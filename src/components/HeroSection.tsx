@@ -36,43 +36,15 @@ const HeroSection = () => {
               </p>
             </div>
 
-            {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            {/* CTA Button */}
+            <div className="flex justify-center">
               <Button
                 size="lg"
                 className="bg-gold-light text-primary hover:bg-gold-dark transition-all duration-300 shadow-gold text-base sm:text-lg px-6 sm:px-8 h-12 sm:h-14 touch-target touch-friendly"
               >
-                Get Started Free
+                APALSA Mentorship Program
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
-              
-              <Button
-                variant="outline"
-                size="lg"
-                className="border-2 border-gold-light text-gold-light hover:bg-gold-light hover:text-primary transition-all duration-300 text-base sm:text-lg px-6 sm:px-8 h-12 sm:h-14 touch-target touch-friendly"
-              >
-                Browse Resources
-              </Button>
-            </div>
-
-            {/* Stats */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-6 lg:pt-8 max-w-2xl mx-auto">
-              <div className="text-center">
-                <div className="text-2xl sm:text-3xl font-bold text-gold-light">10K+</div>
-                <div className="text-white/80 text-xs sm:text-sm">Case Studies</div>
-              </div>
-              <div className="text-center">
-                <div className="text-2xl sm:text-3xl font-bold text-gold-light">50+</div>
-                <div className="text-white/80 text-xs sm:text-sm">Study Guides</div>
-              </div>
-              <div className="text-center">
-                <div className="text-2xl sm:text-3xl font-bold text-gold-light">24/7</div>
-                <div className="text-white/80 text-xs sm:text-sm">Legal Updates</div>
-              </div>
-              <div className="text-center">
-                <div className="text-2xl sm:text-3xl font-bold text-gold-light">5K+</div>
-                <div className="text-white/80 text-xs sm:text-sm">Active Students</div>
-              </div>
             </div>
           </div>
 
