@@ -39,12 +39,6 @@ const Header = () => {
                 {item.name}
               </a>
             ))}
-            <a
-              href="/resources"
-              className="text-foreground hover:text-primary transition-colors font-medium text-sm lg:text-base"
-            >
-              Library
-            </a>
           </nav>
 
           {/* Desktop CTA Buttons */}

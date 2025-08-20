@@ -8,7 +8,6 @@ const MobileNavigation = () => {
 
   const navigationItems = [
     { name: "Home", href: "/", icon: Home },
-    { name: "Library", href: "/resources", icon: Library },
   ];
 
   const handleNavClick = () => {
