@@ -6,9 +6,7 @@ import { Scale, Menu, Home, BookOpen, Users, Briefcase, Info, Library } from "lu
 const MobileNavigation = () => {
   const [isOpen, setIsOpen] = useState(false);
 
-  const navigationItems = [
-    { name: "Home", href: "/", icon: Home },
-  ];
+  const navigationItems = [];
 
   const handleNavClick = () => {
     setIsOpen(false);
@@ -40,8 +38,8 @@ const MobileNavigation = () => {
                   <Scale className="w-6 h-6 text-primary" />
                 </div>
                 <div>
-                  <h2 className="text-lg font-bold text-white">LawPathfinder</h2>
-                  <p className="text-xs text-white/80">Student Hub</p>
+                  <h2 className="text-lg font-bold text-white">APALSA</h2>
+                  <p className="text-xs text-white/80">Mentorship Program</p>
                 </div>
               </div>
               <SheetClose asChild>
@@ -68,19 +66,9 @@ const MobileNavigation = () => {
               </div>
             </nav>
 
-            {/* CTA Buttons */}
-            <div className="border-t border-border p-4 space-y-3">
-              <Button 
-                variant="ghost" 
-                className="w-full justify-start touch-target text-foreground hover:text-primary hover:bg-primary/5"
-              >
-                Sign In
-              </Button>
-              <Button 
-                className="w-full touch-target bg-primary hover:bg-primary/90 text-primary-foreground"
-              >
-                Get Started
-              </Button>
+            {/* Empty footer for spacing */}
+            <div className="border-t border-border p-4">
+              {/* No CTA buttons */}
             </div>
           </div>
         </SheetContent>
