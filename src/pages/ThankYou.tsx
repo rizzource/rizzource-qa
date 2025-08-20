@@ -158,7 +158,7 @@ const ThankYou = () => {
                             type="button"
                             variant="outline"
                             onClick={handleBackToHome}
-                            className="flex-1 border-white/20 text-white hover:bg-white/10"
+                            className="flex-1 border-white/20 text-light-green hover:bg-light-green hover:text-white"
                           >
                             <ArrowLeft className="mr-2 h-4 w-4" />
                             Back to Home

@@ -316,7 +316,7 @@ const SignupForm = ({ userType, onBack }: SignupFormProps) => {
                         type="button"
                         variant="outline"
                         onClick={prevStep}
-                        className="border-white/20 text-white hover:bg-white/10"
+                        className="border-white/20 text-light-green hover:bg-light-green hover:text-white"
                       >
                         <ArrowLeft className="mr-2 h-4 w-4" />
                         Previous
