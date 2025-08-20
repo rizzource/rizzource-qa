@@ -2,7 +2,11 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight, BookOpen, Users, Zap, Scale } from "lucide-react";
 import heroImage from "@/assets/hero-legal-illustration.jpg";
 
-const HeroSection = () => {
+interface HeroSectionProps {
+  onStartProgram: () => void;
+}
+
+const HeroSection = ({ onStartProgram }: HeroSectionProps) => {
   return (
     <section className="relative min-h-screen bg-hero-gradient overflow-hidden">
       {/* Floating background elements */}
@@ -40,6 +44,7 @@ const HeroSection = () => {
             <div className="flex justify-center">
               <Button
                 size="lg"
+                onClick={onStartProgram}
                 className="bg-gold-light text-primary hover:bg-gold-dark transition-all duration-300 shadow-gold text-base sm:text-lg px-6 sm:px-8 h-12 sm:h-14 touch-target touch-friendly"
               >
                 APALSA Mentorship Program
