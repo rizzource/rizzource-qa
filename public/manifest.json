@@ -1,0 +1,25 @@
+{
+  "name": "LawPathfinder Hub - Legal Resources for Students",
+  "short_name": "LawPathfinder",
+  "description": "Comprehensive legal research platform for law students. Access 10,000+ case studies, interactive study guides, and collaborative learning tools.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#2D5016",
+  "theme_color": "#FFD700",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "/placeholder.svg",
+      "type": "image/svg+xml",
+      "sizes": "192x192",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["education", "productivity", "reference"],
+  "lang": "en-US"
+}

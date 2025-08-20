@@ -1,0 +1,313 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    /* Enhanced Law Platform Color System - Green & Gold Theme */
+    --background: 0 0% 98%;
+    --foreground: 210 11% 15%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 210 11% 15%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 210 11% 15%;
+
+    /* Primary: Dark Forest Green (#2D5016) */
+    --primary-green: 98 67% 19%;
+    --primary: 98 67% 19%;
+    --primary-foreground: 0 0% 98%;
+
+    /* Secondary: Medium Green (#4A7C2A) */
+    --secondary-green: 94 48% 32%;
+    --secondary: 94 48% 32%;
+    --secondary-foreground: 0 0% 98%;
+
+    /* Light Green for hover states */
+    --light-green: 85 39% 45%;
+
+    /* Gold System */
+    --gold-primary: 51 100% 50%;     /* #FFD700 */
+    --gold-secondary: 43 74% 38%;    /* #B8860B */
+    --gold-accent: 45 77% 77%;       /* #F4E6A1 */
+    --accent: 51 100% 50%;
+    --accent-foreground: 98 67% 19%;
+
+    /* Supporting colors */
+    --gold-dark: 43 74% 38%;
+    --gold-light: 51 100% 50%;
+
+    /* Neutral colors */
+    --neutral-light: 240 33% 99%;    /* #F8F9FA */
+    --neutral-dark: 210 11% 21%;     /* #343A40 */
+
+    /* Enhanced muted tones */
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 98 67% 19%;
+
+    /* Enhanced gradients */
+    --gradient-hero: linear-gradient(135deg, hsl(98 67% 19%), hsl(94 48% 32%));
+    --gradient-gold: linear-gradient(135deg, hsl(51 100% 50%), hsl(43 74% 38%));
+    --gradient-card: linear-gradient(135deg, hsl(0 0% 100%), hsl(45 77% 97%));
+    
+    /* Enhanced shadows */
+    --shadow-gold: 0 10px 30px -10px hsl(51 100% 50% / 0.3);
+    --shadow-green: 0 10px 30px -10px hsl(98 67% 19% / 0.2);
+    --shadow-card: 0 4px 20px -4px hsl(98 67% 19% / 0.1);
+
+    --radius: 0.5rem;
+
+    --sidebar-background: 0 0% 98%;
+
+    --sidebar-foreground: 240 5.3% 26.1%;
+
+    --sidebar-primary: 240 5.9% 10%;
+
+    --sidebar-primary-foreground: 0 0% 98%;
+
+    --sidebar-accent: 240 4.8% 95.9%;
+
+    --sidebar-accent-foreground: 240 5.9% 10%;
+
+    --sidebar-border: 220 13% 91%;
+
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+  
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  /* Mobile-first optimizations */
+  @media (max-width: 767px) {
+    .mobile-optimized {
+      padding-left: 1rem;
+      padding-right: 1rem;
+    }
+    
+    .touch-target {
+      min-height: 44px;
+      min-width: 44px;
+    }
+    
+    /* Bottom navigation spacing */
+    body {
+      padding-bottom: 4rem;
+    }
+  }
+  
+  /* Improved touch interactions */
+  .touch-friendly {
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+  
+  /* Performance optimizations */
+  .lazy-image {
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  
+  .lazy-image.loaded {
+    opacity: 1;
+  }
+  
+  /* Swipe animations */
+  @keyframes swipeIn {
+    from {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+  
+  .swipe-in {
+    animation: swipeIn 0.3s ease-out;
+  }
+}
+
+@layer components {
+  /* Enhanced gradient backgrounds */
+  .bg-hero-gradient {
+    background: var(--gradient-hero);
+  }
+  
+  .bg-gold-gradient {
+    background: var(--gradient-gold);
+  }
+  
+  .bg-card-gradient {
+    background: var(--gradient-card);
+  }
+  
+  /* Enhanced shadows */
+  .shadow-gold {
+    box-shadow: var(--shadow-gold);
+  }
+  
+  .shadow-green {
+    box-shadow: var(--shadow-green);
+  }
+  
+  .shadow-card {
+    box-shadow: var(--shadow-card);
+  }
+  
+  /* Search and form enhancements */
+  .search-focus {
+    @apply ring-2 ring-gold-primary border-gold-primary;
+  }
+  
+  .filter-checkbox:checked {
+    @apply bg-secondary-green border-secondary-green;
+  }
+  
+  /* Resource card styling */
+  .resource-card {
+    @apply bg-white border border-gold-accent/30 hover:border-gold-primary/50 transition-all duration-300 hover:shadow-card;
+  }
+  
+  /* Loading shimmer effect */
+  .shimmer {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+  }
+  
+  /* Floating animation */
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+  
+  .animate-float-delayed {
+    animation: float 6s ease-in-out infinite 2s;
+  }
+  
+  /* Accessibility focus indicators */
+  .focus-gold {
+    @apply focus:outline-none focus:ring-2 focus:ring-gold-primary focus:ring-offset-2;
+  }
+  
+  /* Enhanced dropdown styling */
+  .dropdown-content {
+    @apply bg-white border border-border shadow-lg rounded-lg z-50 max-h-64 overflow-y-auto;
+  }
+  
+  .dropdown-item {
+    @apply px-3 py-2 hover:bg-muted cursor-pointer transition-colors;
+  }
+  
+  .dropdown-item-selected {
+    @apply bg-primary/10 text-primary;
+  }
+}
+
+@layer utilities {
+  .text-gold-light {
+    color: hsl(var(--gold-light));
+  }
+  
+  .text-gold-dark {
+    color: hsl(var(--gold-dark));
+  }
+  
+  .bg-gold-light {
+    background-color: hsl(var(--gold-light));
+  }
+  
+  .bg-gold-dark {
+    background-color: hsl(var(--gold-dark));
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
