@@ -2,24 +2,24 @@ import { Scale, BookOpen, Users, Mail } from "lucide-react";
 
 const Footer = () => {
   const quickLinks = [
-    { name: "Case Database", href: "#cases" },
-    { name: "Study Materials", href: "#materials" },
-    { name: "Legal Research", href: "#research" },
-    { name: "Practice Exams", href: "#exams" },
+    { name: "About APALSA", href: "#about" },
+    { name: "Mentorship Program", href: "#mentorship" },
+    { name: "How It Works", href: "#how-it-works" },
+    { name: "Success Stories", href: "#stories" },
   ];
 
   const resources = [
-    { name: "Law School Prep", href: "#prep" },
-    { name: "Bar Exam Guide", href: "#bar" },
-    { name: "Career Resources", href: "#career" },
-    { name: "Legal Writing", href: "#writing" },
+    { name: "Mentor Guidelines", href: "#mentor-guide" },
+    { name: "Mentee Resources", href: "#mentee-resources" },
+    { name: "Events & Workshops", href: "#events" },
+    { name: "Network Directory", href: "#directory" },
   ];
 
   const support = [
-    { name: "Help Center", href: "#help" },
-    { name: "Student Support", href: "#support" },
-    { name: "Contact Us", href: "#contact" },
-    { name: "Community", href: "#community" },
+    { name: "Program FAQ", href: "#faq" },
+    { name: "Contact Support", href: "#support" },
+    { name: "Get Help", href: "#help" },
+    { name: "Join Community", href: "#community" },
   ];
 
   return (
@@ -34,14 +34,14 @@ const Footer = () => {
                 <Scale className="w-6 h-6 text-primary" />
               </div>
               <div>
-                <h3 className="text-xl font-bold">LawPathfinder</h3>
-                <p className="text-sm text-primary-foreground/80">Student Hub</p>
+                <h3 className="text-xl font-bold">APALSA</h3>
+                <p className="text-sm text-primary-foreground/80">Mentorship Program</p>
               </div>
             </div>
             
             <p className="text-primary-foreground/80 leading-relaxed">
-              Empowering the next generation of legal professionals with comprehensive 
-              research tools and collaborative learning resources.
+              Connecting Asian Pacific American law students with experienced mentors 
+              and building a supportive community for legal career success.
             </p>
             
             <div className="flex space-x-4">
@@ -113,7 +113,7 @@ const Footer = () => {
         <div className="border-t border-primary-foreground/20 mt-12 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             <p className="text-primary-foreground/60 text-sm">
-              © 2024 LawPathfinder. All rights reserved.
+              © 2024 APALSA Mentorship Program. All rights reserved.
             </p>
             
             <div className="flex space-x-6 text-sm">

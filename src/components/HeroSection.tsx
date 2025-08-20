@@ -29,14 +29,13 @@ const HeroSection = ({ onStartProgram }: HeroSectionProps) => {
           <div className="text-center space-y-6 lg:space-y-8">
             <div className="space-y-4">
               <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold text-white leading-tight">
-                Your Complete
-                <span className="block text-gold-light">Legal Research</span>
-                Companion
+                Join APALSA's
+                <span className="block text-gold-light">Mentorship Program</span>
+                Today
               </h1>
               
               <p className="text-lg sm:text-xl lg:text-2xl text-white/90 leading-relaxed max-w-4xl mx-auto">
-                Access comprehensive case studies, legal databases, and study materials 
-                designed specifically for law students and legal professionals.
+                Connect with experienced legal professionals and fellow students in the Asian Pacific American Law Student Association community for guidance and career support.
               </p>
             </div>
 
@@ -58,7 +57,7 @@ const HeroSection = ({ onStartProgram }: HeroSectionProps) => {
             <div className="relative z-10">
               <img
                 src={heroImage}
-                alt="Legal research and study materials"
+                alt="APALSA mentorship program community"
                 className="w-full h-auto rounded-2xl shadow-green"
                 loading="eager"
               />
