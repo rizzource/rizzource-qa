@@ -8,10 +8,6 @@ const MobileNavigation = () => {
 
   const navigationItems = [
     { name: "Home", href: "/", icon: Home },
-    { name: "Resources", href: "#resources", icon: BookOpen },
-    { name: "Case Studies", href: "#cases", icon: Briefcase },
-    { name: "Study Groups", href: "#groups", icon: Users },
-    { name: "About", href: "#about", icon: Info },
     { name: "Library", href: "/resources", icon: Library },
   ];
 

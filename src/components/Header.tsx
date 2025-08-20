@@ -4,12 +4,7 @@ import { useState } from "react";
 import MobileNavigation from "./MobileNavigation";
 
 const Header = () => {
-  const navigation = [
-    { name: "Resources", href: "#resources" },
-    { name: "Case Studies", href: "#cases" },
-    { name: "Study Groups", href: "#groups" },
-    { name: "About", href: "#about" },
-  ];
+  const navigation = [];
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-b border-border/50">
