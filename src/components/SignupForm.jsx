@@ -659,7 +659,7 @@ const SignupForm = ({ userType, onBack }) => {
                         type="button"
                         variant="outline"
                         onClick={prevStep}
-                        className="border-white/20 text-light-green hover:bg-light-green hover:text-white"
+                        className="border-white/20 text-light-green hover:bg-light-green hover:text-white whitespace-nowrap flex items-center"
                       >
                         <ArrowLeft className="mr-2 h-4 w-4" />
                         Previous
@@ -670,7 +670,7 @@ const SignupForm = ({ userType, onBack }) => {
                       <Button
                         type="button"
                         onClick={nextStep}
-                        className="bg-gold-light text-primary hover:bg-gold-dark ml-auto"
+                        className="bg-gold-light text-primary hover:bg-gold-dark ml-auto whitespace-nowrap flex items-center"
                       >
                         Next
                         <ArrowRight className="ml-2 h-4 w-4" />
@@ -678,7 +678,7 @@ const SignupForm = ({ userType, onBack }) => {
                     ) : (
                       <Button
                         type="submit"
-                        className="bg-gold-light text-primary hover:bg-gold-dark ml-auto"
+                        className="bg-gold-light text-primary hover:bg-gold-dark ml-auto whitespace-nowrap flex items-center"
                       >
                         Submit Application
                       </Button>

@@ -11,7 +11,7 @@ const MentorMenteeSelection = ({ onSelectType, onBack }) => {
           <Button
             variant="ghost"
             onClick={onBack}
-            className="mb-8 text-white hover:bg-white/10"
+            className="mb-8 text-white hover:bg-white/10 whitespace-nowrap flex items-center"
           >
             <ArrowLeft className="mr-2 h-4 w-4" />
             Back to Home
