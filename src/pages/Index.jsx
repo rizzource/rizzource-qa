@@ -6,18 +6,15 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Users, BookOpen, Zap } from "lucide-react";
 
-type AppState = 'hero' | 'selection' | 'signup';
-type UserType = 'mentor' | 'mentee' | null;
-
 const Index = () => {
-  const [appState, setAppState] = useState<AppState>('hero');
-  const [userType, setUserType] = useState<UserType>(null);
+  const [appState, setAppState] = useState('hero');
+  const [userType, setUserType] = useState(null);
 
   const handleStartProgram = () => {
     setAppState('selection');
   };
 
-  const handleUserTypeSelect = (type: 'mentor' | 'mentee') => {
+  const handleUserTypeSelect = (type) => {
     setUserType(type);
     setAppState('signup');
   };

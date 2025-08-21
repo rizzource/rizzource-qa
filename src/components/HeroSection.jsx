@@ -2,11 +2,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight, BookOpen, Users, Zap, Scale } from "lucide-react";
 import heroImage from "@/assets/hero-legal-illustration.jpg";
 
-interface HeroSectionProps {
-  onStartProgram: () => void;
-}
-
-const HeroSection = ({ onStartProgram }: HeroSectionProps) => {
+const HeroSection = ({ onStartProgram }) => {
   return (
     <section className="relative min-h-screen bg-hero-gradient overflow-hidden">
       {/* Floating background elements */}
