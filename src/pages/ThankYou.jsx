@@ -9,8 +9,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { CheckCircle, Star, ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
+import Header from "@/components/Header.jsx";
+import Footer from "@/components/Footer.jsx";
 
 const feedbackSchema = z.object({
   rating: z.string().min(1, "Please select a rating"),
@@ -18,15 +18,13 @@ const feedbackSchema = z.object({
   improvement: z.string().optional(),
 });
 
-type FeedbackFormData = z.infer<typeof feedbackSchema>;
-
 const ThankYou = () => {
   const [showFeedbackForm, setShowFeedbackForm] = useState(true);
   const [feedbackSubmitted, setFeedbackSubmitted] = useState(false);
-  const [signupData, setSignupData] = useState<any>(null);
+  const [signupData, setSignupData] = useState(null);
   const navigate = useNavigate();
 
-  const form = useForm<FeedbackFormData>({
+  const form = useForm({
     resolver: zodResolver(feedbackSchema),
     defaultValues: {
       rating: "",
@@ -45,7 +43,7 @@ const ThankYou = () => {
     }
   }, [navigate]);
 
-  const onSubmitFeedback = (data: FeedbackFormData) => {
+  const onSubmitFeedback = (data) => {
     console.log('Feedback submitted:', data);
     setShowFeedbackForm(false);
     setFeedbackSubmitted(true);

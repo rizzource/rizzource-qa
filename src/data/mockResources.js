@@ -1,6 +1,4 @@
-import { Resource } from "@/types/resource";
-
-export const mockResources: Resource[] = [
+export const mockResources = [
   {
     id: "1",
     title: "Constitutional Law: First Amendment Analysis",
