@@ -11,7 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { ArrowLeft, ArrowRight, GraduationCap, Users } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
-const signupSchema = z.object({
+const mentorSchema = z.object({
   // Basic Information
   firstName: z.string().min(2, "First name must be at least 2 characters"),
   lastName: z.string().min(2, "Last name must be at least 2 characters"),
@@ -31,7 +31,18 @@ const signupSchema = z.object({
   lastComments: z.string().optional(),
 });
 
-type SignupFormData = z.infer<typeof signupSchema>;
+const menteeSchema = z.object({
+  firstName: z.string().min(2, "First name must be at least 2 characters"),
+  lastName: z.string().min(2, "Last name must be at least 2 characters"),
+  email: z.string().email("Please enter a valid email address"),
+  lawFieldInterest: z.string().min(1, "Please enter your field of law interest"),
+  hometown: z.string().min(2, "Please enter your hometown"),
+  undergraduateUniversity: z.string().min(2, "Please enter your undergraduate university"),
+});
+
+type MentorFormData = z.infer<typeof mentorSchema>;
+type MenteeFormData = z.infer<typeof menteeSchema>;
+type SignupFormData = MentorFormData | MenteeFormData;
 
 interface SignupFormProps {
   userType: 'mentor' | 'mentee';
@@ -42,9 +53,12 @@ const SignupForm = ({ userType, onBack }: SignupFormProps) => {
   const [currentStep, setCurrentStep] = useState(1);
   const navigate = useNavigate();
   
-  const form = useForm<SignupFormData>({
-    resolver: zodResolver(signupSchema),
-    defaultValues: {
+  const schema = userType === 'mentor' ? mentorSchema : menteeSchema;
+  const maxSteps = userType === 'mentor' ? 3 : 1;
+  
+  const form = useForm({
+    resolver: zodResolver(schema),
+    defaultValues: userType === 'mentor' ? {
       firstName: "",
       lastName: "",
       email: "",
@@ -57,17 +71,34 @@ const SignupForm = ({ userType, onBack }: SignupFormProps) => {
       hasCar: "",
       coMentors: "",
       lastComments: "",
+    } : {
+      firstName: "",
+      lastName: "",
+      email: "",
+      lawFieldInterest: "",
+      hometown: "",
+      undergraduateUniversity: "",
     },
   });
 
-  const onSubmit = (data: SignupFormData) => {
+  const onSubmit = (data: any) => {
     // Store form data in sessionStorage for the thank you page
     sessionStorage.setItem('signupData', JSON.stringify({ ...data, userType }));
     navigate('/thank-you');
   };
 
   const nextStep = async () => {
-    let fieldsToValidate: (keyof SignupFormData)[] = [];
+    if (userType === 'mentee') {
+      // For mentee, validate all fields since it's a single step
+      const isValid = await form.trigger();
+      if (isValid) {
+        form.handleSubmit(onSubmit)();
+      }
+      return;
+    }
+
+    // For mentor, handle multi-step validation
+    let fieldsToValidate: string[] = [];
     
     switch (currentStep) {
       case 1:
@@ -81,7 +112,7 @@ const SignupForm = ({ userType, onBack }: SignupFormProps) => {
         break;
     }
 
-    const isValid = await form.trigger(fieldsToValidate);
+    const isValid = await form.trigger(fieldsToValidate as any);
     if (isValid) {
       setCurrentStep(currentStep + 1);
     }
@@ -92,6 +123,117 @@ const SignupForm = ({ userType, onBack }: SignupFormProps) => {
   };
 
   const renderStepContent = () => {
+    if (userType === 'mentee') {
+      return (
+        <div className="space-y-4">
+          <FormField
+            control={form.control}
+            name="firstName"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-white">First Name</FormLabel>
+                <FormControl>
+                  <Input 
+                    placeholder="Enter your first name" 
+                    {...field} 
+                    className="bg-white/10 border-white/20 text-white placeholder:text-white/60"
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="lastName"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-white">Last Name</FormLabel>
+                <FormControl>
+                  <Input 
+                    placeholder="Enter your last name" 
+                    {...field} 
+                    className="bg-white/10 border-white/20 text-white placeholder:text-white/60"
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-white">Email</FormLabel>
+                <FormControl>
+                  <Input 
+                    type="email"
+                    placeholder="Enter your email address" 
+                    {...field} 
+                    className="bg-white/10 border-white/20 text-white placeholder:text-white/60"
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="lawFieldInterest"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-white">Field of law you are interested in?</FormLabel>
+                <FormControl>
+                  <Input 
+                    placeholder="Transactional, litigation, big law, public interest, etc. If you don't know yet you can say so" 
+                    {...field}
+                    className="bg-white/10 border-white/20 text-white placeholder:text-white/60"
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="hometown"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-white">Where is your hometown?</FormLabel>
+                <FormControl>
+                  <Input 
+                    placeholder="Enter your hometown" 
+                    {...field}
+                    className="bg-white/10 border-white/20 text-white placeholder:text-white/60"
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="undergraduateUniversity"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-white">Where did you go to undergraduate?</FormLabel>
+                <FormControl>
+                  <Input 
+                    placeholder="Enter your undergraduate university" 
+                    {...field}
+                    className="bg-white/10 border-white/20 text-white placeholder:text-white/60"
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+      );
+    }
+
+    // Mentor form steps
     switch (currentStep) {
       case 1:
         return (
@@ -372,14 +514,14 @@ const SignupForm = ({ userType, onBack }: SignupFormProps) => {
                 {userType === 'mentor' ? 'Mentor Application' : 'Mentee Application'}
               </CardTitle>
               <CardDescription className="text-white/80">
-                Step {currentStep} of 3: {stepTitles[currentStep - 1]}
+                {userType === 'mentee' ? 'Complete your application' : `Step ${currentStep} of 3: ${stepTitles[currentStep - 1]}`}
               </CardDescription>
               
               {/* Progress Bar */}
               <div className="w-full bg-white/20 rounded-full h-2 mt-4">
                 <div 
                   className="bg-gold-light h-2 rounded-full transition-all duration-300"
-                  style={{ width: `${(currentStep / 3) * 100}%` }}
+                  style={{ width: `${userType === 'mentee' ? 100 : (currentStep / 3) * 100}%` }}
                 ></div>
               </div>
             </CardHeader>
@@ -390,34 +532,46 @@ const SignupForm = ({ userType, onBack }: SignupFormProps) => {
                   {renderStepContent()}
                   
                   <div className="flex justify-between pt-4">
-                    {currentStep > 1 && (
-                      <Button
-                        type="button"
-                        variant="outline"
-                        onClick={prevStep}
-                        className="border-white/20 text-light-green hover:bg-light-green hover:text-white"
-                      >
-                        <ArrowLeft className="mr-2 h-4 w-4" />
-                        Previous
-                      </Button>
-                    )}
-                    
-                    {currentStep < 3 ? (
+                    {userType === 'mentee' ? (
                       <Button
                         type="button"
                         onClick={nextStep}
                         className="bg-gold-light text-primary hover:bg-gold-dark ml-auto"
                       >
-                        Next
-                        <ArrowRight className="ml-2 h-4 w-4" />
-                      </Button>
-                    ) : (
-                      <Button
-                        type="submit"
-                        className="bg-gold-light text-primary hover:bg-gold-dark ml-auto"
-                      >
                         Submit Application
                       </Button>
+                    ) : (
+                      <>
+                        {currentStep > 1 && (
+                          <Button
+                            type="button"
+                            variant="outline"
+                            onClick={prevStep}
+                            className="border-white/20 text-light-green hover:bg-light-green hover:text-white"
+                          >
+                            <ArrowLeft className="mr-2 h-4 w-4" />
+                            Previous
+                          </Button>
+                        )}
+                        
+                        {currentStep < 3 ? (
+                          <Button
+                            type="button"
+                            onClick={nextStep}
+                            className="bg-gold-light text-primary hover:bg-gold-dark ml-auto"
+                          >
+                            Next
+                            <ArrowRight className="ml-2 h-4 w-4" />
+                          </Button>
+                        ) : (
+                          <Button
+                            type="submit"
+                            className="bg-gold-light text-primary hover:bg-gold-dark ml-auto"
+                          >
+                            Submit Application
+                          </Button>
+                        )}
+                      </>
                     )}
                   </div>
                 </form>
