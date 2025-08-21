@@ -263,6 +263,11 @@ All colors MUST be HSL.
   .dropdown-item-selected {
     @apply bg-primary/10 text-primary;
   }
+
+  /* Logo color adjustment using CSS filter to match theme */
+  .logo-green {
+    filter: hue-rotate(140deg) saturate(120%) brightness(0.9);
+  }
 }
 
 @layer utilities {
