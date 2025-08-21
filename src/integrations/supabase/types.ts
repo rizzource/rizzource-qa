@@ -14,7 +14,138 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      feedback: {
+        Row: {
+          application_experience: string
+          created_at: string
+          experience_rating: string
+          id: string
+          liked_about_process: string | null
+          suggestions: string | null
+          thoughts: string | null
+          user_email: string
+        }
+        Insert: {
+          application_experience: string
+          created_at?: string
+          experience_rating: string
+          id?: string
+          liked_about_process?: string | null
+          suggestions?: string | null
+          thoughts?: string | null
+          user_email: string
+        }
+        Update: {
+          application_experience?: string
+          created_at?: string
+          experience_rating?: string
+          id?: string
+          liked_about_process?: string | null
+          suggestions?: string | null
+          thoughts?: string | null
+          user_email?: string
+        }
+        Relationships: []
+      }
+      mentees: {
+        Row: {
+          car_availability: boolean | null
+          comments: string | null
+          created_at: string
+          email: string
+          expectations: string | null
+          field_of_law: string
+          first_name: string
+          hobbies: string | null
+          hometown: string
+          id: string
+          last_name: string
+          mentorship_time_commitment: string
+          undergraduate_university: string
+        }
+        Insert: {
+          car_availability?: boolean | null
+          comments?: string | null
+          created_at?: string
+          email: string
+          expectations?: string | null
+          field_of_law: string
+          first_name: string
+          hobbies?: string | null
+          hometown: string
+          id?: string
+          last_name: string
+          mentorship_time_commitment: string
+          undergraduate_university: string
+        }
+        Update: {
+          car_availability?: boolean | null
+          comments?: string | null
+          created_at?: string
+          email?: string
+          expectations?: string | null
+          field_of_law?: string
+          first_name?: string
+          hobbies?: string | null
+          hometown?: string
+          id?: string
+          last_name?: string
+          mentorship_time_commitment?: string
+          undergraduate_university?: string
+        }
+        Relationships: []
+      }
+      mentors: {
+        Row: {
+          car_availability: boolean | null
+          class_year: string
+          co_mentor_preference: string | null
+          comments: string | null
+          created_at: string
+          email: string
+          field_of_law: string
+          first_name: string
+          hobbies: string | null
+          hometown: string
+          id: string
+          last_name: string
+          mentorship_time_commitment: string
+          undergraduate_university: string
+        }
+        Insert: {
+          car_availability?: boolean | null
+          class_year: string
+          co_mentor_preference?: string | null
+          comments?: string | null
+          created_at?: string
+          email: string
+          field_of_law: string
+          first_name: string
+          hobbies?: string | null
+          hometown: string
+          id?: string
+          last_name: string
+          mentorship_time_commitment: string
+          undergraduate_university: string
+        }
+        Update: {
+          car_availability?: boolean | null
+          class_year?: string
+          co_mentor_preference?: string | null
+          comments?: string | null
+          created_at?: string
+          email?: string
+          field_of_law?: string
+          first_name?: string
+          hobbies?: string | null
+          hometown?: string
+          id?: string
+          last_name?: string
+          mentorship_time_commitment?: string
+          undergraduate_university?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
