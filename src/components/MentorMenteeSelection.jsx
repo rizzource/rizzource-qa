@@ -49,7 +49,7 @@ const MentorMenteeSelection = ({ onSelectType, onBack }) => {
                 </ul>
                 <Button 
                   size="lg"
-                  className="w-full bg-gold-light text-primary hover:bg-gold-dark"
+                  className="bg-gold-light text-primary hover:bg-gold-dark rounded-xl px-8 py-3"
                   onClick={(e) => {
                     e.stopPropagation();
                     onSelectType('mentor');
@@ -80,7 +80,7 @@ const MentorMenteeSelection = ({ onSelectType, onBack }) => {
                 </ul>
                 <Button 
                   size="lg"
-                  className="w-full bg-gold-light text-primary hover:bg-gold-dark"
+                  className="bg-gold-light text-primary hover:bg-gold-dark rounded-xl px-8 py-3"
                   onClick={(e) => {
                     e.stopPropagation();
                     onSelectType('mentee');
