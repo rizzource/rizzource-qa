@@ -12,19 +12,23 @@ import { ArrowLeft, ArrowRight, GraduationCap, Users } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const signupSchema = z.object({
-  // Personal Information
-  fullName: z.string().min(2, "Full name must be at least 2 characters"),
+  // Basic Information
+  firstName: z.string().min(2, "First name must be at least 2 characters"),
+  lastName: z.string().min(2, "Last name must be at least 2 characters"),
   email: z.string().email("Please enter a valid email address"),
-  phone: z.string().min(10, "Please enter a valid phone number"),
+  classYear: z.string().min(1, "Please select your class year"),
   
-  // Professional Information
-  currentPosition: z.string().min(2, "Please enter your current position"),
-  organization: z.string().min(2, "Please enter your organization"),
-  experienceLevel: z.string().min(1, "Please select your experience level"),
+  // Background Information
+  lawFieldInterest: z.string().min(1, "Please enter your field of law interest"),
+  hometown: z.string().min(2, "Please enter your hometown"),
+  undergraduateUniversity: z.string().min(2, "Please enter your undergraduate university"),
   
-  // Program Information
-  goals: z.string().min(10, "Please describe your goals (at least 10 characters)"),
-  availability: z.string().min(1, "Please select your availability"),
+  // Personal Information
+  hobbiesInterests: z.string().min(10, "Please describe your hobbies/interests (at least 10 characters)"),
+  timeCommitment: z.string().min(1, "Please select your time commitment level"),
+  hasCar: z.string().min(1, "Please select if you have a car"),
+  coMentors: z.string().optional(),
+  lastComments: z.string().optional(),
 });
 
 type SignupFormData = z.infer<typeof signupSchema>;
@@ -41,14 +45,18 @@ const SignupForm = ({ userType, onBack }: SignupFormProps) => {
   const form = useForm<SignupFormData>({
     resolver: zodResolver(signupSchema),
     defaultValues: {
-      fullName: "",
+      firstName: "",
+      lastName: "",
       email: "",
-      phone: "",
-      currentPosition: "",
-      organization: "",
-      experienceLevel: "",
-      goals: "",
-      availability: "",
+      classYear: "",
+      lawFieldInterest: "",
+      hometown: "",
+      undergraduateUniversity: "",
+      hobbiesInterests: "",
+      timeCommitment: "",
+      hasCar: "",
+      coMentors: "",
+      lastComments: "",
     },
   });
 
@@ -63,13 +71,13 @@ const SignupForm = ({ userType, onBack }: SignupFormProps) => {
     
     switch (currentStep) {
       case 1:
-        fieldsToValidate = ['fullName', 'email', 'phone'];
+        fieldsToValidate = ['firstName', 'lastName', 'email', 'classYear'];
         break;
       case 2:
-        fieldsToValidate = ['currentPosition', 'organization', 'experienceLevel'];
+        fieldsToValidate = ['lawFieldInterest', 'hometown', 'undergraduateUniversity'];
         break;
       case 3:
-        fieldsToValidate = ['goals', 'availability'];
+        fieldsToValidate = ['hobbiesInterests', 'timeCommitment', 'hasCar'];
         break;
     }
 
@@ -90,13 +98,30 @@ const SignupForm = ({ userType, onBack }: SignupFormProps) => {
           <div className="space-y-4">
             <FormField
               control={form.control}
-              name="fullName"
+              name="firstName"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-white">Full Name</FormLabel>
+                  <FormLabel className="text-white">First Name</FormLabel>
                   <FormControl>
                     <Input 
-                      placeholder="Enter your full name" 
+                      placeholder="Enter your first name" 
+                      {...field} 
+                      className="bg-white/10 border-white/20 text-white placeholder:text-white/60"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="lastName"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-white">Last Name</FormLabel>
+                  <FormControl>
+                    <Input 
+                      placeholder="Enter your last name" 
                       {...field} 
                       className="bg-white/10 border-white/20 text-white placeholder:text-white/60"
                     />
@@ -110,7 +135,7 @@ const SignupForm = ({ userType, onBack }: SignupFormProps) => {
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-white">Email Address</FormLabel>
+                  <FormLabel className="text-white">Email</FormLabel>
                   <FormControl>
                     <Input 
                       type="email"
@@ -125,17 +150,21 @@ const SignupForm = ({ userType, onBack }: SignupFormProps) => {
             />
             <FormField
               control={form.control}
-              name="phone"
+              name="classYear"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-white">Phone Number</FormLabel>
-                  <FormControl>
-                    <Input 
-                      placeholder="Enter your phone number" 
-                      {...field} 
-                      className="bg-white/10 border-white/20 text-white placeholder:text-white/60"
-                    />
-                  </FormControl>
+                  <FormLabel className="text-white">Class Year</FormLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl>
+                      <SelectTrigger className="bg-white/10 border-white/20 text-white">
+                        <SelectValue placeholder="Select your class year" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="2L">2L</SelectItem>
+                      <SelectItem value="3L">3L</SelectItem>
+                    </SelectContent>
+                  </Select>
                   <FormMessage />
                 </FormItem>
               )}
@@ -147,13 +176,13 @@ const SignupForm = ({ userType, onBack }: SignupFormProps) => {
           <div className="space-y-4">
             <FormField
               control={form.control}
-              name="currentPosition"
+              name="lawFieldInterest"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-white">Current Position</FormLabel>
+                  <FormLabel className="text-white">What field of law are you interested in?</FormLabel>
                   <FormControl>
                     <Input 
-                      placeholder="e.g., Law Student, Associate, Partner" 
+                      placeholder="e.g., Corporate Law, Criminal Law, or 'I don't know yet'" 
                       {...field}
                       className="bg-white/10 border-white/20 text-white placeholder:text-white/60"
                     />
@@ -164,13 +193,13 @@ const SignupForm = ({ userType, onBack }: SignupFormProps) => {
             />
             <FormField
               control={form.control}
-              name="organization"
+              name="hometown"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-white">Organization/Law School</FormLabel>
+                  <FormLabel className="text-white">Where is your hometown?</FormLabel>
                   <FormControl>
                     <Input 
-                      placeholder="Enter your organization or law school" 
+                      placeholder="Enter your hometown" 
                       {...field}
                       className="bg-white/10 border-white/20 text-white placeholder:text-white/60"
                     />
@@ -181,24 +210,17 @@ const SignupForm = ({ userType, onBack }: SignupFormProps) => {
             />
             <FormField
               control={form.control}
-              name="experienceLevel"
+              name="undergraduateUniversity"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-white">Experience Level</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <FormControl>
-                      <SelectTrigger className="bg-white/10 border-white/20 text-white">
-                        <SelectValue placeholder="Select your experience level" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="student">Law Student</SelectItem>
-                      <SelectItem value="0-2">0-2 years</SelectItem>
-                      <SelectItem value="3-5">3-5 years</SelectItem>
-                      <SelectItem value="6-10">6-10 years</SelectItem>
-                      <SelectItem value="10+">10+ years</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <FormLabel className="text-white">Where did you go to undergraduate university?</FormLabel>
+                  <FormControl>
+                    <Input 
+                      placeholder="Enter your undergraduate university" 
+                      {...field}
+                      className="bg-white/10 border-white/20 text-white placeholder:text-white/60"
+                    />
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
@@ -210,18 +232,13 @@ const SignupForm = ({ userType, onBack }: SignupFormProps) => {
           <div className="space-y-4">
             <FormField
               control={form.control}
-              name="goals"
+              name="hobbiesInterests"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-white">
-                    {userType === 'mentor' ? 'What do you hope to contribute as a mentor?' : 'What are your career goals?'}
-                  </FormLabel>
+                  <FormLabel className="text-white">What are your hobbies/interests outside of law school?</FormLabel>
                   <FormControl>
                     <Textarea 
-                      placeholder={userType === 'mentor' 
-                        ? "Describe how you'd like to help mentees and what you can offer..."
-                        : "Describe your career aspirations and what you hope to achieve..."
-                      }
+                      placeholder="Tell us about your hobbies and interests outside of law school..."
                       {...field}
                       className="bg-white/10 border-white/20 text-white placeholder:text-white/60 min-h-[100px]"
                     />
@@ -232,23 +249,85 @@ const SignupForm = ({ userType, onBack }: SignupFormProps) => {
             />
             <FormField
               control={form.control}
-              name="availability"
+              name="timeCommitment"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-white">Availability</FormLabel>
+                  <FormLabel className="text-white">How much time would you like to be dedicated to the mentorship?</FormLabel>
+                  <FormControl>
+                    <div className="text-xs text-white/70 mb-2">
+                      1 = "I would like to check in for help every once in a while" | 5 = "I would love a new friend, let's hang out!"
+                    </div>
+                  </FormControl>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
                       <SelectTrigger className="bg-white/10 border-white/20 text-white">
-                        <SelectValue placeholder="Select your availability" />
+                        <SelectValue placeholder="Select your time commitment level" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="1-2-hours">1-2 hours per week</SelectItem>
-                      <SelectItem value="3-4-hours">3-4 hours per week</SelectItem>
-                      <SelectItem value="5-6-hours">5-6 hours per week</SelectItem>
-                      <SelectItem value="flexible">Flexible schedule</SelectItem>
+                      <SelectItem value="1">1 - Check in occasionally</SelectItem>
+                      <SelectItem value="2">2</SelectItem>
+                      <SelectItem value="3">3 - Moderate engagement</SelectItem>
+                      <SelectItem value="4">4</SelectItem>
+                      <SelectItem value="5">5 - High engagement, new friend</SelectItem>
                     </SelectContent>
                   </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="hasCar"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-white">Do you have a car?</FormLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl>
+                      <SelectTrigger className="bg-white/10 border-white/20 text-white">
+                        <SelectValue placeholder="Select if you have a car" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="yes">Yes</SelectItem>
+                      <SelectItem value="no">No</SelectItem>
+                      <SelectItem value="planning">Planning on getting one</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="coMentors"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-white">Is there someone you would like to be co-mentors with? (Optional)</FormLabel>
+                  <FormControl>
+                    <Input 
+                      placeholder="Enter name or leave blank" 
+                      {...field}
+                      className="bg-white/10 border-white/20 text-white placeholder:text-white/60"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="lastComments"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-white">Any last comments? (Optional)</FormLabel>
+                  <FormControl>
+                    <Textarea 
+                      placeholder="Any additional comments or information you'd like to share..."
+                      {...field}
+                      className="bg-white/10 border-white/20 text-white placeholder:text-white/60 min-h-[80px]"
+                    />
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
@@ -261,9 +340,9 @@ const SignupForm = ({ userType, onBack }: SignupFormProps) => {
   };
 
   const stepTitles = [
-    "Personal Information",
-    "Professional Background", 
-    "Program Details"
+    "Basic Information",
+    "Background Information", 
+    "Personal Details"
   ];
 
   return (
