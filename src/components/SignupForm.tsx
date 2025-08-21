@@ -59,7 +59,7 @@ const SignupForm = ({ userType, onBack }: SignupFormProps) => {
   const navigate = useNavigate();
   
   const schema = userType === 'mentor' ? mentorSchema : menteeSchema;
-  const maxSteps = userType === 'mentor' ? 3 : 1;
+  const maxSteps = 3; // Both mentor and mentee now have 3 steps
   
   const form = useForm({
     resolver: zodResolver(schema),
@@ -98,28 +98,34 @@ const SignupForm = ({ userType, onBack }: SignupFormProps) => {
   };
 
   const nextStep = async () => {
-    if (userType === 'mentee') {
-      // For mentee, validate all fields since it's a single step
-      const isValid = await form.trigger();
-      if (isValid) {
-        form.handleSubmit(onSubmit)();
-      }
-      return;
-    }
-
-    // For mentor, handle multi-step validation
     let fieldsToValidate: string[] = [];
     
-    switch (currentStep) {
-      case 1:
-        fieldsToValidate = ['firstName', 'lastName', 'email', 'classYear'];
-        break;
-      case 2:
-        fieldsToValidate = ['lawFieldInterest', 'hometown', 'undergraduateUniversity'];
-        break;
-      case 3:
-        fieldsToValidate = ['hobbiesInterests', 'timeCommitment', 'hasCar'];
-        break;
+    if (userType === 'mentee') {
+      // For mentee, handle multi-step validation
+      switch (currentStep) {
+        case 1:
+          fieldsToValidate = ['firstName', 'lastName', 'email'];
+          break;
+        case 2:
+          fieldsToValidate = ['lawFieldInterest', 'hometown', 'undergraduateUniversity'];
+          break;
+        case 3:
+          fieldsToValidate = ['hobbiesInterests', 'expectations', 'hasCar', 'timeCommitment'];
+          break;
+      }
+    } else {
+      // For mentor, handle multi-step validation
+      switch (currentStep) {
+        case 1:
+          fieldsToValidate = ['firstName', 'lastName', 'email', 'classYear'];
+          break;
+        case 2:
+          fieldsToValidate = ['lawFieldInterest', 'hometown', 'undergraduateUniversity'];
+          break;
+        case 3:
+          fieldsToValidate = ['hobbiesInterests', 'timeCommitment', 'hasCar'];
+          break;
+      }
     }
 
     const isValid = await form.trigger(fieldsToValidate as any);
@@ -134,213 +140,228 @@ const SignupForm = ({ userType, onBack }: SignupFormProps) => {
 
   const renderStepContent = () => {
     if (userType === 'mentee') {
-      return (
-        <div className="space-y-4">
-          <FormField
-            control={form.control}
-            name="firstName"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-white">First Name</FormLabel>
-                <FormControl>
-                  <Input 
-                    placeholder="Enter your first name" 
-                    {...field} 
-                    className="bg-white/10 border-white/20 text-white placeholder:text-white/60"
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="lastName"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-white">Last Name</FormLabel>
-                <FormControl>
-                  <Input 
-                    placeholder="Enter your last name" 
-                    {...field} 
-                    className="bg-white/10 border-white/20 text-white placeholder:text-white/60"
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="email"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-white">Email</FormLabel>
-                <FormControl>
-                  <Input 
-                    type="email"
-                    placeholder="Enter your email address" 
-                    {...field} 
-                    className="bg-white/10 border-white/20 text-white placeholder:text-white/60"
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="lawFieldInterest"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-white">Field of law you are interested in?</FormLabel>
-                <FormControl>
-                  <Input 
-                    placeholder="Transactional, litigation, big law, public interest, etc. If you don't know yet you can say so" 
-                    {...field}
-                    className="bg-white/10 border-white/20 text-white placeholder:text-white/60"
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="hometown"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-white">Where is your hometown?</FormLabel>
-                <FormControl>
-                  <Input 
-                    placeholder="Enter your hometown" 
-                    {...field}
-                    className="bg-white/10 border-white/20 text-white placeholder:text-white/60"
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="undergraduateUniversity"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-white">Where did you go to undergraduate?</FormLabel>
-                <FormControl>
-                  <Input 
-                    placeholder="Enter your undergraduate university" 
-                    {...field}
-                    className="bg-white/10 border-white/20 text-white placeholder:text-white/60"
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="hobbiesInterests"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-white">Any hobbies/interests outside law school?</FormLabel>
-                <FormControl>
-                  <Textarea 
-                    placeholder="Tell us about your hobbies and interests outside of law school..."
-                    {...field}
-                    className="bg-white/10 border-white/20 text-white placeholder:text-white/60 min-h-[100px]"
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="expectations"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-white">What do you expect from mentors or this program?</FormLabel>
-                <FormControl>
-                  <Textarea 
-                    placeholder="Share your expectations from the mentorship program..."
-                    {...field}
-                    className="bg-white/10 border-white/20 text-white placeholder:text-white/60 min-h-[100px]"
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="hasCar"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-white">Do you have a car?</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
-                  <FormControl>
-                    <SelectTrigger className="bg-white/10 border-white/20 text-white">
-                      <SelectValue placeholder="Select if you have a car" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    <SelectItem value="yes">Yes</SelectItem>
-                    <SelectItem value="no">No</SelectItem>
-                    <SelectItem value="planning">Planning on getting one</SelectItem>
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="timeCommitment"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-white">How much time would you like to be dedicated to the mentorship?</FormLabel>
-                <div className="text-xs text-white/70 mb-2">
-                  1 = "I would like to check in for any help every once in a while" | 5 = "I would love a new friend, let's hang out"
-                </div>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
-                  <FormControl>
-                    <SelectTrigger className="bg-white/10 border-white/20 text-white">
-                      <SelectValue placeholder="Select your time commitment level" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    <SelectItem value="1">1 - Check in occasionally</SelectItem>
-                    <SelectItem value="2">2</SelectItem>
-                    <SelectItem value="3">3 - Moderate engagement</SelectItem>
-                    <SelectItem value="4">4</SelectItem>
-                    <SelectItem value="5">5 - High engagement, new friend</SelectItem>
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="concerns"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-white">Any other concerns/comments? (Optional)</FormLabel>
-                <FormControl>
-                  <Textarea 
-                    placeholder="Share any additional concerns or comments..."
-                    {...field}
-                    className="bg-white/10 border-white/20 text-white placeholder:text-white/60 min-h-[80px]"
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
-      );
+      switch (currentStep) {
+        case 1:
+          return (
+            <div className="space-y-4">
+              <FormField
+                control={form.control}
+                name="firstName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-white">First Name</FormLabel>
+                    <FormControl>
+                      <Input 
+                        placeholder="Enter your first name" 
+                        {...field} 
+                        className="bg-white/10 border-white/20 text-white placeholder:text-white/60"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="lastName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-white">Last Name</FormLabel>
+                    <FormControl>
+                      <Input 
+                        placeholder="Enter your last name" 
+                        {...field} 
+                        className="bg-white/10 border-white/20 text-white placeholder:text-white/60"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-white">Email</FormLabel>
+                    <FormControl>
+                      <Input 
+                        type="email"
+                        placeholder="Enter your email address" 
+                        {...field} 
+                        className="bg-white/10 border-white/20 text-white placeholder:text-white/60"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+          );
+        case 2:
+          return (
+            <div className="space-y-4">
+              <FormField
+                control={form.control}
+                name="lawFieldInterest"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-white">Field of law you are interested in?</FormLabel>
+                    <FormControl>
+                      <Input 
+                        placeholder="Transactional, litigation, big law, public interest, etc. If you don't know yet you can say so" 
+                        {...field}
+                        className="bg-white/10 border-white/20 text-white placeholder:text-white/60"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="hometown"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-white">Where is your hometown?</FormLabel>
+                    <FormControl>
+                      <Input 
+                        placeholder="Enter your hometown" 
+                        {...field}
+                        className="bg-white/10 border-white/20 text-white placeholder:text-white/60"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="undergraduateUniversity"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-white">Where did you go to undergraduate?</FormLabel>
+                    <FormControl>
+                      <Input 
+                        placeholder="Enter your undergraduate university" 
+                        {...field}
+                        className="bg-white/10 border-white/20 text-white placeholder:text-white/60"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+          );
+        case 3:
+          return (
+            <div className="space-y-4">
+              <FormField
+                control={form.control}
+                name="hobbiesInterests"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-white">Any hobbies/interests outside law school?</FormLabel>
+                    <FormControl>
+                      <Textarea 
+                        placeholder="Tell us about your hobbies and interests outside of law school..."
+                        {...field}
+                        className="bg-white/10 border-white/20 text-white placeholder:text-white/60 min-h-[100px]"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="expectations"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-white">What do you expect from mentors or this program?</FormLabel>
+                    <FormControl>
+                      <Textarea 
+                        placeholder="Share your expectations from the mentorship program..."
+                        {...field}
+                        className="bg-white/10 border-white/20 text-white placeholder:text-white/60 min-h-[100px]"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="hasCar"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-white">Do you have a car?</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormControl>
+                        <SelectTrigger className="bg-white/10 border-white/20 text-white">
+                          <SelectValue placeholder="Select if you have a car" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="yes">Yes</SelectItem>
+                        <SelectItem value="no">No</SelectItem>
+                        <SelectItem value="planning">Planning on getting one</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="timeCommitment"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-white">How much time would you like to be dedicated to the mentorship?</FormLabel>
+                    <div className="text-xs text-white/70 mb-2">
+                      1 = "I would like to check in for any help every once in a while" | 5 = "I would love a new friend, let's hang out"
+                    </div>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormControl>
+                        <SelectTrigger className="bg-white/10 border-white/20 text-white">
+                          <SelectValue placeholder="Select your time commitment level" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="1">1 - Check in occasionally</SelectItem>
+                        <SelectItem value="2">2</SelectItem>
+                        <SelectItem value="3">3 - Moderate engagement</SelectItem>
+                        <SelectItem value="4">4</SelectItem>
+                        <SelectItem value="5">5 - High engagement, new friend</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="concerns"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-white">Any other concerns/comments? (Optional)</FormLabel>
+                    <FormControl>
+                      <Textarea 
+                        placeholder="Share any additional concerns or comments..."
+                        {...field}
+                        className="bg-white/10 border-white/20 text-white placeholder:text-white/60 min-h-[80px]"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+          );
+        default:
+          return null;
+      }
     }
 
     // Mentor form steps
@@ -624,14 +645,14 @@ const SignupForm = ({ userType, onBack }: SignupFormProps) => {
                 {userType === 'mentor' ? 'Mentor Application' : 'Mentee Application'}
               </CardTitle>
               <CardDescription className="text-white/80">
-                {userType === 'mentee' ? 'Complete your application' : `Step ${currentStep} of 3: ${stepTitles[currentStep - 1]}`}
+                Step {currentStep} of 3: {stepTitles[currentStep - 1]}
               </CardDescription>
               
               {/* Progress Bar */}
               <div className="w-full bg-white/20 rounded-full h-2 mt-4">
                 <div 
                   className="bg-gold-light h-2 rounded-full transition-all duration-300"
-                  style={{ width: `${userType === 'mentee' ? 100 : (currentStep / 3) * 100}%` }}
+                  style={{ width: `${(currentStep / 3) * 100}%` }}
                 ></div>
               </div>
             </CardHeader>
@@ -642,46 +663,34 @@ const SignupForm = ({ userType, onBack }: SignupFormProps) => {
                   {renderStepContent()}
                   
                   <div className="flex justify-between pt-4">
-                    {userType === 'mentee' ? (
+                    {currentStep > 1 && (
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={prevStep}
+                        className="border-white/20 text-light-green hover:bg-light-green hover:text-white"
+                      >
+                        <ArrowLeft className="mr-2 h-4 w-4" />
+                        Previous
+                      </Button>
+                    )}
+                    
+                    {currentStep < 3 ? (
                       <Button
                         type="button"
                         onClick={nextStep}
                         className="bg-gold-light text-primary hover:bg-gold-dark ml-auto"
                       >
-                        Submit Application
+                        Next
+                        <ArrowRight className="ml-2 h-4 w-4" />
                       </Button>
                     ) : (
-                      <>
-                        {currentStep > 1 && (
-                          <Button
-                            type="button"
-                            variant="outline"
-                            onClick={prevStep}
-                            className="border-white/20 text-light-green hover:bg-light-green hover:text-white"
-                          >
-                            <ArrowLeft className="mr-2 h-4 w-4" />
-                            Previous
-                          </Button>
-                        )}
-                        
-                        {currentStep < 3 ? (
-                          <Button
-                            type="button"
-                            onClick={nextStep}
-                            className="bg-gold-light text-primary hover:bg-gold-dark ml-auto"
-                          >
-                            Next
-                            <ArrowRight className="ml-2 h-4 w-4" />
-                          </Button>
-                        ) : (
-                          <Button
-                            type="submit"
-                            className="bg-gold-light text-primary hover:bg-gold-dark ml-auto"
-                          >
-                            Submit Application
-                          </Button>
-                        )}
-                      </>
+                      <Button
+                        type="submit"
+                        className="bg-gold-light text-primary hover:bg-gold-dark ml-auto"
+                      >
+                        Submit Application
+                      </Button>
                     )}
                   </div>
                 </form>
