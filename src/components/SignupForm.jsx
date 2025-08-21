@@ -145,7 +145,7 @@ const SignupForm = ({ userType, onBack }) => {
                       <Input 
                         placeholder="Enter your first name" 
                         {...field} 
-                        className="bg-white/10 border-white/20 text-white placeholder:text-white/60"
+                        className="bg-white/10 border-white/20 text-white placeholder:text-white/60 focus:border-gold-light focus:ring-1 focus:ring-gold-light px-3"
                       />
                     </FormControl>
                     <FormMessage />
@@ -162,7 +162,7 @@ const SignupForm = ({ userType, onBack }) => {
                       <Input 
                         placeholder="Enter your last name" 
                         {...field} 
-                        className="bg-white/10 border-white/20 text-white placeholder:text-white/60"
+                        className="bg-white/10 border-white/20 text-white placeholder:text-white/60 focus:border-gold-light focus:ring-1 focus:ring-gold-light px-3"
                       />
                     </FormControl>
                     <FormMessage />
@@ -180,7 +180,7 @@ const SignupForm = ({ userType, onBack }) => {
                         type="email"
                         placeholder="Enter your email address" 
                         {...field} 
-                        className="bg-white/10 border-white/20 text-white placeholder:text-white/60"
+                        className="bg-white/10 border-white/20 text-white placeholder:text-white/60 focus:border-gold-light focus:ring-1 focus:ring-gold-light px-3"
                       />
                     </FormControl>
                     <FormMessage />
@@ -202,7 +202,7 @@ const SignupForm = ({ userType, onBack }) => {
                       <Input 
                         placeholder="Transactional, litigation, big law, public interest, etc. If you don't know yet you can say so" 
                         {...field}
-                        className="bg-white/10 border-white/20 text-white placeholder:text-white/60"
+                        className="bg-white/10 border-white/20 text-white placeholder:text-white/60 focus:border-gold-light focus:ring-1 focus:ring-gold-light px-3"
                       />
                     </FormControl>
                     <FormMessage />
@@ -219,7 +219,7 @@ const SignupForm = ({ userType, onBack }) => {
                       <Input 
                         placeholder="Enter your hometown" 
                         {...field}
-                        className="bg-white/10 border-white/20 text-white placeholder:text-white/60"
+                        className="bg-white/10 border-white/20 text-white placeholder:text-white/60 focus:border-gold-light focus:ring-1 focus:ring-gold-light px-3"
                       />
                     </FormControl>
                     <FormMessage />
@@ -236,7 +236,7 @@ const SignupForm = ({ userType, onBack }) => {
                       <Input 
                         placeholder="Enter your undergraduate university" 
                         {...field}
-                        className="bg-white/10 border-white/20 text-white placeholder:text-white/60"
+                        className="bg-white/10 border-white/20 text-white placeholder:text-white/60 focus:border-gold-light focus:ring-1 focus:ring-gold-light px-3"
                       />
                     </FormControl>
                     <FormMessage />
@@ -258,7 +258,7 @@ const SignupForm = ({ userType, onBack }) => {
                       <Textarea 
                         placeholder="Tell us about your hobbies and interests outside of law school..."
                         {...field}
-                        className="bg-white/10 border-white/20 text-white placeholder:text-white/60 min-h-[100px]"
+                        className="bg-white/10 border-white/20 text-white placeholder:text-white/60 min-h-[100px] focus:border-gold-light focus:ring-1 focus:ring-gold-light px-3 py-2 resize-none"
                       />
                     </FormControl>
                     <FormMessage />
@@ -275,7 +275,7 @@ const SignupForm = ({ userType, onBack }) => {
                       <Textarea 
                         placeholder="Share your expectations from the mentorship program..."
                         {...field}
-                        className="bg-white/10 border-white/20 text-white placeholder:text-white/60 min-h-[100px]"
+                        className="bg-white/10 border-white/20 text-white placeholder:text-white/60 min-h-[100px] focus:border-gold-light focus:ring-1 focus:ring-gold-light px-3 py-2 resize-none"
                       />
                     </FormControl>
                     <FormMessage />
@@ -290,7 +290,7 @@ const SignupForm = ({ userType, onBack }) => {
                     <FormLabel className="text-white">Do you have a car?</FormLabel>
                     <Select onValueChange={field.onChange} defaultValue={field.value}>
                       <FormControl>
-                        <SelectTrigger className="bg-white/10 border-white/20 text-white">
+                        <SelectTrigger className="bg-white/10 border-white/20 text-white focus:border-gold-light focus:ring-1 focus:ring-gold-light px-3">
                           <SelectValue placeholder="Select if you have a car" />
                         </SelectTrigger>
                       </FormControl>
@@ -315,7 +315,7 @@ const SignupForm = ({ userType, onBack }) => {
                     </div>
                     <Select onValueChange={field.onChange} defaultValue={field.value}>
                       <FormControl>
-                        <SelectTrigger className="bg-white/10 border-white/20 text-white">
+                        <SelectTrigger className="bg-white/10 border-white/20 text-white focus:border-gold-light focus:ring-1 focus:ring-gold-light px-3">
                           <SelectValue placeholder="Select your time commitment level" />
                         </SelectTrigger>
                       </FormControl>
@@ -341,7 +341,7 @@ const SignupForm = ({ userType, onBack }) => {
                       <Textarea 
                         placeholder="Share any additional concerns or comments..."
                         {...field}
-                        className="bg-white/10 border-white/20 text-white placeholder:text-white/60 min-h-[80px]"
+                        className="bg-white/10 border-white/20 text-white placeholder:text-white/60 min-h-[80px] focus:border-gold-light focus:ring-1 focus:ring-gold-light px-3 py-2 resize-none"
                       />
                     </FormControl>
                     <FormMessage />
@@ -370,7 +370,7 @@ const SignupForm = ({ userType, onBack }) => {
                     <Input 
                       placeholder="Enter your first name" 
                       {...field} 
-                      className="bg-white/10 border-white/20 text-white placeholder:text-white/60"
+                      className="bg-white/10 border-white/20 text-white placeholder:text-white/60 focus:border-gold-light focus:ring-1 focus:ring-gold-light px-3"
                     />
                   </FormControl>
                   <FormMessage />
@@ -387,7 +387,7 @@ const SignupForm = ({ userType, onBack }) => {
                     <Input 
                       placeholder="Enter your last name" 
                       {...field} 
-                      className="bg-white/10 border-white/20 text-white placeholder:text-white/60"
+                      className="bg-white/10 border-white/20 text-white placeholder:text-white/60 focus:border-gold-light focus:ring-1 focus:ring-gold-light px-3"
                     />
                   </FormControl>
                   <FormMessage />
@@ -405,7 +405,7 @@ const SignupForm = ({ userType, onBack }) => {
                       type="email"
                       placeholder="Enter your email address" 
                       {...field} 
-                      className="bg-white/10 border-white/20 text-white placeholder:text-white/60"
+                      className="bg-white/10 border-white/20 text-white placeholder:text-white/60 focus:border-gold-light focus:ring-1 focus:ring-gold-light px-3"
                     />
                   </FormControl>
                   <FormMessage />
@@ -420,7 +420,7 @@ const SignupForm = ({ userType, onBack }) => {
                   <FormLabel className="text-white">Class Year</FormLabel>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
-                      <SelectTrigger className="bg-white/10 border-white/20 text-white">
+                      <SelectTrigger className="bg-white/10 border-white/20 text-white focus:border-gold-light focus:ring-1 focus:ring-gold-light px-3">
                         <SelectValue placeholder="Select your class year" />
                       </SelectTrigger>
                     </FormControl>
@@ -448,7 +448,7 @@ const SignupForm = ({ userType, onBack }) => {
                     <Input 
                       placeholder="e.g., Corporate Law, Criminal Law, or 'I don't know yet'" 
                       {...field}
-                      className="bg-white/10 border-white/20 text-white placeholder:text-white/60"
+                      className="bg-white/10 border-white/20 text-white placeholder:text-white/60 focus:border-gold-light focus:ring-1 focus:ring-gold-light px-3"
                     />
                   </FormControl>
                   <FormMessage />
@@ -465,7 +465,7 @@ const SignupForm = ({ userType, onBack }) => {
                     <Input 
                       placeholder="Enter your hometown" 
                       {...field}
-                      className="bg-white/10 border-white/20 text-white placeholder:text-white/60"
+                      className="bg-white/10 border-white/20 text-white placeholder:text-white/60 focus:border-gold-light focus:ring-1 focus:ring-gold-light px-3"
                     />
                   </FormControl>
                   <FormMessage />
@@ -482,7 +482,7 @@ const SignupForm = ({ userType, onBack }) => {
                     <Input 
                       placeholder="Enter your undergraduate university" 
                       {...field}
-                      className="bg-white/10 border-white/20 text-white placeholder:text-white/60"
+                      className="bg-white/10 border-white/20 text-white placeholder:text-white/60 focus:border-gold-light focus:ring-1 focus:ring-gold-light px-3"
                     />
                   </FormControl>
                   <FormMessage />
@@ -504,7 +504,7 @@ const SignupForm = ({ userType, onBack }) => {
                     <Textarea 
                       placeholder="Tell us about your hobbies and interests outside of law school..."
                       {...field}
-                      className="bg-white/10 border-white/20 text-white placeholder:text-white/60 min-h-[100px]"
+                      className="bg-white/10 border-white/20 text-white placeholder:text-white/60 min-h-[100px] focus:border-gold-light focus:ring-1 focus:ring-gold-light px-3 py-2 resize-none"
                     />
                   </FormControl>
                   <FormMessage />
@@ -524,7 +524,7 @@ const SignupForm = ({ userType, onBack }) => {
                   </FormControl>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
-                      <SelectTrigger className="bg-white/10 border-white/20 text-white">
+                      <SelectTrigger className="bg-white/10 border-white/20 text-white focus:border-gold-light focus:ring-1 focus:ring-gold-light px-3">
                         <SelectValue placeholder="Select your time commitment level" />
                       </SelectTrigger>
                     </FormControl>
@@ -548,7 +548,7 @@ const SignupForm = ({ userType, onBack }) => {
                   <FormLabel className="text-white">Do you have a car?</FormLabel>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
-                      <SelectTrigger className="bg-white/10 border-white/20 text-white">
+                      <SelectTrigger className="bg-white/10 border-white/20 text-white focus:border-gold-light focus:ring-1 focus:ring-gold-light px-3">
                         <SelectValue placeholder="Select if you have a car" />
                       </SelectTrigger>
                     </FormControl>
@@ -572,7 +572,7 @@ const SignupForm = ({ userType, onBack }) => {
                     <Input 
                       placeholder="Enter name or leave blank" 
                       {...field}
-                      className="bg-white/10 border-white/20 text-white placeholder:text-white/60"
+                      className="bg-white/10 border-white/20 text-white placeholder:text-white/60 focus:border-gold-light focus:ring-1 focus:ring-gold-light px-3"
                     />
                   </FormControl>
                   <FormMessage />
@@ -589,7 +589,7 @@ const SignupForm = ({ userType, onBack }) => {
                     <Textarea 
                       placeholder="Any additional comments or information you'd like to share..."
                       {...field}
-                      className="bg-white/10 border-white/20 text-white placeholder:text-white/60 min-h-[80px]"
+                      className="bg-white/10 border-white/20 text-white placeholder:text-white/60 min-h-[80px] focus:border-gold-light focus:ring-1 focus:ring-gold-light px-3 py-2 resize-none"
                     />
                   </FormControl>
                   <FormMessage />
