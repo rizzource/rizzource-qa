@@ -270,7 +270,26 @@ All colors MUST be HSL.
     min-width: var(--radix-select-trigger-width) !important;
   }
   
+  /* Hide all tick mark indicators */
   [data-radix-select-item-indicator] {
+    display: none !important;
+  }
+  
+  [data-radix-select-item] [data-radix-select-item-indicator] {
+    display: none !important;
+  }
+  
+  [data-radix-select-item]::before,
+  [data-radix-select-item]::after {
+    display: none !important;
+  }
+  
+  [data-radix-select-item] > span[data-radix-select-item-indicator] {
+    display: none !important;
+  }
+  
+  /* Hide check icons */
+  [data-radix-select-item] svg {
     display: none !important;
   }
   
@@ -293,6 +312,16 @@ All colors MUST be HSL.
   
   [data-radix-select-item][data-state="checked"]::after {
     display: none !important;
+  }
+  
+  /* Additional rules to hide any checkmarks */
+  .radix-select-item-indicator,
+  [data-state="checked"] .radix-select-item-indicator,
+  [role="option"] [data-state="checked"]::before,
+  [role="option"] [data-state="checked"]::after,
+  [role="option"] svg[data-state="checked"] {
+    display: none !important;
+    visibility: hidden !important;
   }
 }
 
