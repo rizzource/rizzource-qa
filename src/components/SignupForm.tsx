@@ -386,7 +386,7 @@ const SignupForm = ({ userType, onBack }: SignupFormProps) => {
             
             <CardContent>
               <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6" key={currentStep}>
                   {renderStepContent()}
                   
                   <div className="flex justify-between pt-4">
