@@ -11,9 +11,13 @@ const Header = () => {
         <div className="flex items-center justify-between h-16">
           
           {/* Logo */}
-          <a href="/" className="flex items-center touch-friendly">
-            <div className="w-10 h-10 md:w-12 md:h-12 bg-primary rounded-lg flex items-center justify-center overflow-hidden">
-              <img src="/lovable-uploads/a804b6c9-a739-499a-b08e-179235e98c06.png" alt="Rizzourse logo - shield, scales and book" className="w-8 h-8 md:w-10 md:h-10 object-contain object-center logo-white" decoding="async" loading="eager" />
+          <a href="/" className="flex items-center space-x-3 touch-friendly">
+            <div className="w-8 h-8 md:w-10 md:h-10 bg-primary rounded-lg flex items-center justify-center overflow-hidden">
+              <img src="/lovable-uploads/a804b6c9-a739-499a-b08e-179235e98c06.png" alt="Rizzourse logo - shield, scales and book" className="w-7 h-7 md:w-8 md:h-8 object-contain object-top logo-white" decoding="async" loading="eager" />
+            </div>
+            <div className="hidden sm:block">
+              <h1 className="text-lg md:text-xl font-bold text-primary">Rizzourse</h1>
+              <p className="text-xs text-muted-foreground">Legal Mentorship</p>
             </div>
           </a>
 
