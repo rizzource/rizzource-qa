@@ -2,7 +2,12 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowLeft, GraduationCap, Users } from "lucide-react";
 
-const MentorMenteeSelection = ({ onSelectType, onBack }) => {
+interface MentorMenteeSelectionProps {
+  onSelectType: (type: 'mentor' | 'mentee') => void;
+  onBack: () => void;
+}
+
+const MentorMenteeSelection = ({ onSelectType, onBack }: MentorMenteeSelectionProps) => {
   return (
     <section className="min-h-screen bg-hero-gradient flex items-center py-20">
       <div className="container mx-auto px-4">

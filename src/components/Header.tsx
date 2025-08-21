@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Scale } from "lucide-react";
 import { useState } from "react";
-import MobileNavigation from "./MobileNavigation.jsx";
+import MobileNavigation from "./MobileNavigation";
 
 const Header = () => {
   const navigation = [];
