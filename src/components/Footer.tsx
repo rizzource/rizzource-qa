@@ -30,13 +30,9 @@ const Footer = () => {
           
           {/* Brand Section */}
           <div className="space-y-4">
-            <div className="flex items-center space-x-3">
+            <div className="flex items-center justify-start">
               <div className="w-10 h-10 bg-gold-light rounded-lg flex items-center justify-center overflow-hidden">
-                <img src="/lovable-uploads/a804b6c9-a739-499a-b08e-179235e98c06.png" alt="Rizzourse logo - shield, scales and book" className="w-7 h-7 object-contain object-top logo-green" loading="lazy" decoding="async" />
-              </div>
-              <div>
-                <h3 className="text-xl font-bold">Rizzourse</h3>
-                <p className="text-sm text-primary-foreground/80">Legal Mentorship</p>
+                <img src="/lovable-uploads/a804b6c9-a739-499a-b08e-179235e98c06.png" alt="Rizzourse logo - shield, scales and book" className="w-9 h-9 object-contain object-center logo-green" loading="lazy" decoding="async" />
               </div>
             </div>
             
