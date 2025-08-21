@@ -24,7 +24,7 @@ const HeroSection = ({ onStartProgram }) => {
           {/* Content Section */}
           <div className="text-center space-y-6 lg:space-y-8">
             <div className="space-y-4">
-              <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold text-white leading-tight">
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold text-white leading-tight pt-8">
                 Join APALSA's
                 <span className="block text-gold-light">Mentorship Program</span>
                 Today
