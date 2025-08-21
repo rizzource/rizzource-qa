@@ -1,6 +1,4 @@
-import { CapacitorConfig } from '@capacitor/cli';
-
-const config: CapacitorConfig = {
+const config = {
   appId: 'app.lovable.b1400f422b414e10a39f7020af7f41d3',
   appName: 'law-pathfinder-hub',
   webDir: 'dist',
