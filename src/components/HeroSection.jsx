@@ -40,10 +40,10 @@ const HeroSection = ({ onStartProgram }) => {
               <Button
                 size="lg"
                 onClick={onStartProgram}
-                className="bg-gold-light text-primary hover:bg-gold-dark transition-all duration-300 shadow-gold text-base sm:text-lg px-6 sm:px-8 h-12 sm:h-14 touch-target touch-friendly"
+                className="bg-gold-light text-primary hover:bg-gold-dark transition-all duration-300 shadow-gold text-base sm:text-lg px-6 sm:px-8 h-12 sm:h-14 touch-target touch-friendly whitespace-nowrap flex items-center"
               >
                 APALSA Mentorship Program
-                <ArrowRight className="ml-2 h-5 w-5" />
+                <ArrowRight className="ml-2 h-5 w-5 flex-shrink-0" />
               </Button>
             </div>
           </div>
