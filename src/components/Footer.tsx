@@ -1,4 +1,4 @@
-import { Scale, BookOpen, Users, Mail } from "lucide-react";
+import { Shield, BookOpen, Users, Mail } from "lucide-react";
 
 const Footer = () => {
   const quickLinks = [
@@ -31,7 +31,7 @@ const Footer = () => {
           <div className="space-y-4">
             <div className="flex items-center space-x-3">
               <div className="w-10 h-10 bg-gold-light rounded-lg flex items-center justify-center">
-                <Scale className="w-6 h-6 text-primary" />
+                <Shield className="w-6 h-6 text-primary" />
               </div>
               <div>
                 <h3 className="text-xl font-bold">Rizzourse</h3>
