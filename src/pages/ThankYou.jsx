@@ -98,16 +98,26 @@ const ThankYou = () => {
                               <FormLabel className="text-white">How was your application experience?</FormLabel>
                               <Select onValueChange={field.onChange} defaultValue={field.value}>
                                 <FormControl>
-                                  <SelectTrigger className="bg-white/10 border-white/20 text-white">
+                                  <SelectTrigger className="bg-white/10 border-white/20 text-white focus:border-gold-light focus:ring-1 focus:ring-gold-light px-3 rounded-md">
                                     <SelectValue placeholder="Rate your experience" />
                                   </SelectTrigger>
                                 </FormControl>
-                                <SelectContent>
-                                  <SelectItem value="5">⭐⭐⭐⭐⭐ Excellent</SelectItem>
-                                  <SelectItem value="4">⭐⭐⭐⭐ Good</SelectItem>
-                                  <SelectItem value="3">⭐⭐⭐ Average</SelectItem>
-                                  <SelectItem value="2">⭐⭐ Below Average</SelectItem>
-                                  <SelectItem value="1">⭐ Poor</SelectItem>
+                                <SelectContent className="bg-white border border-gray-200 rounded-md shadow-lg z-50 w-full min-w-[var(--radix-select-trigger-width)]">
+                                  <SelectItem value="5" className="text-gray-900 hover:bg-gray-100 cursor-pointer pl-4 pr-4 py-2 focus:bg-gray-100 data-[state=checked]:bg-gray-100">
+                                    <span className="block">⭐⭐⭐⭐⭐ Excellent</span>
+                                  </SelectItem>
+                                  <SelectItem value="4" className="text-gray-900 hover:bg-gray-100 cursor-pointer pl-4 pr-4 py-2 focus:bg-gray-100 data-[state=checked]:bg-gray-100">
+                                    <span className="block">⭐⭐⭐⭐ Good</span>
+                                  </SelectItem>
+                                  <SelectItem value="3" className="text-gray-900 hover:bg-gray-100 cursor-pointer pl-4 pr-4 py-2 focus:bg-gray-100 data-[state=checked]:bg-gray-100">
+                                    <span className="block">⭐⭐⭐ Average</span>
+                                  </SelectItem>
+                                  <SelectItem value="2" className="text-gray-900 hover:bg-gray-100 cursor-pointer pl-4 pr-4 py-2 focus:bg-gray-100 data-[state=checked]:bg-gray-100">
+                                    <span className="block">⭐⭐ Below Average</span>
+                                  </SelectItem>
+                                  <SelectItem value="1" className="text-gray-900 hover:bg-gray-100 cursor-pointer pl-4 pr-4 py-2 focus:bg-gray-100 data-[state=checked]:bg-gray-100">
+                                    <span className="block">⭐ Poor</span>
+                                  </SelectItem>
                                 </SelectContent>
                               </Select>
                               <FormMessage />
@@ -125,7 +135,7 @@ const ThankYou = () => {
                                 <Textarea 
                                   placeholder="Share your thoughts about the application process..."
                                   {...field}
-                                  className="bg-white/10 border-white/20 text-white placeholder:text-white/60 min-h-[100px]"
+                                  className="bg-white/10 border-white/20 text-white placeholder:text-white/60 min-h-[100px] focus:border-gold-light focus:ring-1 focus:ring-gold-light px-3 py-2 resize-none rounded-md"
                                 />
                               </FormControl>
                               <FormMessage />
@@ -143,7 +153,7 @@ const ThankYou = () => {
                                 <Textarea 
                                   placeholder="Let us know how we can make this better..."
                                   {...field}
-                                  className="bg-white/10 border-white/20 text-white placeholder:text-white/60"
+                                  className="bg-white/10 border-white/20 text-white placeholder:text-white/60 focus:border-gold-light focus:ring-1 focus:ring-gold-light px-3 py-2 resize-none rounded-md"
                                 />
                               </FormControl>
                               <FormMessage />
@@ -156,7 +166,7 @@ const ThankYou = () => {
                             type="button"
                             variant="outline"
                             onClick={handleBackToHome}
-                            className="flex-1 border-white/20 text-light-green hover:bg-light-green hover:text-white"
+                            className="flex-1 border-white/20 text-white hover:bg-light-green whitespace-nowrap flex items-center"
                           >
                             <ArrowLeft className="mr-2 h-4 w-4" />
                             Back to Home
@@ -197,7 +207,7 @@ const ThankYou = () => {
                     </p>
                     <Button
                       onClick={handleBackToHome}
-                      className="bg-gold-light text-primary hover:bg-gold-dark"
+                      className="bg-gold-light text-primary hover:bg-gold-dark whitespace-nowrap flex items-center"
                     >
                       <ArrowLeft className="mr-2 h-4 w-4" />
                       Back to Home
