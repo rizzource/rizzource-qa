@@ -2,7 +2,7 @@ import { Scale, BookOpen, Users, Mail } from "lucide-react";
 
 const Footer = () => {
   const quickLinks = [
-    { name: "About APALSA", href: "#about" },
+    { name: "About Rizzourse", href: "#about" },
     { name: "Mentorship Program", href: "#mentorship" },
     { name: "How It Works", href: "#how-it-works" },
     { name: "Success Stories", href: "#stories" },
@@ -34,13 +34,13 @@ const Footer = () => {
                 <Scale className="w-6 h-6 text-primary" />
               </div>
               <div>
-                <h3 className="text-xl font-bold">APALSA</h3>
-                <p className="text-sm text-primary-foreground/80">Mentorship Program</p>
+                <h3 className="text-xl font-bold">Rizzourse</h3>
+                <p className="text-sm text-primary-foreground/80">Legal Mentorship</p>
               </div>
             </div>
             
             <p className="text-primary-foreground/80 leading-relaxed">
-              Connecting Asian Pacific American law students with experienced mentors 
+              Connecting law students with experienced mentors 
               and building a supportive community for legal career success.
             </p>
             
@@ -113,7 +113,7 @@ const Footer = () => {
         <div className="border-t border-primary-foreground/20 mt-12 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             <p className="text-primary-foreground/60 text-sm">
-              © 2024 APALSA Mentorship Program. All rights reserved.
+              © 2024 Rizzourse. All rights reserved.
             </p>
             
             <div className="flex space-x-6 text-sm">
