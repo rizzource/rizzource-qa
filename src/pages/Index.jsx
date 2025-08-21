@@ -82,10 +82,10 @@ const Index = () => {
           />
         )}
         {appState === 'mentor' && (
-          <MentorForm onBack={handleBackToSelection} />
+          <SignupForm onBack={handleBackToSelection} />
         )}
         {appState === 'mentee' && (
-          <MenteeForm onBack={handleBackToSelection} />
+          <SignupForm onBack={handleBackToSelection} />
         )}
       </main>
       <Footer />
