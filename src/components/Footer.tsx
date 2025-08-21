@@ -1,4 +1,5 @@
-import { Shield, BookOpen, Users, Mail } from "lucide-react";
+import RizzourseIcon from "./RizzourseIcon";
+import { BookOpen, Users, Mail } from "lucide-react";
 
 const Footer = () => {
   const quickLinks = [
@@ -31,7 +32,7 @@ const Footer = () => {
           <div className="space-y-4">
             <div className="flex items-center space-x-3">
               <div className="w-10 h-10 bg-gold-light rounded-lg flex items-center justify-center">
-                <Shield className="w-6 h-6 text-primary" />
+                <RizzourseIcon className="w-6 h-6 text-primary" size={24} />
               </div>
               <div>
                 <h3 className="text-xl font-bold">Rizzourse</h3>
