@@ -59,7 +59,7 @@ const Footer = () => {
               © 2024 Rizzourse. All rights reserved.
             </p>
             
-            <div className="flex space-x-6 text-sm">
+            {/* <div className="flex space-x-6 text-sm">
               <a href="#privacy" className="text-primary-foreground/60 hover:text-gold-light transition-colors">
                 Privacy Policy
               </a>
@@ -69,7 +69,7 @@ const Footer = () => {
               <a href="#accessibility" className="text-primary-foreground/60 hover:text-gold-light transition-colors">
                 Accessibility
               </a>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>
