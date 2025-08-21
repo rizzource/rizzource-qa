@@ -98,9 +98,9 @@ const ThankYou = () => {
                               <FormLabel className="text-white">How was your application experience?</FormLabel>
                               <Select onValueChange={field.onChange} defaultValue={field.value}>
                                 <FormControl>
-                                  <SelectTrigger className="bg-white/10 border-white/20 text-white focus:border-gold-light focus:ring-1 focus:ring-gold-light px-3 rounded-md">
-                                    <SelectValue placeholder="Rate your experience" />
-                                  </SelectTrigger>
+                        <SelectTrigger className="bg-white/10 border-white/20 text-white px-3 rounded-md">
+                          <SelectValue placeholder="Rate your experience" />
+                        </SelectTrigger>
                                 </FormControl>
                                 <SelectContent className="bg-white border border-gray-200 rounded-md shadow-lg z-50 w-full min-w-[var(--radix-select-trigger-width)]">
                                   <SelectItem value="5" className="text-gray-900 hover:bg-gray-100 cursor-pointer pl-4 pr-4 py-2 focus:bg-gray-100 data-[state=checked]:bg-gray-100">
@@ -135,7 +135,7 @@ const ThankYou = () => {
                                 <Textarea 
                                   placeholder="Share your thoughts about the application process..."
                                   {...field}
-                                  className="bg-white/10 border-white/20 text-white placeholder:text-white/60 min-h-[100px] focus:border-gold-light focus:ring-1 focus:ring-gold-light px-3 py-2 resize-none rounded-md"
+                                  className="bg-white/10 border-white/20 text-white placeholder:text-white/60 min-h-[100px] px-3 py-2 resize-none rounded-md"
                                 />
                               </FormControl>
                               <FormMessage />
@@ -153,7 +153,7 @@ const ThankYou = () => {
                                 <Textarea 
                                   placeholder="Let us know how we can make this better..."
                                   {...field}
-                                  className="bg-white/10 border-white/20 text-white placeholder:text-white/60 focus:border-gold-light focus:ring-1 focus:ring-gold-light px-3 py-2 resize-none rounded-md"
+                                  className="bg-white/10 border-white/20 text-white placeholder:text-white/60 px-3 py-2 resize-none rounded-md"
                                 />
                               </FormControl>
                               <FormMessage />
