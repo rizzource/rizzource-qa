@@ -16,50 +16,50 @@ const RizzourseIcon: React.FC<RizzourseIconProps> = ({ className = "", size = 24
     >
       {/* Shield outline */}
       <path
-        d="M50 5 L20 20 L20 45 C20 65 35 85 50 95 C65 85 80 65 80 45 L80 20 Z"
+        d="M50 5 L15 20 L15 45 C15 70 30 90 50 95 C70 90 85 70 85 45 L85 20 Z"
         fill="none"
         stroke="currentColor"
-        strokeWidth="4"
+        strokeWidth="3"
       />
       
-      {/* Scales of Justice */}
-      <g transform="translate(50, 35)">
+      {/* Scales of Justice - Made larger */}
+      <g transform="translate(50, 40)">
         {/* Scale pole */}
-        <line x1="0" y1="-10" x2="0" y2="20" stroke="currentColor" strokeWidth="2"/>
+        <line x1="0" y1="-15" x2="0" y2="25" stroke="currentColor" strokeWidth="3"/>
         
         {/* Scale crossbar */}
-        <line x1="-15" y1="-5" x2="15" y2="-5" stroke="currentColor" strokeWidth="2"/>
+        <line x1="-20" y1="-8" x2="20" y2="-8" stroke="currentColor" strokeWidth="2.5"/>
         
         {/* Left scale pan */}
         <path
-          d="M-15 -5 L-20 0 L-10 0 Z"
+          d="M-20 -8 L-25 -3 L-15 -3 Z"
           fill="currentColor"
         />
         
         {/* Right scale pan */}
         <path
-          d="M15 -5 L20 0 L10 0 Z"
+          d="M20 -8 L25 -3 L15 -3 Z"
           fill="currentColor"
         />
         
         {/* Scale chains */}
-        <line x1="-15" y1="-5" x2="-15" y2="0" stroke="currentColor" strokeWidth="1"/>
-        <line x1="15" y1="-5" x2="15" y2="0" stroke="currentColor" strokeWidth="1"/>
+        <line x1="-20" y1="-8" x2="-20" y2="-3" stroke="currentColor" strokeWidth="1.5"/>
+        <line x1="20" y1="-8" x2="20" y2="-3" stroke="currentColor" strokeWidth="1.5"/>
         
         {/* Scale base */}
-        <ellipse cx="0" cy="20" rx="3" ry="2" fill="currentColor"/>
+        <ellipse cx="0" cy="25" rx="4" ry="3" fill="currentColor"/>
       </g>
       
-      {/* Book */}
-      <g transform="translate(65, 55)">
+      {/* Book - Made larger */}
+      <g transform="translate(58, 65)">
         {/* Book cover */}
-        <rect x="0" y="0" width="12" height="16" fill="currentColor" rx="1"/>
+        <rect x="0" y="0" width="16" height="20" fill="currentColor" rx="1"/>
         
         {/* Book pages */}
-        <rect x="1" y="1" width="10" height="14" fill="none" stroke="currentColor" strokeWidth="0.5"/>
-        <line x1="3" y1="4" x2="9" y2="4" stroke="currentColor" strokeWidth="0.5"/>
-        <line x1="3" y1="6" x2="9" y2="6" stroke="currentColor" strokeWidth="0.5"/>
-        <line x1="3" y1="8" x2="7" y2="8" stroke="currentColor" strokeWidth="0.5"/>
+        <rect x="1" y="1" width="14" height="18" fill="none" stroke="currentColor" strokeWidth="0.8"/>
+        <line x1="3" y1="5" x2="13" y2="5" stroke="currentColor" strokeWidth="0.8"/>
+        <line x1="3" y1="8" x2="13" y2="8" stroke="currentColor" strokeWidth="0.8"/>
+        <line x1="3" y1="11" x2="10" y2="11" stroke="currentColor" strokeWidth="0.8"/>
       </g>
     </svg>
   );
