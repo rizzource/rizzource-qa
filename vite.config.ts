@@ -1,3 +1,5 @@
-// This file exists to satisfy the TypeScript configuration requirements
-// The actual Vite configuration is in vite.config.js
-export {};
+import { defineConfig } from "vite";
+
+// Minimal TypeScript config to satisfy tsconfig.node.json
+// The actual configuration is in vite.config.js
+export default defineConfig({});
