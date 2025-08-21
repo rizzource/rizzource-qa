@@ -205,13 +205,15 @@ const ThankYou = () => {
                     <p className="text-white/90">
                       You'll receive a confirmation email shortly with next steps for the mentorship program.
                     </p>
-                    <Button
-                      onClick={handleBackToHome}
-                      className="bg-gold-light text-primary hover:bg-gold-dark whitespace-nowrap flex items-center"
-                    >
-                      <ArrowLeft className="mr-2 h-4 w-4" />
-                      Back to Home
-                    </Button>
+                    <div className="flex justify-center">
+                      <Button
+                        onClick={handleBackToHome}
+                        className="bg-gold-light text-primary hover:bg-gold-dark whitespace-nowrap flex items-center"
+                      >
+                        <ArrowLeft className="mr-2 h-4 w-4" />
+                        Back to Home
+                      </Button>
+                    </div>
                   </div>
                 </CardContent>
               </Card>
