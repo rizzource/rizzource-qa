@@ -14,52 +14,66 @@ const RizzourseIcon: React.FC<RizzourseIconProps> = ({ className = "", size = 24
       className={className}
       fill="currentColor"
     >
-      {/* Shield outline */}
+      {/* Shield outline - matching the provided logo design */}
       <path
-        d="M50 5 L15 20 L15 45 C15 70 30 90 50 95 C70 90 85 70 85 45 L85 20 Z"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="3"
+        d="M50 8 L22 18 L22 42 C22 65 35 85 50 92 C65 85 78 65 78 42 L78 18 Z"
+        fill="currentColor"
+        stroke="none"
       />
       
-      {/* Scales of Justice - Made larger */}
-      <g transform="translate(50, 40)">
+      {/* Inner shield area (white background effect) */}
+      <path
+        d="M50 12 L26 20 L26 40 C26 60 37 78 50 84 C63 78 74 60 74 40 L74 20 Z"
+        fill="white"
+        stroke="none"
+      />
+      
+      {/* Scales of Justice - centered and prominent */}
+      <g transform="translate(50, 35)" fill="currentColor">
+        {/* Scale top knob */}
+        <circle cx="0" cy="-12" r="2"/>
+        
         {/* Scale pole */}
-        <line x1="0" y1="-15" x2="0" y2="25" stroke="currentColor" strokeWidth="3"/>
+        <rect x="-1" y="-10" width="2" height="25" rx="1"/>
         
         {/* Scale crossbar */}
-        <line x1="-20" y1="-8" x2="20" y2="-8" stroke="currentColor" strokeWidth="2.5"/>
+        <rect x="-18" y="-8" width="36" height="2" rx="1"/>
+        
+        {/* Left scale chain */}
+        <rect x="-18" y="-8" width="1" height="8"/>
+        
+        {/* Right scale chain */}
+        <rect x="17" y="-8" width="1" height="8"/>
         
         {/* Left scale pan */}
-        <path
-          d="M-20 -8 L-25 -3 L-15 -3 Z"
-          fill="currentColor"
-        />
+        <ellipse cx="-18" cy="2" rx="8" ry="2"/>
+        <path d="M-26 2 L-18 -2 L-10 2 Z"/>
         
         {/* Right scale pan */}
-        <path
-          d="M20 -8 L25 -3 L15 -3 Z"
-          fill="currentColor"
-        />
-        
-        {/* Scale chains */}
-        <line x1="-20" y1="-8" x2="-20" y2="-3" stroke="currentColor" strokeWidth="1.5"/>
-        <line x1="20" y1="-8" x2="20" y2="-3" stroke="currentColor" strokeWidth="1.5"/>
+        <ellipse cx="18" cy="2" rx="8" ry="2"/>
+        <path d="M26 2 L18 -2 L10 2 Z"/>
         
         {/* Scale base */}
-        <ellipse cx="0" cy="25" rx="4" ry="3" fill="currentColor"/>
+        <ellipse cx="0" cy="15" rx="5" ry="3"/>
+        <rect x="-3" y="12" width="6" height="6" rx="3"/>
       </g>
       
-      {/* Book - Made larger */}
-      <g transform="translate(58, 65)">
-        {/* Book cover */}
-        <rect x="0" y="0" width="16" height="20" fill="currentColor" rx="1"/>
+      {/* Book - positioned on the right side */}
+      <g transform="translate(62, 58)" fill="currentColor">
+        {/* Book spine and covers */}
+        <rect x="0" y="0" width="14" height="18" rx="1"/>
         
-        {/* Book pages */}
-        <rect x="1" y="1" width="14" height="18" fill="none" stroke="currentColor" strokeWidth="0.8"/>
-        <line x1="3" y1="5" x2="13" y2="5" stroke="currentColor" strokeWidth="0.8"/>
-        <line x1="3" y1="8" x2="13" y2="8" stroke="currentColor" strokeWidth="0.8"/>
-        <line x1="3" y1="11" x2="10" y2="11" stroke="currentColor" strokeWidth="0.8"/>
+        {/* Book pages effect */}
+        <rect x="1" y="1" width="12" height="16" fill="white" rx="0.5"/>
+        
+        {/* Page lines */}
+        <rect x="3" y="4" width="8" height="1" fill="currentColor"/>
+        <rect x="3" y="7" width="8" height="1" fill="currentColor"/>
+        <rect x="3" y="10" width="6" height="1" fill="currentColor"/>
+        
+        {/* Book binding */}
+        <rect x="0" y="2" width="14" height="1" fill="white"/>
+        <rect x="0" y="15" width="14" height="1" fill="white"/>
       </g>
     </svg>
   );
