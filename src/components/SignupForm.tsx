@@ -38,6 +38,11 @@ const menteeSchema = z.object({
   lawFieldInterest: z.string().min(1, "Please enter your field of law interest"),
   hometown: z.string().min(2, "Please enter your hometown"),
   undergraduateUniversity: z.string().min(2, "Please enter your undergraduate university"),
+  hobbiesInterests: z.string().min(10, "Please describe your hobbies/interests (at least 10 characters)"),
+  expectations: z.string().min(10, "Please describe your expectations (at least 10 characters)"),
+  hasCar: z.string().min(1, "Please select if you have a car"),
+  timeCommitment: z.string().min(1, "Please select your time commitment level"),
+  concerns: z.string().optional(),
 });
 
 type MentorFormData = z.infer<typeof mentorSchema>;
@@ -78,6 +83,11 @@ const SignupForm = ({ userType, onBack }: SignupFormProps) => {
       lawFieldInterest: "",
       hometown: "",
       undergraduateUniversity: "",
+      hobbiesInterests: "",
+      expectations: "",
+      hasCar: "",
+      timeCommitment: "",
+      concerns: "",
     },
   });
 
@@ -223,6 +233,106 @@ const SignupForm = ({ userType, onBack }: SignupFormProps) => {
                     placeholder="Enter your undergraduate university" 
                     {...field}
                     className="bg-white/10 border-white/20 text-white placeholder:text-white/60"
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="hobbiesInterests"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-white">Any hobbies/interests outside law school?</FormLabel>
+                <FormControl>
+                  <Textarea 
+                    placeholder="Tell us about your hobbies and interests outside of law school..."
+                    {...field}
+                    className="bg-white/10 border-white/20 text-white placeholder:text-white/60 min-h-[100px]"
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="expectations"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-white">What do you expect from mentors or this program?</FormLabel>
+                <FormControl>
+                  <Textarea 
+                    placeholder="Share your expectations from the mentorship program..."
+                    {...field}
+                    className="bg-white/10 border-white/20 text-white placeholder:text-white/60 min-h-[100px]"
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="hasCar"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-white">Do you have a car?</FormLabel>
+                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <FormControl>
+                    <SelectTrigger className="bg-white/10 border-white/20 text-white">
+                      <SelectValue placeholder="Select if you have a car" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="yes">Yes</SelectItem>
+                    <SelectItem value="no">No</SelectItem>
+                    <SelectItem value="planning">Planning on getting one</SelectItem>
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="timeCommitment"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-white">How much time would you like to be dedicated to the mentorship?</FormLabel>
+                <div className="text-xs text-white/70 mb-2">
+                  1 = "I would like to check in for any help every once in a while" | 5 = "I would love a new friend, let's hang out"
+                </div>
+                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <FormControl>
+                    <SelectTrigger className="bg-white/10 border-white/20 text-white">
+                      <SelectValue placeholder="Select your time commitment level" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="1">1 - Check in occasionally</SelectItem>
+                    <SelectItem value="2">2</SelectItem>
+                    <SelectItem value="3">3 - Moderate engagement</SelectItem>
+                    <SelectItem value="4">4</SelectItem>
+                    <SelectItem value="5">5 - High engagement, new friend</SelectItem>
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="concerns"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-white">Any other concerns/comments? (Optional)</FormLabel>
+                <FormControl>
+                  <Textarea 
+                    placeholder="Share any additional concerns or comments..."
+                    {...field}
+                    className="bg-white/10 border-white/20 text-white placeholder:text-white/60 min-h-[80px]"
                   />
                 </FormControl>
                 <FormMessage />
