@@ -9,7 +9,7 @@ const Footer = () => {
       <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-accent/5 rounded-full blur-3xl pointer-events-none" />
       
       <div className="container mx-auto px-4 py-20 relative z-10">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
+        <div className="grid lg:grid-cols-2 gap-12 items-start">
           
           {/* Brand Section */}
           <div className="space-y-8">
@@ -45,10 +45,10 @@ const Footer = () => {
           </div>
 
           {/* Contact Section */}
-          <div className="lg:text-right">
-            <div className="inline-block p-8 bg-primary-foreground/5 backdrop-blur-sm rounded-3xl border border-primary-foreground/10 shadow-green">
-              <h4 className="text-2xl font-bold text-primary-foreground mb-6">Get In Touch</h4>
-              <div className="group flex items-center justify-center lg:justify-end space-x-4 p-4 bg-primary-foreground/10 rounded-2xl hover:bg-gold-light/20 transition-all duration-300 hover:shadow-gold">
+          <div className="flex justify-end">
+            <div className="p-8 bg-primary-foreground/5 backdrop-blur-sm rounded-3xl border border-primary-foreground/10 shadow-green">
+              <h4 className="text-2xl font-bold text-primary-foreground mb-6 text-right">Get In Touch</h4>
+              <div className="group flex items-center space-x-4 p-4 bg-primary-foreground/10 rounded-2xl hover:bg-gold-light/20 transition-all duration-300 hover:shadow-gold">
                 <Mail className="w-6 h-6 text-gold-light" />
                 <a
                   href="mailto:rana.sher.khan@emory.edu"
