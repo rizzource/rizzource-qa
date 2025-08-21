@@ -9,8 +9,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { CheckCircle, Star, ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
+import Header from "@/components/Header.jsx";
+import Footer from "@/components/Footer.jsx";
 
 const feedbackSchema = z.object({
   rating: z.string().min(1, "Please select a rating"),

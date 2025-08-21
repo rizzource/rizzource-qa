@@ -1,9 +1,9 @@
 import { useState } from "react";
-import HeroSection from "@/components/HeroSection";
-import MentorMenteeSelection from "@/components/MentorMenteeSelection";
-import SignupForm from "@/components/SignupForm";
-import Header from "@/components/Header";  
-import Footer from "@/components/Footer";
+import HeroSection from "@/components/HeroSection.jsx";
+import MentorMenteeSelection from "@/components/MentorMenteeSelection.jsx";
+import SignupForm from "@/components/SignupForm.jsx";
+import Header from "@/components/Header.jsx";  
+import Footer from "@/components/Footer.jsx";
 import { Users, BookOpen, Zap } from "lucide-react";
 
 const Index = () => {
