@@ -11,7 +11,7 @@ const Footer = () => {
       <div className="container mx-auto px-4 py-20 relative z-10">
         <div className="grid lg:grid-cols-2 gap-12 items-start">
           
-          {/* Brand Section */}
+          {/* Brand Section - Left Side */}
           <div className="space-y-8">
             <div className="space-y-4">
               <div className="flex items-center space-x-4">
@@ -44,19 +44,19 @@ const Footer = () => {
             </div>
           </div>
 
-          {/* Contact Section */}
-          <div className="flex justify-end">
-            <div className="p-8 bg-primary-foreground/5 backdrop-blur-sm rounded-3xl border border-primary-foreground/10 shadow-green">
-              <h4 className="text-2xl font-bold text-primary-foreground mb-6 text-right">Get In Touch</h4>
+          {/* Contact Section - Right Side */}
+          <div className="flex justify-end lg:justify-end">
+            <div className="p-8 bg-primary-foreground/5 backdrop-blur-sm rounded-3xl border border-primary-foreground/10 shadow-green w-full max-w-sm">
+              <h4 className="text-2xl font-bold text-primary-foreground mb-6">Get In Touch</h4>
               <div className="group flex items-center space-x-4 p-4 bg-primary-foreground/10 rounded-2xl hover:bg-gold-light/20 transition-all duration-300 hover:shadow-gold">
-                <Mail className="w-6 h-6 text-gold-light" />
+                <Mail className="w-6 h-6 text-gold-light flex-shrink-0" />
                 <a
                   href="mailto:rana.sher.khan@emory.edu"
-                  className="text-primary-foreground hover:text-gold-light transition-colors text-lg font-medium"
+                  className="text-primary-foreground hover:text-gold-light transition-colors text-lg font-medium break-all"
                 >
                   rana.sher.khan@emory.edu
                 </a>
-                <ArrowRight className="w-5 h-5 text-gold-light group-hover:translate-x-1 transition-transform" />
+                <ArrowRight className="w-5 h-5 text-gold-light group-hover:translate-x-1 transition-transform flex-shrink-0" />
               </div>
             </div>
           </div>
