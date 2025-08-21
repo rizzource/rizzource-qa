@@ -1,5 +1,6 @@
 import { useState } from "react";
 import HeroSection from "@/components/HeroSection";
+import SignupForm from "@/components/SignupForm"
 import MentorMenteeSelection from "@/components/MentorMenteeSelection";
 import MentorForm from "@/components/MentorForm";
 import MenteeForm from "@/components/MenteeForm";
