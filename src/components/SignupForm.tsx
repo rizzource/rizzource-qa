@@ -45,7 +45,16 @@ const menteeSchema = z.object({
   concerns: z.string().optional(),
 });
 
-const SignupForm = ({ userType, onBack }) => {
+type MentorFormData = z.infer<typeof mentorSchema>;
+type MenteeFormData = z.infer<typeof menteeSchema>;
+type SignupFormData = MentorFormData | MenteeFormData;
+
+interface SignupFormProps {
+  userType: 'mentor' | 'mentee';
+  onBack: () => void;
+}
+
+const SignupForm = ({ userType, onBack }: SignupFormProps) => {
   const [currentStep, setCurrentStep] = useState(1);
   const navigate = useNavigate();
   
@@ -82,14 +91,14 @@ const SignupForm = ({ userType, onBack }) => {
     },
   });
 
-  const onSubmit = (data) => {
+  const onSubmit = (data: any) => {
     // Store form data in sessionStorage for the thank you page
     sessionStorage.setItem('signupData', JSON.stringify({ ...data, userType }));
     navigate('/thank-you');
   };
 
   const nextStep = async () => {
-    let fieldsToValidate = [];
+    let fieldsToValidate: string[] = [];
     
     if (userType === 'mentee') {
       // For mentee, handle multi-step validation
@@ -119,7 +128,7 @@ const SignupForm = ({ userType, onBack }) => {
       }
     }
 
-    const isValid = await form.trigger(fieldsToValidate);
+    const isValid = await form.trigger(fieldsToValidate as any);
     if (isValid) {
       setCurrentStep(currentStep + 1);
     }
