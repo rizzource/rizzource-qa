@@ -294,10 +294,16 @@ const SignupForm = ({ userType, onBack }) => {
                           <SelectValue placeholder="Select if you have a car" />
                         </SelectTrigger>
                       </FormControl>
-                      <SelectContent className="bg-white border border-gray-200 rounded-md shadow-lg z-50">
-                        <SelectItem value="yes" className="text-gray-900 hover:bg-gray-100">Yes</SelectItem>
-                        <SelectItem value="no" className="text-gray-900 hover:bg-gray-100">No</SelectItem>
-                        <SelectItem value="planning" className="text-gray-900 hover:bg-gray-100">Planning on getting one</SelectItem>
+                      <SelectContent className="bg-white border border-gray-200 rounded-md shadow-lg z-50 w-full min-w-[var(--radix-select-trigger-width)]">
+                        <SelectItem value="yes" className="text-gray-900 hover:bg-gray-100 cursor-pointer pl-4 pr-4 py-2 focus:bg-gray-100 data-[state=checked]:bg-gray-100">
+                          <span className="block">Yes</span>
+                        </SelectItem>
+                        <SelectItem value="no" className="text-gray-900 hover:bg-gray-100 cursor-pointer pl-4 pr-4 py-2 focus:bg-gray-100 data-[state=checked]:bg-gray-100">
+                          <span className="block">No</span>
+                        </SelectItem>
+                        <SelectItem value="planning" className="text-gray-900 hover:bg-gray-100 cursor-pointer pl-4 pr-4 py-2 focus:bg-gray-100 data-[state=checked]:bg-gray-100">
+                          <span className="block">Planning on getting one</span>
+                        </SelectItem>
                       </SelectContent>
                     </Select>
                     <FormMessage />
@@ -319,12 +325,22 @@ const SignupForm = ({ userType, onBack }) => {
                           <SelectValue placeholder="Select your time commitment level" />
                         </SelectTrigger>
                       </FormControl>
-                      <SelectContent className="bg-white border border-gray-200 rounded-md shadow-lg z-50">
-                        <SelectItem value="1" className="text-gray-900 hover:bg-gray-100">1 - Check in occasionally</SelectItem>
-                        <SelectItem value="2" className="text-gray-900 hover:bg-gray-100">2</SelectItem>
-                        <SelectItem value="3" className="text-gray-900 hover:bg-gray-100">3 - Moderate engagement</SelectItem>
-                        <SelectItem value="4" className="text-gray-900 hover:bg-gray-100">4</SelectItem>
-                        <SelectItem value="5" className="text-gray-900 hover:bg-gray-100">5 - High engagement, new friend</SelectItem>
+                      <SelectContent className="bg-white border border-gray-200 rounded-md shadow-lg z-50 w-full min-w-[var(--radix-select-trigger-width)]">
+                        <SelectItem value="1" className="text-gray-900 hover:bg-gray-100 cursor-pointer pl-4 pr-4 py-2 focus:bg-gray-100 data-[state=checked]:bg-gray-100">
+                          <span className="block">1 - Check in occasionally</span>
+                        </SelectItem>
+                        <SelectItem value="2" className="text-gray-900 hover:bg-gray-100 cursor-pointer pl-4 pr-4 py-2 focus:bg-gray-100 data-[state=checked]:bg-gray-100">
+                          <span className="block">2</span>
+                        </SelectItem>
+                        <SelectItem value="3" className="text-gray-900 hover:bg-gray-100 cursor-pointer pl-4 pr-4 py-2 focus:bg-gray-100 data-[state=checked]:bg-gray-100">
+                          <span className="block">3 - Moderate engagement</span>
+                        </SelectItem>
+                        <SelectItem value="4" className="text-gray-900 hover:bg-gray-100 cursor-pointer pl-4 pr-4 py-2 focus:bg-gray-100 data-[state=checked]:bg-gray-100">
+                          <span className="block">4</span>
+                        </SelectItem>
+                        <SelectItem value="5" className="text-gray-900 hover:bg-gray-100 cursor-pointer pl-4 pr-4 py-2 focus:bg-gray-100 data-[state=checked]:bg-gray-100">
+                          <span className="block">5 - High engagement, new friend</span>
+                        </SelectItem>
                       </SelectContent>
                     </Select>
                     <FormMessage />
@@ -424,9 +440,13 @@ const SignupForm = ({ userType, onBack }) => {
                         <SelectValue placeholder="Select your class year" />
                       </SelectTrigger>
                     </FormControl>
-                    <SelectContent className="bg-white border border-gray-200 rounded-md shadow-lg z-50">
-                      <SelectItem value="2L" className="text-gray-900 hover:bg-gray-100">2L</SelectItem>
-                      <SelectItem value="3L" className="text-gray-900 hover:bg-gray-100">3L</SelectItem>
+                    <SelectContent className="bg-white border border-gray-200 rounded-md shadow-lg z-50 w-full min-w-[var(--radix-select-trigger-width)]">
+                      <SelectItem value="2L" className="text-gray-900 hover:bg-gray-100 cursor-pointer pl-4 pr-4 py-2 focus:bg-gray-100 data-[state=checked]:bg-gray-100">
+                        <span className="block">2L</span>
+                      </SelectItem>
+                      <SelectItem value="3L" className="text-gray-900 hover:bg-gray-100 cursor-pointer pl-4 pr-4 py-2 focus:bg-gray-100 data-[state=checked]:bg-gray-100">
+                        <span className="block">3L</span>
+                      </SelectItem>
                     </SelectContent>
                   </Select>
                   <FormMessage />
@@ -528,12 +548,22 @@ const SignupForm = ({ userType, onBack }) => {
                         <SelectValue placeholder="Select your time commitment level" />
                       </SelectTrigger>
                     </FormControl>
-                    <SelectContent className="bg-white border border-gray-200 rounded-md shadow-lg z-50">
-                      <SelectItem value="1" className="text-gray-900 hover:bg-gray-100">1 - Check in occasionally</SelectItem>
-                      <SelectItem value="2" className="text-gray-900 hover:bg-gray-100">2</SelectItem>
-                      <SelectItem value="3" className="text-gray-900 hover:bg-gray-100">3 - Moderate engagement</SelectItem>
-                      <SelectItem value="4" className="text-gray-900 hover:bg-gray-100">4</SelectItem>
-                      <SelectItem value="5" className="text-gray-900 hover:bg-gray-100">5 - High engagement, new friend</SelectItem>
+                    <SelectContent className="bg-white border border-gray-200 rounded-md shadow-lg z-50 w-full min-w-[var(--radix-select-trigger-width)]">
+                      <SelectItem value="1" className="text-gray-900 hover:bg-gray-100 cursor-pointer pl-4 pr-4 py-2 focus:bg-gray-100 data-[state=checked]:bg-gray-100">
+                        <span className="block">1 - Check in occasionally</span>
+                      </SelectItem>
+                      <SelectItem value="2" className="text-gray-900 hover:bg-gray-100 cursor-pointer pl-4 pr-4 py-2 focus:bg-gray-100 data-[state=checked]:bg-gray-100">
+                        <span className="block">2</span>
+                      </SelectItem>
+                      <SelectItem value="3" className="text-gray-900 hover:bg-gray-100 cursor-pointer pl-4 pr-4 py-2 focus:bg-gray-100 data-[state=checked]:bg-gray-100">
+                        <span className="block">3 - Moderate engagement</span>
+                      </SelectItem>
+                      <SelectItem value="4" className="text-gray-900 hover:bg-gray-100 cursor-pointer pl-4 pr-4 py-2 focus:bg-gray-100 data-[state=checked]:bg-gray-100">
+                        <span className="block">4</span>
+                      </SelectItem>
+                      <SelectItem value="5" className="text-gray-900 hover:bg-gray-100 cursor-pointer pl-4 pr-4 py-2 focus:bg-gray-100 data-[state=checked]:bg-gray-100">
+                        <span className="block">5 - High engagement, new friend</span>
+                      </SelectItem>
                     </SelectContent>
                   </Select>
                   <FormMessage />
@@ -552,10 +582,16 @@ const SignupForm = ({ userType, onBack }) => {
                         <SelectValue placeholder="Select if you have a car" />
                       </SelectTrigger>
                     </FormControl>
-                    <SelectContent className="bg-white border border-gray-200 rounded-md shadow-lg z-50">
-                      <SelectItem value="yes" className="text-gray-900 hover:bg-gray-100">Yes</SelectItem>
-                      <SelectItem value="no" className="text-gray-900 hover:bg-gray-100">No</SelectItem>
-                      <SelectItem value="planning" className="text-gray-900 hover:bg-gray-100">Planning on getting one</SelectItem>
+                    <SelectContent className="bg-white border border-gray-200 rounded-md shadow-lg z-50 w-full min-w-[var(--radix-select-trigger-width)]">
+                      <SelectItem value="yes" className="text-gray-900 hover:bg-gray-100 cursor-pointer pl-4 pr-4 py-2 focus:bg-gray-100 data-[state=checked]:bg-gray-100">
+                        <span className="block">Yes</span>
+                      </SelectItem>
+                      <SelectItem value="no" className="text-gray-900 hover:bg-gray-100 cursor-pointer pl-4 pr-4 py-2 focus:bg-gray-100 data-[state=checked]:bg-gray-100">
+                        <span className="block">No</span>
+                      </SelectItem>
+                      <SelectItem value="planning" className="text-gray-900 hover:bg-gray-100 cursor-pointer pl-4 pr-4 py-2 focus:bg-gray-100 data-[state=checked]:bg-gray-100">
+                        <span className="block">Planning on getting one</span>
+                      </SelectItem>
                     </SelectContent>
                   </Select>
                   <FormMessage />

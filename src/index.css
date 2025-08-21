@@ -263,6 +263,37 @@ All colors MUST be HSL.
   .dropdown-item-selected {
     @apply bg-primary/10 text-primary;
   }
+  
+  /* Custom Select styling - hide tick marks and improve appearance */
+  [data-radix-select-content] {
+    width: var(--radix-select-trigger-width) !important;
+    min-width: var(--radix-select-trigger-width) !important;
+  }
+  
+  [data-radix-select-item-indicator] {
+    display: none !important;
+  }
+  
+  [data-radix-select-item] {
+    position: relative;
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+    padding-top: 8px !important;
+    padding-bottom: 8px !important;
+  }
+  
+  [data-radix-select-item]:focus {
+    background-color: rgb(243 244 246) !important;
+    outline: none !important;
+  }
+  
+  [data-radix-select-item][data-state="checked"] {
+    background-color: rgb(243 244 246) !important;
+  }
+  
+  [data-radix-select-item][data-state="checked"]::after {
+    display: none !important;
+  }
 }
 
 @layer utilities {
