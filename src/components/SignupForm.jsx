@@ -10,6 +10,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ArrowLeft, ArrowRight, GraduationCap, Users } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 const mentorSchema = z.object({
   // Basic Information
@@ -48,6 +50,7 @@ const menteeSchema = z.object({
 const SignupForm = ({ userType, onBack }) => {
   const [currentStep, setCurrentStep] = useState(1);
   const navigate = useNavigate();
+  const { toast } = useToast();
   
   const schema = userType === 'mentor' ? mentorSchema : menteeSchema;
   const maxSteps = 3; // Both mentor and mentee now have 3 steps
@@ -82,10 +85,67 @@ const SignupForm = ({ userType, onBack }) => {
     },
   });
 
-  const onSubmit = (data) => {
-    // Store form data in sessionStorage for the thank you page
-    sessionStorage.setItem('signupData', JSON.stringify({ ...data, userType }));
-    navigate('/thank-you');
+  const onSubmit = async (data) => {
+    try {
+      const tableName = userType === 'mentor' ? 'mentors' : 'mentees';
+      
+      // Prepare data for database insertion
+      const dbData = {
+        first_name: data.firstName,
+        last_name: data.lastName,
+        email: data.email,
+        field_of_law: data.lawFieldInterest,
+        hometown: data.hometown,
+        undergraduate_university: data.undergraduateUniversity,
+        hobbies: data.hobbiesInterests,
+        mentorship_time_commitment: data.timeCommitment,
+        car_availability: data.hasCar === 'yes',
+        comments: data.lastComments || data.concerns || null,
+      };
+
+      // Add mentor-specific fields
+      if (userType === 'mentor') {
+        dbData.class_year = data.classYear;
+        dbData.co_mentor_preference = data.coMentors || null;
+      }
+
+      // Add mentee-specific fields
+      if (userType === 'mentee') {
+        dbData.expectations = data.expectations;
+      }
+
+      // Insert data into Supabase
+      const { error } = await supabase
+        .from(tableName)
+        .insert([dbData]);
+
+      if (error) {
+        console.error('Supabase error:', error);
+        toast({
+          title: "Error",
+          description: "Failed to submit your application. Please try again.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Store form data in sessionStorage for the thank you page
+      sessionStorage.setItem('signupData', JSON.stringify({ ...data, userType }));
+      
+      toast({
+        title: "Success!",
+        description: "Your application has been submitted successfully.",
+      });
+      
+      navigate('/thank-you');
+    } catch (error) {
+      console.error('Submission error:', error);
+      toast({
+        title: "Error",
+        description: "An unexpected error occurred. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   const nextStep = async () => {
