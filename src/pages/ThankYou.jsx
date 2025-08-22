@@ -78,7 +78,7 @@ const ThankYou = () => {
                   </CardTitle>
                   <CardDescription className="text-white/80 text-lg">
                     Thank you, {signupData.fullName}! Your {signupData.userType} application has been received.
-                    We'll review your application and get back to you within 2-3 business days.
+                    We'll review your application and get back to.
                   </CardDescription>
                 </CardHeader>
                 
