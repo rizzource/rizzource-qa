@@ -6,7 +6,7 @@ const Footer = () => {
     <footer className="bg-primary text-primary-foreground">
       <div className="container mx-auto px-4 py-16">
         <div className="space-y-8">
-
+          
           {/* Brand Section */}
           <div className="space-y-4">
             <div className="flex items-center space-x-3">
@@ -14,25 +14,23 @@ const Footer = () => {
                 <Scale className="w-6 h-6 text-primary" />
               </div>
               <div>
-                <h3 className="text-xl font-bold">RIZZource</h3>
-                <p className="text-sm text-primary-foreground/80">Law School and Beyond
-                </p>
+                <h3 className="text-xl font-bold">Rizzourse</h3>
+                <p className="text-sm text-primary-foreground/80">Legal Mentorship</p>
               </div>
             </div>
-
+            
             <p className="text-primary-foreground/80 leading-relaxed">
-              Student-driven resource to support your journey through Law School and Beyond.<br />
-              ——————————— <br />
-              RIZZource 2025. Powered by students.
+              Connecting law students with experienced mentors 
+              and building a supportive community for legal career success.
             </p>
-
+            
             <div className="flex space-x-4">
-              {/* <div className="w-8 h-8 bg-primary-foreground/10 rounded-lg flex items-center justify-center">
+              <div className="w-8 h-8 bg-primary-foreground/10 rounded-lg flex items-center justify-center">
                 <BookOpen className="w-4 h-4" />
               </div>
               <div className="w-8 h-8 bg-primary-foreground/10 rounded-lg flex items-center justify-center">
                 <Users className="w-4 h-4" />
-              </div> */}
+              </div>
               <div className="w-8 h-8 bg-primary-foreground/10 rounded-lg flex items-center justify-center">
                 <Mail className="w-4 h-4" />
               </div>
@@ -58,9 +56,9 @@ const Footer = () => {
         <div className="border-t border-primary-foreground/20 mt-12 pt-8">
           <div className="flex justify-center items-center">
             <p className="text-primary-foreground/60 text-sm">
-              2025 RIZZource. Powered by students.
+              © 2024 Rizzourse. All rights reserved.
             </p>
-
+            
             {/* <div className="flex space-x-6 text-sm">
               <a href="#privacy" className="text-primary-foreground/60 hover:text-gold-light transition-colors">
                 Privacy Policy
