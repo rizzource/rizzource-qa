@@ -11,6 +11,7 @@ import { CheckCircle, Star, ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { supabase } from "@/integrations/supabase/client";
 
 const feedbackSchema = z.object({
   rating: z.string().min(1, "Please select a rating"),
@@ -42,12 +43,31 @@ const ThankYou = () => {
     }
   }, [navigate]);
 
-  const onSubmitFeedback = (data) => {
-    console.log('Feedback submitted:', data);
-    setShowFeedbackForm(false);
-    setFeedbackSubmitted(true);
-    // Clear signup data from session storage
-    sessionStorage.removeItem('signupData');
+  const onSubmitFeedback = async (data) => {
+    try {
+      console.log('Feedback submitted:', data);
+      
+      // Save feedback to database
+      const { error } = await supabase
+        .from('feedback')
+        .insert({
+          rating: data.rating,
+          suggestions: data.improvement,
+          user_email: signupData?.email || 'anonymous@example.com'
+        });
+
+      if (error) {
+        console.error('Error saving feedback:', error);
+        return;
+      }
+
+      setShowFeedbackForm(false);
+      setFeedbackSubmitted(true);
+      // Clear signup data from session storage
+      sessionStorage.removeItem('signupData');
+    } catch (error) {
+      console.error('Error submitting feedback:', error);
+    }
   };
 
   const handleBackToHome = () => {
