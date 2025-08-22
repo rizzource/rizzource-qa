@@ -8,8 +8,11 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ArrowLeft, ArrowRight, GraduationCap, Users } from "lucide-react";
+import { ArrowLeft, ArrowRight, GraduationCap, Users, Loader2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { createMentor } from "@/services/mentorService";
+import { createMentee } from "@/services/menteeService";
+import { useToast } from "@/hooks/use-toast";
 
 const mentorSchema = z.object({
   // Basic Information
@@ -47,7 +50,9 @@ const menteeSchema = z.object({
 
 const SignupForm = ({ userType, onBack }) => {
   const [currentStep, setCurrentStep] = useState(1);
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const { toast } = useToast();
   
   const schema = userType === 'mentor' ? mentorSchema : menteeSchema;
   const maxSteps = 3; // Both mentor and mentee now have 3 steps
@@ -82,10 +87,56 @@ const SignupForm = ({ userType, onBack }) => {
     },
   });
 
-  const onSubmit = (data) => {
-    // Store form data in sessionStorage for the thank you page
-    sessionStorage.setItem('signupData', JSON.stringify({ ...data, userType }));
-    navigate('/thank-you');
+  const onSubmit = async (data) => {
+    setIsLoading(true);
+
+    try {
+      // Map form fields to database schema
+      const mappedData = {
+        first_name: data.firstName,
+        last_name: data.lastName,
+        email: data.email,
+        field_of_law: data.lawFieldInterest,
+        hometown: data.hometown,
+        undergraduate_university: data.undergraduateUniversity,
+        hobbies: data.hobbiesInterests,
+        mentorship_time_commitment: data.timeCommitment,
+        car_availability: data.hasCar === 'yes',
+        comments: userType === 'mentor' ? data.lastComments : data.concerns,
+      };
+
+      // Add type-specific fields
+      if (userType === 'mentor') {
+        mappedData.class_year = data.classYear;
+        mappedData.co_mentor_preference = data.coMentors;
+      } else {
+        mappedData.expectations = data.expectations;
+      }
+
+      // Submit to appropriate service
+      const result = userType === 'mentor' 
+        ? await createMentor(mappedData)
+        : await createMentee(mappedData);
+      
+      if (result.success) {
+        toast({
+          title: "Application Submitted Successfully!",
+          description: `Thank you for applying to be a ${userType}.`,
+        });
+        // Navigate to feedback form with email
+        navigate(`/feedback?email=${encodeURIComponent(data.email)}&type=${userType}`);
+      } else {
+        throw new Error(result.error);
+      }
+    } catch (error) {
+      toast({
+        title: "Submission Failed",
+        description: error.message || "Please try again later.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const nextStep = async () => {
@@ -714,9 +765,17 @@ const SignupForm = ({ userType, onBack }) => {
                     ) : (
                       <Button
                         type="submit"
+                        disabled={isLoading}
                         className="bg-gold-light text-primary hover:bg-gold-dark ml-auto whitespace-nowrap flex items-center"
                       >
-                        Submit Application
+                        {isLoading ? (
+                          <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            Submitting...
+                          </>
+                        ) : (
+                          "Submit Application"
+                        )}
                       </Button>
                     )}
                   </div>

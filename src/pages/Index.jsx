@@ -1,8 +1,7 @@
 import { useState } from "react";
 import HeroSection from "@/components/HeroSection";
 import MentorMenteeSelection from "@/components/MentorMenteeSelection";
-import MentorForm from "@/components/MentorForm";
-import MenteeForm from "@/components/MenteeForm";
+import SignupForm from "@/components/SignupForm";
 import Header from "@/components/Header";  
 import Footer from "@/components/Footer";
 import { Users, BookOpen, Zap } from "lucide-react";
@@ -82,10 +81,10 @@ const Index = () => {
           />
         )}
         {appState === 'mentor' && (
-          <MentorForm onBack={handleBackToSelection} />
+          <SignupForm userType="mentor" onBack={handleBackToSelection} />
         )}
         {appState === 'mentee' && (
-          <MenteeForm onBack={handleBackToSelection} />
+          <SignupForm userType="mentee" onBack={handleBackToSelection} />
         )}
       </main>
       <Footer />
