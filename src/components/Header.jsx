@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { BookOpen } from "lucide-react";
+import { Scale } from "lucide-react";
 import { useState } from "react";
 import MobileNavigation from "./MobileNavigation";
 
@@ -14,7 +14,7 @@ const Header = () => {
           {/* Logo */}
           <a href="/" className="flex items-center space-x-3 touch-friendly">
             <div className="w-8 h-8 md:w-10 md:h-10 bg-primary rounded-lg flex items-center justify-center">
-              <BookOpen className="w-5 h-5 md:w-6 md:h-6 text-primary-foreground" />
+              <Scale className="w-5 h-5 md:w-6 md:h-6 text-primary-foreground" />
             </div>
             <div className="hidden sm:block">
               <h1 className="text-lg md:text-xl font-bold text-primary">Rizzourse</h1>
