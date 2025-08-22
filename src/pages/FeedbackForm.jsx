@@ -71,35 +71,36 @@ const FeedbackForm = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-muted/50 to-background p-4">
+    <div className="min-h-screen bg-hero-gradient p-4">
       <div className="max-w-2xl mx-auto">
-        <Card>
+        <Card className="bg-card/95 backdrop-blur-sm border-light-green/20 shadow-card">
           <CardHeader className="text-center">
-            <CardTitle className="text-2xl font-bold">Application Feedback</CardTitle>
-            <CardDescription>
+            <CardTitle className="text-2xl font-bold text-foreground">Application Feedback</CardTitle>
+            <CardDescription className="text-muted-foreground">
               Help us improve our application process by sharing your experience
             </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="space-y-2">
-                <Label htmlFor="application_experience">How was your overall application experience? *</Label>
+                <Label htmlFor="application_experience" className="text-foreground">How was your overall application experience? *</Label>
                 <Textarea
                   id="application_experience"
                   value={formData.application_experience}
                   onChange={(e) => handleInputChange("application_experience", e.target.value)}
                   placeholder="Please describe your experience completing the application..."
+                  className="bg-background/80 border-light-green/30 focus:border-gold-light focus:ring-gold-light/20"
                   required
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="experience_rating">Rate your experience *</Label>
+                <Label htmlFor="experience_rating" className="text-foreground">Rate your experience *</Label>
                 <Select onValueChange={(value) => handleInputChange("experience_rating", value)} required>
-                  <SelectTrigger>
+                  <SelectTrigger className="bg-background/80 border-light-green/30 focus:border-gold-light focus:ring-gold-light/20">
                     <SelectValue placeholder="Select a rating" />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="bg-background border-light-green/30">
                     <SelectItem value="Excellent">Excellent</SelectItem>
                     <SelectItem value="Good">Good</SelectItem>
                     <SelectItem value="Average">Average</SelectItem>
@@ -109,38 +110,41 @@ const FeedbackForm = () => {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="liked_about_process">What did you like about the application process?</Label>
+                <Label htmlFor="liked_about_process" className="text-foreground">What did you like about the application process?</Label>
                 <Textarea
                   id="liked_about_process"
                   value={formData.liked_about_process}
                   onChange={(e) => handleInputChange("liked_about_process", e.target.value)}
                   placeholder="Tell us what worked well for you..."
+                  className="bg-background/80 border-light-green/30 focus:border-gold-light focus:ring-gold-light/20"
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="thoughts">Any additional thoughts about the mentorship program?</Label>
+                <Label htmlFor="thoughts" className="text-foreground">Any additional thoughts about the mentorship program?</Label>
                 <Textarea
                   id="thoughts"
                   value={formData.thoughts}
                   onChange={(e) => handleInputChange("thoughts", e.target.value)}
                   placeholder="Share your thoughts about the program itself..."
+                  className="bg-background/80 border-light-green/30 focus:border-gold-light focus:ring-gold-light/20"
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="suggestions">Suggestions for improvement</Label>
+                <Label htmlFor="suggestions" className="text-foreground">Suggestions for improvement</Label>
                 <Textarea
                   id="suggestions"
                   value={formData.suggestions}
                   onChange={(e) => handleInputChange("suggestions", e.target.value)}
                   placeholder="How can we make the application process better?"
+                  className="bg-background/80 border-light-green/30 focus:border-gold-light focus:ring-gold-light/20"
                 />
               </div>
 
               <Button 
                 type="submit" 
-                className="w-full" 
+                className="w-full bg-gold-light text-primary hover:bg-gold-dark transition-colors" 
                 disabled={isLoading}
               >
                 {isLoading ? (
