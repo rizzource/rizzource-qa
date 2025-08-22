@@ -21,9 +21,7 @@ const Footer = () => {
             </div>
 
             <p className="text-primary-foreground/80 leading-relaxed">
-              Student-driven resource to support your journey through Law School and Beyond.<br />
-              ——————————— <br />
-              RIZZource 2025. Powered by students.
+              Student-driven resource to support your journey through Law School and Beyond.  
             </p>
 
             <div className="flex space-x-4">
