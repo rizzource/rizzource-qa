@@ -8,8 +8,11 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ArrowLeft, ArrowRight, GraduationCap, Users } from "lucide-react";
+import { ArrowLeft, ArrowRight, GraduationCap, Users, Loader2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { createMentor } from "@/services/mentorService";
+import { createMentee } from "@/services/menteeService";
+import cat from "@/assets/cat.gif";
 
 const mentorSchema = z.object({
   // Basic Information
@@ -17,12 +20,12 @@ const mentorSchema = z.object({
   lastName: z.string().min(2, "Last name must be at least 2 characters"),
   email: z.string().email("Please enter a valid email address"),
   classYear: z.string().min(1, "Please select your class year"),
-  
+
   // Background Information
   lawFieldInterest: z.string().min(1, "Please enter your field of law interest"),
   hometown: z.string().min(2, "Please enter your hometown"),
   undergraduateUniversity: z.string().min(2, "Please enter your undergraduate university"),
-  
+
   // Personal Information
   hobbiesInterests: z.string().min(10, "Please describe your hobbies/interests (at least 10 characters)"),
   timeCommitment: z.string().min(1, "Please select your time commitment level"),
@@ -47,11 +50,14 @@ const menteeSchema = z.object({
 
 const SignupForm = ({ userType, onBack }) => {
   const [currentStep, setCurrentStep] = useState(1);
+  const [isLoading, setIsLoading] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [message, setMessage] = useState("");
   const navigate = useNavigate();
-  
+
   const schema = userType === 'mentor' ? mentorSchema : menteeSchema;
   const maxSteps = 3; // Both mentor and mentee now have 3 steps
-  
+
   const form = useForm({
     resolver: zodResolver(schema),
     defaultValues: userType === 'mentor' ? {
@@ -82,15 +88,59 @@ const SignupForm = ({ userType, onBack }) => {
     },
   });
 
-  const onSubmit = (data) => {
-    // Store form data in sessionStorage for the thank you page
-    sessionStorage.setItem('signupData', JSON.stringify({ ...data, userType }));
-    navigate('/thank-you');
+  const onSubmit = async (data) => {
+    setIsLoading(true);
+
+    try {
+      // Map form fields to database schema
+      const mappedData = {
+        first_name: data.firstName,
+        last_name: data.lastName,
+        email: data.email,
+        field_of_law: data.lawFieldInterest,
+        hometown: data.hometown,
+        undergraduate_university: data.undergraduateUniversity,
+        hobbies: data.hobbiesInterests,
+        mentorship_time_commitment: data.timeCommitment,
+        car_availability: data.hasCar === 'yes',
+        comments: userType === 'mentor' ? data.lastComments : data.concerns,
+      };
+
+      // Add type-specific fields
+      if (userType === 'mentor') {
+        mappedData.class_year = data.classYear;
+        mappedData.co_mentor_preference = data.coMentors;
+      } else {
+        mappedData.expectations = data.expectations;
+      }
+
+      const result = userType === 'mentor'
+        ? await createMentor(mappedData)
+        : await createMentee(mappedData);
+
+      if (result.success) {
+        setMessage(`Thank you for applying to be a ${userType}.`);
+        setOpen(true);
+        setTimeout(() => {
+          setOpen(false);
+          navigate(
+            `/feedback?email=${encodeURIComponent(data.email)}&type=${userType}`
+          );
+        }, 3000);
+      } else {
+        throw new Error(result.error);
+      }
+    } catch (error) {
+      setMessage(`Submission Failed`);
+      setOpen(true);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const nextStep = async () => {
     let fieldsToValidate = [];
-    
+
     if (userType === 'mentee') {
       // For mentee, handle multi-step validation
       switch (currentStep) {
@@ -142,9 +192,9 @@ const SignupForm = ({ userType, onBack }) => {
                   <FormItem>
                     <FormLabel className="text-white">First Name</FormLabel>
                     <FormControl>
-                      <Input 
-                        placeholder="Enter your first name" 
-                        {...field} 
+                      <Input
+                        placeholder="Enter your first name"
+                        {...field}
                         className="bg-white/10 border-white/20 text-white placeholder:text-white/60 px-3 rounded-md"
                       />
                     </FormControl>
@@ -159,9 +209,9 @@ const SignupForm = ({ userType, onBack }) => {
                   <FormItem>
                     <FormLabel className="text-white">Last Name</FormLabel>
                     <FormControl>
-                      <Input 
-                        placeholder="Enter your last name" 
-                        {...field} 
+                      <Input
+                        placeholder="Enter your last name"
+                        {...field}
                         className="bg-white/10 border-white/20 text-white placeholder:text-white/60 px-3 rounded-md"
                       />
                     </FormControl>
@@ -176,10 +226,10 @@ const SignupForm = ({ userType, onBack }) => {
                   <FormItem>
                     <FormLabel className="text-white">Email</FormLabel>
                     <FormControl>
-                      <Input 
+                      <Input
                         type="email"
-                        placeholder="Enter your email address" 
-                        {...field} 
+                        placeholder="Enter your email address"
+                        {...field}
                         className="bg-white/10 border-white/20 text-white placeholder:text-white/60 px-3 rounded-md"
                       />
                     </FormControl>
@@ -199,8 +249,8 @@ const SignupForm = ({ userType, onBack }) => {
                   <FormItem>
                     <FormLabel className="text-white">Field of law you are interested in?</FormLabel>
                     <FormControl>
-                      <Input 
-                        placeholder="Transactional, litigation, big law, public interest, etc. If you don't know yet you can say so" 
+                      <Input
+                        placeholder="Transactional, litigation, big law, public interest, etc. If you don't know yet you can say so"
                         {...field}
                         className="bg-white/10 border-white/20 text-white placeholder:text-white/60 px-3 rounded-md"
                       />
@@ -216,8 +266,8 @@ const SignupForm = ({ userType, onBack }) => {
                   <FormItem>
                     <FormLabel className="text-white">Where is your hometown?</FormLabel>
                     <FormControl>
-                      <Input 
-                        placeholder="Enter your hometown" 
+                      <Input
+                        placeholder="Enter your hometown"
                         {...field}
                         className="bg-white/10 border-white/20 text-white placeholder:text-white/60 px-3 rounded-md"
                       />
@@ -233,8 +283,8 @@ const SignupForm = ({ userType, onBack }) => {
                   <FormItem>
                     <FormLabel className="text-white">Where did you go to undergraduate?</FormLabel>
                     <FormControl>
-                      <Input 
-                        placeholder="Enter your undergraduate university" 
+                      <Input
+                        placeholder="Enter your undergraduate university"
                         {...field}
                         className="bg-white/10 border-white/20 text-white placeholder:text-white/60 px-3 rounded-md"
                       />
@@ -255,7 +305,7 @@ const SignupForm = ({ userType, onBack }) => {
                   <FormItem>
                     <FormLabel className="text-white">Any hobbies/interests outside law school?</FormLabel>
                     <FormControl>
-                      <Textarea 
+                      <Textarea
                         placeholder="Tell us about your hobbies and interests outside of law school..."
                         {...field}
                         className="bg-white/10 border-white/20 text-white placeholder:text-white/60 min-h-[100px] px-3 py-2 resize-none rounded-md"
@@ -272,7 +322,7 @@ const SignupForm = ({ userType, onBack }) => {
                   <FormItem>
                     <FormLabel className="text-white">What do you expect from mentors or this program?</FormLabel>
                     <FormControl>
-                      <Textarea 
+                      <Textarea
                         placeholder="Share your expectations from the mentorship program..."
                         {...field}
                         className="bg-white/10 border-white/20 text-white placeholder:text-white/60 min-h-[100px] px-3 py-2 resize-none rounded-md"
@@ -354,7 +404,7 @@ const SignupForm = ({ userType, onBack }) => {
                   <FormItem>
                     <FormLabel className="text-white">Any other concerns/comments? (Optional)</FormLabel>
                     <FormControl>
-                      <Textarea 
+                      <Textarea
                         placeholder="Share any additional concerns or comments..."
                         {...field}
                         className="bg-white/10 border-white/20 text-white placeholder:text-white/60 min-h-[80px] px-3 py-2 resize-none rounded-md"
@@ -383,9 +433,9 @@ const SignupForm = ({ userType, onBack }) => {
                 <FormItem>
                   <FormLabel className="text-white">First Name</FormLabel>
                   <FormControl>
-                    <Input 
-                      placeholder="Enter your first name" 
-                      {...field} 
+                    <Input
+                      placeholder="Enter your first name"
+                      {...field}
                       className="bg-white/10 border-white/20 text-white placeholder:text-white/60 px-3 rounded-md"
                     />
                   </FormControl>
@@ -400,9 +450,9 @@ const SignupForm = ({ userType, onBack }) => {
                 <FormItem>
                   <FormLabel className="text-white">Last Name</FormLabel>
                   <FormControl>
-                    <Input 
-                      placeholder="Enter your last name" 
-                      {...field} 
+                    <Input
+                      placeholder="Enter your last name"
+                      {...field}
                       className="bg-white/10 border-white/20 text-white placeholder:text-white/60 px-3 rounded-md"
                     />
                   </FormControl>
@@ -417,10 +467,10 @@ const SignupForm = ({ userType, onBack }) => {
                 <FormItem>
                   <FormLabel className="text-white">Email</FormLabel>
                   <FormControl>
-                    <Input 
+                    <Input
                       type="email"
-                      placeholder="Enter your email address" 
-                      {...field} 
+                      placeholder="Enter your email address"
+                      {...field}
                       className="bg-white/10 border-white/20 text-white placeholder:text-white/60 px-3 rounded-md"
                     />
                   </FormControl>
@@ -465,8 +515,8 @@ const SignupForm = ({ userType, onBack }) => {
                 <FormItem>
                   <FormLabel className="text-white">What field of law are you interested in?</FormLabel>
                   <FormControl>
-                    <Input 
-                      placeholder="e.g., Corporate Law, Criminal Law, or 'I don't know yet'" 
+                    <Input
+                      placeholder="e.g., Corporate Law, Criminal Law, or 'I don't know yet'"
                       {...field}
                       className="bg-white/10 border-white/20 text-white placeholder:text-white/60 px-3 rounded-md"
                     />
@@ -482,8 +532,8 @@ const SignupForm = ({ userType, onBack }) => {
                 <FormItem>
                   <FormLabel className="text-white">Where is your hometown?</FormLabel>
                   <FormControl>
-                    <Input 
-                      placeholder="Enter your hometown" 
+                    <Input
+                      placeholder="Enter your hometown"
                       {...field}
                       className="bg-white/10 border-white/20 text-white placeholder:text-white/60 px-3 rounded-md"
                     />
@@ -499,8 +549,8 @@ const SignupForm = ({ userType, onBack }) => {
                 <FormItem>
                   <FormLabel className="text-white">Where did you go to undergraduate university?</FormLabel>
                   <FormControl>
-                    <Input 
-                      placeholder="Enter your undergraduate university" 
+                    <Input
+                      placeholder="Enter your undergraduate university"
                       {...field}
                       className="bg-white/10 border-white/20 text-white placeholder:text-white/60 px-3 rounded-md"
                     />
@@ -521,7 +571,7 @@ const SignupForm = ({ userType, onBack }) => {
                 <FormItem>
                   <FormLabel className="text-white">What are your hobbies/interests outside of law school?</FormLabel>
                   <FormControl>
-                    <Textarea 
+                    <Textarea
                       placeholder="Tell us about your hobbies and interests outside of law school..."
                       {...field}
                       className="bg-white/10 border-white/20 text-white placeholder:text-white/60 min-h-[100px] px-3 py-2 resize-none rounded-md"
@@ -605,8 +655,8 @@ const SignupForm = ({ userType, onBack }) => {
                 <FormItem>
                   <FormLabel className="text-white">Is there someone you would like to be co-mentors with? (Optional)</FormLabel>
                   <FormControl>
-                    <Input 
-                      placeholder="Enter name or leave blank" 
+                    <Input
+                      placeholder="Enter name or leave blank"
                       {...field}
                       className="bg-white/10 border-white/20 text-white placeholder:text-white/60 px-3 rounded-md"
                     />
@@ -622,7 +672,7 @@ const SignupForm = ({ userType, onBack }) => {
                 <FormItem>
                   <FormLabel className="text-white">Any last comments? (Optional)</FormLabel>
                   <FormControl>
-                    <Textarea 
+                    <Textarea
                       placeholder="Any additional comments or information you'd like to share..."
                       {...field}
                       className="bg-white/10 border-white/20 text-white placeholder:text-white/60 min-h-[80px] px-3 py-2 resize-none rounded-md"
@@ -641,7 +691,7 @@ const SignupForm = ({ userType, onBack }) => {
 
   const stepTitles = [
     "Basic Information",
-    "Background Information", 
+    "Background Information",
     "Personal Details"
   ];
 
@@ -674,21 +724,21 @@ const SignupForm = ({ userType, onBack }) => {
               <CardDescription className="text-white/80">
                 Step {currentStep} of 3: {stepTitles[currentStep - 1]}
               </CardDescription>
-              
+
               {/* Progress Bar */}
               <div className="w-full bg-white/20 rounded-full h-2 mt-4">
-                <div 
+                <div
                   className="bg-gold-light h-2 rounded-full transition-all duration-300"
                   style={{ width: `${(currentStep / 3) * 100}%` }}
                 ></div>
               </div>
             </CardHeader>
-            
+
             <CardContent>
               <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6" key={currentStep}>
                   {renderStepContent()}
-                  
+
                   <div className="flex justify-between pt-4">
                     {currentStep > 1 && (
                       <Button
@@ -701,7 +751,7 @@ const SignupForm = ({ userType, onBack }) => {
                         Previous
                       </Button>
                     )}
-                    
+
                     {currentStep < 3 ? (
                       <Button
                         type="button"
@@ -714,13 +764,38 @@ const SignupForm = ({ userType, onBack }) => {
                     ) : (
                       <Button
                         type="submit"
+                        disabled={isLoading}
                         className="bg-gold-light text-primary hover:bg-gold-dark ml-auto whitespace-nowrap flex items-center"
                       >
-                        Submit Application
+                        {isLoading ? (
+                          <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            Submitting...
+                          </>
+                        ) : (
+                          "Submit Application"
+                        )}
                       </Button>
                     )}
                   </div>
                 </form>
+
+                {open && (
+                  <div className="fixed inset-0 flex items-center justify-center bg-black/40 z-50">
+                    <div className="bg-white rounded-lg shadow-xl p-6 w-[320px] text-center animate-fade-in">
+                      <h2 className="text-lg font-semibold text-green-600 mb-2">
+                        Application Submitted!
+                      </h2>
+                      <p className="text-gray-700">{message}</p>
+                      <img
+                        src={cat}
+                        alt="Cute Cat"
+                        className="w-32 h-32 mb-4 rounded-lg mx-auto"
+                      />
+                      <p className="text-sm text-gray-500 mt-2">Redirecting...</p>
+                    </div>
+                  </div>
+                )}
               </Form>
             </CardContent>
           </Card>
