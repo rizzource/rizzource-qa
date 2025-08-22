@@ -10,7 +10,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ArrowLeft, ArrowRight, GraduationCap, Users } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
 
 const mentorSchema = z.object({
   // Basic Information
@@ -83,16 +82,10 @@ const SignupForm = ({ userType, onBack }) => {
     },
   });
 
-  const onSubmit = async (data) => {
-    const { error } = await supabase
-      .from("signups")
-      .insert([{ ...data, userType }]);
-  
-    if (error) {
-      console.error("Error inserting data:", error);
-    } else {
-      navigate("/thank-you");
-    }
+  const onSubmit = (data) => {
+    // Store form data in sessionStorage for the thank you page
+    sessionStorage.setItem('signupData', JSON.stringify({ ...data, userType }));
+    navigate('/thank-you');
   };
 
   const nextStep = async () => {
