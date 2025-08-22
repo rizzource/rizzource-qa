@@ -183,9 +183,6 @@ const ThankYou = () => {
                 
                 <CardContent className="text-center">
                   <div className="space-y-4">
-                    <p className="text-white/90">
-                      You'll receive a confirmation email shortly with next steps for the mentorship program.
-                    </p>
                     <div className="flex justify-center">
                       <Button
                         onClick={handleBackToHome}
