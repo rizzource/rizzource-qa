@@ -16,7 +16,7 @@ const Index = () => {
 
   const handleUserTypeSelect = (type) => {
     setUserType(type);
-    setAppState(type); // 'mentor' or 'mentee'
+    setAppState('signup');
   };
 
   const handleBackToSelection = () => {
@@ -80,11 +80,11 @@ const Index = () => {
             onBack={handleBackToHero}
           />
         )}
-        {appState === 'mentor' && (
-          <SignupForm userType="mentor" onBack={handleBackToSelection} />
-        )}
-        {appState === 'mentee' && (
-          <SignupForm userType="mentee" onBack={handleBackToSelection} />
+        {appState === 'signup' && userType && (
+          <SignupForm 
+            userType={userType}
+            onBack={handleBackToSelection}
+          />
         )}
       </main>
       <Footer />
