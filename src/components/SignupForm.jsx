@@ -121,21 +121,21 @@ const SignupForm = ({ userType, onBack }) => {
 
       if (error) {
         console.error('Supabase error:', error);
-        toast({
-          title: "Error",
-          description: "Failed to submit your application. Please try again.",
-          variant: "destructive",
-        });
+        // toast({
+        //   title: "Error",
+        //   description: "Failed to submit your application. Please try again.",
+        //   variant: "destructive",
+        // });
         return;
       }
 
       // Store form data in sessionStorage for the thank you page
       sessionStorage.setItem('signupData', JSON.stringify({ ...data, userType }));
       
-      toast({
-        title: "Success!",
-        description: "Your application has been submitted successfully.",
-      });
+      // toast({
+      //   title: "Success!",
+      //   description: "Your application has been submitted successfully.",
+      // });
       
       navigate('/thank-you');
     } catch (error) {
