@@ -124,25 +124,7 @@ const ThankYou = () => {
                             </FormItem>
                           )}
                         />
-                        
-                        <FormField
-                          control={form.control}
-                          name="feedback"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel className="text-white">What did you like about the application process?</FormLabel>
-                              <FormControl>
-                                <Textarea 
-                                  placeholder="Share your thoughts about the application process..."
-                                  {...field}
-                                  className="bg-white/10 border-white/20 text-white placeholder:text-white/60 min-h-[100px] px-3 py-2 resize-none rounded-md"
-                                />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                        
+                         
                         <FormField
                           control={form.control}
                           name="improvement"
