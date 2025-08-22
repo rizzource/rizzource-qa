@@ -14,7 +14,6 @@ import Footer from "@/components/Footer";
 
 const feedbackSchema = z.object({
   rating: z.string().min(1, "Please select a rating"),
-  feedback: z.string().min(10, "Please provide at least 10 characters of feedback"),
   improvement: z.string().optional(),
 });
 
