@@ -25,14 +25,12 @@ const HeroSection = ({ onStartProgram }) => {
           <div className="text-center space-y-6 lg:space-y-8">
             <div className="space-y-4">
               <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold text-white leading-tight pt-8">
-                Join APALSA's
+                APALSA's
                 <span className="block text-gold-light">Mentorship Program</span>
-                Today
               </h1>
               
               <p className="text-lg sm:text-xl lg:text-2xl text-white/90 leading-relaxed max-w-4xl mx-auto">
-                Connect with experienced legal professionals and fellow students in the Asian Pacific American Law Student Association community for guidance and career support.
-              </p>
+Learn from APALSA mentors who have excelled academically, secured internships, and are eager to share insights to help you thrive in Law School and Beyond.              </p>
             </div>
 
             {/* CTA Button */}
