@@ -19,7 +19,7 @@ const Header = () => {
             <div className="hidden sm:block">
               <h1 className="text-lg md:text-xl text-primary">
                 <span className="font-bold" style={{color: 'hsl(51 100% 50%)'}}>RIZZ</span>
-                <span className="font-semibold">ource</span>
+                <span className="font-semibold" style={{fontWeight: 500}}>ource</span>
               </h1>
               <p className="text-xs text-muted-foreground">Law School and Beyond</p>
             </div>
