@@ -17,7 +17,10 @@ const Header = () => {
               <Scale className="w-5 h-5 md:w-6 md:h-6 text-primary-foreground" />
             </div>
             <div className="hidden sm:block">
-              <h1 className="text-lg md:text-xl font-bold text-primary">RIZZource</h1>
+              <h1 className="text-lg md:text-xl text-primary">
+                <span className="font-bold" style={{color: 'hsl(51 100% 50%)'}}>RIZZ</span>
+                <span className="font-semibold">ource</span>
+              </h1>
               <p className="text-xs text-muted-foreground">Law School and Beyond</p>
             </div>
           </a>

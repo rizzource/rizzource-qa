@@ -33,6 +33,7 @@ All colors MUST be HSL.
 
     /* Gold System */
     --gold-primary: 51 100% 50%;     /* #FFD700 */
+    --gold-rizz: 51 100% 50%;        /* #FFD900 */
     --gold-secondary: 43 74% 38%;    /* #B8860B */
     --gold-accent: 45 77% 77%;       /* #F4E6A1 */
     --accent: 51 100% 50%;
