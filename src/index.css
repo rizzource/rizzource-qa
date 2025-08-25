@@ -139,7 +139,9 @@ All colors MUST be HSL.
   html {
     scroll-behavior: smooth;
   }
-  
+}
+
+@layer utilities {
   /* Enhanced mobile-first optimizations */
   .mobile-optimized {
     @apply px-4 sm:px-6 lg:px-8;
@@ -147,6 +149,8 @@ All colors MUST be HSL.
   
   .touch-friendly {
     @apply min-h-[44px] min-w-[44px] p-2;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
   }
   
   .touch-target {
@@ -187,18 +191,6 @@ All colors MUST be HSL.
   
   .responsive-margin {
     @apply m-4 sm:m-6 md:m-8 lg:m-12;
-  }
-    
-    /* Bottom navigation spacing */
-    body {
-      padding-bottom: 4rem;
-    }
-  }
-  
-  /* Improved touch interactions */
-  .touch-friendly {
-    -webkit-tap-highlight-color: transparent;
-    touch-action: manipulation;
   }
   
   /* Performance optimizations */
