@@ -220,10 +220,17 @@ const SignupForm = ({ userType, onBack }) => {
                     <FormControl>
                       <Input 
                         {...field}
-                        className="bg-white/10 border-white/20 text-white placeholder:text-white/60 px-3 rounded-md"
+                        className="
+            bg-white/10 
+            border-white/20 
+            text-white 
+            placeholder:text-white/60 
+            px-3 rounded-md
+            focus:border-[#FFD900] focus:ring-2 focus:ring-[#FFD900]
+          "
                       />
                     </FormControl>
-                    <FormMessage />
+                    <FormMessage className="text-[#FFD900]" />
                   </FormItem>
                 )}
               />
