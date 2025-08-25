@@ -56,7 +56,8 @@ All colors MUST be HSL.
 
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 51 100% 50%; /* Changed from green to yellow */
+    --ring: 85 39% 45%; /* Green focus ring for text inputs */
+    --ring-yellow: 51 100% 50%; /* Yellow focus ring for buttons and accents */
 
     /* Enhanced gradients */
     --gradient-hero: linear-gradient(135deg, hsl(98 67% 19%), hsl(94 48% 32%));
@@ -219,7 +220,16 @@ All colors MUST be HSL.
   
   /* Search and form enhancements */
   .search-focus {
-    @apply ring-2 ring-gold-primary border-gold-primary;
+    @apply ring-2 ring-light-green border-light-green;
+  }
+  
+  /* Text input focus styles */
+  .input-focus-green {
+    @apply focus-visible:ring-2 focus-visible:ring-light-green focus-visible:border-light-green;
+  }
+  
+  .input-focus-yellow {
+    @apply focus-visible:ring-2 focus-visible:ring-gold-primary focus-visible:border-gold-primary;
   }
   
   .filter-checkbox:checked {
