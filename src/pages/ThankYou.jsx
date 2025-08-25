@@ -200,6 +200,11 @@ const ThankYou = () => {
                   <CardTitle className="text-3xl text-white mb-2">
                     Thank You for Your Feedback!
                   </CardTitle>
+                  <img
+                    src="https://ixwnucfebopjqcokohhw.supabase.co/storage/v1/object/public/assets/cat2.gif"
+                    alt="Success Cat"
+                    className="mx-auto mb-4 w-32 h-32 object-contain"
+                  />
                   <CardDescription className="text-white/80 text-lg">
                     Your feedback helps us improve the APALSA Mentorship Program experience.
                     We appreciate you taking the time to share your thoughts.
