@@ -137,6 +137,7 @@ const SignupForm = ({ userType, onBack }) => {
       //   description: "Your application has been submitted successfully.",
       // });
       
+      window.scrollTo({ top: 0, behavior: "smooth" });
       navigate('/thank-you');
     } catch (error) {
       console.error('Submission error:', error);
@@ -182,6 +183,7 @@ const SignupForm = ({ userType, onBack }) => {
     const isValid = await form.trigger(fieldsToValidate);
     if (isValid) {
       setCurrentStep(currentStep + 1);
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
   };
 
