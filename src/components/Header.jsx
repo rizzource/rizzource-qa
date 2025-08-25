@@ -16,11 +16,6 @@ const Header = () => {
             </div>
             <div className="flex-1 sm:block">
               <h1 className="text-base sm:text-lg md:text-xl text-primary leading-tight">
-                 <img
-        src="https://ixwnucfebopjqcokohhw.supabase.co/storage/v1/object/public/assets/5d1a12c4-4885-4103-a5d7-5656fab8f278.png"
-        alt="Logo"
-        className="h-10"
-      />
                 <span className="font-bold text-gold" style={{fontWeight: 700, color: "#FFD900"}}>RIZZ</span>
                 <span className="font-semibold text-primary" style={{fontWeight: 600}}>ource</span>
               </h1>
