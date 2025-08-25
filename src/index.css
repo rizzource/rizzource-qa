@@ -140,17 +140,54 @@ All colors MUST be HSL.
     scroll-behavior: smooth;
   }
   
-  /* Mobile-first optimizations */
-  @media (max-width: 767px) {
-    .mobile-optimized {
-      padding-left: 1rem;
-      padding-right: 1rem;
-    }
-    
-    .touch-target {
-      min-height: 44px;
-      min-width: 44px;
-    }
+  /* Enhanced mobile-first optimizations */
+  .mobile-optimized {
+    @apply px-4 sm:px-6 lg:px-8;
+  }
+  
+  .touch-friendly {
+    @apply min-h-[44px] min-w-[44px] p-2;
+  }
+  
+  .touch-target {
+    @apply relative min-h-[44px] min-w-[44px];
+  }
+  
+  .touch-target::before {
+    content: '';
+    @apply absolute inset-0;
+  }
+  
+  /* Responsive text scaling */
+  .responsive-text-sm {
+    @apply text-sm sm:text-base md:text-lg;
+  }
+  
+  .responsive-text-lg {
+    @apply text-lg sm:text-xl md:text-2xl;
+  }
+  
+  .responsive-text-xl {
+    @apply text-xl sm:text-2xl md:text-3xl lg:text-4xl;
+  }
+  
+  .responsive-text-2xl {
+    @apply text-2xl sm:text-3xl md:text-4xl lg:text-5xl;
+  }
+  
+  /* Enhanced mobile button sizing */
+  .mobile-button {
+    @apply px-4 py-3 text-base min-h-[48px] sm:px-6 sm:py-4 sm:text-lg;
+  }
+  
+  /* Mobile-first responsive spacing */
+  .responsive-padding {
+    @apply p-4 sm:p-6 md:p-8 lg:p-12;
+  }
+  
+  .responsive-margin {
+    @apply m-4 sm:m-6 md:m-8 lg:m-12;
+  }
     
     /* Bottom navigation spacing */
     body {

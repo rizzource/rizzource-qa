@@ -1,31 +1,29 @@
 import { Button } from "@/components/ui/button";
 import { Scale } from "lucide-react";
-import { useState } from "react";
-import MobileNavigation from "./MobileNavigation";
 
 const Header = () => {
   const navigation = [];
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-b border-border/50">
-      <div className="container mx-auto px-4 mobile-optimized">
-        <div className="flex items-center justify-between h-16">
+      <div className="container mx-auto mobile-optimized">
+        <div className="flex items-center justify-between h-14 sm:h-16">
           
-          {/* Logo */}
-          <a href="/" className="flex items-center space-x-3 touch-friendly">
-            <div className="w-8 h-8 md:w-10 md:h-10 bg-primary rounded-lg flex items-center justify-center">
-              <Scale className="w-5 h-5 md:w-6 md:h-6 text-primary-foreground" />
+          {/* Logo - Responsive sizing and visibility */}
+          <a href="/" className="flex items-center space-x-2 sm:space-x-3 touch-friendly flex-1 sm:flex-initial">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 bg-primary rounded-lg flex items-center justify-center flex-shrink-0">
+              <Scale className="w-5 h-5 sm:w-6 sm:h-6 text-primary-foreground" />
             </div>
-            <div className="hidden sm:block">
-              <h1 className="text-lg md:text-xl text-primary">
-                <span className="font-bold" style={{color: 'hsl(51 100% 50%)'}}>RIZZ</span>
-                <span className="font-semibold" style={{fontWeight: 500}}>ource</span>
+            <div className="flex-1 sm:block">
+              <h1 className="text-base sm:text-lg md:text-xl text-primary leading-tight">
+                <span className="font-bold text-gold-rizz" style={{fontWeight: 700}}>RIZZ</span>
+                <span className="font-semibold text-primary" style={{fontWeight: 600}}>ource</span>
               </h1>
-              <p className="text-xs text-muted-foreground">Law School and Beyond</p>
+              <p className="text-xs text-muted-foreground hidden sm:block">Law School and Beyond</p>
             </div>
           </a>
 
-          {/* Desktop Navigation */}
+          {/* Desktop Navigation - Hidden on mobile */}
           <nav className="hidden md:flex items-center space-x-6 lg:space-x-8">
             {navigation.map((item) => (
               <a
@@ -37,9 +35,6 @@ const Header = () => {
               </a>
             ))}
           </nav>
-
-          {/* Mobile Navigation */}
-          <MobileNavigation />
         </div>
       </div>
     </header>
