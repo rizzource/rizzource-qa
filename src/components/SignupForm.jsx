@@ -204,10 +204,10 @@ const SignupForm = ({ userType, onBack }) => {
                     <FormControl>
                        <Input 
                          {...field}
-                        className="bg-white/10 border-white/20 text-white placeholder:text-white/60 px-3 rounded-md"
-                      />
-                    </FormControl>
-                    <FormMessage />
+                         className="bg-white/10 border-white/20 text-white placeholder:text-white/60 px-3 rounded-md focus:border-[#FFD900] focus:ring-2 focus:ring-[#FFD900]"
+                       />
+                     </FormControl>
+                     <FormMessage className="text-[#FFD900]" />
                   </FormItem>
                 )}
               />
@@ -218,12 +218,12 @@ const SignupForm = ({ userType, onBack }) => {
                   <FormItem>
                     <FormLabel className="text-white">Last Name</FormLabel>
                     <FormControl>
-                      <Input 
-                        {...field}
-                        className="bg-white/10 border-white/20 text-white placeholder:text-white/60 px-3 rounded-md"
-                      />
-                    </FormControl>
-                    <FormMessage />
+                       <Input 
+                         {...field}
+                         className="bg-white/10 border-white/20 text-white placeholder:text-white/60 px-3 rounded-md focus:border-[#FFD900] focus:ring-2 focus:ring-[#FFD900]"
+                       />
+                     </FormControl>
+                     <FormMessage className="text-[#FFD900]" />
                   </FormItem>
                 )}
               />
@@ -234,13 +234,13 @@ const SignupForm = ({ userType, onBack }) => {
                   <FormItem>
                     <FormLabel className="text-white">Email</FormLabel>
                     <FormControl>
-                      <Input 
-                        type="email"
-                        {...field}
-                        className="bg-white/10 border-white/20 text-white placeholder:text-white/60 px-3 rounded-md"
-                      />
-                    </FormControl>
-                    <FormMessage />
+                       <Input 
+                         type="email"
+                         {...field}
+                         className="bg-white/10 border-white/20 text-white placeholder:text-white/60 px-3 rounded-md focus:border-[#FFD900] focus:ring-2 focus:ring-[#FFD900]"
+                       />
+                     </FormControl>
+                     <FormMessage className="text-[#FFD900]" />
                   </FormItem>
                 )}
               />
@@ -256,12 +256,12 @@ const SignupForm = ({ userType, onBack }) => {
                   <FormItem>
                     <FormLabel className="text-white">Field of law you are interested in?</FormLabel>
                     <FormControl>
-                      <Input 
-                        {...field}
-                        className="bg-white/10 border-white/20 text-white placeholder:text-white/60 px-3 rounded-md"
-                      />
-                    </FormControl>
-                    <FormMessage />
+                       <Input 
+                         {...field}
+                         className="bg-white/10 border-white/20 text-white placeholder:text-white/60 px-3 rounded-md focus:border-[#FFD900] focus:ring-2 focus:ring-[#FFD900]"
+                       />
+                     </FormControl>
+                     <FormMessage className="text-[#FFD900]" />
                   </FormItem>
                 )}
               />
@@ -272,12 +272,12 @@ const SignupForm = ({ userType, onBack }) => {
                   <FormItem>
                     <FormLabel className="text-white">Where is your hometown?</FormLabel>
                     <FormControl>
-                      <Input 
-                        {...field}
-                        className="bg-white/10 border-white/20 text-white placeholder:text-white/60 px-3 rounded-md"
-                      />
-                    </FormControl>
-                    <FormMessage />
+                       <Input 
+                         {...field}
+                         className="bg-white/10 border-white/20 text-white placeholder:text-white/60 px-3 rounded-md focus:border-[#FFD900] focus:ring-2 focus:ring-[#FFD900]"
+                       />
+                     </FormControl>
+                     <FormMessage className="text-[#FFD900]" />
                   </FormItem>
                 )}
               />
@@ -288,12 +288,12 @@ const SignupForm = ({ userType, onBack }) => {
                   <FormItem>
                     <FormLabel className="text-white">Where did you go to undergraduate?</FormLabel>
                     <FormControl>
-                      <Input 
-                        {...field}
-                        className="bg-white/10 border-white/20 text-white placeholder:text-white/60 px-3 rounded-md"
-                      />
-                    </FormControl>
-                    <FormMessage />
+                       <Input 
+                         {...field}
+                         className="bg-white/10 border-white/20 text-white placeholder:text-white/60 px-3 rounded-md focus:border-[#FFD900] focus:ring-2 focus:ring-[#FFD900]"
+                       />
+                     </FormControl>
+                     <FormMessage className="text-[#FFD900]" />
                   </FormItem>
                 )}
               />
@@ -309,12 +309,12 @@ const SignupForm = ({ userType, onBack }) => {
                   <FormItem>
                     <FormLabel className="text-white">Any hobbies/interests outside law school?</FormLabel>
                     <FormControl>
-                       <Textarea 
-                         {...field}
-                        className="bg-white/10 border-white/20 text-white placeholder:text-white/60 min-h-[100px] px-3 py-2 resize-none rounded-md"
-                      />
-                    </FormControl>
-                    <FormMessage />
+                        <Textarea 
+                          {...field}
+                         className="bg-white/10 border-white/20 text-white placeholder:text-white/60 min-h-[100px] px-3 py-2 resize-none rounded-md focus:border-[#FFD900] focus:ring-2 focus:ring-[#FFD900]"
+                       />
+                     </FormControl>
+                     <FormMessage className="text-[#FFD900]" />
                   </FormItem>
                 )}
               />
@@ -325,12 +325,12 @@ const SignupForm = ({ userType, onBack }) => {
                   <FormItem>
                     <FormLabel className="text-white">What do you expect from mentors or this program?</FormLabel>
                     <FormControl>
-                       <Textarea 
-                         {...field}
-                        className="bg-white/10 border-white/20 text-white placeholder:text-white/60 min-h-[100px] px-3 py-2 resize-none rounded-md"
-                      />
-                    </FormControl>
-                    <FormMessage />
+                        <Textarea 
+                          {...field}
+                         className="bg-white/10 border-white/20 text-white placeholder:text-white/60 min-h-[100px] px-3 py-2 resize-none rounded-md focus:border-[#FFD900] focus:ring-2 focus:ring-[#FFD900]"
+                       />
+                     </FormControl>
+                     <FormMessage className="text-[#FFD900]" />
                   </FormItem>
                 )}
               />
@@ -342,23 +342,23 @@ const SignupForm = ({ userType, onBack }) => {
                     <FormLabel className="text-white">Do you have a car?</FormLabel>
                     <Select onValueChange={field.onChange} defaultValue={field.value}>
                       <FormControl>
-                         <SelectTrigger className="bg-white/10 border-white/20 text-white px-3 rounded-md">
-                           <SelectValue placeholder="Select if you have a car" />
-                         </SelectTrigger>
-                      </FormControl>
-                      <SelectContent className="bg-white border border-gray-200 rounded-md shadow-lg z-50 w-full min-w-[var(--radix-select-trigger-width)]">
-                        <SelectItem value="yes" className="text-gray-900 hover:bg-gray-100 cursor-pointer pl-4 pr-4 py-2 focus:bg-gray-100 data-[state=checked]:bg-gray-100">
-                          <span className="block">Yes</span>
-                        </SelectItem>
-                        <SelectItem value="no" className="text-gray-900 hover:bg-gray-100 cursor-pointer pl-4 pr-4 py-2 focus:bg-gray-100 data-[state=checked]:bg-gray-100">
-                          <span className="block">No</span>
-                        </SelectItem>
-                        <SelectItem value="planning" className="text-gray-900 hover:bg-gray-100 cursor-pointer pl-4 pr-4 py-2 focus:bg-gray-100 data-[state=checked]:bg-gray-100">
-                          <span className="block">Planning on getting one</span>
-                        </SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
+                          <SelectTrigger className="bg-white/10 border-white/20 text-white px-3 rounded-md focus:border-[#FFD900] focus:ring-2 focus:ring-[#FFD900]">
+                            <SelectValue placeholder="Select if you have a car" />
+                          </SelectTrigger>
+                       </FormControl>
+                       <SelectContent className="bg-white border border-gray-200 rounded-md shadow-lg z-50 w-full min-w-[var(--radix-select-trigger-width)]">
+                         <SelectItem value="yes" className="text-gray-900 hover:bg-gray-100 cursor-pointer pl-4 pr-4 py-2 focus:bg-gray-100 data-[state=checked]:bg-gray-100">
+                           <span className="block">Yes</span>
+                         </SelectItem>
+                         <SelectItem value="no" className="text-gray-900 hover:bg-gray-100 cursor-pointer pl-4 pr-4 py-2 focus:bg-gray-100 data-[state=checked]:bg-gray-100">
+                           <span className="block">No</span>
+                         </SelectItem>
+                         <SelectItem value="planning" className="text-gray-900 hover:bg-gray-100 cursor-pointer pl-4 pr-4 py-2 focus:bg-gray-100 data-[state=checked]:bg-gray-100">
+                           <span className="block">Planning on getting one</span>
+                         </SelectItem>
+                       </SelectContent>
+                     </Select>
+                     <FormMessage className="text-[#FFD900]" />
                   </FormItem>
                 )}
               />
@@ -373,29 +373,29 @@ const SignupForm = ({ userType, onBack }) => {
                     </div>
                     <Select onValueChange={field.onChange} defaultValue={field.value}>
                       <FormControl>
-                         <SelectTrigger className="bg-white/10 border-white/20 text-white px-3 rounded-md">
-                           <SelectValue placeholder="Select your time commitment level" />
-                         </SelectTrigger>
-                      </FormControl>
-                      <SelectContent className="bg-white border border-gray-200 rounded-md shadow-lg z-50 w-full min-w-[var(--radix-select-trigger-width)]">
-                        <SelectItem value="1" className="text-gray-900 hover:bg-gray-100 cursor-pointer pl-4 pr-4 py-2 focus:bg-gray-100 data-[state=checked]:bg-gray-100">
-                          <span className="block">1 - Check in occasionally</span>
-                        </SelectItem>
-                        <SelectItem value="2" className="text-gray-900 hover:bg-gray-100 cursor-pointer pl-4 pr-4 py-2 focus:bg-gray-100 data-[state=checked]:bg-gray-100">
-                          <span className="block">2</span>
-                        </SelectItem>
-                        <SelectItem value="3" className="text-gray-900 hover:bg-gray-100 cursor-pointer pl-4 pr-4 py-2 focus:bg-gray-100 data-[state=checked]:bg-gray-100">
-                          <span className="block">3 - Moderate engagement</span>
-                        </SelectItem>
-                        <SelectItem value="4" className="text-gray-900 hover:bg-gray-100 cursor-pointer pl-4 pr-4 py-2 focus:bg-gray-100 data-[state=checked]:bg-gray-100">
-                          <span className="block">4</span>
-                        </SelectItem>
-                        <SelectItem value="5" className="text-gray-900 hover:bg-gray-100 cursor-pointer pl-4 pr-4 py-2 focus:bg-gray-100 data-[state=checked]:bg-gray-100">
-                          <span className="block">5 - High engagement, new friend</span>
-                        </SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
+                          <SelectTrigger className="bg-white/10 border-white/20 text-white px-3 rounded-md focus:border-[#FFD900] focus:ring-2 focus:ring-[#FFD900]">
+                            <SelectValue placeholder="Select your time commitment level" />
+                          </SelectTrigger>
+                       </FormControl>
+                       <SelectContent className="bg-white border border-gray-200 rounded-md shadow-lg z-50 w-full min-w-[var(--radix-select-trigger-width)]">
+                         <SelectItem value="1" className="text-gray-900 hover:bg-gray-100 cursor-pointer pl-4 pr-4 py-2 focus:bg-gray-100 data-[state=checked]:bg-gray-100">
+                           <span className="block">1 - Check in occasionally</span>
+                         </SelectItem>
+                         <SelectItem value="2" className="text-gray-900 hover:bg-gray-100 cursor-pointer pl-4 pr-4 py-2 focus:bg-gray-100 data-[state=checked]:bg-gray-100">
+                           <span className="block">2</span>
+                         </SelectItem>
+                         <SelectItem value="3" className="text-gray-900 hover:bg-gray-100 cursor-pointer pl-4 pr-4 py-2 focus:bg-gray-100 data-[state=checked]:bg-gray-100">
+                           <span className="block">3 - Moderate engagement</span>
+                         </SelectItem>
+                         <SelectItem value="4" className="text-gray-900 hover:bg-gray-100 cursor-pointer pl-4 pr-4 py-2 focus:bg-gray-100 data-[state=checked]:bg-gray-100">
+                           <span className="block">4</span>
+                         </SelectItem>
+                         <SelectItem value="5" className="text-gray-900 hover:bg-gray-100 cursor-pointer pl-4 pr-4 py-2 focus:bg-gray-100 data-[state=checked]:bg-gray-100">
+                           <span className="block">5 - High engagement, new friend</span>
+                         </SelectItem>
+                       </SelectContent>
+                     </Select>
+                     <FormMessage className="text-[#FFD900]" />
                   </FormItem>
                 )}
               />
@@ -406,12 +406,12 @@ const SignupForm = ({ userType, onBack }) => {
                   <FormItem>
                     <FormLabel className="text-white">Any other concerns/comments? (Optional)</FormLabel>
                     <FormControl>
-                       <Textarea 
-                         {...field}
-                        className="bg-white/10 border-white/20 text-white placeholder:text-white/60 min-h-[80px] px-3 py-2 resize-none rounded-md"
-                      />
-                    </FormControl>
-                    <FormMessage />
+                        <Textarea 
+                          {...field}
+                         className="bg-white/10 border-white/20 text-white placeholder:text-white/60 min-h-[80px] px-3 py-2 resize-none rounded-md focus:border-[#FFD900] focus:ring-2 focus:ring-[#FFD900]"
+                       />
+                     </FormControl>
+                     <FormMessage className="text-[#FFD900]" />
                   </FormItem>
                 )}
               />
@@ -434,12 +434,12 @@ const SignupForm = ({ userType, onBack }) => {
                 <FormItem>
                   <FormLabel className="text-white">First Name</FormLabel>
                   <FormControl>
-                    <Input 
-                      {...field} 
-                      className="bg-white/10 border-white/20 text-white placeholder:text-white/60 px-3 rounded-md"
-                    />
-                  </FormControl>
-                  <FormMessage />
+                     <Input 
+                       {...field} 
+                       className="bg-white/10 border-white/20 text-white placeholder:text-white/60 px-3 rounded-md focus:border-[#FFD900] focus:ring-2 focus:ring-[#FFD900]"
+                     />
+                   </FormControl>
+                   <FormMessage className="text-[#FFD900]" />
                 </FormItem>
               )}
             />
@@ -450,12 +450,12 @@ const SignupForm = ({ userType, onBack }) => {
                 <FormItem>
                   <FormLabel className="text-white">Last Name</FormLabel>
                   <FormControl>
-                    <Input 
-                      {...field} 
-                      className="bg-white/10 border-white/20 text-white placeholder:text-white/60 px-3 rounded-md"
-                    />
-                  </FormControl>
-                  <FormMessage />
+                     <Input 
+                       {...field} 
+                       className="bg-white/10 border-white/20 text-white placeholder:text-white/60 px-3 rounded-md focus:border-[#FFD900] focus:ring-2 focus:ring-[#FFD900]"
+                     />
+                   </FormControl>
+                   <FormMessage className="text-[#FFD900]" />
                 </FormItem>
               )}
             />
@@ -466,13 +466,13 @@ const SignupForm = ({ userType, onBack }) => {
                 <FormItem>
                   <FormLabel className="text-white">Email</FormLabel>
                   <FormControl>
-                    <Input 
-                      type="email"
-                      {...field} 
-                      className="bg-white/10 border-white/20 text-white placeholder:text-white/60 px-3 rounded-md"
-                    />
-                  </FormControl>
-                  <FormMessage />
+                     <Input 
+                       type="email"
+                       {...field} 
+                       className="bg-white/10 border-white/20 text-white placeholder:text-white/60 px-3 rounded-md focus:border-[#FFD900] focus:ring-2 focus:ring-[#FFD900]"
+                     />
+                   </FormControl>
+                   <FormMessage className="text-[#FFD900]" />
                 </FormItem>
               )}
             />
@@ -484,20 +484,20 @@ const SignupForm = ({ userType, onBack }) => {
                   <FormLabel className="text-white">Class Year</FormLabel>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
-                      <SelectTrigger className="bg-white/10 border-white/20 text-white px-3 rounded-md">
-                        <SelectValue placeholder="Select your class year" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent className="bg-white border border-gray-200 rounded-md shadow-lg z-50 w-full min-w-[var(--radix-select-trigger-width)]">
-                      <SelectItem value="2L" className="text-gray-900 hover:bg-gray-100 cursor-pointer pl-4 pr-4 py-2 focus:bg-gray-100 data-[state=checked]:bg-gray-100">
-                        <span className="block">2L</span>
-                      </SelectItem>
-                      <SelectItem value="3L" className="text-gray-900 hover:bg-gray-100 cursor-pointer pl-4 pr-4 py-2 focus:bg-gray-100 data-[state=checked]:bg-gray-100">
-                        <span className="block">3L</span>
-                      </SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
+                       <SelectTrigger className="bg-white/10 border-white/20 text-white px-3 rounded-md focus:border-[#FFD900] focus:ring-2 focus:ring-[#FFD900]">
+                         <SelectValue placeholder="Select your class year" />
+                       </SelectTrigger>
+                     </FormControl>
+                     <SelectContent className="bg-white border border-gray-200 rounded-md shadow-lg z-50 w-full min-w-[var(--radix-select-trigger-width)]">
+                       <SelectItem value="2L" className="text-gray-900 hover:bg-gray-100 cursor-pointer pl-4 pr-4 py-2 focus:bg-gray-100 data-[state=checked]:bg-gray-100">
+                         <span className="block">2L</span>
+                       </SelectItem>
+                       <SelectItem value="3L" className="text-gray-900 hover:bg-gray-100 cursor-pointer pl-4 pr-4 py-2 focus:bg-gray-100 data-[state=checked]:bg-gray-100">
+                         <span className="block">3L</span>
+                       </SelectItem>
+                     </SelectContent>
+                   </Select>
+                   <FormMessage className="text-[#FFD900]" />
                 </FormItem>
               )}
             />
@@ -513,12 +513,12 @@ const SignupForm = ({ userType, onBack }) => {
                 <FormItem>
                   <FormLabel className="text-white">What field of law are you interested in?</FormLabel>
                   <FormControl>
-                    <Input 
-                      {...field}
-                      className="bg-white/10 border-white/20 text-white placeholder:text-white/60 px-3 rounded-md"
-                    />
-                  </FormControl>
-                  <FormMessage />
+                     <Input 
+                       {...field}
+                       className="bg-white/10 border-white/20 text-white placeholder:text-white/60 px-3 rounded-md focus:border-[#FFD900] focus:ring-2 focus:ring-[#FFD900]"
+                     />
+                   </FormControl>
+                   <FormMessage className="text-[#FFD900]" />
                 </FormItem>
               )}
             />
@@ -529,12 +529,12 @@ const SignupForm = ({ userType, onBack }) => {
                 <FormItem>
                   <FormLabel className="text-white">Where is your hometown?</FormLabel>
                   <FormControl>
-                    <Input 
-                      {...field}
-                      className="bg-white/10 border-white/20 text-white placeholder:text-white/60 px-3 rounded-md"
-                    />
-                  </FormControl>
-                  <FormMessage />
+                     <Input 
+                       {...field}
+                       className="bg-white/10 border-white/20 text-white placeholder:text-white/60 px-3 rounded-md focus:border-[#FFD900] focus:ring-2 focus:ring-[#FFD900]"
+                     />
+                   </FormControl>
+                   <FormMessage className="text-[#FFD900]" />
                 </FormItem>
               )}
             />
@@ -545,12 +545,12 @@ const SignupForm = ({ userType, onBack }) => {
                 <FormItem>
                   <FormLabel className="text-white">Where did you go to undergraduate university?</FormLabel>
                   <FormControl>
-                    <Input 
-                      {...field}
-                      className="bg-white/10 border-white/20 text-white placeholder:text-white/60 px-3 rounded-md"
-                    />
-                  </FormControl>
-                  <FormMessage />
+                     <Input 
+                       {...field}
+                       className="bg-white/10 border-white/20 text-white placeholder:text-white/60 px-3 rounded-md focus:border-[#FFD900] focus:ring-2 focus:ring-[#FFD900]"
+                     />
+                   </FormControl>
+                   <FormMessage className="text-[#FFD900]" />
                 </FormItem>
               )}
             />
@@ -566,12 +566,12 @@ const SignupForm = ({ userType, onBack }) => {
                 <FormItem>
                   <FormLabel className="text-white">What are your hobbies/interests outside of law school?</FormLabel>
                   <FormControl>
-                    <Textarea 
-                      {...field}
-                      className="bg-white/10 border-white/20 text-white placeholder:text-white/60 min-h-[100px] px-3 py-2 resize-none rounded-md"
-                    />
-                  </FormControl>
-                  <FormMessage />
+                     <Textarea 
+                       {...field}
+                       className="bg-white/10 border-white/20 text-white placeholder:text-white/60 min-h-[100px] px-3 py-2 resize-none rounded-md focus:border-[#FFD900] focus:ring-2 focus:ring-[#FFD900]"
+                     />
+                   </FormControl>
+                   <FormMessage className="text-[#FFD900]" />
                 </FormItem>
               )}
             />
@@ -588,29 +588,29 @@ const SignupForm = ({ userType, onBack }) => {
                   </FormControl>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
-                      <SelectTrigger className="bg-white/10 border-white/20 text-white px-3 rounded-md">
-                        <SelectValue placeholder="Select your time commitment level" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent className="bg-white border border-gray-200 rounded-md shadow-lg z-50 w-full min-w-[var(--radix-select-trigger-width)]">
-                      <SelectItem value="1" className="text-gray-900 hover:bg-gray-100 cursor-pointer pl-4 pr-4 py-2 focus:bg-gray-100 data-[state=checked]:bg-gray-100">
-                        <span className="block">1 - Check in occasionally</span>
-                      </SelectItem>
-                      <SelectItem value="2" className="text-gray-900 hover:bg-gray-100 cursor-pointer pl-4 pr-4 py-2 focus:bg-gray-100 data-[state=checked]:bg-gray-100">
-                        <span className="block">2</span>
-                      </SelectItem>
-                      <SelectItem value="3" className="text-gray-900 hover:bg-gray-100 cursor-pointer pl-4 pr-4 py-2 focus:bg-gray-100 data-[state=checked]:bg-gray-100">
-                        <span className="block">3 - Moderate engagement</span>
-                      </SelectItem>
-                      <SelectItem value="4" className="text-gray-900 hover:bg-gray-100 cursor-pointer pl-4 pr-4 py-2 focus:bg-gray-100 data-[state=checked]:bg-gray-100">
-                        <span className="block">4</span>
-                      </SelectItem>
-                      <SelectItem value="5" className="text-gray-900 hover:bg-gray-100 cursor-pointer pl-4 pr-4 py-2 focus:bg-gray-100 data-[state=checked]:bg-gray-100">
-                        <span className="block">5 - High engagement, new friend</span>
-                      </SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
+                       <SelectTrigger className="bg-white/10 border-white/20 text-white px-3 rounded-md focus:border-[#FFD900] focus:ring-2 focus:ring-[#FFD900]">
+                         <SelectValue placeholder="Select your time commitment level" />
+                       </SelectTrigger>
+                     </FormControl>
+                     <SelectContent className="bg-white border border-gray-200 rounded-md shadow-lg z-50 w-full min-w-[var(--radix-select-trigger-width)]">
+                       <SelectItem value="1" className="text-gray-900 hover:bg-gray-100 cursor-pointer pl-4 pr-4 py-2 focus:bg-gray-100 data-[state=checked]:bg-gray-100">
+                         <span className="block">1 - Check in occasionally</span>
+                       </SelectItem>
+                       <SelectItem value="2" className="text-gray-900 hover:bg-gray-100 cursor-pointer pl-4 pr-4 py-2 focus:bg-gray-100 data-[state=checked]:bg-gray-100">
+                         <span className="block">2</span>
+                       </SelectItem>
+                       <SelectItem value="3" className="text-gray-900 hover:bg-gray-100 cursor-pointer pl-4 pr-4 py-2 focus:bg-gray-100 data-[state=checked]:bg-gray-100">
+                         <span className="block">3 - Moderate engagement</span>
+                       </SelectItem>
+                       <SelectItem value="4" className="text-gray-900 hover:bg-gray-100 cursor-pointer pl-4 pr-4 py-2 focus:bg-gray-100 data-[state=checked]:bg-gray-100">
+                         <span className="block">4</span>
+                       </SelectItem>
+                       <SelectItem value="5" className="text-gray-900 hover:bg-gray-100 cursor-pointer pl-4 pr-4 py-2 focus:bg-gray-100 data-[state=checked]:bg-gray-100">
+                         <span className="block">5 - High engagement, new friend</span>
+                       </SelectItem>
+                     </SelectContent>
+                   </Select>
+                   <FormMessage className="text-[#FFD900]" />
                 </FormItem>
               )}
             />
@@ -622,23 +622,23 @@ const SignupForm = ({ userType, onBack }) => {
                   <FormLabel className="text-white">Do you have a car?</FormLabel>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
-                      <SelectTrigger className="bg-white/10 border-white/20 text-white px-3 rounded-md">
-                        <SelectValue placeholder="Select if you have a car" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent className="bg-white border border-gray-200 rounded-md shadow-lg z-50 w-full min-w-[var(--radix-select-trigger-width)]">
-                      <SelectItem value="yes" className="text-gray-900 hover:bg-gray-100 cursor-pointer pl-4 pr-4 py-2 focus:bg-gray-100 data-[state=checked]:bg-gray-100">
-                        <span className="block">Yes</span>
-                      </SelectItem>
-                      <SelectItem value="no" className="text-gray-900 hover:bg-gray-100 cursor-pointer pl-4 pr-4 py-2 focus:bg-gray-100 data-[state=checked]:bg-gray-100">
-                        <span className="block">No</span>
-                      </SelectItem>
-                      <SelectItem value="planning" className="text-gray-900 hover:bg-gray-100 cursor-pointer pl-4 pr-4 py-2 focus:bg-gray-100 data-[state=checked]:bg-gray-100">
-                        <span className="block">Planning on getting one</span>
-                      </SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
+                       <SelectTrigger className="bg-white/10 border-white/20 text-white px-3 rounded-md focus:border-[#FFD900] focus:ring-2 focus:ring-[#FFD900]">
+                         <SelectValue placeholder="Select if you have a car" />
+                       </SelectTrigger>
+                     </FormControl>
+                     <SelectContent className="bg-white border border-gray-200 rounded-md shadow-lg z-50 w-full min-w-[var(--radix-select-trigger-width)]">
+                       <SelectItem value="yes" className="text-gray-900 hover:bg-gray-100 cursor-pointer pl-4 pr-4 py-2 focus:bg-gray-100 data-[state=checked]:bg-gray-100">
+                         <span className="block">Yes</span>
+                       </SelectItem>
+                       <SelectItem value="no" className="text-gray-900 hover:bg-gray-100 cursor-pointer pl-4 pr-4 py-2 focus:bg-gray-100 data-[state=checked]:bg-gray-100">
+                         <span className="block">No</span>
+                       </SelectItem>
+                       <SelectItem value="planning" className="text-gray-900 hover:bg-gray-100 cursor-pointer pl-4 pr-4 py-2 focus:bg-gray-100 data-[state=checked]:bg-gray-100">
+                         <span className="block">Planning on getting one</span>
+                       </SelectItem>
+                     </SelectContent>
+                   </Select>
+                   <FormMessage className="text-[#FFD900]" />
                 </FormItem>
               )}
             />
@@ -649,12 +649,12 @@ const SignupForm = ({ userType, onBack }) => {
                 <FormItem>
                   <FormLabel className="text-white">Is there someone you would like to be co-mentors with? (Optional)</FormLabel>
                   <FormControl>
-                    <Input 
-                      {...field}
-                      className="bg-white/10 border-white/20 text-white placeholder:text-white/60 px-3 rounded-md"
-                    />
-                  </FormControl>
-                  <FormMessage />
+                     <Input 
+                       {...field}
+                       className="bg-white/10 border-white/20 text-white placeholder:text-white/60 px-3 rounded-md focus:border-[#FFD900] focus:ring-2 focus:ring-[#FFD900]"
+                     />
+                   </FormControl>
+                   <FormMessage className="text-[#FFD900]" />
                 </FormItem>
               )}
             />
@@ -665,12 +665,12 @@ const SignupForm = ({ userType, onBack }) => {
                 <FormItem>
                   <FormLabel className="text-white">Any last comments? (Optional)</FormLabel>
                   <FormControl>
-                    <Textarea 
-                      {...field}
-                      className="bg-white/10 border-white/20 text-white placeholder:text-white/60 min-h-[80px] px-3 py-2 resize-none rounded-md"
-                    />
-                  </FormControl>
-                  <FormMessage />
+                     <Textarea 
+                       {...field}
+                       className="bg-white/10 border-white/20 text-white placeholder:text-white/60 min-h-[80px] px-3 py-2 resize-none rounded-md focus:border-[#FFD900] focus:ring-2 focus:ring-[#FFD900]"
+                     />
+                   </FormControl>
+                   <FormMessage className="text-[#FFD900]" />
                 </FormItem>
               )}
             />
