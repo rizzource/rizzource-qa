@@ -755,7 +755,7 @@ const SignupForm = ({ userType, onBack }) => {
                         type="button"
                         variant="outline"
                         onClick={prevStep}
-                        className="border-white/20 text-white hover:bg-light-green whitespace-nowrap flex items-center"
+                        className="border-white/20 text-green hover:bg-light-green whitespace-nowrap flex items-center"
                       >
                         <ArrowLeft className="mr-2 h-4 w-4" />
                         Previous
