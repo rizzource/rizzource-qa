@@ -95,6 +95,11 @@ const ThankYou = () => {
                   <CardTitle className="text-3xl text-white mb-2">
                     Application Submitted Successfully!
                   </CardTitle>
+                  <img
+                    src="https://ixwnucfebopjqcokohhw.supabase.co/storage/v1/object/public/assets/cat.gif"
+                    alt="Success Cat"
+                    className="mx-auto mb-4 w-32 h-32 object-contain"
+                  />
                   <CardDescription className="text-white/80 text-lg">
                     Thank you, {signupData.firstName}! Your {signupData.userType} application has been received.
                     We'll review your application and get back to you.
