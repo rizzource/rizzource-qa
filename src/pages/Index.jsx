@@ -51,26 +51,30 @@ const Index = ({ mentorshipPage = false }) => {
           <>
             <HeroSection onStartProgram={handleStartProgram} />
             {/* Add visual break between hero and footer */}
-            <section className="bg-white flex items-center justify-center min-h-screen">
-                    <div className="text-center space-y-4">
-                      <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
-                        <Users className="w-8 h-8 text-primary" />
-                      </div>
-                      <h3 className="text-xl font-semibold">Friends</h3>
-                      <p className="text-muted-foreground">
-                        Meet upper-year students, make friends and get connected to opportunities
-                      </p>
+            <section className="bg-background py-16 sm:py-20 md:py-24">
+              <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 sm:gap-12 lg:gap-16 max-w-4xl mx-auto">
+                  <div className="text-center space-y-4 sm:space-y-6">
+                    <div className="w-16 h-16 sm:w-20 sm:h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto shadow-lg">
+                      <Users className="w-8 h-8 sm:w-10 sm:h-10 text-primary" />
                     </div>
-            
-                    <div className="text-center space-y-4">
-                      <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
-                        <BookOpen className="w-8 h-8 text-primary" />
-                      </div>
-                      <h3 className="text-xl font-semibold">Advice</h3>
-                      <p className="text-muted-foreground">
-                        Get advice on classes, internships and navigating law school
-                      </p>
+                    <h3 className="text-xl sm:text-2xl font-semibold text-foreground">Friends</h3>
+                    <p className="text-muted-foreground text-sm sm:text-base leading-relaxed max-w-xs mx-auto">
+                      Meet upper-year students, make friends and get connected to opportunities
+                    </p>
+                  </div>
+          
+                  <div className="text-center space-y-4 sm:space-y-6">
+                    <div className="w-16 h-16 sm:w-20 sm:h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto shadow-lg">
+                      <BookOpen className="w-8 h-8 sm:w-10 sm:h-10 text-primary" />
                     </div>
+                    <h3 className="text-xl sm:text-2xl font-semibold text-foreground">Advice</h3>
+                    <p className="text-muted-foreground text-sm sm:text-base leading-relaxed max-w-xs mx-auto">
+                      Get advice on classes, internships and navigating law school
+                    </p>
+                  </div>
+                </div>
+              </div>
             </section>
           </>
         )}
