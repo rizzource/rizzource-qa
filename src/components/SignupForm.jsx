@@ -183,7 +183,10 @@ const SignupForm = ({ userType, onBack }) => {
     const isValid = await form.trigger(fieldsToValidate);
     if (isValid) {
       setCurrentStep(currentStep + 1);
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      // Small timeout to ensure DOM updates before scrolling
+      setTimeout(() => {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }, 100);
     }
   };
 

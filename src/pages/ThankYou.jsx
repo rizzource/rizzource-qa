@@ -63,6 +63,7 @@ const ThankYou = () => {
 
       setShowFeedbackForm(false);
       setFeedbackSubmitted(true);
+      window.scrollTo({ top: 0, behavior: "smooth" });
       // Clear signup data from session storage
       sessionStorage.removeItem('signupData');
     } catch (error) {
