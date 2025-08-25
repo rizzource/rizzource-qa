@@ -29,7 +29,7 @@ const MentorMenteeSelection = ({ onSelectType, onBack }) => {
 
           {/* Selection Cards */}
           <div className="grid md:grid-cols-2 gap-8">
-            <Card className="bg-white/10 backdrop-blur-sm border-white/20 hover:bg-white/15 transition-all duration-300 cursor-pointer group"
+            <Card className="p-6 bg-white/10 backdrop-blur-sm border-white/20 hover:bg-white/15 transition-all duration-300 cursor-pointer group"
                   onClick={() => onSelectType('mentor')}>
               <CardHeader className="text-center pb-4">
                 <div className="mx-auto mb-4 p-4 bg-gold-light/20 rounded-full w-fit group-hover:bg-gold-light/30 transition-colors">
@@ -59,8 +59,8 @@ const MentorMenteeSelection = ({ onSelectType, onBack }) => {
                 </Button>
               </CardContent>
             </Card>
-
-            <Card className="bg-white/10 backdrop-blur-sm border-white/20 hover:bg-white/15 transition-all duration-300 cursor-pointer group"
+          
+            <Card className="p-6 bg-white/10 backdrop-blur-sm border-white/20 hover:bg-white/15 transition-all duration-300 cursor-pointer group"
                   onClick={() => onSelectType('mentee')}>
               <CardHeader className="text-center pb-4">
                 <div className="mx-auto mb-4 p-4 bg-gold-light/20 rounded-full w-fit group-hover:bg-gold-light/30 transition-colors">
