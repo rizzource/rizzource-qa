@@ -51,7 +51,7 @@ const Index = ({ mentorshipPage = false }) => {
           <>
             <HeroSection onStartProgram={handleStartProgram} />
             {/* Add visual break between hero and footer */}
-            <section className="bg-white py-5 flex items-center justify-center min-h-screen">
+            <section className="bg-white flex items-center justify-center min-h-screen">
                     <div className="text-center space-y-4">
                       <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
                         <Users className="w-8 h-8 text-primary" />
