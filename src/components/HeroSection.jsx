@@ -30,7 +30,7 @@ const HeroSection = ({ onStartProgram }) => {
               </h1>
               
               <p className="text-lg sm:text-xl lg:text-2xl text-white/90 leading-relaxed max-w-4xl mx-auto">
-Learn from APALSA mentors who have excelled academically, secured internships, and are eager to share insights to help you thrive in Law School and Beyond.              </p>
+Learn from APALSA mentors who have excelled academically, secured internships, and are eager to share insights to help you thrive in Law School.              </p>
             </div>
 
             {/* CTA Button */}
@@ -40,7 +40,7 @@ Learn from APALSA mentors who have excelled academically, secured internships, a
                 onClick={onStartProgram}
                 className="bg-gold-light text-primary hover:bg-gold-dark transition-all duration-300 shadow-gold text-base sm:text-lg px-6 sm:px-8 h-12 sm:h-14 touch-target touch-friendly whitespace-nowrap flex items-center rounded-xl"
               >
-                APALSA Mentorship Program
+                SIGN UP NOW
                 <ArrowRight className="ml-2 h-5 w-5 flex-shrink-0" />
               </Button>
             </div>
