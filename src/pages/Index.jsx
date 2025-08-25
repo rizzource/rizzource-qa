@@ -54,33 +54,20 @@ const Index = ({ mentorshipPage = false }) => {
             <section className="bg-white py-20">
               <div className="container mx-auto px-4 text-center">
                 <div className="max-w-4xl mx-auto space-y-8">
-                  <h2 className="text-3xl font-bold text-foreground">
-                    Join APALSA's Mentorship Network
-                  </h2>
-                  <p className="text-lg text-muted-foreground leading-relaxed">
-                    Connect with upper-year law students and fellow students in the Asian Pacific American Law Student Association community. Our mentorship program provides guidance, support, and networking opportunities to help you succeed in your legal career.
-                  </p>
                   <div className="grid md:grid-cols-3 gap-8 mt-12">
                     <div className="text-center space-y-4">
                       <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
                         <Users className="w-8 h-8 text-primary" />
                       </div>
-                      <h3 className="text-xl font-semibold">Student Network</h3>
-                      <p className="text-muted-foreground">Connect with law students and expand your network within APALSA</p>
+                      <h3 className="text-xl font-semibold">Friends</h3>
+                      <p className="text-muted-foreground">Meet upper-year students, make friends and get connected to opportunities</p>
                     </div>
                     <div className="text-center space-y-4">
                       <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
                         <BookOpen className="w-8 h-8 text-primary" />
                       </div>
-                      <h3 className="text-xl font-semibold">Career Guidance</h3>
-                      <p className="text-muted-foreground">Get personalized advice for your legal career path</p>
-                    </div>
-                    <div className="text-center space-y-4">
-                      <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
-                        <Zap className="w-8 h-8 text-primary" />
-                      </div>
-                      <h3 className="text-xl font-semibold">Skills Development</h3>
-                      <p className="text-muted-foreground">Enhance your legal skills through mentorship and support</p>
+                      <h3 className="text-xl font-semibold">Advice</h3>
+                      <p className="text-muted-foreground">Get advice on classes, internships and navigating law school</p>
                     </div>
                   </div>
                 </div>
