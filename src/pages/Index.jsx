@@ -51,26 +51,30 @@ const Index = ({ mentorshipPage = false }) => {
           <>
             <HeroSection onStartProgram={handleStartProgram} />
             {/* Add visual break between hero and footer */}
-            <section className="bg-white py-5 flex items-center justify-center min-h-screen">
-                    <div className="text-center space-y-4">
-                      <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
-                        <Users className="w-8 h-8 text-primary" />
-                      </div>
-                      <h3 className="text-xl font-semibold">Friends</h3>
-                      <p className="text-muted-foreground">
-                        Meet upper-year students, make friends and get connected to opportunities
-                      </p>
-                    </div>
+            <section className="bg-white py-10 flex items-center justify-center">
+              <div className="grid md:grid-cols-2 gap-8 text-center">
+                {/* Friends Card */}
+                <div className="space-y-4">
+                  <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
+                    <Users className="w-8 h-8 text-primary" />
+                  </div>
+                  <h3 className="text-xl font-semibold">Friends</h3>
+                  <p className="text-muted-foreground">
+                    Meet upper-year students, make friends and get connected to opportunities
+                  </p>
+                </div>
             
-                    <div className="text-center space-y-4">
-                      <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
-                        <BookOpen className="w-8 h-8 text-primary" />
-                      </div>
-                      <h3 className="text-xl font-semibold">Advice</h3>
-                      <p className="text-muted-foreground">
-                        Get advice on classes, internships and navigating law school
-                      </p>
-                    </div>
+                {/* Advice Card */}
+                <div className="space-y-4">
+                  <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
+                    <BookOpen className="w-8 h-8 text-primary" />
+                  </div>
+                  <h3 className="text-xl font-semibold">Advice</h3>
+                  <p className="text-muted-foreground">
+                    Get advice on classes, internships and navigating law school
+                  </p>
+                </div>
+              </div>
             </section>
           </>
         )}
