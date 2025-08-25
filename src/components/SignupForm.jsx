@@ -204,14 +204,7 @@ const SignupForm = ({ userType, onBack }) => {
                     <FormControl>
                        <Input 
                          {...field}
-                         className="
-            bg-white/10 
-            border-white/20 
-            text-white 
-            placeholder:text-white/60 
-            px-3 rounded-md
-            focus:border-[#FFD900] focus:ring-2 focus:ring-[#FFD900]
-          "
+                        className="bg-white/10 border-white/20 text-white placeholder:text-white/60 px-3 rounded-md"
                       />
                     </FormControl>
                     <FormMessage />
@@ -227,17 +220,10 @@ const SignupForm = ({ userType, onBack }) => {
                     <FormControl>
                       <Input 
                         {...field}
-                        className="
-            bg-white/10 
-            border-white/20 
-            text-white 
-            placeholder:text-white/60 
-            px-3 rounded-md
-            focus:border-[#FFD900] focus:ring-2 focus:ring-[#FFD900]
-          "
+                        className="bg-white/10 border-white/20 text-white placeholder:text-white/60 px-3 rounded-md"
                       />
                     </FormControl>
-                    <FormMessage className="text-[#FFD900]" />
+                    <FormMessage />
                   </FormItem>
                 )}
               />
@@ -251,16 +237,10 @@ const SignupForm = ({ userType, onBack }) => {
                       <Input 
                         type="email"
                         {...field}
-className="
-            bg-white/10 
-            border-white/20 
-            text-white 
-            placeholder:text-white/60 
-            px-3 rounded-md
-            focus:border-[#FFD900] focus:ring-2 focus:ring-[#FFD900]
-          "                      />
+                        className="bg-white/10 border-white/20 text-white placeholder:text-white/60 px-3 rounded-md"
+                      />
                     </FormControl>
-                    <FormMessage className="text-[#FFD900]"/>
+                    <FormMessage />
                   </FormItem>
                 )}
               />
@@ -278,16 +258,10 @@ className="
                     <FormControl>
                       <Input 
                         {...field}
-className="
-            bg-white/10 
-            border-white/20 
-            text-white 
-            placeholder:text-white/60 
-            px-3 rounded-md
-            focus:border-[#FFD900] focus:ring-2 focus:ring-[#FFD900]
-          "                      />
+                        className="bg-white/10 border-white/20 text-white placeholder:text-white/60 px-3 rounded-md"
+                      />
                     </FormControl>
-                    <FormMessage className="text-[#FFD900]" />
+                    <FormMessage />
                   </FormItem>
                 )}
               />
@@ -300,16 +274,10 @@ className="
                     <FormControl>
                       <Input 
                         {...field}
-className="
-            bg-white/10 
-            border-white/20 
-            text-white 
-            placeholder:text-white/60 
-            px-3 rounded-md
-            focus:border-[#FFD900] focus:ring-2 focus:ring-[#FFD900]
-          "                      />
+                        className="bg-white/10 border-white/20 text-white placeholder:text-white/60 px-3 rounded-md"
+                      />
                     </FormControl>
-                    <FormMessage className="text-[#FFD900]" />
+                    <FormMessage />
                   </FormItem>
                 )}
               />
@@ -322,16 +290,10 @@ className="
                     <FormControl>
                       <Input 
                         {...field}
-className="
-            bg-white/10 
-            border-white/20 
-            text-white 
-            placeholder:text-white/60 
-            px-3 rounded-md
-            focus:border-[#FFD900] focus:ring-2 focus:ring-[#FFD900]
-          "                      />
+                        className="bg-white/10 border-white/20 text-white placeholder:text-white/60 px-3 rounded-md"
+                      />
                     </FormControl>
-                    <FormMessage className="text-[#FFD900]" />
+                    <FormMessage />
                   </FormItem>
                 )}
               />
@@ -349,16 +311,10 @@ className="
                     <FormControl>
                        <Textarea 
                          {...field}
-className="
-            bg-white/10 
-            border-white/20 
-            text-white 
-            placeholder:text-white/60 
-            px-3 rounded-md
-            focus:border-[#FFD900] focus:ring-2 focus:ring-[#FFD900]
-          "                      />
+                        className="bg-white/10 border-white/20 text-white placeholder:text-white/60 min-h-[100px] px-3 py-2 resize-none rounded-md"
+                      />
                     </FormControl>
-                    <FormMessage className="text-[#FFD900]" />
+                    <FormMessage />
                   </FormItem>
                 )}
               />
@@ -371,16 +327,10 @@ className="
                     <FormControl>
                        <Textarea 
                          {...field}
-className="
-            bg-white/10 
-            border-white/20 
-            text-white 
-            placeholder:text-white/60 
-            px-3 rounded-md
-            focus:border-[#FFD900] focus:ring-2 focus:ring-[#FFD900]
-          "                      />
+                        className="bg-white/10 border-white/20 text-white placeholder:text-white/60 min-h-[100px] px-3 py-2 resize-none rounded-md"
+                      />
                     </FormControl>
-                    <FormMessage className="text-[#FFD900]" />
+                    <FormMessage />
                   </FormItem>
                 )}
               />
@@ -392,30 +342,23 @@ className="
                     <FormLabel className="text-white">Do you have a car?</FormLabel>
                     <Select onValueChange={field.onChange} defaultValue={field.value}>
                       <FormControl>
-                         <SelectTrigger className="
-            bg-white/10 
-            border-white/20 
-            text-white 
-            placeholder:text-white/60 
-            px-3 rounded-md
-            focus:border-[#FFD900] focus:ring-2 focus:ring-[#FFD900]
-          ">
+                         <SelectTrigger className="bg-white/10 border-white/20 text-white px-3 rounded-md">
                            <SelectValue placeholder="Select if you have a car" />
                          </SelectTrigger>
                       </FormControl>
-                      <SelectContent className="bg-white focus:border-[#FFD900] focus:ring-2 focus:ring-[#FFD900] border border-gray-200 rounded-md shadow-lg z-50 w-full min-w-[var(--radix-select-trigger-width)]">
+                      <SelectContent className="bg-white border border-gray-200 rounded-md shadow-lg z-50 w-full min-w-[var(--radix-select-trigger-width)]">
                         <SelectItem value="yes" className="text-gray-900 hover:bg-gray-100 cursor-pointer pl-4 pr-4 py-2 focus:bg-gray-100 data-[state=checked]:bg-gray-100">
                           <span className="block">Yes</span>
                         </SelectItem>
-                        <SelectItem value="no" className="text-gray-900 focus:border-[#FFD900] hover:bg-gray-100 cursor-pointer pl-4 pr-4 py-2 focus:bg-gray-100 data-[state=checked]:bg-gray-100">
+                        <SelectItem value="no" className="text-gray-900 hover:bg-gray-100 cursor-pointer pl-4 pr-4 py-2 focus:bg-gray-100 data-[state=checked]:bg-gray-100">
                           <span className="block">No</span>
                         </SelectItem>
-                        <SelectItem value="planning" className="text-gray-900 focus:border-[#FFD900] hover:bg-gray-100 cursor-pointer pl-4 pr-4 py-2 focus:bg-gray-100 data-[state=checked]:bg-gray-100">
+                        <SelectItem value="planning" className="text-gray-900 hover:bg-gray-100 cursor-pointer pl-4 pr-4 py-2 focus:bg-gray-100 data-[state=checked]:bg-gray-100">
                           <span className="block">Planning on getting one</span>
                         </SelectItem>
                       </SelectContent>
                     </Select>
-                    <FormMessage className="text-[#FFD900]" />
+                    <FormMessage />
                   </FormItem>
                 )}
               />
@@ -430,7 +373,7 @@ className="
                     </div>
                     <Select onValueChange={field.onChange} defaultValue={field.value}>
                       <FormControl>
-                         <SelectTrigger className="bg-white/10 focus:border-[#FFD900] focus:ring-2 focus:ring-[#FFD900]border-white/20 text-white px-3 rounded-md">
+                         <SelectTrigger className="bg-white/10 border-white/20 text-white px-3 rounded-md">
                            <SelectValue placeholder="Select your time commitment level" />
                          </SelectTrigger>
                       </FormControl>
@@ -452,7 +395,7 @@ className="
                         </SelectItem>
                       </SelectContent>
                     </Select>
-                    <FormMessage className="text-[#FFD900]" />
+                    <FormMessage />
                   </FormItem>
                 )}
               />
@@ -465,10 +408,10 @@ className="
                     <FormControl>
                        <Textarea 
                          {...field}
-                        className="bg-white/10 focus:border-[#FFD900] focus:ring-2 focus:ring-[#FFD900] border-white/20 text-white placeholder:text-white/60 min-h-[80px] px-3 py-2 resize-none rounded-md"
+                        className="bg-white/10 border-white/20 text-white placeholder:text-white/60 min-h-[80px] px-3 py-2 resize-none rounded-md"
                       />
                     </FormControl>
-                    <FormMessage className="text-[#FFD900]" />
+                    <FormMessage />
                   </FormItem>
                 )}
               />
@@ -493,10 +436,10 @@ className="
                   <FormControl>
                     <Input 
                       {...field} 
-                      className="bg-white/10 border-white/20 focus:border-[#FFD900] focus:ring-2 focus:ring-[#FFD900] text-white placeholder:text-white/60 px-3 rounded-md"
+                      className="bg-white/10 border-white/20 text-white placeholder:text-white/60 px-3 rounded-md"
                     />
                   </FormControl>
-                  <FormMessage className="text-[#FFD900]" />
+                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -509,10 +452,10 @@ className="
                   <FormControl>
                     <Input 
                       {...field} 
-                      className="bg-white/10 focus:border-[#FFD900] focus:ring-2 focus:ring-[#FFD900] border-white/20 text-white placeholder:text-white/60 px-3 rounded-md"
+                      className="bg-white/10 border-white/20 text-white placeholder:text-white/60 px-3 rounded-md"
                     />
                   </FormControl>
-                  <FormMessage className="text-[#FFD900]" />
+                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -526,10 +469,10 @@ className="
                     <Input 
                       type="email"
                       {...field} 
-                      className="bg-white/10 focus:border-[#FFD900] focus:ring-2 focus:ring-[#FFD900] border-white/20 text-white placeholder:text-white/60 px-3 rounded-md"
+                      className="bg-white/10 border-white/20 text-white placeholder:text-white/60 px-3 rounded-md"
                     />
                   </FormControl>
-                  <FormMessage className="text-[#FFD900]" />
+                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -541,7 +484,7 @@ className="
                   <FormLabel className="text-white">Class Year</FormLabel>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
-                      <SelectTrigger className="bg-white/10 focus:border-[#FFD900] focus:ring-2 focus:ring-[#FFD900] border-white/20 text-white px-3 rounded-md">
+                      <SelectTrigger className="bg-white/10 border-white/20 text-white px-3 rounded-md">
                         <SelectValue placeholder="Select your class year" />
                       </SelectTrigger>
                     </FormControl>
@@ -554,7 +497,7 @@ className="
                       </SelectItem>
                     </SelectContent>
                   </Select>
-                  <FormMessage className="text-[#FFD900]" />
+                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -572,10 +515,10 @@ className="
                   <FormControl>
                     <Input 
                       {...field}
-                      className="bg-white/10 focus:border-[#FFD900] focus:ring-2 focus:ring-[#FFD900] border-white/20 text-white placeholder:text-white/60 px-3 rounded-md"
+                      className="bg-white/10 border-white/20 text-white placeholder:text-white/60 px-3 rounded-md"
                     />
                   </FormControl>
-                  <FormMessage className="text-[#FFD900]" />
+                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -588,10 +531,10 @@ className="
                   <FormControl>
                     <Input 
                       {...field}
-                      className="bg-white/10 border-white/20 text-white focus:border-[#FFD900] focus:ring-2 focus:ring-[#FFD900] placeholder:text-white/60 px-3 rounded-md"
+                      className="bg-white/10 border-white/20 text-white placeholder:text-white/60 px-3 rounded-md"
                     />
                   </FormControl>
-                  <FormMessage className="text-[#FFD900]" />
+                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -604,10 +547,10 @@ className="
                   <FormControl>
                     <Input 
                       {...field}
-                      className="bg-white/10 border-white/20 focus:border-[#FFD900] focus:ring-2 focus:ring-[#FFD900] text-white placeholder:text-white/60 px-3 rounded-md"
+                      className="bg-white/10 border-white/20 text-white placeholder:text-white/60 px-3 rounded-md"
                     />
                   </FormControl>
-                  <FormMessage className="text-[#FFD900]" />
+                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -625,10 +568,10 @@ className="
                   <FormControl>
                     <Textarea 
                       {...field}
-                      className="bg-white/10 border-white/20 focus:border-[#FFD900] focus:ring-2 focus:ring-[#FFD900] text-white placeholder:text-white/60 min-h-[100px] px-3 py-2 resize-none rounded-md"
+                      className="bg-white/10 border-white/20 text-white placeholder:text-white/60 min-h-[100px] px-3 py-2 resize-none rounded-md"
                     />
                   </FormControl>
-                  <FormMessage className="text-[#FFD900]" />
+                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -645,7 +588,7 @@ className="
                   </FormControl>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
-                      <SelectTrigger className="bg-white/10 focus:border-[#FFD900] focus:ring-2 focus:ring-[#FFD900] border-white/20 text-white px-3 rounded-md">
+                      <SelectTrigger className="bg-white/10 border-white/20 text-white px-3 rounded-md">
                         <SelectValue placeholder="Select your time commitment level" />
                       </SelectTrigger>
                     </FormControl>
@@ -667,7 +610,7 @@ className="
                       </SelectItem>
                     </SelectContent>
                   </Select>
-                  <FormMessage className="text-[#FFD900]" />
+                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -679,7 +622,7 @@ className="
                   <FormLabel className="text-white">Do you have a car?</FormLabel>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
-                      <SelectTrigger className="bg-white/10 focus:border-[#FFD900] focus:ring-2 focus:ring-[#FFD900] border-white/20 text-white px-3 rounded-md">
+                      <SelectTrigger className="bg-white/10 border-white/20 text-white px-3 rounded-md">
                         <SelectValue placeholder="Select if you have a car" />
                       </SelectTrigger>
                     </FormControl>
@@ -695,7 +638,7 @@ className="
                       </SelectItem>
                     </SelectContent>
                   </Select>
-                  <FormMessage className="text-[#FFD900]" />
+                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -708,10 +651,10 @@ className="
                   <FormControl>
                     <Input 
                       {...field}
-                      className="bg-white/10 focus:border-[#FFD900] focus:ring-2 focus:ring-[#FFD900] border-white/20 text-white placeholder:text-white/60 px-3 rounded-md"
+                      className="bg-white/10 border-white/20 text-white placeholder:text-white/60 px-3 rounded-md"
                     />
                   </FormControl>
-                  <FormMessage className="text-[#FFD900]" />
+                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -724,10 +667,10 @@ className="
                   <FormControl>
                     <Textarea 
                       {...field}
-                      className="bg-white/10 border-white/20 focus:border-[#FFD900] focus:ring-2 focus:ring-[#FFD900] text-white placeholder:text-white/60 min-h-[80px] px-3 py-2 resize-none rounded-md"
+                      className="bg-white/10 border-white/20 text-white placeholder:text-white/60 min-h-[80px] px-3 py-2 resize-none rounded-md"
                     />
                   </FormControl>
-                  <FormMessage className="text-[#FFD900]" />
+                  <FormMessage />
                 </FormItem>
               )}
             />
