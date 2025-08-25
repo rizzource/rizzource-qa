@@ -202,9 +202,8 @@ const SignupForm = ({ userType, onBack }) => {
                   <FormItem>
                     <FormLabel className="text-white">First Name</FormLabel>
                     <FormControl>
-                      <Input 
-                        {/* placeholder="Enter your first name"  */}
-                        {...field} 
+                       <Input 
+                         {...field}
                         className="bg-white/10 border-white/20 text-white placeholder:text-white/60 px-3 rounded-md"
                       />
                     </FormControl>
@@ -220,8 +219,7 @@ const SignupForm = ({ userType, onBack }) => {
                     <FormLabel className="text-white">Last Name</FormLabel>
                     <FormControl>
                       <Input 
-                        {/* placeholder="Enter your last name"  */}
-                        {...field} 
+                        {...field}
                         className="bg-white/10 border-white/20 text-white placeholder:text-white/60 px-3 rounded-md"
                       />
                     </FormControl>
@@ -238,8 +236,7 @@ const SignupForm = ({ userType, onBack }) => {
                     <FormControl>
                       <Input 
                         type="email"
-                        {/* placeholder="Enter your email address"  */}
-                        {...field} 
+                        {...field}
                         className="bg-white/10 border-white/20 text-white placeholder:text-white/60 px-3 rounded-md"
                       />
                     </FormControl>
@@ -260,7 +257,6 @@ const SignupForm = ({ userType, onBack }) => {
                     <FormLabel className="text-white">Field of law you are interested in?</FormLabel>
                     <FormControl>
                       <Input 
-                        {/* placeholder="Transactional, litigation, big law, public interest, etc. If you don't know yet you can say so"  */}
                         {...field}
                         className="bg-white/10 border-white/20 text-white placeholder:text-white/60 px-3 rounded-md"
                       />
@@ -277,7 +273,6 @@ const SignupForm = ({ userType, onBack }) => {
                     <FormLabel className="text-white">Where is your hometown?</FormLabel>
                     <FormControl>
                       <Input 
-                        {/* placeholder="Enter your hometown"  */}
                         {...field}
                         className="bg-white/10 border-white/20 text-white placeholder:text-white/60 px-3 rounded-md"
                       />
@@ -294,7 +289,6 @@ const SignupForm = ({ userType, onBack }) => {
                     <FormLabel className="text-white">Where did you go to undergraduate?</FormLabel>
                     <FormControl>
                       <Input 
-                        {/* placeholder="Enter your undergraduate university"  */}
                         {...field}
                         className="bg-white/10 border-white/20 text-white placeholder:text-white/60 px-3 rounded-md"
                       />
@@ -315,9 +309,8 @@ const SignupForm = ({ userType, onBack }) => {
                   <FormItem>
                     <FormLabel className="text-white">Any hobbies/interests outside law school?</FormLabel>
                     <FormControl>
-                      <Textarea 
-                        {/* placeholder="Tell us about your hobbies and interests outside of law school..." */}
-                        {...field}
+                       <Textarea 
+                         {...field}
                         className="bg-white/10 border-white/20 text-white placeholder:text-white/60 min-h-[100px] px-3 py-2 resize-none rounded-md"
                       />
                     </FormControl>
@@ -332,9 +325,8 @@ const SignupForm = ({ userType, onBack }) => {
                   <FormItem>
                     <FormLabel className="text-white">What do you expect from mentors or this program?</FormLabel>
                     <FormControl>
-                      <Textarea 
-                        {/* placeholder="Share your expectations from the mentorship program..." */}
-                        {...field}
+                       <Textarea 
+                         {...field}
                         className="bg-white/10 border-white/20 text-white placeholder:text-white/60 min-h-[100px] px-3 py-2 resize-none rounded-md"
                       />
                     </FormControl>
@@ -350,9 +342,9 @@ const SignupForm = ({ userType, onBack }) => {
                     <FormLabel className="text-white">Do you have a car?</FormLabel>
                     <Select onValueChange={field.onChange} defaultValue={field.value}>
                       <FormControl>
-                        <SelectTrigger className="bg-white/10 border-white/20 text-white px-3 rounded-md">
-                          {/* <SelectValue placeholder="Select if you have a car" /> */}
-                        </SelectTrigger>
+                         <SelectTrigger className="bg-white/10 border-white/20 text-white px-3 rounded-md">
+                           <SelectValue placeholder="Select if you have a car" />
+                         </SelectTrigger>
                       </FormControl>
                       <SelectContent className="bg-white border border-gray-200 rounded-md shadow-lg z-50 w-full min-w-[var(--radix-select-trigger-width)]">
                         <SelectItem value="yes" className="text-gray-900 hover:bg-gray-100 cursor-pointer pl-4 pr-4 py-2 focus:bg-gray-100 data-[state=checked]:bg-gray-100">
@@ -381,9 +373,9 @@ const SignupForm = ({ userType, onBack }) => {
                     </div>
                     <Select onValueChange={field.onChange} defaultValue={field.value}>
                       <FormControl>
-                        <SelectTrigger className="bg-white/10 border-white/20 text-white px-3 rounded-md">
-                          {/* <SelectValue placeholder="Select your time commitment level" /> */}
-                        </SelectTrigger>
+                         <SelectTrigger className="bg-white/10 border-white/20 text-white px-3 rounded-md">
+                           <SelectValue placeholder="Select your time commitment level" />
+                         </SelectTrigger>
                       </FormControl>
                       <SelectContent className="bg-white border border-gray-200 rounded-md shadow-lg z-50 w-full min-w-[var(--radix-select-trigger-width)]">
                         <SelectItem value="1" className="text-gray-900 hover:bg-gray-100 cursor-pointer pl-4 pr-4 py-2 focus:bg-gray-100 data-[state=checked]:bg-gray-100">
@@ -414,9 +406,8 @@ const SignupForm = ({ userType, onBack }) => {
                   <FormItem>
                     <FormLabel className="text-white">Any other concerns/comments? (Optional)</FormLabel>
                     <FormControl>
-                      <Textarea 
-                        {/* placeholder="Share any additional concerns or comments..." */}
-                        {...field}
+                       <Textarea 
+                         {...field}
                         className="bg-white/10 border-white/20 text-white placeholder:text-white/60 min-h-[80px] px-3 py-2 resize-none rounded-md"
                       />
                     </FormControl>
