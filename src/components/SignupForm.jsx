@@ -435,7 +435,6 @@ const SignupForm = ({ userType, onBack }) => {
                   <FormLabel className="text-white">First Name</FormLabel>
                   <FormControl>
                     <Input 
-                      placeholder="Enter your first name" 
                       {...field} 
                       className="bg-white/10 border-white/20 text-white placeholder:text-white/60 px-3 rounded-md"
                     />
@@ -452,7 +451,6 @@ const SignupForm = ({ userType, onBack }) => {
                   <FormLabel className="text-white">Last Name</FormLabel>
                   <FormControl>
                     <Input 
-                      placeholder="Enter your last name" 
                       {...field} 
                       className="bg-white/10 border-white/20 text-white placeholder:text-white/60 px-3 rounded-md"
                     />
@@ -470,7 +468,6 @@ const SignupForm = ({ userType, onBack }) => {
                   <FormControl>
                     <Input 
                       type="email"
-                      placeholder="Enter your email address" 
                       {...field} 
                       className="bg-white/10 border-white/20 text-white placeholder:text-white/60 px-3 rounded-md"
                     />
@@ -517,7 +514,6 @@ const SignupForm = ({ userType, onBack }) => {
                   <FormLabel className="text-white">What field of law are you interested in?</FormLabel>
                   <FormControl>
                     <Input 
-                      placeholder="e.g., Corporate Law, Criminal Law, or 'I don't know yet'" 
                       {...field}
                       className="bg-white/10 border-white/20 text-white placeholder:text-white/60 px-3 rounded-md"
                     />
@@ -534,7 +530,6 @@ const SignupForm = ({ userType, onBack }) => {
                   <FormLabel className="text-white">Where is your hometown?</FormLabel>
                   <FormControl>
                     <Input 
-                      placeholder="Enter your hometown" 
                       {...field}
                       className="bg-white/10 border-white/20 text-white placeholder:text-white/60 px-3 rounded-md"
                     />
@@ -551,7 +546,6 @@ const SignupForm = ({ userType, onBack }) => {
                   <FormLabel className="text-white">Where did you go to undergraduate university?</FormLabel>
                   <FormControl>
                     <Input 
-                      placeholder="Enter your undergraduate university" 
                       {...field}
                       className="bg-white/10 border-white/20 text-white placeholder:text-white/60 px-3 rounded-md"
                     />
@@ -573,7 +567,6 @@ const SignupForm = ({ userType, onBack }) => {
                   <FormLabel className="text-white">What are your hobbies/interests outside of law school?</FormLabel>
                   <FormControl>
                     <Textarea 
-                      placeholder="Tell us about your hobbies and interests outside of law school..."
                       {...field}
                       className="bg-white/10 border-white/20 text-white placeholder:text-white/60 min-h-[100px] px-3 py-2 resize-none rounded-md"
                     />
@@ -657,7 +650,6 @@ const SignupForm = ({ userType, onBack }) => {
                   <FormLabel className="text-white">Is there someone you would like to be co-mentors with? (Optional)</FormLabel>
                   <FormControl>
                     <Input 
-                      placeholder="Enter name or leave blank" 
                       {...field}
                       className="bg-white/10 border-white/20 text-white placeholder:text-white/60 px-3 rounded-md"
                     />
@@ -674,7 +666,6 @@ const SignupForm = ({ userType, onBack }) => {
                   <FormLabel className="text-white">Any last comments? (Optional)</FormLabel>
                   <FormControl>
                     <Textarea 
-                      placeholder="Any additional comments or information you'd like to share..."
                       {...field}
                       className="bg-white/10 border-white/20 text-white placeholder:text-white/60 min-h-[80px] px-3 py-2 resize-none rounded-md"
                     />
