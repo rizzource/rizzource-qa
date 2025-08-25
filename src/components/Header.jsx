@@ -16,7 +16,7 @@ const Header = () => {
             </div>
             <div className="flex-1 sm:block">
               <h1 className="text-base sm:text-lg md:text-xl text-primary leading-tight">
-                <span className="font-bold text-gold" style={{fontWeight: 700}}>RIZZ</span>
+                <span className="font-bold text-gold" style={{fontWeight: 700, color: "#FFD900"}}>RIZZ</span>
                 <span className="font-semibold text-primary" style={{fontWeight: 600}}>ource</span>
               </h1>
               <p className="text-xs text-muted-foreground hidden sm:block">Law School and Beyond</p>
