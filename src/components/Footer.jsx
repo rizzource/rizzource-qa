@@ -24,17 +24,17 @@ const Footer = () => {
               Student-driven resource to support your journey through Law School and Beyond.  
             </p>
 
-            <div className="flex space-x-4">
-              {/* <div className="w-8 h-8 bg-primary-foreground/10 rounded-lg flex items-center justify-center">
+            {/* <div className="flex space-x-4">
+              <div className="w-8 h-8 bg-primary-foreground/10 rounded-lg flex items-center justify-center">
                 <BookOpen className="w-4 h-4" />
               </div>
               <div className="w-8 h-8 bg-primary-foreground/10 rounded-lg flex items-center justify-center">
                 <Users className="w-4 h-4" />
-              </div> */}
+              </div>
               <div className="w-8 h-8 bg-primary-foreground/10 rounded-lg flex items-center justify-center">
                 <Mail className="w-4 h-4" />
               </div>
-            </div>
+            </div> */}
           </div>
 
           {/* Contact Section */}
@@ -42,12 +42,15 @@ const Footer = () => {
             <h4 className="text-lg font-semibold mb-4">Contact</h4>
             <div className="flex items-center space-x-3">
               <Mail className="w-5 h-5 text-primary-foreground/80" />
-              <a
+              {/* <a
                 href="mailto:rana.sher.khan@emory.edu"
                 className="text-primary-foreground/80 hover:text-gold-light transition-colors"
               >
                 rana.sher.khan@emory.edu
-              </a>
+              </a> */}
+              <p>
+                rana.sher.khan@emory.edu
+              </p>
             </div>
           </div>
         </div>
