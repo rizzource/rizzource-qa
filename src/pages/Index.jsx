@@ -51,7 +51,7 @@ const Index = ({ mentorshipPage = false }) => {
           <>
             <HeroSection onStartProgram={handleStartProgram} />
             {/* Add visual break between hero and footer */}
-            <section className="bg-white py-5 flex items-center justify-center">
+            <section className="bg-white py-2 flex items-center justify-center">
               <div className="grid md:grid-cols-2 gap-8 text-center">
                 {/* Friends Card */}
                 <div className="space-y-4">
