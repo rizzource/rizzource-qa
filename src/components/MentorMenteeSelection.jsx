@@ -37,15 +37,15 @@ const MentorMenteeSelection = ({ onSelectType, onBack }) => {
                 </div>
                 <CardTitle className="text-2xl text-white">Become a Mentor</CardTitle>
                 <CardDescription className="text-white/80 text-base">
-                  Share your experience and guide aspiring legal professionals
+                  Share your experience and guide fellow law students
                 </CardDescription>
               </CardHeader>
               <CardContent className="text-center">
                 <ul className="text-white/90 space-y-2 mb-6">
-                  <li>• Guide law students and junior lawyers</li>
-                  <li>• Share career insights and advice</li>
-                  <li>• Build meaningful professional relationships</li>
-                  <li>• Give back to the legal community</li>
+                  <li>• Guide lower-year law students</li>
+                  <li>• Share academic insights and study strategies</li>
+                  <li>• Build meaningful relationships within APALSA</li>
+                  <li>• Give back to the law student community</li>
                 </ul>
                 <Button 
                   size="lg"
@@ -68,15 +68,15 @@ const MentorMenteeSelection = ({ onSelectType, onBack }) => {
                 </div>
                 <CardTitle className="text-2xl text-white">Become a Mentee</CardTitle>
                 <CardDescription className="text-white/80 text-base">
-                  Learn from experienced professionals and accelerate your career
+                  Learn from upper-year law students and accelerate your academic success
                 </CardDescription>
               </CardHeader>
               <CardContent className="text-center">
                 <ul className="text-white/90 space-y-2 mb-6">
-                  <li>• Get personalized career guidance</li>
-                  <li>• Learn from experienced professionals</li>
-                  <li>• Expand your professional network</li>
-                  <li>• Accelerate your career growth</li>
+                  <li>• Get personalized academic guidance</li>
+                  <li>• Learn from mentors in senior classes</li>
+                  <li>• Expand your student network within APALSA</li>
+                  <li>• Accelerate your law school success</li>
                 </ul>
                 <Button 
                   size="lg"

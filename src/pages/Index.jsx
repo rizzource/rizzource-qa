@@ -2,11 +2,12 @@ import { useState } from "react";
 import HeroSection from "@/components/HeroSection";
 import MentorMenteeSelection from "@/components/MentorMenteeSelection";
 import SignupForm from "@/components/SignupForm";
+import MinimalistHome from "@/components/MinimalistHome";
 import Header from "@/components/Header";  
 import Footer from "@/components/Footer";
 import { Users, BookOpen, Zap } from "lucide-react";
 
-const Index = () => {
+const Index = ({ mentorshipPage = false }) => {
   const [appState, setAppState] = useState('hero');
   const [userType, setUserType] = useState(null);
 
@@ -29,6 +30,19 @@ const Index = () => {
     setUserType(null);
   };
 
+  // Show minimalist homepage if not mentorship page
+  if (!mentorshipPage) {
+    return (
+      <div className="min-h-screen">
+        <Header />
+        <main>
+          <MinimalistHome />
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen">
       <Header />
@@ -44,15 +58,15 @@ const Index = () => {
                     Join APALSA's Mentorship Network
                   </h2>
                   <p className="text-lg text-muted-foreground leading-relaxed">
-                    Connect with experienced legal professionals and fellow students in the Asian Pacific American Law Student Association community. Our mentorship program provides guidance, support, and networking opportunities to help you succeed in your legal career.
+                    Connect with upper-year law students and fellow students in the Asian Pacific American Law Student Association community. Our mentorship program provides guidance, support, and networking opportunities to help you succeed in your legal career.
                   </p>
                   <div className="grid md:grid-cols-3 gap-8 mt-12">
                     <div className="text-center space-y-4">
                       <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
                         <Users className="w-8 h-8 text-primary" />
                       </div>
-                      <h3 className="text-xl font-semibold">Professional Network</h3>
-                      <p className="text-muted-foreground">Connect with legal professionals and expand your network</p>
+                      <h3 className="text-xl font-semibold">Student Network</h3>
+                      <p className="text-muted-foreground">Connect with law students and expand your network within APALSA</p>
                     </div>
                     <div className="text-center space-y-4">
                       <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
