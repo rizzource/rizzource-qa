@@ -52,9 +52,6 @@ const Index = ({ mentorshipPage = false }) => {
             <HeroSection onStartProgram={handleStartProgram} />
             {/* Add visual break between hero and footer */}
             <section className="bg-white py-5 flex items-center justify-center min-h-screen">
-              <div className="container mx-auto px-4 text-center">
-                <div className="max-w-4xl mx-auto space-y-8">
-                  <div className="grid md:grid-cols-2 gap-8 justify-center">
                     <div className="text-center space-y-4">
                       <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
                         <Users className="w-8 h-8 text-primary" />
@@ -74,9 +71,6 @@ const Index = ({ mentorshipPage = false }) => {
                         Get advice on classes, internships and navigating law school
                       </p>
                     </div>
-                  </div>
-                </div>
-              </div>
             </section>
           </>
         )}
