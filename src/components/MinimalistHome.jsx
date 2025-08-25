@@ -13,7 +13,7 @@ const MinimalistHome = () => {
               <Scale className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8 lg:w-10 lg:h-10 text-primary-foreground" />
             </div>
             <h1 className="text-xl sm:text-2xl md:text-4xl lg:text-5xl xl:text-6xl leading-tight break-words">
-              <span className="text-gold-rizz font-bold">RIZZ</span>
+              <span className="text-gold-rizz font-bold" style={{color: "#FFD900"}}>RIZZ</span>
               <span className="text-primary font-semibold">ource</span>
             </h1>
           </div>
@@ -24,7 +24,7 @@ const MinimalistHome = () => {
           </h2>
           
           <p className="text-sm sm:text-base md:text-lg lg:text-xl text-muted-foreground mb-8 sm:mb-10 md:mb-12 max-w-2xl mx-auto leading-relaxed px-2 break-words">
-            The ultimate resource platform for law students and legal professionals
+            The ultimate resource platform for law students
           </p>
           
           {/* Link to APALSA Mentorship */}
