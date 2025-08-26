@@ -14,6 +14,33 @@ export type Database = {
   }
   public: {
     Tables: {
+      data_exports: {
+        Row: {
+          export_type: string
+          exported_at: string
+          id: string
+          notes: string | null
+          record_count: number | null
+          user_id: string | null
+        }
+        Insert: {
+          export_type: string
+          exported_at?: string
+          id?: string
+          notes?: string | null
+          record_count?: number | null
+          user_id?: string | null
+        }
+        Update: {
+          export_type?: string
+          exported_at?: string
+          id?: string
+          notes?: string | null
+          record_count?: number | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       feedback: {
         Row: {
           created_at: string | null
@@ -166,6 +193,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      export_data_to_json: {
+        Args: { table_name: string }
+        Returns: Json
+      }
       get_current_user_role: {
         Args: Record<PropertyKey, never>
         Returns: string
