@@ -73,6 +73,7 @@ const Header = () => {
                     variant="ghost"
                     size="sm"
                     onClick={handleSignOut}
+                    className="flex items-center space-x-2"
                   >
                     <LogOut className="h-4 w-4 sm:mr-2" />
                     <span className="hidden sm:inline">Sign Out</span>
@@ -83,6 +84,7 @@ const Header = () => {
                   variant="outline"
                   size="sm"
                   onClick={() => navigate('/auth')}
+                  className="flex items-center space-x-2"
                 >
                   <User className="h-4 w-4 sm:mr-2" />
                   <span className="hidden sm:inline">Sign In</span>
