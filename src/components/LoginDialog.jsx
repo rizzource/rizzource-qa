@@ -88,7 +88,7 @@ export const LoginDialog = ({ isOpen, onClose }) => {
               name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Password</FormLabel>
+                  <FormLabel>Password1</FormLabel>
                   <FormControl>
                     <Input type="password" {...field} />
                   </FormControl>
