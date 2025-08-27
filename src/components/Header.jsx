@@ -1,12 +1,10 @@
 import { useState } from 'react';
 import { Button } from "@/components/ui/button";
-import { Scale, Shield, LogOut } from "lucide-react";
-import { LoginDialog } from './LoginDialog';
+import { Scale, Shield, LogOut, User } from "lucide-react";
 import { useAuth } from './AuthProvider';
 import { useNavigate } from 'react-router-dom';
 
 const Header = () => {
-  const [showLoginDialog, setShowLoginDialog] = useState(false);
   const { user, isAdmin, signOut } = useAuth();
   const navigate = useNavigate();
 
@@ -17,8 +15,19 @@ const Header = () => {
   const handleAdminAccess = () => {
     if (user && isAdmin()) {
       navigate('/admin');
+    } else if (user) {
+      // User is logged in but not admin
+      return;
     } else {
-      setShowLoginDialog(true);
+      navigate('/auth');
+    }
+  };
+
+  const handleAuthAction = () => {
+    if (user) {
+      handleSignOut();
+    } else {
+      navigate('/auth');
     }
   };
 
@@ -49,15 +58,17 @@ const Header = () => {
                   <span className="text-xs sm:text-sm text-muted-foreground hidden sm:inline">
                     {isAdmin() ? 'Admin' : 'User'}
                   </span>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={handleAdminAccess}
-                    className="hidden sm:flex"
-                  >
-                    <Shield className="h-4 w-4 mr-2" />
-                    {isAdmin() ? 'Dashboard' : 'Admin'}
-                  </Button>
+                  {isAdmin() && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={handleAdminAccess}
+                      className="hidden sm:flex"
+                    >
+                      <Shield className="h-4 w-4 mr-2" />
+                      Dashboard
+                    </Button>
+                  )}
                   <Button
                     variant="ghost"
                     size="sm"
@@ -71,21 +82,16 @@ const Header = () => {
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => setShowLoginDialog(true)}
+                  onClick={() => navigate('/auth')}
                 >
-                  <Shield className="h-4 w-4 sm:mr-2" />
-                  <span className="hidden sm:inline">Admin Login</span>
+                  <User className="h-4 w-4 sm:mr-2" />
+                  <span className="hidden sm:inline">Sign In</span>
                 </Button>
               )}
             </div>
           </div>
         </div>
       </header>
-
-      <LoginDialog 
-        isOpen={showLoginDialog} 
-        onClose={() => setShowLoginDialog(false)} 
-      />
     </>
   );
 };
