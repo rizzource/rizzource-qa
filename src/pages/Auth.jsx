@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Scale, Shield } from 'lucide-react';
 
 const Auth = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -82,103 +82,172 @@ const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background to-secondary/20 flex items-center justify-center p-4">
-      <Card className="w-full max-w-md">
-        <CardHeader>
-          <CardTitle className="text-center">Welcome</CardTitle>
-          <CardDescription className="text-center">
-            Sign in to your account or create a new one
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Tabs defaultValue="signin" className="w-full">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="signin">Sign In</TabsTrigger>
-              <TabsTrigger value="signup">Sign Up</TabsTrigger>
-            </TabsList>
-            
-            <TabsContent value="signin">
-              <form onSubmit={handleSignIn} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="signin-email">Email</Label>
-                  <Input
-                    id="signin-email"
-                    name="email"
-                    type="email"
-                    placeholder="Enter your email"
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="signin-password">Password</Label>
-                  <Input
-                    id="signin-password"
-                    name="password"
-                    type="password"
-                    placeholder="Enter your password"
-                    required
-                  />
-                </div>
-                <Button type="submit" className="w-full" disabled={isLoading}>
-                  {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+    <div className="min-h-screen bg-background flex flex-col">
+      {/* Header */}
+      <header className="bg-white border-b border-border">
+        <div className="container mx-auto px-4 py-4">
+          <div className="flex items-center justify-between">
+            <a href="/" className="flex items-center space-x-3">
+              <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+                <Scale className="w-6 h-6 text-primary-foreground" />
+              </div>
+              <div>
+                <h1 className="text-xl text-primary leading-tight">
+                  <span className="font-bold text-gold-primary">RIZZ</span>
+                  <span className="font-semibold text-primary">ource</span>
+                </h1>
+                <p className="text-xs text-muted-foreground">Law School and Beyond</p>
+              </div>
+            </a>
+            <Button 
+              variant="ghost" 
+              onClick={() => navigate('/')}
+              className="text-muted-foreground hover:text-foreground"
+            >
+              Back to Home
+            </Button>
+          </div>
+        </div>
+      </header>
+
+      {/* Main Content */}
+      <main className="flex-1 flex items-center justify-center p-4 bg-gradient-to-br from-background to-muted/30">
+        <Card className="w-full max-w-md shadow-card">
+          <CardHeader className="text-center space-y-2">
+            <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Shield className="w-8 h-8 text-primary" />
+            </div>
+            <CardTitle className="text-2xl text-foreground">Welcome Back</CardTitle>
+            <CardDescription className="text-muted-foreground">
+              Sign in to your account or create a new one to get started
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Tabs defaultValue="signin" className="w-full">
+              <TabsList className="grid w-full grid-cols-2 mb-6">
+                <TabsTrigger value="signin" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
                   Sign In
-                </Button>
-              </form>
-            </TabsContent>
-            
-            <TabsContent value="signup">
-              <form onSubmit={handleSignUp} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="signup-email">Email</Label>
-                  <Input
-                    id="signup-email"
-                    name="email"
-                    type="email"
-                    placeholder="Enter your email"
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="signup-password">Password</Label>
-                  <Input
-                    id="signup-password"
-                    name="password"
-                    type="password"
-                    placeholder="Create a password"
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="confirm-password">Confirm Password</Label>
-                  <Input
-                    id="confirm-password"
-                    name="confirmPassword"
-                    type="password"
-                    placeholder="Confirm your password"
-                    required
-                  />
-                </div>
-                <Button type="submit" className="w-full" disabled={isLoading}>
-                  {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                </TabsTrigger>
+                <TabsTrigger value="signup" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
                   Sign Up
-                </Button>
-              </form>
-            </TabsContent>
-          </Tabs>
+                </TabsTrigger>
+              </TabsList>
+              
+              <TabsContent value="signin" className="space-y-4">
+                <form onSubmit={handleSignIn} className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="signin-email" className="text-foreground font-medium">
+                      Email Address
+                    </Label>
+                    <Input
+                      id="signin-email"
+                      name="email"
+                      type="email"
+                      placeholder="Enter your email"
+                      required
+                      className="input-focus-green"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="signin-password" className="text-foreground font-medium">
+                      Password
+                    </Label>
+                    <Input
+                      id="signin-password"
+                      name="password"
+                      type="password"
+                      placeholder="Enter your password"
+                      required
+                      className="input-focus-green"
+                    />
+                  </div>
+                  <Button 
+                    type="submit" 
+                    className="w-full bg-primary hover:bg-primary/90 text-primary-foreground" 
+                    disabled={isLoading}
+                  >
+                    {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                    Sign In
+                  </Button>
+                </form>
+              </TabsContent>
+              
+              <TabsContent value="signup" className="space-y-4">
+                <form onSubmit={handleSignUp} className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="signup-email" className="text-foreground font-medium">
+                      Email Address
+                    </Label>
+                    <Input
+                      id="signup-email"
+                      name="email"
+                      type="email"
+                      placeholder="Enter your email"
+                      required
+                      className="input-focus-green"
+                    />
+                    <p className="text-xs text-muted-foreground">
+                      Use admin@lawmentorship.com or coordinator@lawmentorship.com for admin access
+                    </p>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="signup-password" className="text-foreground font-medium">
+                      Password
+                    </Label>
+                    <Input
+                      id="signup-password"
+                      name="password"
+                      type="password"
+                      placeholder="Create a password (min. 6 characters)"
+                      required
+                      className="input-focus-green"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="confirm-password" className="text-foreground font-medium">
+                      Confirm Password
+                    </Label>
+                    <Input
+                      id="confirm-password"
+                      name="confirmPassword"
+                      type="password"
+                      placeholder="Confirm your password"
+                      required
+                      className="input-focus-green"
+                    />
+                  </div>
+                  <Button 
+                    type="submit" 
+                    className="w-full bg-primary hover:bg-primary/90 text-primary-foreground" 
+                    disabled={isLoading}
+                  >
+                    {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                    Create Account
+                  </Button>
+                </form>
+              </TabsContent>
+            </Tabs>
 
-          {error && (
-            <Alert className="mt-4 border-destructive">
-              <AlertDescription className="text-destructive">{error}</AlertDescription>
-            </Alert>
-          )}
+            {error && (
+              <Alert className="mt-4 border-destructive bg-destructive/10">
+                <AlertDescription className="text-destructive text-sm">{error}</AlertDescription>
+              </Alert>
+            )}
 
-          {success && (
-            <Alert className="mt-4 border-green-500">
-              <AlertDescription className="text-green-700">{success}</AlertDescription>
-            </Alert>
-          )}
-        </CardContent>
-      </Card>
+            {success && (
+              <Alert className="mt-4 border-primary bg-primary/10">
+                <AlertDescription className="text-primary text-sm">{success}</AlertDescription>
+              </Alert>
+            )}
+
+            <div className="mt-6 pt-4 border-t border-border">
+              <p className="text-xs text-muted-foreground text-center">
+                By creating an account, you agree to our terms of service and privacy policy.
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+      </main>
     </div>
   );
 };
