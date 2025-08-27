@@ -146,7 +146,7 @@ const Auth = () => {
                       type="email"
                       placeholder="Enter your email"
                       required
-                      className="input-focus-green"
+                      className="input-focus-yellow"
                     />
                   </div>
                   <div className="space-y-2">
@@ -159,7 +159,7 @@ const Auth = () => {
                       type="password"
                       placeholder="Enter your password"
                       required
-                      className="input-focus-green"
+                      className="input-focus-yellow"
                     />
                   </div>
                   <Button 
@@ -185,11 +185,8 @@ const Auth = () => {
                       type="email"
                       placeholder="Enter your email"
                       required
-                      className="input-focus-green"
+                      className="input-focus-yellow"
                     />
-                    <p className="text-xs text-muted-foreground">
-                      Use admin@lawmentorship.com or coordinator@lawmentorship.com for admin access
-                    </p>
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="signup-password" className="text-foreground font-medium">
@@ -201,7 +198,7 @@ const Auth = () => {
                       type="password"
                       placeholder="Create a password (min. 6 characters)"
                       required
-                      className="input-focus-green"
+                      className="input-focus-yellow"
                     />
                   </div>
                   <div className="space-y-2">
@@ -214,7 +211,7 @@ const Auth = () => {
                       type="password"
                       placeholder="Confirm your password"
                       required
-                      className="input-focus-green"
+                      className="input-focus-yellow"
                     />
                   </div>
                   <Button 
