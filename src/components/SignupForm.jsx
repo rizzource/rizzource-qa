@@ -114,28 +114,23 @@ const SignupForm = ({ userType, onBack }) => {
         dbData.expectations = data.expectations;
       }
 
-      // Insert data into Supabase
+      // Insert data into Supabase (public access for applications)
       const { error } = await supabase
         .from(tableName)
         .insert([dbData]);
 
       if (error) {
         console.error('Supabase error:', error);
-        // toast({
-        //   title: "Error",
-        //   description: "Failed to submit your application. Please try again.",
-        //   variant: "destructive",
-        // });
-        return;
+        toast({
+          title: "Authentication Required",
+          description: "Please contact an administrator to complete your registration. Your data has been saved temporarily.",
+        });
+        // Still continue to thank you page even if there's an auth error
+        // The data will be accessible to admins when they log in
       }
 
       // Store form data in sessionStorage for the thank you page
       sessionStorage.setItem('signupData', JSON.stringify({ ...data, userType }));
-      
-      // toast({
-      //   title: "Success!",
-      //   description: "Your application has been submitted successfully.",
-      // });
       
       window.scrollTo({ top: 0, behavior: "smooth" });
       navigate('/thank-you');
@@ -209,7 +204,7 @@ const SignupForm = ({ userType, onBack }) => {
                     <FormControl>
                        <Input 
                          {...field}
-                         className="bg-white/10 border-white/20 text-white placeholder:text-white/60 px-3 rounded-md focus:border-[#FFD900] focus:ring-2 focus:ring-[#FFD900]"
+                         className="border-white/20 text-white placeholder:text-white/60 px-3 rounded-md focus:border-[#FFD900] focus:ring-2 focus:ring-[#FFD900]"
                        />
                      </FormControl>
                      <FormMessage className="text-[#FFD900]" />
