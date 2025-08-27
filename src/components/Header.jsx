@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Scale, Shield, LogOut, User } from "lucide-react";
 import { useAuth } from './AuthProvider';
 import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 const Header = () => {
   const { user, isAdmin, signOut } = useAuth();
@@ -59,36 +60,34 @@ const Header = () => {
                     {isAdmin() ? 'Admin' : 'User'}
                   </span>
                   {isAdmin() && (
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={handleAdminAccess}
-                      className="hidden sm:flex"
+                    <Link
+                      to="/admin"
+                      className="hidden sm:inline-flex items-center px-3 py-1.5 text-sm font-medium rounded-md border border-border/50 text-gray-700 hover:text-primary hover:border-primary transition-colors"
                     >
-                      <Shield className="h-4 w-4" />
+                      <Shield className="h-4 w-4 mr-1" />
                       Dashboard
-                    </Button>
+                    </Link>
                   )}
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={handleSignOut}
-                    className="flex items-center space-x-2"
+                  <Link
+                    to="#"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleSignOut();
+                    }}
+                    className="inline-flex items-center px-3 py-1.5 text-sm font-medium text-red-600 hover:text-red-800 transition-colors"
                   >
-                    <LogOut className="h-4 w-4" />
+                    <LogOut className="h-4 w-4 mr-1" />
                     <span className="hidden sm:inline">Sign Out</span>
-                  </Button>
+                  </Link>
                 </>
               ) : (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => navigate('/auth')}
-                  className="flex items-center space-x-2"
+                <Link
+                  to="/auth"
+                  className="inline-flex items-center px-3 py-1.5 text-sm font-medium rounded-md border border-border/50 text-gray-700 hover:text-primary hover:border-primary transition-colors"
                 >
-                  <User className="h-4 w-4 sm:mr-2" />
+                  <User className="h-4 w-4 mr-1" />
                   <span className="hidden sm:inline">Sign In</span>
-                </Button>
+                </Link>
               )}
             </div>
           </div>
