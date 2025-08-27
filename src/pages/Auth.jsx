@@ -146,7 +146,7 @@ const Auth = () => {
                       type="email"
                       placeholder="Enter your email"
                       required
-                      className="input-focus-yellow"
+                      className="input-focus-green"
                     />
                   </div>
                   <div className="space-y-2">
@@ -159,7 +159,7 @@ const Auth = () => {
                       type="password"
                       placeholder="Enter your password"
                       required
-                      className="input-focus-yellow"
+                      className="input-focus-green"
                     />
                   </div>
                   <Button 
@@ -185,7 +185,7 @@ const Auth = () => {
                       type="email"
                       placeholder="Enter your email"
                       required
-                      className="input-focus-yellow"
+                      className="input-focus-green"
                     />
                   </div>
                   <div className="space-y-2">
@@ -198,7 +198,7 @@ const Auth = () => {
                       type="password"
                       placeholder="Create a password (min. 6 characters)"
                       required
-                      className="input-focus-yellow"
+                      className="input-focus-green"
                     />
                   </div>
                   <div className="space-y-2">
@@ -211,7 +211,7 @@ const Auth = () => {
                       type="password"
                       placeholder="Confirm your password"
                       required
-                      className="input-focus-yellow"
+                      className="input-focus-green"
                     />
                   </div>
                   <Button 
