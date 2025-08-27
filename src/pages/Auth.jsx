@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Loader2, Scale, Shield } from 'lucide-react';
+import Footer from '@/components/Footer';
 
 const Auth = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -82,9 +83,9 @@ const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="min-h-screen bg-hero-gradient flex flex-col">
       {/* Header */}
-      <header className="bg-white border-b border-border">
+      <header className="bg-white/95 backdrop-blur-sm border-b border-border/50">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <a href="/" className="flex items-center space-x-3">
@@ -111,8 +112,8 @@ const Auth = () => {
       </header>
 
       {/* Main Content */}
-      <main className="flex-1 flex items-center justify-center p-4 bg-gradient-to-br from-background to-muted/30">
-        <Card className="w-full max-w-md shadow-card">
+      <main className="flex-1 flex items-center justify-center p-4">
+        <Card className="w-full max-w-md shadow-card bg-white/95 backdrop-blur-sm">
           <CardHeader className="text-center space-y-2">
             <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
               <Shield className="w-8 h-8 text-primary" />
@@ -248,6 +249,8 @@ const Auth = () => {
           </CardContent>
         </Card>
       </main>
+      
+      <Footer />
     </div>
   );
 };
