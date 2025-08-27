@@ -65,7 +65,7 @@ const Header = () => {
                       onClick={handleAdminAccess}
                       className="hidden sm:flex"
                     >
-                      <Shield className="h-4 w-4 mr-2" />
+                      <Shield className="h-4 w-4" />
                       Dashboard
                     </Button>
                   )}
@@ -75,7 +75,7 @@ const Header = () => {
                     onClick={handleSignOut}
                     className="flex items-center space-x-2"
                   >
-                    <LogOut className="h-4 w-4 sm:mr-2" />
+                    <LogOut className="h-4 w-4" />
                     <span className="hidden sm:inline">Sign Out</span>
                   </Button>
                 </>
