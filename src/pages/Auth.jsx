@@ -79,7 +79,7 @@ const Auth = () => {
     <div className="min-h-screen flex flex-col">
       <Header />
       {/* Main Content */}
-      <main className="flex-1 flex items-center justify-center p-4">
+      <main className="flex-1 flex items-center justify-center p-4 mt-6">
           {/* Left Side - Add your own content here */}
           <div className="w-1/2 p-6">
             {/* LEFT SIDE CONTENT GOES HERE */}
