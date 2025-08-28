@@ -105,14 +105,14 @@ const Auth = () => {
 
       {/* Main Content */}
       <main className="flex-1 flex items-center justify-center p-4">
-        <div className="flex w-full max-w-5xl bg-white/0 rounded-lg shadow-none overflow-hidden">
+        {/* <div className="flex w-full max-w-5xl bg-white/0 rounded-lg shadow-none overflow-hidden"> */}
           {/* Left Side - Add your own content here */}
           <div className="w-1/2 p-6">
             {/* LEFT SIDE CONTENT GOES HERE */}
           </div>
 
           {/* Right Side - Form Section */}
-          <div className="w-1/2 bg-white backdrop-blur-sm flex items-center justify-center p-6">
+          <div className="w-1/2 bg-white/95 backdrop-blur-sm flex items-center justify-center p-6">
             <Card className="w-full max-w-md shadow-card bg-white/95 backdrop-blur-sm">
               <CardHeader className="text-center space-y-2">
                 <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -198,7 +198,7 @@ const Auth = () => {
               </CardContent>
             </Card>
           </div>
-        </div>
+        {/* </div> */}
       </main>
       <Footer />
     </div>
