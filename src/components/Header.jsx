@@ -53,7 +53,6 @@ const Header = () => {
                     to="/admin"
                     className="hidden sm:inline-flex items-center px-3 py-1.5 text-sm font-medium rounded-md border border-border/50 text-gray-700 hover:text-primary hover:border-primary transition-colors"
                   >
-                    <Shield className="h-4 w-4 mr-1" />
                     Dashboard
                   </Link>
                 )}
