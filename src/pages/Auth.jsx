@@ -76,7 +76,7 @@ const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen bg-green flex flex-col">
+    <div className="min-h-screen bg-hero-gradient flex flex-col">
       <Header />
       {/* Main Content */}
       <main className="flex-1 flex items-center justify-center p-4 mt-10">
