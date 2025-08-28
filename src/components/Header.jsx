@@ -7,7 +7,7 @@ import { useNavigate, Link, useLocation } from 'react-router-dom';
 const Header = () => {
   const { user, isAdmin, signOut } = useAuth();
   const navigate = useNavigate();
-  const location = useLocation(); // To get current path
+  const location = useLocation(); // Get current path
 
   const handleSignOut = async () => {
     await signOut();
@@ -43,7 +43,30 @@ const Header = () => {
                 <ArrowLeft className="h-4 w-4 mr-1" />
                 <span className="hidden sm:inline">Back to Home</span>
               </Link>
+            ) : location.pathname === "/admin" ? (
+              // Show Back to Home + Sign Out on Dashboard
+              <>
+                <Link
+                  to="/"
+                  className="inline-flex items-center px-3 py-1.5 text-sm font-medium rounded-md border border-border/50 text-gray-700 hover:text-primary hover:border-primary transition-colors"
+                >
+                  <ArrowLeft className="h-4 w-4 mr-1" />
+                  <span className="hidden sm:inline">Back to Home</span>
+                </Link>
+                <Link
+                  to="#"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleSignOut();
+                  }}
+                  className="inline-flex items-center px-3 py-1.5 text-sm font-medium text-red-600 hover:text-red-800 transition-colors"
+                >
+                  <LogOut className="h-4 w-4 mr-1" />
+                  <span className="hidden sm:inline">Sign Out</span>
+                </Link>
+              </>
             ) : user ? (
+              // Default User/Admin View
               <>
                 <span className="text-xs sm:text-sm text-muted-foreground hidden sm:inline">
                   {isAdmin() ? 'Admin' : 'User'}
