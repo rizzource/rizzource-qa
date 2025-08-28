@@ -112,7 +112,7 @@ const Auth = () => {
           </div>
 
           {/* Right Side - Form Section */}
-          <div className="w-1/2 bg-white/95 backdrop-blur-sm flex items-center justify-center p-6">
+          <div className="w-1/2 bg-white backdrop-blur-sm flex items-center justify-center p-6">
             <Card className="w-full max-w-md shadow-card bg-white/95 backdrop-blur-sm">
               <CardHeader className="text-center space-y-2">
                 <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
