@@ -81,7 +81,7 @@ const Auth = () => {
       {/* Main Content */}
       <main className="flex-1 flex items-center justify-center p-4 mt-20">
           {/* Left Side - Add your own content here */}
-          <div className="w-1/2 p-6 bg-hero-gradient">
+          <div className="w-1/2 p-6 bg-hero-gradient min-h-screen">
             {/* LEFT SIDE CONTENT GOES HERE */}
           </div>
 
