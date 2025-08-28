@@ -9,6 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Loader2, Scale, Shield } from 'lucide-react';
 import Footer from '@/components/Footer';
+import Header from '@/components/Header';
 
 const Auth = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -76,32 +77,7 @@ const Auth = () => {
 
   return (
     // <div className="min-h-screen bg-hero-gradient flex flex-col">
-      {/* Header */}
-      <header className="bg-white/95 backdrop-blur-sm border-b border-border/50">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <a href="/" className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
-                <Scale className="w-6 h-6 text-primary-foreground" />
-              </div>
-              <div>
-                <h1 className="text-xl text-primary leading-tight">
-                  <span className="font-bold text-gold-primary">RIZZ</span>
-                  <span className="font-semibold text-primary">ource</span>
-                </h1>
-                <p className="text-xs text-muted-foreground">Law School and Beyond</p>
-              </div>
-            </a>
-            <Button
-              variant="ghost"
-              onClick={() => navigate('/')}
-              className="text-muted-foreground hover:text-foreground"
-            >
-              Back to Home
-            </Button>
-          </div>
-        </div>
-      </header>
+      <Header />
 
       {/* Main Content */}
       <main className="flex-1 flex items-center justify-center p-4">
