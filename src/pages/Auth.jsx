@@ -79,7 +79,7 @@ const Auth = () => {
     <div className="bg-white/95 flex flex-col">
       <Header />
       {/* Main Content */}
-      <main className="flex-1 flex items-center justify-center p-4 mt-10 min-h-screen">
+      <main className="flex-1 flex items-center justify-center min-h-screen">
           <div className="w-1/2 p-6 bg-hero-gradient">
             {/* <div className="absolute inset-0 overflow-hidden pointer-events-none">
               <div className="absolute top-20 left-4 md:left-10 animate-float opacity-20">
