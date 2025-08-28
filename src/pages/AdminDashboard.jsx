@@ -163,9 +163,9 @@ export const AdminDashboard = () => {
   return (
     <div className="min-h-screen bg-hero-gradient flex flex-col">
       <Header />
-      <div className="text-2xl font-semibold text-foreground mb-6">
+      {/* <div className="text-2xl font-semibold text-foreground mb-6">
         Welcome back, Admin!
-      </div>
+      </div> */}
       <div className="container mx-auto px-4 py-8 space-y-8 flex-1">
         {/* Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
