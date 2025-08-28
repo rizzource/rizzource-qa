@@ -79,7 +79,7 @@ const Auth = () => {
     <div className="bg-white/95 flex flex-col">
       <Header />
       {/* Main Content */}
-      <main className="flex-1 flex items-stretch justify-center mt-14">
+      <main className="flex-1 flex items-stretch justify-center mt-20">
           {/* Left Side - Logo Section */}
           <div className="w-1/2 p-6 bg-hero-gradient flex items-center justify-center">
             <div className="relative z-10 container mx-auto px-4 mobile-optimized py-20 flex items-center justify-center h-full">
