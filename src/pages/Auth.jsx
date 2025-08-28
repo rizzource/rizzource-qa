@@ -79,25 +79,12 @@ const Auth = () => {
     <div className="bg-white/95 flex flex-col">
       <Header />
       {/* Main Content */}
-      <main className="flex-1 flex items-center justify-center mt-12 min-h-screen">
-          <div className="w-1/2 p-6 bg-hero-gradient">
-            {/* <div className="absolute inset-0 overflow-hidden pointer-events-none">
-              <div className="absolute top-20 left-4 md:left-10 animate-float opacity-20">
-                <Scale className="w-12 h-12 md:w-16 md:h-16 text-gold-light" />
-              </div>
-              <div className="absolute top-40 right-4 md:right-20 animate-float-delayed opacity-20">
-                <BookOpen className="w-10 h-10 md:w-12 md:h-12 text-gold-light" />
-              </div>
-              <div className="absolute bottom-40 left-4 md:left-20 animate-float opacity-20">
-                <Users className="w-12 h-12 md:w-14 md:h-14 text-gold-light" />
-              </div>
-            </div> */}
-      
-            <div className="relative z-10 container mx-auto px-4 mobile-optimized py-20 min-h-screen flex items-center">
+      <main className="flex-1 flex items-stretch justify-center mt-12">
+          {/* Left Side - Logo Section */}
+          <div className="w-1/2 p-6 bg-hero-gradient flex items-center justify-center">
+            <div className="relative z-10 container mx-auto px-4 mobile-optimized py-20 flex items-center justify-center h-full">
               <div className="w-full space-y-12">
-                {/* Content Section */}
                 <div className="text-center space-y-6 lg:space-y-8">
-                  {/* RIZZource Logo */}
                   <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 md:gap-6 mb-8 sm:mb-10 md:mb-12">
                     <div className="w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 bg-white/10 rounded-lg flex items-center justify-center flex-shrink-0 backdrop-blur-sm">
                       <Scale className="w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10 text-gold-light" />
@@ -116,6 +103,9 @@ const Auth = () => {
           <div className="w-1/2 bg-white/95 backdrop-blur-sm flex items-center justify-center p-6">
             <Card className="w-full max-w-md shadow-card bg-white/95 backdrop-blur-sm">
               <CardHeader className="text-center space-y-2">
+                <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Shield className="w-8 h-8 text-primary" />
+                </div>
                 <CardTitle className="text-2xl text-foreground">Welcome Back</CardTitle>
                 <CardDescription className="text-muted-foreground">
                   Sign in to your account or create a new one to get started
