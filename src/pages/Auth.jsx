@@ -75,7 +75,7 @@ const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen bg-hero-gradient flex flex-col">
+    // <div className="min-h-screen bg-hero-gradient flex flex-col">
       {/* Header */}
       <header className="bg-white/95 backdrop-blur-sm border-b border-border/50">
         <div className="container mx-auto px-4 py-4">
@@ -105,7 +105,7 @@ const Auth = () => {
 
       {/* Main Content */}
       <main className="flex-1 flex items-center justify-center p-4">
-        {/* <div className="flex w-full max-w-5xl bg-white/0 rounded-lg shadow-none overflow-hidden"> */}
+        <div className="flex w-full max-w-5xl bg-white/0 rounded-lg shadow-none overflow-hidden">
           {/* Left Side - Add your own content here */}
           <div className="w-1/2 p-6">
             {/* LEFT SIDE CONTENT GOES HERE */}
@@ -198,10 +198,10 @@ const Auth = () => {
               </CardContent>
             </Card>
           </div>
-        {/* </div> */}
+        </div>
       </main>
       <Footer />
-    </div>
+    {/* </div> */}
   );
 };
 
