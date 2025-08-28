@@ -81,7 +81,7 @@ const Auth = () => {
       {/* Main Content */}
       <main className="flex-1 flex items-center justify-center p-4 min-h-screen">
           <div className="w-1/2 p-6 bg-hero-gradient">
-            <div className="absolute inset-0 overflow-hidden pointer-events-none">
+            {/* <div className="absolute inset-0 overflow-hidden pointer-events-none">
               <div className="absolute top-20 left-4 md:left-10 animate-float opacity-20">
                 <Scale className="w-12 h-12 md:w-16 md:h-16 text-gold-light" />
               </div>
@@ -91,7 +91,7 @@ const Auth = () => {
               <div className="absolute bottom-40 left-4 md:left-20 animate-float opacity-20">
                 <Users className="w-12 h-12 md:w-14 md:h-14 text-gold-light" />
               </div>
-            </div>
+            </div> */}
       
             <div className="relative z-10 container mx-auto px-4 mobile-optimized py-20 min-h-screen flex items-center">
               <div className="w-full space-y-12">
