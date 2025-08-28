@@ -10,6 +10,7 @@ import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
 import * as XLSX from 'xlsx';
 import Footer from '@/components/Footer';
+import Header from '@/components/Header';
 
 export const AdminDashboard = () => {
   const { user, userProfile, isAdmin, signOut } = useAuth();
@@ -161,47 +162,7 @@ export const AdminDashboard = () => {
 
   return (
     <div className="min-h-screen bg-hero-gradient flex flex-col">
-      {/* Header */}
-      <header className="bg-white/95 backdrop-blur-sm border-b border-border/50 sticky top-0 z-10">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <Button 
-                variant="ghost" 
-                onClick={() => navigate('/')}
-                className="text-muted-foreground hover:text-foreground"
-              >
-                <ArrowLeft className="h-4 w-4 mr-2" />
-                Back to Home
-              </Button>
-              <div className="flex items-center space-x-4">
-                <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
-                  <Shield className="w-6 h-6 text-primary-foreground" />
-                </div>
-                <div>
-                  <h1 className="text-2xl font-bold text-foreground">Admin Dashboard</h1>
-                  <p className="text-sm text-muted-foreground">
-                    Welcome back, {userProfile?.email}
-                  </p>
-                </div>
-              </div>
-            </div>
-            <div className="flex items-center space-x-4">
-              <Badge variant="secondary" className="bg-primary/10 text-primary border-primary/20">
-                Administrator
-              </Badge>
-              <Button 
-                onClick={handleSignOut} 
-                variant="outline" 
-                className="border-border hover:bg-muted"
-              >
-                Sign Out
-              </Button>
-            </div>
-          </div>
-        </div>
-      </header>
-
+      <Header />
       <div className="container mx-auto px-4 py-8 space-y-8 flex-1">
         {/* Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
