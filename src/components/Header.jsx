@@ -68,15 +68,16 @@ const Header = () => {
             ) : user ? (
               // Default User/Admin View
               <>
-                <span className="text-xs sm:text-sm text-muted-foreground hidden sm:inline">
+                <span className="text-xs sm:text-sm text-muted-foreground">
                   {isAdmin() ? 'Admin' : 'User'}
                 </span>
                 {isAdmin() && (
                   <Link
                     to="/admin"
-                    className="hidden sm:inline-flex items-center px-3 py-1.5 text-sm font-medium rounded-md border border-border/50 text-gray-700 hover:text-primary hover:border-primary transition-colors"
+                    className="inline-flex items-center px-2 sm:px-3 py-1.5 text-xs sm:text-sm font-medium rounded-md border border-border/50 text-gray-700 hover:text-primary hover:border-primary transition-colors"
                   >
-                    Dashboard
+                    <span className="hidden sm:inline">Dashboard</span>
+                    <Shield className="h-4 w-4 sm:hidden" />
                   </Link>
                 )}
                 <Link
