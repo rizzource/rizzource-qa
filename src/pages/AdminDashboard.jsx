@@ -1,70 +1,102 @@
-import { useEffect, useState } from 'react';
-import { useAuth } from '@/components/AuthProvider';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Badge } from '@/components/ui/badge';
-import { supabase } from '@/integrations/supabase/client';
-import { Users, UserCheck, MessageSquare, Activity, Shield, FileSpreadsheet, Loader2, ArrowLeft } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-import { useToast } from '@/hooks/use-toast';
-import * as XLSX from 'xlsx';
-import Footer from '@/components/Footer';
-import Header from '@/components/Header';
+import { useEffect, useState } from "react";
+import { useAuth } from "@/components/AuthProvider";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
+import { supabase } from "@/integrations/supabase/client";
+import {
+  Users,
+  UserCheck,
+  MessageSquare,
+  Activity,
+  Shield,
+  FileSpreadsheet,
+  Loader2,
+} from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { useToast } from "@/hooks/use-toast";
+import * as XLSX from "xlsx";
+import Footer from "@/components/Footer";
+import Header from "@/components/Header";
 
 export const AdminDashboard = () => {
-  const { user, userProfile, isAdmin, signOut } = useAuth();
+  const { user, userProfile, isAdmin } = useAuth();
   const [stats, setStats] = useState({
     mentees: 0,
     mentors: 0,
     feedback: 0,
-    exports: 0
+    exports: 0,
   });
   const [mentees, setMentees] = useState([]);
   const [mentors, setMentors] = useState([]);
   const [feedback, setFeedback] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [exportingTable, setExportingTable] = useState('');
+  const [exportingTable, setExportingTable] = useState("");
+  const [activeSection, setActiveSection] = useState(0); // 0=mentees,1=mentors,2=feedback
   const navigate = useNavigate();
   const { toast } = useToast();
 
   useEffect(() => {
     if (!user) {
-      navigate('/');
+      navigate("/");
       return;
     }
-    
     if (userProfile && !isAdmin()) {
-      navigate('/');
+      navigate("/");
       return;
     }
-    
     fetchStats();
   }, [user, userProfile, navigate, isAdmin]);
 
   const fetchStats = async () => {
     if (!isAdmin()) return;
-    
     try {
-      const [menteesResponse, mentorsResponse, feedbackResponse, exportsResponse] = await Promise.all([
-        supabase.from('mentees').select('*').order('created_at', { ascending: false }),
-        supabase.from('mentors').select('*').order('created_at', { ascending: false }),
-        supabase.from('feedback').select('*').order('created_at', { ascending: false }),
-        supabase.from('data_exports').select('*', { count: 'exact', head: true })
+      const [
+        menteesResponse,
+        mentorsResponse,
+        feedbackResponse,
+        exportsResponse,
+      ] = await Promise.all([
+        supabase
+          .from("mentees")
+          .select("*")
+          .order("created_at", { ascending: false }),
+        supabase
+          .from("mentors")
+          .select("*")
+          .order("created_at", { ascending: false }),
+        supabase
+          .from("feedback")
+          .select("*")
+          .order("created_at", { ascending: false }),
+        supabase.from("data_exports").select("*", { count: "exact", head: true }),
       ]);
 
       setMentees(menteesResponse.data || []);
       setMentors(mentorsResponse.data || []);
       setFeedback(feedbackResponse.data || []);
-      
       setStats({
         mentees: menteesResponse.data?.length || 0,
         mentors: mentorsResponse.data?.length || 0,
         feedback: feedbackResponse.data?.length || 0,
-        exports: exportsResponse.count || 0
+        exports: exportsResponse.count || 0,
       });
     } catch (error) {
-      console.error('Error fetching data:', error);
+      console.error("Error fetching data:", error);
       toast({
         title: "Error",
         description: "Failed to fetch dashboard data",
@@ -75,11 +107,6 @@ export const AdminDashboard = () => {
     }
   };
 
-  const handleSignOut = async () => {
-    await signOut();
-    navigate('/');
-  };
-
   const exportToExcel = async (tableName, data, filename) => {
     if (!data || data.length === 0) {
       toast({
@@ -88,41 +115,34 @@ export const AdminDashboard = () => {
       });
       return;
     }
-
     setExportingTable(tableName);
-    
     try {
-      // Create worksheet from data
       const worksheet = XLSX.utils.json_to_sheet(data);
       const workbook = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(workbook, worksheet, tableName);
-
-      // Generate filename with timestamp
-      const timestamp = new Date().toISOString().split('T')[0];
-      const fullFilename = `${filename}_${timestamp}.xlsx`;
-
-      // Download file
-      XLSX.writeFile(workbook, fullFilename);
-
-      // Log the export in the database
-      await supabase.rpc('export_data_to_json', { table_name: tableName });
-
+      const timestamp = new Date().toISOString().split("T")[0];
+      XLSX.writeFile(workbook, `${filename}_${timestamp}.xlsx`);
+      await supabase.rpc("export_data_to_json", { table_name: tableName });
       toast({
         title: "Export Successful",
-        description: `${data.length} records exported to ${fullFilename}`,
+        description: `${data.length} records exported`,
       });
-
     } catch (error) {
-      console.error('Export error:', error);
+      console.error("Export error:", error);
       toast({
         title: "Export Failed",
         description: error.message || "Failed to export data",
         variant: "destructive",
       });
     } finally {
-      setExportingTable('');
+      setExportingTable("");
     }
   };
+
+  const handlePrev = () =>
+    setActiveSection((prev) => (prev > 0 ? prev - 1 : 2));
+  const handleNext = () =>
+    setActiveSection((prev) => (prev < 2 ? prev + 1 : 0));
 
   if (loading) {
     return (
@@ -151,7 +171,10 @@ export const AdminDashboard = () => {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Button onClick={() => navigate('/')} className="w-full bg-primary hover:bg-primary/90">
+            <Button
+              onClick={() => navigate("/")}
+              className="w-full bg-primary hover:bg-primary/90"
+            >
               Return to Home
             </Button>
           </CardContent>
@@ -167,7 +190,7 @@ export const AdminDashboard = () => {
         Welcome back, Admin!
       </div>
       <div className="container mx-auto px-4 py-8 space-y-8 flex-1">
-        {/* Stats Grid */}
+        {/* Stats Section */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           <Card className="shadow-card bg-white/95 backdrop-blur-sm">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -222,8 +245,50 @@ export const AdminDashboard = () => {
           </Card>
         </div>
 
-        {/* Mentees Table */}
-        <Card className="shadow-card bg-white/95 backdrop-blur-sm">
+        {/* Table Sections */}
+        {activeSection === 0 && (
+          <MenteesTable
+            mentees={mentees}
+            exportToExcel={exportToExcel}
+            exportingTable={exportingTable}
+          />
+        )}
+        {activeSection === 1 && (
+          <MentorsTable
+            mentors={mentors}
+            exportToExcel={exportToExcel}
+            exportingTable={exportingTable}
+          />
+        )}
+        {activeSection === 2 && (
+          <FeedbackTable
+            feedback={feedback}
+            exportToExcel={exportToExcel}
+            exportingTable={exportingTable}
+          />
+        )}
+
+        {/* Pagination Controls */}
+        <div className="flex justify-between items-center mt-6">
+          <Button onClick={handlePrev} variant="outline">
+            ← Previous
+          </Button>
+          <span className="text-sm text-muted-foreground">
+            Viewing {activeSection === 0 ? "Mentees" : activeSection === 1 ? "Mentors" : "Feedback"}
+          </span>
+          <Button onClick={handleNext} variant="outline">
+            Next →
+          </Button>
+        </div>
+      </div>
+      <Footer />
+    </div>
+  );
+};
+
+
+const MenteesTable = ({ mentees, exportToExcel, exportingTable }) => (
+  <Card className="shadow-card bg-white/95 backdrop-blur-sm">
           <CardHeader>
             <div className="flex justify-between items-center">
               <div>
@@ -291,9 +356,10 @@ export const AdminDashboard = () => {
             </div>
           </CardContent>
         </Card>
+);
 
-        {/* Mentors Table */}
-        <Card className="shadow-card bg-white/95 backdrop-blur-sm">
+const MentorsTable = ({ mentors, exportToExcel, exportingTable }) => (
+  <Card className="shadow-card bg-white/95 backdrop-blur-sm">
           <CardHeader>
             <div className="flex justify-between items-center">
               <div>
@@ -363,74 +429,70 @@ export const AdminDashboard = () => {
             </div>
           </CardContent>
         </Card>
+);
 
-        {/* Feedback Table */}
-        <Card className="shadow-card bg-white/95 backdrop-blur-sm">
-          <CardHeader>
-            <div className="flex justify-between items-center">
-              <div>
-                <CardTitle className="text-foreground">Feedback</CardTitle>
-                <CardDescription className="text-muted-foreground">
-                  User feedback submissions
-                </CardDescription>
-              </div>
-              <Button
-                onClick={() => exportToExcel('feedback', feedback, 'feedback_export')}
-                disabled={exportingTable === 'feedback'}
-                className="bg-primary hover:bg-primary/90 text-primary-foreground"
-              >
-                <FileSpreadsheet className="h-4 w-4 mr-2" />
-                {exportingTable === 'feedback' ? 'Exporting...' : 'Export to Excel'}
-              </Button>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="overflow-x-auto">
-              <div className="rounded-md border border-border min-w-full">
-                <Table>
-                  <TableHeader>
-                    <TableRow className="border-border bg-muted/50">
-                      <TableHead className="text-foreground font-semibold min-w-[180px]">Email</TableHead>
-                      <TableHead className="text-foreground font-semibold min-w-[80px]">Rating</TableHead>
-                      <TableHead className="text-foreground font-semibold min-w-[200px]">Comments</TableHead>
-                      <TableHead className="text-foreground font-semibold min-w-[100px]">Created At</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {feedback.length === 0 ? (
-                      <TableRow>
-                        <TableCell colSpan={4} className="text-center text-muted-foreground py-8">
-                          No feedback found
-                        </TableCell>
-                      </TableRow>
-                    ) : (
-                      feedback.map((item) => (
-                        <TableRow key={item.id} className="border-border hover:bg-muted/30">
-                          <TableCell className="text-muted-foreground text-sm">{item.email}</TableCell>
-                          <TableCell>
-                            <Badge 
-                              variant={item.rating >= 4 ? "default" : item.rating >= 3 ? "secondary" : "destructive"} 
-                              className="text-xs"
-                            >
-                              {item.rating}/5
-                            </Badge>
-                          </TableCell>
-                          <TableCell className="max-w-xs truncate text-muted-foreground text-sm">{item.comments}</TableCell>
-                          <TableCell className="text-muted-foreground text-sm">
-                            {new Date(item.created_at).toLocaleDateString()}
-                          </TableCell>
-                        </TableRow>
-                      ))
-                    )}
-                  </TableBody>
-                </Table>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+const FeedbackTable = ({ feedback, exportToExcel, exportingTable }) => (
+  <Card className="shadow-card bg-white/95 backdrop-blur-sm">
+    <CardHeader>
+      <div className="flex justify-between items-center">
+        <div>
+          <CardTitle className="text-foreground">Feedback</CardTitle>
+          <CardDescription className="text-muted-foreground">
+            User feedback submissions
+          </CardDescription>
+        </div>
+        <Button
+          onClick={() => exportToExcel('feedback', feedback, 'feedback_export')}
+          disabled={exportingTable === 'feedback'}
+          className="bg-primary hover:bg-primary/90 text-primary-foreground"
+          >
+          <FileSpreadsheet className="h-4 w-4 mr-2" />
+          {exportingTable === 'feedback' ? 'Exporting...' : 'Export to Excel'}
+        </Button>
       </div>
-      
-      <Footer />
-    </div>
-  );
-};
+    </CardHeader>
+    <CardContent>
+      <div className="overflow-x-auto">
+        <div className="rounded-md border border-border min-w-full">
+          <Table>
+            <TableHeader>
+              <TableRow className="border-border bg-muted/50">
+                <TableHead className="text-foreground font-semibold min-w-[180px]">Email</TableHead>
+                <TableHead className="text-foreground font-semibold min-w-[80px]">Rating</TableHead>
+                <TableHead className="text-foreground font-semibold min-w-[200px]">Comments</TableHead>
+                <TableHead className="text-foreground font-semibold min-w-[100px]">Created At</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {feedback.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={4} className="text-center text-muted-foreground py-8">
+                  No feedback found
+                </TableCell>
+              </TableRow>
+  ) : (
+    feedback.map((item) => (
+      <TableRow key={item.id} className="border-border hover:bg-muted/30">
+        <TableCell className="text-muted-foreground text-sm">{item.email}</TableCell>
+        <TableCell>
+          <Badge 
+            variant={item.rating >= 4 ? "default" : item.rating >= 3 ? "secondary" : "destructive"} 
+            className="text-xs"
+            >
+            {item.rating}/5
+          </Badge>
+        </TableCell>
+        <TableCell className="max-w-xs truncate text-muted-foreground text-sm">{item.comments}</TableCell>
+        <TableCell className="text-muted-foreground text-sm">
+          {new Date(item.created_at).toLocaleDateString()}
+        </TableCell>
+      </TableRow>
+    ))
+  )}
+            </TableBody>
+          </Table>
+        </div>
+      </div>
+    </CardContent>
+  </Card>
+);
