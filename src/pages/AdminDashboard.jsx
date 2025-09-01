@@ -35,12 +35,6 @@ import {
   Loader2,
   ArrowLeft,
   ArrowRight,
-  Scale,
-  BookOpen,
-  Briefcase,
-  Gavel,
-  FileText,
-  GraduationCap,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
@@ -311,88 +305,63 @@ export const AdminDashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-hero-gradient flex flex-col relative overflow-hidden">
-      {/* Floating background law-related icons */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-20 left-4 md:left-10 animate-float opacity-10">
-          <Scale className="w-12 h-12 md:w-16 md:h-16 text-gold-light" />
-        </div>
-        <div className="absolute top-40 right-4 md:right-20 animate-float-delayed opacity-10">
-          <BookOpen className="w-10 h-10 md:w-12 md:h-12 text-white" />
-        </div>
-        <div className="absolute bottom-60 left-4 md:left-20 animate-float opacity-10">
-          <Users className="w-12 h-12 md:w-14 md:h-14 text-gold-light" />
-        </div>
-        <div className="absolute top-60 left-1/2 transform -translate-x-1/2 animate-float-delayed opacity-10">
-          <Briefcase className="w-8 h-8 md:w-10 md:h-10 text-white" />
-        </div>
-        <div className="absolute bottom-40 right-8 md:right-16 animate-float opacity-10">
-          <Gavel className="w-10 h-10 md:w-12 md:h-12 text-gold-light" />
-        </div>
-        <div className="absolute top-80 left-1/4 animate-float-delayed opacity-10">
-          <FileText className="w-8 h-8 md:w-10 md:h-10 text-white" />
-        </div>
-        <div className="absolute bottom-80 right-1/3 animate-float opacity-10">
-          <GraduationCap className="w-10 h-10 md:w-12 md:h-12 text-gold-light" />
-        </div>
-      </div>
-
+    <div className="min-h-screen bg-hero-gradient flex flex-col">
       <Header />
-      <div className="relative z-10 container mx-auto px-4 pt-6 pb-2">
+      <div className="container mx-auto px-4 pt-6 pb-2">
         <h1 className="text-xl sm:text-2xl font-semibold text-white mb-4 lg:mb-6">
           Welcome back, Admin!
         </h1>
       </div>
-      <div className="relative z-10 container mx-auto px-4 pb-8 space-y-6 lg:space-y-8 flex-1">
+      <div className="container mx-auto px-4 pb-8 space-y-6 lg:space-y-8 flex-1">
         {/* Stats Section */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
-          <Card className="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-lg border border-white/20 shadow-xl">
+          <Card className="shadow-card bg-white/95 backdrop-blur-sm">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-white/80">Total Mentees</CardTitle>
-              <Users className="h-4 w-4 text-gold-light" />
+              <CardTitle className="text-sm font-medium text-muted-foreground">Total Mentees</CardTitle>
+              <Users className="h-4 w-4 text-primary" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-white">{stats.mentees}</div>
-              <p className="text-xs text-white/60 mt-1">
+              <div className="text-2xl font-bold text-foreground">{stats.mentees}</div>
+              <p className="text-xs text-muted-foreground mt-1">
                 Registered applications
               </p>
             </CardContent>
           </Card>
           
-          <Card className="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-lg border border-white/20 shadow-xl">
+          <Card className="shadow-card bg-white/95 backdrop-blur-sm">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-white/80">Total Mentors</CardTitle>
-              <UserCheck className="h-4 w-4 text-gold-light" />
+              <CardTitle className="text-sm font-medium text-muted-foreground">Total Mentors</CardTitle>
+              <UserCheck className="h-4 w-4 text-primary" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-white">{stats.mentors}</div>
-              <p className="text-xs text-white/60 mt-1">
+              <div className="text-2xl font-bold text-foreground">{stats.mentors}</div>
+              <p className="text-xs text-muted-foreground mt-1">
                 Registered applications
               </p>
             </CardContent>
           </Card>
           
-          <Card className="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-lg border border-white/20 shadow-xl">
+          <Card className="shadow-card bg-white/95 backdrop-blur-sm">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-white/80">Feedback</CardTitle>
-              <MessageSquare className="h-4 w-4 text-gold-light" />
+              <CardTitle className="text-sm font-medium text-muted-foreground">Feedback</CardTitle>
+              <MessageSquare className="h-4 w-4 text-primary" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-white">{stats.feedback}</div>
-              <p className="text-xs text-white/60 mt-1">
+              <div className="text-2xl font-bold text-foreground">{stats.feedback}</div>
+              <p className="text-xs text-muted-foreground mt-1">
                 User submissions
               </p>
             </CardContent>
           </Card>
           
-          <Card className="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-lg border border-white/20 shadow-xl">
+          <Card className="shadow-card bg-white/95 backdrop-blur-sm">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-white/80">Data Exports</CardTitle>
-              <Activity className="h-4 w-4 text-gold-light" />
+              <CardTitle className="text-sm font-medium text-muted-foreground">Data Exports</CardTitle>
+              <Activity className="h-4 w-4 text-primary" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-white">{stats.exports}</div>
-              <p className="text-xs text-white/60 mt-1">
+              <div className="text-2xl font-bold text-foreground">{stats.exports}</div>
+              <p className="text-xs text-muted-foreground mt-1">
                 Total exports performed
               </p>
             </CardContent>
@@ -468,19 +437,19 @@ const MenteesTable = ({ data, currentPage, onPageChange, exportToExcel, exportin
   const totalPages = Math.ceil(data.total / pageSize);
   
   return (
-    <Card className="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-lg border border-white/20 shadow-xl">
+    <Card className="shadow-card bg-white/95 backdrop-blur-sm">
       <CardHeader>
         <div className="flex flex-col sm:flex-row gap-4 sm:justify-between sm:items-center">
           <div>
-            <CardTitle className="text-white">Mentees</CardTitle>
-            <CardDescription className="text-white/70">
+            <CardTitle className="text-foreground">Mentees</CardTitle>
+            <CardDescription className="text-muted-foreground">
               All registered mentee applications ({data.total} total)
             </CardDescription>
           </div>
           <Button
             onClick={() => exportToExcel('mentees', data.data, 'mentees_export')}
             disabled={exportingTable === 'mentees'}
-            className="bg-gold-light text-primary hover:bg-gold-dark transition-all duration-300 w-full sm:w-auto"
+            className="bg-primary hover:bg-primary/90 text-primary-foreground w-full sm:w-auto"
           >
             <FileSpreadsheet className="h-4 w-4 mr-2" />
             <span className="hidden sm:inline">{exportingTable === 'mentees' ? 'Exporting...' : 'Export to Excel'}</span>
@@ -490,49 +459,49 @@ const MenteesTable = ({ data, currentPage, onPageChange, exportToExcel, exportin
       </CardHeader>
       <CardContent>
         <div className="overflow-x-auto">
-          <div className="rounded-md border border-white/30 w-max min-w-full bg-gradient-to-br from-white/5 to-transparent backdrop-blur-sm">
+          <div className="rounded-md border border-border w-max min-w-full">
             <Table>
               <TableHeader>
-                <TableRow className="border-white/20 bg-white/10 backdrop-blur-sm">
-                  <TableHead className="text-white font-semibold min-w-[120px]">Name</TableHead>
-                  <TableHead className="text-white font-semibold min-w-[180px]">Email</TableHead>
-                  <TableHead className="text-white font-semibold min-w-[120px]">Field of Law</TableHead>
-                  <TableHead className="text-white font-semibold min-w-[150px]">University</TableHead>
-                  <TableHead className="text-white font-semibold min-w-[100px]">Hometown</TableHead>
-                  <TableHead className="text-white font-semibold min-w-[140px]">Time Commitment</TableHead>
-                  <TableHead className="text-white font-semibold min-w-[100px]">Created At</TableHead>
+                <TableRow className="border-border bg-muted/50">
+                  <TableHead className="text-foreground font-semibold min-w-[120px]">Name</TableHead>
+                  <TableHead className="text-foreground font-semibold min-w-[180px]">Email</TableHead>
+                  <TableHead className="text-foreground font-semibold min-w-[120px]">Field of Law</TableHead>
+                  <TableHead className="text-foreground font-semibold min-w-[150px]">University</TableHead>
+                  <TableHead className="text-foreground font-semibold min-w-[100px]">Hometown</TableHead>
+                  <TableHead className="text-foreground font-semibold min-w-[140px]">Time Commitment</TableHead>
+                  <TableHead className="text-foreground font-semibold min-w-[100px]">Created At</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {data.loading ? (
-                   <TableRow>
-                     <TableCell colSpan={7} className="text-center text-white/60 py-8">
-                       <Loader2 className="h-4 w-4 animate-spin mx-auto" />
-                       <span className="ml-2">Loading...</span>
-                     </TableCell>
-                   </TableRow>
-                 ) : data.data.length === 0 ? (
-                   <TableRow>
-                     <TableCell colSpan={7} className="text-center text-white/60 py-8">
-                       No mentees found
-                     </TableCell>
-                   </TableRow>
-                 ) : (
-                   data.data.map((mentee) => (
-                     <TableRow key={mentee.id} className="border-white/20 hover:bg-white/10 transition-colors duration-200">
-                       <TableCell className="text-white font-medium">
-                         {mentee.first_name} {mentee.last_name}
-                       </TableCell>
-                       <TableCell className="text-white/80 text-sm">{mentee.email}</TableCell>
-                       <TableCell className="text-white/80 text-sm whitespace-normal break-words max-w-[180px]">{mentee.field_of_law}</TableCell>
-                       <TableCell className="text-white/80 text-sm whitespace-normal break-words max-w-[180px]">{mentee.undergraduate_university}</TableCell>
-                       <TableCell className="text-white/80 text-sm whitespace-normal break-words max-w-[180px]">{mentee.hometown}</TableCell>
-                       <TableCell className="text-white/80 text-sm">{mentee.mentorship_time_commitment}</TableCell>
-                       <TableCell className="text-white/80 text-sm">
-                         {new Date(mentee.created_at).toLocaleDateString()}
-                       </TableCell>
-                     </TableRow>
-                   ))
+                  <TableRow>
+                    <TableCell colSpan={7} className="text-center text-muted-foreground py-8">
+                      <Loader2 className="h-4 w-4 animate-spin mx-auto" />
+                      <span className="ml-2">Loading...</span>
+                    </TableCell>
+                  </TableRow>
+                ) : data.data.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={7} className="text-center text-muted-foreground py-8">
+                      No mentees found
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  data.data.map((mentee) => (
+                    <TableRow key={mentee.id} className="border-border hover:bg-muted/30">
+                      <TableCell className="text-foreground font-medium">
+                        {mentee.first_name} {mentee.last_name}
+                      </TableCell>
+                      <TableCell className="text-muted-foreground text-sm">{mentee.email}</TableCell>
+                      <TableCell className="text-muted-foreground text-sm whitespace-normal break-words max-w-[180px]">{mentee.field_of_law}</TableCell>
+                      <TableCell className="text-muted-foreground text-sm whitespace-normal break-words max-w-[180px]">{mentee.undergraduate_university}</TableCell>
+                      <TableCell className="text-muted-foreground text-sm whitespace-normal break-words max-w-[180px]">{mentee.hometown}</TableCell>
+                      <TableCell className="text-muted-foreground text-sm">{mentee.mentorship_time_commitment}</TableCell>
+                      <TableCell className="text-muted-foreground text-sm">
+                        {new Date(mentee.created_at).toLocaleDateString()}
+                      </TableCell>
+                    </TableRow>
+                  ))
                 )}
               </TableBody>
             </Table>
@@ -582,19 +551,19 @@ const MentorsTable = ({ data, currentPage, onPageChange, exportToExcel, exportin
   const totalPages = Math.ceil(data.total / pageSize);
   
   return (
-    <Card className="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-lg border border-white/20 shadow-xl">
+    <Card className="shadow-card bg-white/95 backdrop-blur-sm">
       <CardHeader>
         <div className="flex flex-col sm:flex-row gap-4 sm:justify-between sm:items-center">
           <div>
-            <CardTitle className="text-white">Mentors</CardTitle>
-            <CardDescription className="text-white/70">
+            <CardTitle className="text-foreground">Mentors</CardTitle>
+            <CardDescription className="text-muted-foreground">
               All registered mentor applications ({data.total} total)
             </CardDescription>
           </div>
           <Button
             onClick={() => exportToExcel('mentors', data.data, 'mentors_export')}
             disabled={exportingTable === 'mentors'}
-            className="bg-gold-light text-primary hover:bg-gold-dark transition-all duration-300 w-full sm:w-auto"
+            className="bg-primary hover:bg-primary/90 text-primary-foreground w-full sm:w-auto"
           >
             <FileSpreadsheet className="h-4 w-4 mr-2" />
             <span className="hidden sm:inline">{exportingTable === 'mentors' ? 'Exporting...' : 'Export to Excel'}</span>
@@ -604,51 +573,51 @@ const MentorsTable = ({ data, currentPage, onPageChange, exportToExcel, exportin
       </CardHeader>
       <CardContent>
         <div className="overflow-x-auto">
-          <div className="rounded-md border border-white/30 w-min min-w-full bg-gradient-to-br from-white/5 to-transparent backdrop-blur-sm">
+          <div className="rounded-md border border-border w-min min-w-full">
             <Table>
               <TableHeader>
-                <TableRow className="border-white/20 bg-white/10 backdrop-blur-sm">
-                  <TableHead className="text-white font-semibold min-w-[120px]">Name</TableHead>
-                  <TableHead className="text-white font-semibold min-w-[180px]">Email</TableHead>
-                  <TableHead className="text-white font-semibold min-w-[120px]">Field of Law</TableHead>
-                  <TableHead className="text-white font-semibold min-w-[80px]">Class Year</TableHead>
-                  <TableHead className="text-white font-semibold min-w-[150px]">University</TableHead>
-                  <TableHead className="text-white font-semibold min-w-[100px]">Hometown</TableHead>
-                  <TableHead className="text-white font-semibold min-w-[140px]">Time Commitment</TableHead>
-                  <TableHead className="text-white font-semibold min-w-[100px]">Created At</TableHead>
+                <TableRow className="border-border bg-muted/50">
+                  <TableHead className="text-foreground font-semibold min-w-[120px]">Name</TableHead>
+                  <TableHead className="text-foreground font-semibold min-w-[180px]">Email</TableHead>
+                  <TableHead className="text-foreground font-semibold min-w-[120px]">Field of Law</TableHead>
+                  <TableHead className="text-foreground font-semibold min-w-[80px]">Class Year</TableHead>
+                  <TableHead className="text-foreground font-semibold min-w-[150px]">University</TableHead>
+                  <TableHead className="text-foreground font-semibold min-w-[100px]">Hometown</TableHead>
+                  <TableHead className="text-foreground font-semibold min-w-[140px]">Time Commitment</TableHead>
+                  <TableHead className="text-foreground font-semibold min-w-[100px]">Created At</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {data.loading ? (
-                   <TableRow>
-                     <TableCell colSpan={8} className="text-center text-white/60 py-8">
-                       <Loader2 className="h-4 w-4 animate-spin mx-auto" />
-                       <span className="ml-2">Loading...</span>
-                     </TableCell>
-                   </TableRow>
-                 ) : data.data.length === 0 ? (
-                   <TableRow>
-                     <TableCell colSpan={8} className="text-center text-white/60 py-8">
-                       No mentors found
-                     </TableCell>
-                   </TableRow>
-                 ) : (
-                   data.data.map((mentor) => (
-                     <TableRow key={mentor.id} className="border-white/20 hover:bg-white/10 transition-colors duration-200">
-                       <TableCell className="text-white font-medium">
-                         {mentor.first_name} {mentor.last_name}
-                       </TableCell>
-                       <TableCell className="text-white/80 text-sm">{mentor.email}</TableCell>
-                       <TableCell className="text-white/80 text-sm">{mentor.field_of_law}</TableCell>
-                       <TableCell className="text-white/80 text-sm">{mentor.class_year}</TableCell>
-                       <TableCell className="text-white/80 text-sm">{mentor.undergraduate_university}</TableCell>
-                       <TableCell className="text-white/80 text-sm">{mentor.hometown}</TableCell>
-                       <TableCell className="text-white/80 text-sm">{mentor.mentorship_time_commitment}</TableCell>
-                       <TableCell className="text-white/80 text-sm">
-                         {new Date(mentor.created_at).toLocaleDateString()}
-                       </TableCell>
-                     </TableRow>
-                   ))
+                  <TableRow>
+                    <TableCell colSpan={8} className="text-center text-muted-foreground py-8">
+                      <Loader2 className="h-4 w-4 animate-spin mx-auto" />
+                      <span className="ml-2">Loading...</span>
+                    </TableCell>
+                  </TableRow>
+                ) : data.data.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={8} className="text-center text-muted-foreground py-8">
+                      No mentors found
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  data.data.map((mentor) => (
+                    <TableRow key={mentor.id} className="border-border hover:bg-muted/30">
+                      <TableCell className="text-foreground font-medium">
+                        {mentor.first_name} {mentor.last_name}
+                      </TableCell>
+                      <TableCell className="text-muted-foreground text-sm">{mentor.email}</TableCell>
+                      <TableCell className="text-muted-foreground text-sm">{mentor.field_of_law}</TableCell>
+                      <TableCell className="text-muted-foreground text-sm">{mentor.class_year}</TableCell>
+                      <TableCell className="text-muted-foreground text-sm">{mentor.undergraduate_university}</TableCell>
+                      <TableCell className="text-muted-foreground text-sm">{mentor.hometown}</TableCell>
+                      <TableCell className="text-muted-foreground text-sm">{mentor.mentorship_time_commitment}</TableCell>
+                      <TableCell className="text-muted-foreground text-sm">
+                        {new Date(mentor.created_at).toLocaleDateString()}
+                      </TableCell>
+                    </TableRow>
+                  ))
                 )}
               </TableBody>
             </Table>
@@ -698,19 +667,19 @@ const FeedbackTable = ({ data, currentPage, onPageChange, exportToExcel, exporti
   const totalPages = Math.ceil(data.total / pageSize);
   
   return (
-    <Card className="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-lg border border-white/20 shadow-xl">
+    <Card className="shadow-card bg-white/95 backdrop-blur-sm">
       <CardHeader>
         <div className="flex flex-col sm:flex-row gap-4 sm:justify-between sm:items-center">
           <div>
-            <CardTitle className="text-white">Feedback</CardTitle>
-            <CardDescription className="text-white/70">
+            <CardTitle className="text-foreground">Feedback</CardTitle>
+            <CardDescription className="text-muted-foreground">
               User feedback submissions ({data.total} total)
             </CardDescription>
           </div>
           <Button
             onClick={() => exportToExcel('feedback', data.data, 'feedback_export')}
             disabled={exportingTable === 'feedback'}
-            className="bg-gold-light text-primary hover:bg-gold-dark transition-all duration-300 w-full sm:w-auto"
+            className="bg-primary hover:bg-primary/90 text-primary-foreground w-full sm:w-auto"
           >
             <FileSpreadsheet className="h-4 w-4 mr-2" />
             <span className="hidden sm:inline">{exportingTable === 'feedback' ? 'Exporting...' : 'Export to Excel'}</span>
@@ -720,41 +689,41 @@ const FeedbackTable = ({ data, currentPage, onPageChange, exportToExcel, exporti
       </CardHeader>
       <CardContent>
         <div className="overflow-x-auto">
-          <div className="rounded-md border border-white/30 w-max min-w-full bg-gradient-to-br from-white/5 to-transparent backdrop-blur-sm">
+          <div className="rounded-md border border-border w-max min-w-full">
             <Table>
               <TableHeader>
-                <TableRow className="border-white/20 bg-white/10 backdrop-blur-sm">
-                  <TableHead className="text-white font-semibold min-w-[180px]">Email</TableHead>
-                  <TableHead className="text-white font-semibold min-w-[80px]">Rating</TableHead>
-                  <TableHead className="text-white font-semibold min-w-[200px]">Suggestions</TableHead>
-                  <TableHead className="text-white font-semibold min-w-[100px]">Created At</TableHead>
+                <TableRow className="border-border bg-muted/50">
+                  <TableHead className="text-foreground font-semibold min-w-[180px]">Email</TableHead>
+                  <TableHead className="text-foreground font-semibold min-w-[80px]">Rating</TableHead>
+                  <TableHead className="text-foreground font-semibold min-w-[200px]">Suggestions</TableHead>
+                  <TableHead className="text-foreground font-semibold min-w-[100px]">Created At</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {data.loading ? (
-                   <TableRow>
-                     <TableCell colSpan={4} className="text-center text-white/60 py-8">
-                       <Loader2 className="h-4 w-4 animate-spin mx-auto" />
-                       <span className="ml-2">Loading...</span>
-                     </TableCell>
-                   </TableRow>
-                 ) : data.data.length === 0 ? (
-                   <TableRow>
-                     <TableCell colSpan={4} className="text-center text-white/60 py-8">
-                       No feedback found
-                     </TableCell>
-                   </TableRow>
-                 ) : (
-                   data.data.map((item) => (
-                     <TableRow key={item.id} className="border-white/20 hover:bg-white/10 transition-colors duration-200">
-                       <TableCell className="text-white/80 text-sm">{item.user_email}</TableCell>
-                       <TableCell className="text-white/80 text-sm">{item.rating}/5</TableCell>
-                       <TableCell className="text-white/80 text-sm whitespace-normal break-words max-w-[180px]">{item.suggestions}</TableCell>
-                       <TableCell className="text-white/80 text-sm">
-                         {new Date(item.created_at).toLocaleDateString()}
-                       </TableCell>
-                     </TableRow>
-                   ))
+                  <TableRow>
+                    <TableCell colSpan={4} className="text-center text-muted-foreground py-8">
+                      <Loader2 className="h-4 w-4 animate-spin mx-auto" />
+                      <span className="ml-2">Loading...</span>
+                    </TableCell>
+                  </TableRow>
+                ) : data.data.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={4} className="text-center text-muted-foreground py-8">
+                      No feedback found
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  data.data.map((item) => (
+                    <TableRow key={item.id} className="border-border hover:bg-muted/30">
+                      <TableCell className="text-muted-foreground text-sm">{item.user_email}</TableCell>
+                      <TableCell className="text-muted-foreground text-sm">{item.rating}/5</TableCell>
+                      <TableCell className="text-muted-foreground text-sm whitespace-normal break-words max-w-[180px]">{item.suggestions}</TableCell>
+                      <TableCell className="text-muted-foreground text-sm">
+                        {new Date(item.created_at).toLocaleDateString()}
+                      </TableCell>
+                    </TableRow>
+                  ))
                 )}
               </TableBody>
             </Table>
