@@ -274,7 +274,7 @@ export const AdminDashboard = () => {
           <Button
             type="button"
             variant="outline"
-            onClick={prevStep}
+            onClick={handlePrev}
             className="border-white/20 text-green hover:bg-light-green whitespace-nowrap flex items-center"
           >
             <ArrowLeft className="mr-2 h-4 w-4" />
@@ -283,11 +283,11 @@ export const AdminDashboard = () => {
           <Button
             type="button"
             variant="outline"
-            onClick={prevStep}
+            onClick={handleNext}
             className="border-white/20 text-green hover:bg-light-green whitespace-nowrap flex items-center"
           >
-            <ArrowRight className="mr-2 h-4 w-4" />
             Next
+            <ArrowRight className="ml-2 h-4 w-4" />
           </Button>
         </div>
       </div>
