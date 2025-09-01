@@ -25,6 +25,8 @@ import {
   Shield,
   FileSpreadsheet,
   Loader2,
+  ArrowLeft,
+  ArrowRight,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
@@ -122,8 +124,17 @@ export const AdminDashboard = () => {
       const timestamp = new Date().toISOString().split("T")[0];
       XLSX.writeFile(workbook, `${filename}_${timestamp}.xlsx`);
       await supabase.rpc("export_data_to_json", { table_name: tableName });
+      toast({
+        title: "Export Successful",
+        description: `${data.length} records exported`,
+      });
     } catch (error) {
       console.error("Export error:", error);
+      toast({
+        title: "Export Failed",
+        description: error.message || "Failed to export data",
+        variant: "destructive",
+      });
     } finally {
       setExportingTable("");
     }
@@ -260,11 +271,23 @@ export const AdminDashboard = () => {
 
         {/* Pagination Controls */}
         <div className="flex justify-between items-center mt-6">
-          <Button onClick={handlePrev} variant="outline">
-            ← Previous
+          <Button
+            type="button"
+            variant="outline"
+            onClick={prevStep}
+            className="border-white/20 text-green hover:bg-light-green whitespace-nowrap flex items-center"
+          >
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Previous
           </Button>
-          <Button onClick={handleNext} variant="outline">
-            Next →
+          <Button
+            type="button"
+            variant="outline"
+            onClick={prevStep}
+            className="border-white/20 text-green hover:bg-light-green whitespace-nowrap flex items-center"
+          >
+            <ArrowRight className="mr-2 h-4 w-4" />
+            Next
           </Button>
         </div>
       </div>
