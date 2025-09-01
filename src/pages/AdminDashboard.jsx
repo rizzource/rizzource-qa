@@ -16,6 +16,14 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 import { supabase } from "@/integrations/supabase/client";
 import {
   Users,
@@ -42,14 +50,23 @@ export const AdminDashboard = () => {
     feedback: 0,
     exports: 0,
   });
-  const [mentees, setMentees] = useState([]);
-  const [mentors, setMentors] = useState([]);
-  const [feedback, setFeedback] = useState([]);
+  
+  // Pagination state for each table
+  const [menteesData, setMenteesData] = useState({ data: [], total: 0, loading: false });
+  const [mentorsData, setMentorsData] = useState({ data: [], total: 0, loading: false });
+  const [feedbackData, setFeedbackData] = useState({ data: [], total: 0, loading: false });
+  
+  const [menteesPage, setMenteesPage] = useState(1);
+  const [mentorsPage, setMentorsPage] = useState(1);
+  const [feedbackPage, setFeedbackPage] = useState(1);
+  
   const [loading, setLoading] = useState(true);
   const [exportingTable, setExportingTable] = useState("");
   const [activeSection, setActiveSection] = useState(0); // 0=mentees,1=mentors,2=feedback
   const navigate = useNavigate();
   const { toast } = useToast();
+
+  const PAGE_SIZE = 10;
 
   useEffect(() => {
     if (!user) {
@@ -61,6 +78,7 @@ export const AdminDashboard = () => {
       return;
     }
     fetchStats();
+    fetchAllData();
   }, [user, userProfile, navigate, isAdmin]);
 
   const fetchStats = async () => {
@@ -72,30 +90,36 @@ export const AdminDashboard = () => {
         feedbackResponse,
         exportsResponse,
       ] = await Promise.all([
-        supabase
-          .from("mentees")
-          .select("*")
-          .order("created_at", { ascending: false }),
-        supabase
-          .from("mentors")
-          .select("*")
-          .order("created_at", { ascending: false }),
-        supabase
-          .from("feedback")
-          .select("*")
-          .order("created_at", { ascending: false }),
+        supabase.from("mentees").select("*", { count: "exact", head: true }),
+        supabase.from("mentors").select("*", { count: "exact", head: true }),
+        supabase.from("feedback").select("*", { count: "exact", head: true }),
         supabase.from("data_exports").select("*", { count: "exact", head: true }),
       ]);
 
-      setMentees(menteesResponse.data || []);
-      setMentors(mentorsResponse.data || []);
-      setFeedback(feedbackResponse.data || []);
       setStats({
-        mentees: menteesResponse.data?.length || 0,
-        mentors: mentorsResponse.data?.length || 0,
-        feedback: feedbackResponse.data?.length || 0,
+        mentees: menteesResponse.count || 0,
+        mentors: mentorsResponse.count || 0,
+        feedback: feedbackResponse.count || 0,
         exports: exportsResponse.count || 0,
       });
+    } catch (error) {
+      console.error("Error fetching stats:", error);
+      toast({
+        title: "Error",
+        description: "Failed to fetch dashboard stats",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const fetchAllData = async () => {
+    if (!isAdmin()) return;
+    try {
+      await Promise.all([
+        fetchMentees(1),
+        fetchMentors(1),
+        fetchFeedback(1),
+      ]);
     } catch (error) {
       console.error("Error fetching data:", error);
       toast({
@@ -105,6 +129,102 @@ export const AdminDashboard = () => {
       });
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchMentees = async (page) => {
+    if (!isAdmin()) return;
+    setMenteesData(prev => ({ ...prev, loading: true }));
+    try {
+      const from = (page - 1) * PAGE_SIZE;
+      const to = from + PAGE_SIZE - 1;
+      
+      const { data, count, error } = await supabase
+        .from("mentees")
+        .select("*", { count: "exact" })
+        .order("created_at", { ascending: false })
+        .range(from, to);
+      
+      if (error) throw error;
+      
+      setMenteesData({
+        data: data || [],
+        total: count || 0,
+        loading: false,
+      });
+      setMenteesPage(page);
+    } catch (error) {
+      console.error("Error fetching mentees:", error);
+      setMenteesData(prev => ({ ...prev, loading: false }));
+      toast({
+        title: "Error",
+        description: "Failed to fetch mentees data",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const fetchMentors = async (page) => {
+    if (!isAdmin()) return;
+    setMentorsData(prev => ({ ...prev, loading: true }));
+    try {
+      const from = (page - 1) * PAGE_SIZE;
+      const to = from + PAGE_SIZE - 1;
+      
+      const { data, count, error } = await supabase
+        .from("mentors")
+        .select("*", { count: "exact" })
+        .order("created_at", { ascending: false })
+        .range(from, to);
+      
+      if (error) throw error;
+      
+      setMentorsData({
+        data: data || [],
+        total: count || 0,
+        loading: false,
+      });
+      setMentorsPage(page);
+    } catch (error) {
+      console.error("Error fetching mentors:", error);
+      setMentorsData(prev => ({ ...prev, loading: false }));
+      toast({
+        title: "Error",
+        description: "Failed to fetch mentors data",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const fetchFeedback = async (page) => {
+    if (!isAdmin()) return;
+    setFeedbackData(prev => ({ ...prev, loading: true }));
+    try {
+      const from = (page - 1) * PAGE_SIZE;
+      const to = from + PAGE_SIZE - 1;
+      
+      const { data, count, error } = await supabase
+        .from("feedback")
+        .select("*", { count: "exact" })
+        .order("created_at", { ascending: false })
+        .range(from, to);
+      
+      if (error) throw error;
+      
+      setFeedbackData({
+        data: data || [],
+        total: count || 0,
+        loading: false,
+      });
+      setFeedbackPage(page);
+    } catch (error) {
+      console.error("Error fetching feedback:", error);
+      setFeedbackData(prev => ({ ...prev, loading: false }));
+      toast({
+        title: "Error",
+        description: "Failed to fetch feedback data",
+        variant: "destructive",
+      });
     }
   };
 
@@ -251,23 +371,32 @@ export const AdminDashboard = () => {
         {/* Table Sections */}
         {activeSection === 0 && (
           <MenteesTable
-            mentees={mentees}
+            data={menteesData}
+            currentPage={menteesPage}
+            onPageChange={fetchMentees}
             exportToExcel={exportToExcel}
             exportingTable={exportingTable}
+            pageSize={PAGE_SIZE}
           />
         )}
         {activeSection === 1 && (
           <MentorsTable
-            mentors={mentors}
+            data={mentorsData}
+            currentPage={mentorsPage}
+            onPageChange={fetchMentors}
             exportToExcel={exportToExcel}
             exportingTable={exportingTable}
+            pageSize={PAGE_SIZE}
           />
         )}
         {activeSection === 2 && (
           <FeedbackTable
-            feedback={feedback}
+            data={feedbackData}
+            currentPage={feedbackPage}
+            onPageChange={fetchFeedback}
             exportToExcel={exportToExcel}
             exportingTable={exportingTable}
+            pageSize={PAGE_SIZE}
           />
         )}
 
@@ -304,200 +433,338 @@ export const AdminDashboard = () => {
 };
 
 
-const MenteesTable = ({ mentees, exportToExcel, exportingTable }) => (
-  <Card className="shadow-card bg-white/95 backdrop-blur-sm">
-          <CardHeader>
-            <div className="flex flex-col sm:flex-row gap-4 sm:justify-between sm:items-center">
-              <div>
-                <CardTitle className="text-foreground">Mentees</CardTitle>
-                <CardDescription className="text-muted-foreground">
-                  All registered mentee applications
-                </CardDescription>
-              </div>
-              <Button
-                onClick={() => exportToExcel('mentees', mentees, 'mentees_export')}
-                disabled={exportingTable === 'mentees'}
-                className="bg-primary hover:bg-primary/90 text-primary-foreground w-full sm:w-auto"
-              >
-                <FileSpreadsheet className="h-4 w-4 mr-2" />
-                <span className="hidden sm:inline">{exportingTable === 'mentees' ? 'Exporting...' : 'Export to Excel'}</span>
-                <span className="sm:hidden">{exportingTable === 'mentees' ? 'Exporting...' : 'Export'}</span>
-              </Button>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="overflow-x-auto">
-              <div className="rounded-md border border-border w-max min-w-full">
-                <Table>
-                  <TableHeader>
-                    <TableRow className="border-border bg-muted/50">
-                      <TableHead className="text-foreground font-semibold min-w-[120px]">Name</TableHead>
-                      <TableHead className="text-foreground font-semibold min-w-[180px]">Email</TableHead>
-                      <TableHead className="text-foreground font-semibold min-w-[120px]">Field of Law</TableHead>
-                      <TableHead className="text-foreground font-semibold min-w-[150px]">University</TableHead>
-                      <TableHead className="text-foreground font-semibold min-w-[100px]">Hometown</TableHead>
-                      <TableHead className="text-foreground font-semibold min-w-[140px]">Time Commitment</TableHead>
-                      <TableHead className="text-foreground font-semibold min-w-[100px]">Created At</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {mentees.length === 0 ? (
-                      <TableRow>
-                        <TableCell colSpan={7} className="text-center text-muted-foreground py-8">
-                          No mentees found
-                        </TableCell>
-                      </TableRow>
-                    ) : (
-                      mentees.map((mentee) => (
-                        <TableRow key={mentee.id} className="border-border hover:bg-muted/30">
-                          <TableCell className="text-foreground font-medium">
-                            {mentee.first_name} {mentee.last_name}
-                          </TableCell>
-                          <TableCell className="text-muted-foreground text-sm">{mentee.email}</TableCell>
-                          <TableCell className="text-muted-foreground text-sm whitespace-normal break-words max-w-[180px]">{mentee.field_of_law}</TableCell>
-                          <TableCell className="text-muted-foreground text-sm whitespace-normal break-words max-w-[180px]">{mentee.undergraduate_university}</TableCell>
-                          <TableCell className="text-muted-foreground text-sm whitespace-normal break-words max-w-[180px]">{mentee.hometown}</TableCell>
-                          <TableCell className="text-muted-foreground text-sm">{mentee.mentorship_time_commitment}</TableCell>
-                          <TableCell className="text-muted-foreground text-sm">
-                            {new Date(mentee.created_at).toLocaleDateString()}
-                          </TableCell>
-                        </TableRow>
-                      ))
-                    )}
-                  </TableBody>
-                </Table>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-);
-
-const MentorsTable = ({ mentors, exportToExcel, exportingTable }) => (
-  <Card className="shadow-card bg-white/95 backdrop-blur-sm">
-          <CardHeader>
-            <div className="flex flex-col sm:flex-row gap-4 sm:justify-between sm:items-center">
-              <div>
-                <CardTitle className="text-foreground">Mentors</CardTitle>
-                <CardDescription className="text-muted-foreground">
-                  All registered mentor applications
-                </CardDescription>
-              </div>
-              <Button
-                onClick={() => exportToExcel('mentors', mentors, 'mentors_export')}
-                disabled={exportingTable === 'mentors'}
-                className="bg-primary hover:bg-primary/90 text-primary-foreground w-full sm:w-auto"
-              >
-                <FileSpreadsheet className="h-4 w-4 mr-2" />
-                <span className="hidden sm:inline">{exportingTable === 'mentors' ? 'Exporting...' : 'Export to Excel'}</span>
-                <span className="sm:hidden">{exportingTable === 'mentors' ? 'Exporting...' : 'Export'}</span>
-              </Button>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="overflow-x-auto">
-              <div className="rounded-md border border-border w-min min-w-full">
-                <Table>
-                  <TableHeader>
-                    <TableRow className="border-border bg-muted/50">
-                      <TableHead className="text-foreground font-semibold min-w-[120px]">Name</TableHead>
-                      <TableHead className="text-foreground font-semibold min-w-[180px]">Email</TableHead>
-                      <TableHead className="text-foreground font-semibold min-w-[120px]">Field of Law</TableHead>
-                      <TableHead className="text-foreground font-semibold min-w-[80px]">Class Year</TableHead>
-                      <TableHead className="text-foreground font-semibold min-w-[150px]">University</TableHead>
-                      <TableHead className="text-foreground font-semibold min-w-[100px]">Hometown</TableHead>
-                      <TableHead className="text-foreground font-semibold min-w-[140px]">Time Commitment</TableHead>
-                      <TableHead className="text-foreground font-semibold min-w-[100px]">Created At</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {mentors.length === 0 ? (
-                      <TableRow>
-                        <TableCell colSpan={8} className="text-center text-muted-foreground py-8">
-                          No mentors found
-                        </TableCell>
-                      </TableRow>
-                    ) : (
-                      mentors.map((mentor) => (
-                        <TableRow key={mentor.id} className="border-border hover:bg-muted/30">
-                          <TableCell className="text-foreground font-medium">
-                            {mentor.first_name} {mentor.last_name}
-                          </TableCell>
-                          <TableCell className="text-muted-foreground text-sm">{mentor.email}</TableCell>
-                          <TableCell className="text-muted-foreground text-sm">{mentor.field_of_law}</TableCell>
-                          <TableCell className="text-muted-foreground text-sm">{mentor.class_year}</TableCell>
-                          <TableCell className="text-muted-foreground text-sm">{mentor.undergraduate_university}</TableCell>
-                          <TableCell className="text-muted-foreground text-sm">{mentor.hometown}</TableCell>
-                          <TableCell className="text-muted-foreground text-sm">{mentor.mentorship_time_commitment}</TableCell>
-                          <TableCell className="text-muted-foreground text-sm">
-                            {new Date(mentor.created_at).toLocaleDateString()}
-                          </TableCell>
-                        </TableRow>
-                      ))
-                    )}
-                  </TableBody>
-                </Table>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-);
-
-const FeedbackTable = ({ feedback, exportToExcel, exportingTable }) => (
-  <Card className="shadow-card bg-white/95 backdrop-blur-sm">
-    <CardHeader>
-      <div className="flex flex-col sm:flex-row gap-4 sm:justify-between sm:items-center">
-        <div>
-          <CardTitle className="text-foreground">Feedback</CardTitle>
-          <CardDescription className="text-muted-foreground">
-            User feedback submissions
-          </CardDescription>
-        </div>
-        <Button
-          onClick={() => exportToExcel('feedback', feedback, 'feedback_export')}
-          disabled={exportingTable === 'feedback'}
-          className="bg-primary hover:bg-primary/90 text-primary-foreground w-full sm:w-auto"
+const MenteesTable = ({ data, currentPage, onPageChange, exportToExcel, exportingTable, pageSize }) => {
+  const totalPages = Math.ceil(data.total / pageSize);
+  
+  return (
+    <Card className="shadow-card bg-white/95 backdrop-blur-sm">
+      <CardHeader>
+        <div className="flex flex-col sm:flex-row gap-4 sm:justify-between sm:items-center">
+          <div>
+            <CardTitle className="text-foreground">Mentees</CardTitle>
+            <CardDescription className="text-muted-foreground">
+              All registered mentee applications ({data.total} total)
+            </CardDescription>
+          </div>
+          <Button
+            onClick={() => exportToExcel('mentees', data.data, 'mentees_export')}
+            disabled={exportingTable === 'mentees'}
+            className="bg-primary hover:bg-primary/90 text-primary-foreground w-full sm:w-auto"
           >
-          <FileSpreadsheet className="h-4 w-4 mr-2" />
-          <span className="hidden sm:inline">{exportingTable === 'feedback' ? 'Exporting...' : 'Export to Excel'}</span>
-          <span className="sm:hidden">{exportingTable === 'feedback' ? 'Exporting...' : 'Export'}</span>
-        </Button>
-      </div>
-    </CardHeader>
-    <CardContent>
-      <div className="overflow-x-auto">
-        <div className="rounded-md border border-border w-max min-w-full">
-          <Table>
-            <TableHeader>
-              <TableRow className="border-border bg-muted/50">
-                <TableHead className="text-foreground font-semibold min-w-[180px]">Email</TableHead>
-                <TableHead className="text-foreground font-semibold min-w-[80px]">Rating</TableHead>
-                <TableHead className="text-foreground font-semibold min-w-[200px]">Suggestions</TableHead>
-                <TableHead className="text-foreground font-semibold min-w-[100px]">Created At</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {feedback.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={4} className="text-center text-muted-foreground py-8">
-                  No feedback found
-                </TableCell>
-              </TableRow>
-  ) : (
-    feedback.map((item) => (
-      <TableRow key={item.id} className="border-border hover:bg-muted/30">
-        <TableCell className="text-muted-foreground text-sm">{item.user_email}</TableCell>
-        <TableCell className="text-muted-foreground text-sm">{item.rating}/5</TableCell>
-        <TableCell className="text-muted-foreground text-sm whitespace-normal break-words max-w-[180px]">{item.suggestions}</TableCell>
-        <TableCell className="text-muted-foreground text-sm">
-          {new Date(item.created_at).toLocaleDateString()}
-        </TableCell>
-      </TableRow>
-    ))
-  )}
-            </TableBody>
-          </Table>
+            <FileSpreadsheet className="h-4 w-4 mr-2" />
+            <span className="hidden sm:inline">{exportingTable === 'mentees' ? 'Exporting...' : 'Export to Excel'}</span>
+            <span className="sm:hidden">{exportingTable === 'mentees' ? 'Exporting...' : 'Export'}</span>
+          </Button>
         </div>
-      </div>
-    </CardContent>
-  </Card>
-);
+      </CardHeader>
+      <CardContent>
+        <div className="overflow-x-auto">
+          <div className="rounded-md border border-border w-max min-w-full">
+            <Table>
+              <TableHeader>
+                <TableRow className="border-border bg-muted/50">
+                  <TableHead className="text-foreground font-semibold min-w-[120px]">Name</TableHead>
+                  <TableHead className="text-foreground font-semibold min-w-[180px]">Email</TableHead>
+                  <TableHead className="text-foreground font-semibold min-w-[120px]">Field of Law</TableHead>
+                  <TableHead className="text-foreground font-semibold min-w-[150px]">University</TableHead>
+                  <TableHead className="text-foreground font-semibold min-w-[100px]">Hometown</TableHead>
+                  <TableHead className="text-foreground font-semibold min-w-[140px]">Time Commitment</TableHead>
+                  <TableHead className="text-foreground font-semibold min-w-[100px]">Created At</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {data.loading ? (
+                  <TableRow>
+                    <TableCell colSpan={7} className="text-center text-muted-foreground py-8">
+                      <Loader2 className="h-4 w-4 animate-spin mx-auto" />
+                      <span className="ml-2">Loading...</span>
+                    </TableCell>
+                  </TableRow>
+                ) : data.data.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={7} className="text-center text-muted-foreground py-8">
+                      No mentees found
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  data.data.map((mentee) => (
+                    <TableRow key={mentee.id} className="border-border hover:bg-muted/30">
+                      <TableCell className="text-foreground font-medium">
+                        {mentee.first_name} {mentee.last_name}
+                      </TableCell>
+                      <TableCell className="text-muted-foreground text-sm">{mentee.email}</TableCell>
+                      <TableCell className="text-muted-foreground text-sm whitespace-normal break-words max-w-[180px]">{mentee.field_of_law}</TableCell>
+                      <TableCell className="text-muted-foreground text-sm whitespace-normal break-words max-w-[180px]">{mentee.undergraduate_university}</TableCell>
+                      <TableCell className="text-muted-foreground text-sm whitespace-normal break-words max-w-[180px]">{mentee.hometown}</TableCell>
+                      <TableCell className="text-muted-foreground text-sm">{mentee.mentorship_time_commitment}</TableCell>
+                      <TableCell className="text-muted-foreground text-sm">
+                        {new Date(mentee.created_at).toLocaleDateString()}
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </div>
+        </div>
+        
+        {/* Pagination Controls */}
+        {totalPages > 1 && (
+          <div className="flex justify-center mt-6">
+            <Pagination>
+              <PaginationContent>
+                <PaginationItem>
+                  <PaginationPrevious 
+                    onClick={() => currentPage > 1 && onPageChange(currentPage - 1)}
+                    className={currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                  />
+                </PaginationItem>
+                
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                  <PaginationItem key={page}>
+                    <PaginationLink
+                      onClick={() => onPageChange(page)}
+                      isActive={currentPage === page}
+                      className="cursor-pointer"
+                    >
+                      {page}
+                    </PaginationLink>
+                  </PaginationItem>
+                ))}
+                
+                <PaginationItem>
+                  <PaginationNext 
+                    onClick={() => currentPage < totalPages && onPageChange(currentPage + 1)}
+                    className={currentPage === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                  />
+                </PaginationItem>
+              </PaginationContent>
+            </Pagination>
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  );
+};
+
+const MentorsTable = ({ data, currentPage, onPageChange, exportToExcel, exportingTable, pageSize }) => {
+  const totalPages = Math.ceil(data.total / pageSize);
+  
+  return (
+    <Card className="shadow-card bg-white/95 backdrop-blur-sm">
+      <CardHeader>
+        <div className="flex flex-col sm:flex-row gap-4 sm:justify-between sm:items-center">
+          <div>
+            <CardTitle className="text-foreground">Mentors</CardTitle>
+            <CardDescription className="text-muted-foreground">
+              All registered mentor applications ({data.total} total)
+            </CardDescription>
+          </div>
+          <Button
+            onClick={() => exportToExcel('mentors', data.data, 'mentors_export')}
+            disabled={exportingTable === 'mentors'}
+            className="bg-primary hover:bg-primary/90 text-primary-foreground w-full sm:w-auto"
+          >
+            <FileSpreadsheet className="h-4 w-4 mr-2" />
+            <span className="hidden sm:inline">{exportingTable === 'mentors' ? 'Exporting...' : 'Export to Excel'}</span>
+            <span className="sm:hidden">{exportingTable === 'mentors' ? 'Exporting...' : 'Export'}</span>
+          </Button>
+        </div>
+      </CardHeader>
+      <CardContent>
+        <div className="overflow-x-auto">
+          <div className="rounded-md border border-border w-min min-w-full">
+            <Table>
+              <TableHeader>
+                <TableRow className="border-border bg-muted/50">
+                  <TableHead className="text-foreground font-semibold min-w-[120px]">Name</TableHead>
+                  <TableHead className="text-foreground font-semibold min-w-[180px]">Email</TableHead>
+                  <TableHead className="text-foreground font-semibold min-w-[120px]">Field of Law</TableHead>
+                  <TableHead className="text-foreground font-semibold min-w-[80px]">Class Year</TableHead>
+                  <TableHead className="text-foreground font-semibold min-w-[150px]">University</TableHead>
+                  <TableHead className="text-foreground font-semibold min-w-[100px]">Hometown</TableHead>
+                  <TableHead className="text-foreground font-semibold min-w-[140px]">Time Commitment</TableHead>
+                  <TableHead className="text-foreground font-semibold min-w-[100px]">Created At</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {data.loading ? (
+                  <TableRow>
+                    <TableCell colSpan={8} className="text-center text-muted-foreground py-8">
+                      <Loader2 className="h-4 w-4 animate-spin mx-auto" />
+                      <span className="ml-2">Loading...</span>
+                    </TableCell>
+                  </TableRow>
+                ) : data.data.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={8} className="text-center text-muted-foreground py-8">
+                      No mentors found
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  data.data.map((mentor) => (
+                    <TableRow key={mentor.id} className="border-border hover:bg-muted/30">
+                      <TableCell className="text-foreground font-medium">
+                        {mentor.first_name} {mentor.last_name}
+                      </TableCell>
+                      <TableCell className="text-muted-foreground text-sm">{mentor.email}</TableCell>
+                      <TableCell className="text-muted-foreground text-sm">{mentor.field_of_law}</TableCell>
+                      <TableCell className="text-muted-foreground text-sm">{mentor.class_year}</TableCell>
+                      <TableCell className="text-muted-foreground text-sm">{mentor.undergraduate_university}</TableCell>
+                      <TableCell className="text-muted-foreground text-sm">{mentor.hometown}</TableCell>
+                      <TableCell className="text-muted-foreground text-sm">{mentor.mentorship_time_commitment}</TableCell>
+                      <TableCell className="text-muted-foreground text-sm">
+                        {new Date(mentor.created_at).toLocaleDateString()}
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </div>
+        </div>
+        
+        {/* Pagination Controls */}
+        {totalPages > 1 && (
+          <div className="flex justify-center mt-6">
+            <Pagination>
+              <PaginationContent>
+                <PaginationItem>
+                  <PaginationPrevious 
+                    onClick={() => currentPage > 1 && onPageChange(currentPage - 1)}
+                    className={currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                  />
+                </PaginationItem>
+                
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                  <PaginationItem key={page}>
+                    <PaginationLink
+                      onClick={() => onPageChange(page)}
+                      isActive={currentPage === page}
+                      className="cursor-pointer"
+                    >
+                      {page}
+                    </PaginationLink>
+                  </PaginationItem>
+                ))}
+                
+                <PaginationItem>
+                  <PaginationNext 
+                    onClick={() => currentPage < totalPages && onPageChange(currentPage + 1)}
+                    className={currentPage === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                  />
+                </PaginationItem>
+              </PaginationContent>
+            </Pagination>
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  );
+};
+
+const FeedbackTable = ({ data, currentPage, onPageChange, exportToExcel, exportingTable, pageSize }) => {
+  const totalPages = Math.ceil(data.total / pageSize);
+  
+  return (
+    <Card className="shadow-card bg-white/95 backdrop-blur-sm">
+      <CardHeader>
+        <div className="flex flex-col sm:flex-row gap-4 sm:justify-between sm:items-center">
+          <div>
+            <CardTitle className="text-foreground">Feedback</CardTitle>
+            <CardDescription className="text-muted-foreground">
+              User feedback submissions ({data.total} total)
+            </CardDescription>
+          </div>
+          <Button
+            onClick={() => exportToExcel('feedback', data.data, 'feedback_export')}
+            disabled={exportingTable === 'feedback'}
+            className="bg-primary hover:bg-primary/90 text-primary-foreground w-full sm:w-auto"
+          >
+            <FileSpreadsheet className="h-4 w-4 mr-2" />
+            <span className="hidden sm:inline">{exportingTable === 'feedback' ? 'Exporting...' : 'Export to Excel'}</span>
+            <span className="sm:hidden">{exportingTable === 'feedback' ? 'Exporting...' : 'Export'}</span>
+          </Button>
+        </div>
+      </CardHeader>
+      <CardContent>
+        <div className="overflow-x-auto">
+          <div className="rounded-md border border-border w-max min-w-full">
+            <Table>
+              <TableHeader>
+                <TableRow className="border-border bg-muted/50">
+                  <TableHead className="text-foreground font-semibold min-w-[180px]">Email</TableHead>
+                  <TableHead className="text-foreground font-semibold min-w-[80px]">Rating</TableHead>
+                  <TableHead className="text-foreground font-semibold min-w-[200px]">Suggestions</TableHead>
+                  <TableHead className="text-foreground font-semibold min-w-[100px]">Created At</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {data.loading ? (
+                  <TableRow>
+                    <TableCell colSpan={4} className="text-center text-muted-foreground py-8">
+                      <Loader2 className="h-4 w-4 animate-spin mx-auto" />
+                      <span className="ml-2">Loading...</span>
+                    </TableCell>
+                  </TableRow>
+                ) : data.data.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={4} className="text-center text-muted-foreground py-8">
+                      No feedback found
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  data.data.map((item) => (
+                    <TableRow key={item.id} className="border-border hover:bg-muted/30">
+                      <TableCell className="text-muted-foreground text-sm">{item.user_email}</TableCell>
+                      <TableCell className="text-muted-foreground text-sm">{item.rating}/5</TableCell>
+                      <TableCell className="text-muted-foreground text-sm whitespace-normal break-words max-w-[180px]">{item.suggestions}</TableCell>
+                      <TableCell className="text-muted-foreground text-sm">
+                        {new Date(item.created_at).toLocaleDateString()}
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </div>
+        </div>
+        
+        {/* Pagination Controls */}
+        {totalPages > 1 && (
+          <div className="flex justify-center mt-6">
+            <Pagination>
+              <PaginationContent>
+                <PaginationItem>
+                  <PaginationPrevious 
+                    onClick={() => currentPage > 1 && onPageChange(currentPage - 1)}
+                    className={currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                  />
+                </PaginationItem>
+                
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                  <PaginationItem key={page}>
+                    <PaginationLink
+                      onClick={() => onPageChange(page)}
+                      isActive={currentPage === page}
+                      className="cursor-pointer"
+                    >
+                      {page}
+                    </PaginationLink>
+                  </PaginationItem>
+                ))}
+                
+                <PaginationItem>
+                  <PaginationNext 
+                    onClick={() => currentPage < totalPages && onPageChange(currentPage + 1)}
+                    className={currentPage === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                  />
+                </PaginationItem>
+              </PaginationContent>
+            </Pagination>
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  );
+};
