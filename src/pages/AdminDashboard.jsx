@@ -304,18 +304,18 @@ const MenteesTable = ({ mentees, exportToExcel, exportingTable }) => (
             </div>
           </CardHeader>
           <CardContent>
-            <div className="overflow-x-hidden">
+            <div className="overflow-x-auto">
               <div className="rounded-md border border-border min-w-full">
                 <Table>
                   <TableHeader>
                     <TableRow className="border-border bg-muted/50">
-                      <TableHead className="text-foreground font-semibold min-w-[80px]">Name</TableHead>
-                      <TableHead className="text-foreground font-semibold min-w-[100px]">Email</TableHead>
-                      <TableHead className="text-foreground font-semibold min-w-[70px]">Field of Law</TableHead>
-                      <TableHead className="text-foreground font-semibold min-w-[60px]">University</TableHead>
-                      <TableHead className="text-foreground font-semibold min-w-[60px]">Hometown</TableHead>
-                      <TableHead className="text-foreground font-semibold min-w-[60px]">Time Commitment</TableHead>
-                      <TableHead className="text-foreground font-semibold min-w-[60px]">Created At</TableHead>
+                      <TableHead className="text-foreground font-semibold min-w-[100px]">Name</TableHead>
+                      <TableHead className="text-foreground font-semibold min-w-[120px]">Email</TableHead>
+                      <TableHead className="text-foreground font-semibold min-w-[90px]">Field of Law</TableHead>
+                      <TableHead className="text-foreground font-semibold min-w-[110px]">University</TableHead>
+                      <TableHead className="text-foreground font-semibold min-w-[80px]">Hometown</TableHead>
+                      <TableHead className="text-foreground font-semibold min-w-[110px]">Time Commitment</TableHead>
+                      <TableHead className="text-foreground font-semibold min-w-[80px]">Created At</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -332,9 +332,9 @@ const MenteesTable = ({ mentees, exportToExcel, exportingTable }) => (
                             {mentee.first_name} {mentee.last_name}
                           </TableCell>
                           <TableCell className="text-muted-foreground text-sm">{mentee.email}</TableCell>
-                          <TableCell className="text-muted-foreground text-sm whitespace-normal break-words">{mentee.field_of_law}</TableCell>
-                          <TableCell className="text-muted-foreground text-sm whitespace-normal break-words">{mentee.undergraduate_university}</TableCell>
-                          <TableCell className="text-muted-foreground text-sm whitespace-normal break-words">{mentee.hometown}</TableCell>
+                          <TableCell className="text-muted-foreground text-sm">{mentee.field_of_law}</TableCell>
+                          <TableCell className="text-muted-foreground text-sm">{mentee.undergraduate_university}</TableCell>
+                          <TableCell className="text-muted-foreground text-sm">{mentee.hometown}</TableCell>
                           <TableCell className="text-muted-foreground text-sm">{mentee.mentorship_time_commitment}</TableCell>
                           <TableCell className="text-muted-foreground text-sm">
                             {new Date(mentee.created_at).toLocaleDateString()}
