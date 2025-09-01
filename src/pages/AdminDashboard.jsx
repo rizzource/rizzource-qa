@@ -309,13 +309,13 @@ const MenteesTable = ({ mentees, exportToExcel, exportingTable }) => (
                 <Table>
                   <TableHeader>
                     <TableRow className="border-border bg-muted/50">
-                      <TableHead className="text-foreground font-semibold min-w-[120px]">Name</TableHead>
-                      <TableHead className="text-foreground font-semibold min-w-[180px]">Email</TableHead>
-                      <TableHead className="text-foreground font-semibold min-w-[120px]">Field of Law</TableHead>
-                      <TableHead className="text-foreground font-semibold min-w-[150px]">University</TableHead>
-                      <TableHead className="text-foreground font-semibold min-w-[100px]">Hometown</TableHead>
-                      <TableHead className="text-foreground font-semibold min-w-[140px]">Time Commitment</TableHead>
-                      <TableHead className="text-foreground font-semibold min-w-[100px]">Created At</TableHead>
+                      <TableHead className="text-foreground font-semibold min-w-[100px]">Name</TableHead>
+                      <TableHead className="text-foreground font-semibold min-w-[140px]">Email</TableHead>
+                      <TableHead className="text-foreground font-semibold min-w-[100px]">Field of Law</TableHead>
+                      <TableHead className="text-foreground font-semibold min-w-[120px]">University</TableHead>
+                      <TableHead className="text-foreground font-semibold min-w-[90px]">Hometown</TableHead>
+                      <TableHead className="text-foreground font-semibold min-w-[120px]">Time Commitment</TableHead>
+                      <TableHead className="text-foreground font-semibold min-w-[90px]">Created At</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -376,14 +376,14 @@ const MentorsTable = ({ mentors, exportToExcel, exportingTable }) => (
                 <Table>
                   <TableHeader>
                     <TableRow className="border-border bg-muted/50">
-                      <TableHead className="text-foreground font-semibold min-w-[120px]">Name</TableHead>
-                      <TableHead className="text-foreground font-semibold min-w-[180px]">Email</TableHead>
-                      <TableHead className="text-foreground font-semibold min-w-[120px]">Field of Law</TableHead>
-                      <TableHead className="text-foreground font-semibold min-w-[80px]">Class Year</TableHead>
-                      <TableHead className="text-foreground font-semibold min-w-[150px]">University</TableHead>
-                      <TableHead className="text-foreground font-semibold min-w-[100px]">Hometown</TableHead>
-                      <TableHead className="text-foreground font-semibold min-w-[140px]">Time Commitment</TableHead>
-                      <TableHead className="text-foreground font-semibold min-w-[100px]">Created At</TableHead>
+                      <TableHead className="text-foreground font-semibold min-w-[100px]">Name</TableHead>
+                      <TableHead className="text-foreground font-semibold min-w-[140px]">Email</TableHead>
+                      <TableHead className="text-foreground font-semibold min-w-[100px]">Field of Law</TableHead>
+                      <TableHead className="text-foreground font-semibold min-w-[120px]">Class Year</TableHead>
+                      <TableHead className="text-foreground font-semibold min-w-[120px]">University</TableHead>
+                      <TableHead className="text-foreground font-semibold min-w-[90px]">Hometown</TableHead>
+                      <TableHead className="text-foreground font-semibold min-w-[120px]">Time Commitment</TableHead>
+                      <TableHead className="text-foreground font-semibold min-w-[90px]">Created At</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
