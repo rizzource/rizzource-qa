@@ -122,17 +122,8 @@ export const AdminDashboard = () => {
       const timestamp = new Date().toISOString().split("T")[0];
       XLSX.writeFile(workbook, `${filename}_${timestamp}.xlsx`);
       await supabase.rpc("export_data_to_json", { table_name: tableName });
-      toast({
-        title: "Export Successful",
-        description: `${data.length} records exported`,
-      });
     } catch (error) {
       console.error("Export error:", error);
-      toast({
-        title: "Export Failed",
-        description: error.message || "Failed to export data",
-        variant: "destructive",
-      });
     } finally {
       setExportingTable("");
     }
@@ -458,18 +449,18 @@ const FeedbackTable = ({ feedback, exportToExcel, exportingTable }) => (
                   No feedback found
                 </TableCell>
               </TableRow>
-              ) : (
-                feedback.map((item) => (
-                  <TableRow key={item.id} className="border-border hover:bg-muted/30">
-                    <TableCell className="text-muted-foreground text-sm">{item.email}</TableCell>
-                    <TableCell className="text-muted-foreground text-sm">{item.rating}/5</TableCell>
-                    <TableCell className="max-w-xs truncate text-muted-foreground text-sm">{item.comments}</TableCell>
-                    <TableCell className="text-muted-foreground text-sm">
-                      {new Date(item.created_at).toLocaleDateString()}
-                    </TableCell>
-                  </TableRow>
-                ))
-              )}
+  ) : (
+    feedback.map((item) => (
+      <TableRow key={item.id} className="border-border hover:bg-muted/30">
+        <TableCell className="text-muted-foreground text-sm">{item.email}</TableCell>
+        <TableCell className="text-muted-foreground text-sm">{item.rating}/5</TableCell>
+        <TableCell className="max-w-xs truncate text-muted-foreground text-sm">{item.comments}</TableCell>
+        <TableCell className="text-muted-foreground text-sm">
+          {new Date(item.created_at).toLocaleDateString()}
+        </TableCell>
+      </TableRow>
+    ))
+  )}
             </TableBody>
           </Table>
         </div>
