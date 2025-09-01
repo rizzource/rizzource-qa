@@ -273,9 +273,6 @@ export const AdminDashboard = () => {
           <Button onClick={handlePrev} variant="outline">
             ← Previous
           </Button>
-          <span className="text-sm text-muted-foreground">
-            Viewing {activeSection === 0 ? "Mentees" : activeSection === 1 ? "Mentors" : "Feedback"}
-          </span>
           <Button onClick={handleNext} variant="outline">
             Next →
           </Button>
