@@ -400,10 +400,10 @@ const MentorsTable = ({ mentors, exportToExcel, exportingTable }) => (
                             {mentor.first_name} {mentor.last_name}
                           </TableCell>
                           <TableCell className="text-muted-foreground text-sm">{mentor.email}</TableCell>
-                          <TableCell className="text-muted-foreground text-sm whitespace-normal break-words max-w-[180px]">{mentor.field_of_law}</TableCell>
+                          <TableCell className="text-muted-foreground text-sm">{mentor.field_of_law}</TableCell>
                           <TableCell className="text-muted-foreground text-sm">{mentor.class_year}</TableCell>
-                          <TableCell className="text-muted-foreground text-sm whitespace-normal break-words max-w-[180px]">{mentor.undergraduate_university}</TableCell>
-                          <TableCell className="text-muted-foreground text-sm whitespace-normal break-words max-w-[180px]">{mentor.hometown}</TableCell>
+                          <TableCell className="text-muted-foreground text-sm">{mentor.undergraduate_university}</TableCell>
+                          <TableCell className="text-muted-foreground text-sm">{mentor.hometown}</TableCell>
                           <TableCell className="text-muted-foreground text-sm">{mentor.mentorship_time_commitment}</TableCell>
                           <TableCell className="text-muted-foreground text-sm">
                             {new Date(mentor.created_at).toLocaleDateString()}
@@ -458,18 +458,18 @@ const FeedbackTable = ({ feedback, exportToExcel, exportingTable }) => (
                   No feedback found
                 </TableCell>
               </TableRow>
-  ) : (
-    feedback.map((item) => (
-      <TableRow key={item.id} className="border-border hover:bg-muted/30">
-        <TableCell className="text-muted-foreground text-sm">{item.email}</TableCell>
-        <TableCell className="text-muted-foreground text-sm">{item.rating}/5</TableCell>
-        <TableCell className="max-w-xs truncate text-muted-foreground text-sm">{item.comments}</TableCell>
-        <TableCell className="text-muted-foreground text-sm">
-          {new Date(item.created_at).toLocaleDateString()}
-        </TableCell>
-      </TableRow>
-    ))
-  )}
+              ) : (
+                feedback.map((item) => (
+                  <TableRow key={item.id} className="border-border hover:bg-muted/30">
+                    <TableCell className="text-muted-foreground text-sm">{item.email}</TableCell>
+                    <TableCell className="text-muted-foreground text-sm">{item.rating}/5</TableCell>
+                    <TableCell className="max-w-xs truncate text-muted-foreground text-sm">{item.comments}</TableCell>
+                    <TableCell className="text-muted-foreground text-sm">
+                      {new Date(item.created_at).toLocaleDateString()}
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
             </TableBody>
           </Table>
         </div>
