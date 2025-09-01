@@ -16,6 +16,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import {
   Users,
@@ -272,6 +273,9 @@ export const AdminDashboard = () => {
           <Button onClick={handlePrev} variant="outline">
             ← Previous
           </Button>
+          <span className="text-sm text-muted-foreground">
+            Viewing {activeSection === 0 ? "Mentees" : activeSection === 1 ? "Mentors" : "Feedback"}
+          </span>
           <Button onClick={handleNext} variant="outline">
             Next →
           </Button>
@@ -309,13 +313,13 @@ const MenteesTable = ({ mentees, exportToExcel, exportingTable }) => (
                 <Table>
                   <TableHeader>
                     <TableRow className="border-border bg-muted/50">
-                      <TableHead className="text-foreground font-semibold min-w-[100px]">Name</TableHead>
-                      <TableHead className="text-foreground font-semibold min-w-[120px]">Email</TableHead>
-                      <TableHead className="text-foreground font-semibold min-w-[90px]">Field of Law</TableHead>
-                      <TableHead className="text-foreground font-semibold min-w-[110px]">University</TableHead>
-                      <TableHead className="text-foreground font-semibold min-w-[80px]">Hometown</TableHead>
-                      <TableHead className="text-foreground font-semibold min-w-[110px]">Time Commitment</TableHead>
-                      <TableHead className="text-foreground font-semibold min-w-[80px]">Created At</TableHead>
+                      <TableHead className="text-foreground font-semibold min-w-[120px]">Name</TableHead>
+                      <TableHead className="text-foreground font-semibold min-w-[180px]">Email</TableHead>
+                      <TableHead className="text-foreground font-semibold min-w-[120px]">Field of Law</TableHead>
+                      <TableHead className="text-foreground font-semibold min-w-[150px]">University</TableHead>
+                      <TableHead className="text-foreground font-semibold min-w-[100px]">Hometown</TableHead>
+                      <TableHead className="text-foreground font-semibold min-w-[140px]">Time Commitment</TableHead>
+                      <TableHead className="text-foreground font-semibold min-w-[100px]">Created At</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -332,7 +336,11 @@ const MenteesTable = ({ mentees, exportToExcel, exportingTable }) => (
                             {mentee.first_name} {mentee.last_name}
                           </TableCell>
                           <TableCell className="text-muted-foreground text-sm">{mentee.email}</TableCell>
-                          <TableCell className="text-muted-foreground text-sm">{mentee.field_of_law}</TableCell>
+                          <TableCell>
+                            <Badge variant="secondary" className="bg-primary/10 text-primary border-primary/20 text-xs">
+                              {mentee.field_of_law}
+                            </Badge>
+                          </TableCell>
                           <TableCell className="text-muted-foreground text-sm">{mentee.undergraduate_university}</TableCell>
                           <TableCell className="text-muted-foreground text-sm">{mentee.hometown}</TableCell>
                           <TableCell className="text-muted-foreground text-sm">{mentee.mentorship_time_commitment}</TableCell>
@@ -376,14 +384,14 @@ const MentorsTable = ({ mentors, exportToExcel, exportingTable }) => (
                 <Table>
                   <TableHeader>
                     <TableRow className="border-border bg-muted/50">
-                      <TableHead className="text-foreground font-semibold min-w-[100px]">Name</TableHead>
-                      <TableHead className="text-foreground font-semibold min-w-[140px]">Email</TableHead>
-                      <TableHead className="text-foreground font-semibold min-w-[100px]">Field of Law</TableHead>
-                      <TableHead className="text-foreground font-semibold min-w-[120px]">Class Year</TableHead>
-                      <TableHead className="text-foreground font-semibold min-w-[120px]">University</TableHead>
-                      <TableHead className="text-foreground font-semibold min-w-[90px]">Hometown</TableHead>
-                      <TableHead className="text-foreground font-semibold min-w-[120px]">Time Commitment</TableHead>
-                      <TableHead className="text-foreground font-semibold min-w-[90px]">Created At</TableHead>
+                      <TableHead className="text-foreground font-semibold min-w-[120px]">Name</TableHead>
+                      <TableHead className="text-foreground font-semibold min-w-[180px]">Email</TableHead>
+                      <TableHead className="text-foreground font-semibold min-w-[120px]">Field of Law</TableHead>
+                      <TableHead className="text-foreground font-semibold min-w-[80px]">Class Year</TableHead>
+                      <TableHead className="text-foreground font-semibold min-w-[150px]">University</TableHead>
+                      <TableHead className="text-foreground font-semibold min-w-[100px]">Hometown</TableHead>
+                      <TableHead className="text-foreground font-semibold min-w-[140px]">Time Commitment</TableHead>
+                      <TableHead className="text-foreground font-semibold min-w-[100px]">Created At</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -400,7 +408,11 @@ const MentorsTable = ({ mentors, exportToExcel, exportingTable }) => (
                             {mentor.first_name} {mentor.last_name}
                           </TableCell>
                           <TableCell className="text-muted-foreground text-sm">{mentor.email}</TableCell>
-                          <TableCell className="text-muted-foreground text-sm">{mentor.field_of_law}</TableCell>
+                          <TableCell>
+                            <Badge variant="secondary" className="bg-primary/10 text-primary border-primary/20 text-xs">
+                              {mentor.field_of_law}
+                            </Badge>
+                          </TableCell>
                           <TableCell className="text-muted-foreground text-sm">{mentor.class_year}</TableCell>
                           <TableCell className="text-muted-foreground text-sm">{mentor.undergraduate_university}</TableCell>
                           <TableCell className="text-muted-foreground text-sm">{mentor.hometown}</TableCell>
@@ -462,7 +474,14 @@ const FeedbackTable = ({ feedback, exportToExcel, exportingTable }) => (
     feedback.map((item) => (
       <TableRow key={item.id} className="border-border hover:bg-muted/30">
         <TableCell className="text-muted-foreground text-sm">{item.email}</TableCell>
-        <TableCell className="text-muted-foreground text-sm">{item.rating}/5</TableCell>
+        <TableCell>
+          <Badge 
+            variant={item.rating >= 4 ? "default" : item.rating >= 3 ? "secondary" : "destructive"} 
+            className="text-xs"
+            >
+            {item.rating}/5
+          </Badge>
+        </TableCell>
         <TableCell className="max-w-xs truncate text-muted-foreground text-sm">{item.comments}</TableCell>
         <TableCell className="text-muted-foreground text-sm">
           {new Date(item.created_at).toLocaleDateString()}
