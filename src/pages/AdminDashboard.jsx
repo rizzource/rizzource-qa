@@ -310,12 +310,12 @@ const MenteesTable = ({ mentees, exportToExcel, exportingTable }) => (
                   <TableHeader>
                     <TableRow className="border-border bg-muted/50">
                       <TableHead className="text-foreground font-semibold min-w-[100px]">Name</TableHead>
-                      <TableHead className="text-foreground font-semibold min-w-[140px]">Email</TableHead>
-                      <TableHead className="text-foreground font-semibold min-w-[100px]">Field of Law</TableHead>
-                      <TableHead className="text-foreground font-semibold min-w-[120px]">University</TableHead>
-                      <TableHead className="text-foreground font-semibold min-w-[90px]">Hometown</TableHead>
-                      <TableHead className="text-foreground font-semibold min-w-[120px]">Time Commitment</TableHead>
-                      <TableHead className="text-foreground font-semibold min-w-[90px]">Created At</TableHead>
+                      <TableHead className="text-foreground font-semibold min-w-[120px]">Email</TableHead>
+                      <TableHead className="text-foreground font-semibold min-w-[90px]">Field of Law</TableHead>
+                      <TableHead className="text-foreground font-semibold min-w-[110px]">University</TableHead>
+                      <TableHead className="text-foreground font-semibold min-w-[80px]">Hometown</TableHead>
+                      <TableHead className="text-foreground font-semibold min-w-[110px]">Time Commitment</TableHead>
+                      <TableHead className="text-foreground font-semibold min-w-[80px]">Created At</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
