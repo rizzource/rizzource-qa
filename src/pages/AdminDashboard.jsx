@@ -314,7 +314,7 @@ const MenteesTable = ({ mentees, exportToExcel, exportingTable }) => (
                       <TableHead className="text-foreground font-semibold min-w-[70px]">Field of Law</TableHead>
                       <TableHead className="text-foreground font-semibold min-w-[110px]">University</TableHead>
                       <TableHead className="text-foreground font-semibold min-w-[70px]">Hometown</TableHead>
-                      <TableHead className="text-foreground font-semibold min-w-[50px]">Time Commitment</TableHead>
+                      <TableHead className="text-foreground font-semibold min-w-[20px]">Time Commitment</TableHead>
                       <TableHead className="text-foreground font-semibold min-w-[60px]">Created At</TableHead>
                     </TableRow>
                   </TableHeader>
