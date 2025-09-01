@@ -461,7 +461,7 @@ const FeedbackTable = ({ feedback, exportToExcel, exportingTable }) => (
               <TableRow className="border-border bg-muted/50">
                 <TableHead className="text-foreground font-semibold min-w-[180px]">Email</TableHead>
                 <TableHead className="text-foreground font-semibold min-w-[80px]">Rating</TableHead>
-                <TableHead className="text-foreground font-semibold min-w-[200px]">Comments</TableHead>
+                <TableHead className="text-foreground font-semibold min-w-[200px]">Suggestions</TableHead>
                 <TableHead className="text-foreground font-semibold min-w-[100px]">Created At</TableHead>
               </TableRow>
             </TableHeader>
@@ -475,9 +475,9 @@ const FeedbackTable = ({ feedback, exportToExcel, exportingTable }) => (
   ) : (
     feedback.map((item) => (
       <TableRow key={item.id} className="border-border hover:bg-muted/30">
-        <TableCell className="text-muted-foreground text-sm">{item.email}</TableCell>
+        <TableCell className="text-muted-foreground text-sm">{item.user_email}</TableCell>
         <TableCell className="text-muted-foreground text-sm">{item.rating}/5</TableCell>
-        <TableCell className="text-muted-foreground text-sm whitespace-normal break-words max-w-[180px]">{item.comments}</TableCell>
+        <TableCell className="text-muted-foreground text-sm whitespace-normal break-words max-w-[180px]">{item.suggestions}</TableCell>
         <TableCell className="text-muted-foreground text-sm">
           {new Date(item.created_at).toLocaleDateString()}
         </TableCell>
