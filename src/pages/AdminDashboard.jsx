@@ -346,9 +346,9 @@ const MenteesTable = ({ mentees, exportToExcel, exportingTable }) => (
                             {mentee.first_name} {mentee.last_name}
                           </TableCell>
                           <TableCell className="text-muted-foreground text-sm">{mentee.email}</TableCell>
-                          <TableCell className="text-muted-foreground text-sm">{mentee.field_of_law}</TableCell>
-                          <TableCell className="text-muted-foreground text-sm">{mentee.undergraduate_university}</TableCell>
-                          <TableCell className="text-muted-foreground text-sm">{mentee.hometown}</TableCell>
+                          <TableCell className="text-muted-foreground text-sm whitespace-normal break-words max-w-[180px]">{mentee.field_of_law}</TableCell>
+                          <TableCell className="text-muted-foreground text-sm whitespace-normal break-words max-w-[180px]">{mentee.undergraduate_university}</TableCell>
+                          <TableCell className="text-muted-foreground text-sm whitespace-normal break-words max-w-[180px]">{mentee.hometown}</TableCell>
                           <TableCell className="text-muted-foreground text-sm">{mentee.mentorship_time_commitment}</TableCell>
                           <TableCell className="text-muted-foreground text-sm">
                             {new Date(mentee.created_at).toLocaleDateString()}
