@@ -305,7 +305,7 @@ const MenteesTable = ({ mentees, exportToExcel, exportingTable }) => (
           </CardHeader>
           <CardContent>
             <div className="overflow-x-auto">
-              <div className="rounded-md border border-border min-w-full">
+              <div className="rounded-md border border-border w-max min-w-full">
                 <Table>
                   <TableHeader>
                     <TableRow className="border-border bg-muted/50">
@@ -372,7 +372,7 @@ const MentorsTable = ({ mentors, exportToExcel, exportingTable }) => (
           </CardHeader>
           <CardContent>
             <div className="overflow-x-auto">
-              <div className="rounded-md border border-border min-w-full">
+              <div className="rounded-md border border-border w-min min-w-full">
                 <Table>
                   <TableHeader>
                     <TableRow className="border-border bg-muted/50">
@@ -441,7 +441,7 @@ const FeedbackTable = ({ feedback, exportToExcel, exportingTable }) => (
     </CardHeader>
     <CardContent>
       <div className="overflow-x-auto">
-        <div className="rounded-md border border-border min-w-full">
+        <div className="rounded-md border border-border w-max min-w-full">
           <Table>
             <TableHeader>
               <TableRow className="border-border bg-muted/50">
