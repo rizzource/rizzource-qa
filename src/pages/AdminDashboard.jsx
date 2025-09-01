@@ -187,12 +187,14 @@ export const AdminDashboard = () => {
   return (
     <div className="min-h-screen bg-hero-gradient flex flex-col">
       <Header />
-      <div className="text-2xl font-semibold text-foreground mb-6">
-        Welcome back, Admin!
+      <div className="container mx-auto px-4 pt-6 pb-2">
+        <h1 className="text-xl sm:text-2xl font-semibold text-white mb-4 lg:mb-6">
+          Welcome back, Admin!
+        </h1>
       </div>
-      <div className="container mx-auto px-4 py-8 space-y-8 flex-1">
+      <div className="container mx-auto px-4 pb-8 space-y-6 lg:space-y-8 flex-1">
         {/* Stats Section */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
           <Card className="shadow-card bg-white/95 backdrop-blur-sm">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">Total Mentees</CardTitle>
@@ -270,21 +272,26 @@ export const AdminDashboard = () => {
         )}
 
         {/* Pagination Controls */}
-        <div className="flex justify-between items-center mt-6">
+        <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mt-6">
           <Button
             type="button"
             variant="outline"
             onClick={handlePrev}
-            className="border-white/20 text-green hover:bg-light-green whitespace-nowrap flex items-center"
+            className="w-full sm:w-auto border-white/20 text-green hover:bg-light-green flex items-center justify-center"
           >
             <ArrowLeft className="mr-2 h-4 w-4" />
             Previous
           </Button>
+          <div className="hidden sm:block text-white/70 text-sm font-medium">
+            {activeSection === 0 && 'Mentees'} 
+            {activeSection === 1 && 'Mentors'} 
+            {activeSection === 2 && 'Feedback'}
+          </div>
           <Button
             type="button"
             variant="outline"
             onClick={handleNext}
-            className="border-white/20 text-green hover:bg-light-green whitespace-nowrap flex items-center"
+            className="w-full sm:w-auto border-white/20 text-green hover:bg-light-green flex items-center justify-center"
           >
             Next
             <ArrowRight className="ml-2 h-4 w-4" />
@@ -300,7 +307,7 @@ export const AdminDashboard = () => {
 const MenteesTable = ({ mentees, exportToExcel, exportingTable }) => (
   <Card className="shadow-card bg-white/95 backdrop-blur-sm">
           <CardHeader>
-            <div className="flex justify-between items-center">
+            <div className="flex flex-col sm:flex-row gap-4 sm:justify-between sm:items-center">
               <div>
                 <CardTitle className="text-foreground">Mentees</CardTitle>
                 <CardDescription className="text-muted-foreground">
@@ -310,10 +317,11 @@ const MenteesTable = ({ mentees, exportToExcel, exportingTable }) => (
               <Button
                 onClick={() => exportToExcel('mentees', mentees, 'mentees_export')}
                 disabled={exportingTable === 'mentees'}
-                className="bg-primary hover:bg-primary/90 text-primary-foreground"
+                className="bg-primary hover:bg-primary/90 text-primary-foreground w-full sm:w-auto"
               >
                 <FileSpreadsheet className="h-4 w-4 mr-2" />
-                {exportingTable === 'mentees' ? 'Exporting...' : 'Export to Excel'}
+                <span className="hidden sm:inline">{exportingTable === 'mentees' ? 'Exporting...' : 'Export to Excel'}</span>
+                <span className="sm:hidden">{exportingTable === 'mentees' ? 'Exporting...' : 'Export'}</span>
               </Button>
             </div>
           </CardHeader>
@@ -367,7 +375,7 @@ const MenteesTable = ({ mentees, exportToExcel, exportingTable }) => (
 const MentorsTable = ({ mentors, exportToExcel, exportingTable }) => (
   <Card className="shadow-card bg-white/95 backdrop-blur-sm">
           <CardHeader>
-            <div className="flex justify-between items-center">
+            <div className="flex flex-col sm:flex-row gap-4 sm:justify-between sm:items-center">
               <div>
                 <CardTitle className="text-foreground">Mentors</CardTitle>
                 <CardDescription className="text-muted-foreground">
@@ -377,10 +385,11 @@ const MentorsTable = ({ mentors, exportToExcel, exportingTable }) => (
               <Button
                 onClick={() => exportToExcel('mentors', mentors, 'mentors_export')}
                 disabled={exportingTable === 'mentors'}
-                className="bg-primary hover:bg-primary/90 text-primary-foreground"
+                className="bg-primary hover:bg-primary/90 text-primary-foreground w-full sm:w-auto"
               >
                 <FileSpreadsheet className="h-4 w-4 mr-2" />
-                {exportingTable === 'mentors' ? 'Exporting...' : 'Export to Excel'}
+                <span className="hidden sm:inline">{exportingTable === 'mentors' ? 'Exporting...' : 'Export to Excel'}</span>
+                <span className="sm:hidden">{exportingTable === 'mentors' ? 'Exporting...' : 'Export'}</span>
               </Button>
             </div>
           </CardHeader>
@@ -436,7 +445,7 @@ const MentorsTable = ({ mentors, exportToExcel, exportingTable }) => (
 const FeedbackTable = ({ feedback, exportToExcel, exportingTable }) => (
   <Card className="shadow-card bg-white/95 backdrop-blur-sm">
     <CardHeader>
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row gap-4 sm:justify-between sm:items-center">
         <div>
           <CardTitle className="text-foreground">Feedback</CardTitle>
           <CardDescription className="text-muted-foreground">
@@ -446,10 +455,11 @@ const FeedbackTable = ({ feedback, exportToExcel, exportingTable }) => (
         <Button
           onClick={() => exportToExcel('feedback', feedback, 'feedback_export')}
           disabled={exportingTable === 'feedback'}
-          className="bg-primary hover:bg-primary/90 text-primary-foreground"
+          className="bg-primary hover:bg-primary/90 text-primary-foreground w-full sm:w-auto"
           >
           <FileSpreadsheet className="h-4 w-4 mr-2" />
-          {exportingTable === 'feedback' ? 'Exporting...' : 'Export to Excel'}
+          <span className="hidden sm:inline">{exportingTable === 'feedback' ? 'Exporting...' : 'Export to Excel'}</span>
+          <span className="sm:hidden">{exportingTable === 'feedback' ? 'Exporting...' : 'Export'}</span>
         </Button>
       </div>
     </CardHeader>
