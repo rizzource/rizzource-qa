@@ -50,7 +50,7 @@ const Index = ({ mentorshipPage = false }) => {
       <main>
         {appState === 'hero' && (
           <>
-            <HeroSection onStartProgram={handleStartProgram} />
+            <HeroSection onStartProgram={handleStartProgram} onBack={handleBackToHero} />
             {/* Add visual break between hero and footer */}
             <section className="bg-background py-16 sm:py-20 md:py-24">
               <div className="container mx-auto px-4 sm:px-6 lg:px-8">
