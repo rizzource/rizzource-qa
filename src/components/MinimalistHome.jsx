@@ -44,23 +44,14 @@ const MinimalistHome = () => {
               </p>
             </div>
             
-            {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row justify-center gap-4 pt-4">
+            {/* CTA Button */}
+            <div className="flex justify-center pt-4">
               <Link to="/resources" className="block">
                 <Button 
                   size="lg"
                   className="bg-gold-light text-primary hover:bg-gold-dark transition-all duration-300 shadow-gold text-base sm:text-lg px-6 sm:px-8 h-12 sm:h-14 touch-target touch-friendly whitespace-nowrap flex items-center rounded-xl font-medium"
                 >
                   Resource Hub
-                </Button>
-              </Link>
-              <Link to="/apalsa-mentorship" className="block">
-                <Button 
-                  size="lg"
-                  variant="outline"
-                  className="border-2 border-white text-white hover:bg-white hover:text-primary transition-all duration-300 text-base sm:text-lg px-6 sm:px-8 h-12 sm:h-14 touch-target touch-friendly whitespace-nowrap flex items-center rounded-xl font-medium"
-                >
-                  APALSA Mentorship
                 </Button>
               </Link>
             </div>
