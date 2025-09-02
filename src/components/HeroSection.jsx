@@ -24,6 +24,14 @@ const HeroSection = ({ onStartProgram }) => {
           {/* Content Section */}
           <div className="text-center space-y-6 lg:space-y-8">
             <div className="space-y-4">
+              <Button
+                variant="ghost"
+                onClick={onBack}
+                className="mb-8 text-white hover:bg-white/10 whitespace-nowrap flex items-center"
+              >
+                <ArrowLeft className="mr-2 h-4 w-4" />
+                Back to Resource Hub
+              </Button>
               <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold text-white leading-tight pt-8">
                 APALSA's
                 <span className="block text-gold-light">Mentorship Program</span>
