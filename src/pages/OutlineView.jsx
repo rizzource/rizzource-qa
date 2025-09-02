@@ -19,71 +19,112 @@ const OutlineView = () => {
   const [loading, setLoading] = useState(true);
   const [ratingLoading, setRatingLoading] = useState(false);
 
-  // Mock data for now - will be replaced with Supabase query
-  const mockOutline = {
-    id: 1,
-    title: "Constitutional Law Comprehensive Outline",
-    professor: "Prof. Johnson",
-    topic: "Constitutional Law",
-    year: "2L",
-    rating_avg: 4.8,
-    rating_count: 23,
-    downloads: 234,
-    file_size: 2.5,
-    file_type: "PDF",
-    file_url: "/sample-outline.pdf",
-    user_id: "user1",
-    created_at: "2024-01-15",
-    notes: `This comprehensive Constitutional Law outline covers all major topics essential for law school success. The outline is structured chronologically and thematically, beginning with foundational principles of constitutional interpretation and moving through specific areas of constitutional doctrine.
-
-Key topics covered include:
-- Constitutional interpretation and judicial review
-- Separation of powers and checks and balances
-- Federalism and the Commerce Clause
-- Individual rights and civil liberties
-- Due Process (both procedural and substantive)
-- Equal Protection Clause analysis
-- First Amendment freedoms (speech, religion, press, assembly)
-- Fourth Amendment search and seizure
-- Fifth Amendment protections
-- Fourteenth Amendment applications
-
-Each section includes:
-✓ Key cases with brief summaries and holdings
-✓ Doctrinal tests and their applications
-✓ Practice examples and hypotheticals
-✓ Cross-references to related concepts
-✓ Exam tips and common pitfalls
-
-This outline was created during my 2L year after taking Constitutional Law with Professor Johnson. It incorporates class notes, textbook readings, and additional research to provide a comprehensive study tool. The outline has been used successfully by students in subsequent years, with many reporting improved exam performance.
-
-Special attention has been paid to recent Supreme Court decisions and their impact on established doctrine. The outline is regularly updated to reflect current legal developments and maintains relevance for both academic study and bar examination preparation.`,
-    tags: ["Due Process", "Equal Protection", "Judicial Review", "First Amendment", "Commerce Clause"]
-  };
+  // Remove the mockOutline constant since we're now fetching from Supabase
 
   useEffect(() => {
-    // Mock loading - replace with actual Supabase query
-    setLoading(true);
-    setTimeout(() => {
-      setOutline(mockOutline);
-      setLoading(false);
-    }, 500);
+    const fetchOutline = async () => {
+      if (!id) return;
+      
+      setLoading(true);
+      try {
+        const { data, error } = await supabase
+          .from('outlines')
+          .select('*')
+          .eq('id', id)
+          .maybeSingle();
+        
+        if (error) throw error;
+        
+        if (data) {
+          setOutline(data);
+          // Check if user has already rated this outline
+          const user = await supabase.auth.getUser();
+          if (user.data.user) {
+            const { data: ratingData } = await supabase
+              .from('outline_ratings')
+              .select('rating')
+              .eq('outline_id', id)
+              .eq('user_id', user.data.user.id)
+              .maybeSingle();
+            
+            if (ratingData) {
+              setUserRating(ratingData.rating);
+            }
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching outline:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchOutline();
   }, [id]);
 
   const handleRatingSubmit = async (rating) => {
     setRatingLoading(true);
     try {
-      // Here you would implement the Supabase rating submission
-      // For now, just simulate the API call
-      await new Promise(resolve => setTimeout(resolve, 500));
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        toast({
+          title: "Authentication Required",
+          description: "Please sign in to rate outlines",
+          variant: "destructive",
+          duration: 3000,
+        });
+        return;
+      }
+
+      // Check if user has already rated this outline
+      const { data: existingRating } = await supabase
+        .from('outline_ratings')
+        .select('id')
+        .eq('outline_id', id)
+        .eq('user_id', user.id)
+        .maybeSingle();
+
+      if (existingRating) {
+        // Update existing rating
+        const { error } = await supabase
+          .from('outline_ratings')
+          .update({ rating })
+          .eq('id', existingRating.id);
+        
+        if (error) throw error;
+      } else {
+        // Create new rating
+        const { error } = await supabase
+          .from('outline_ratings')
+          .insert({
+            outline_id: id,
+            user_id: user.id,
+            rating
+          });
+        
+        if (error) throw error;
+      }
       
       setUserRating(rating);
+      
+      // Refresh outline data to get updated rating stats
+      const { data: updatedOutline } = await supabase
+        .from('outlines')
+        .select('rating_avg, rating_count')
+        .eq('id', id)
+        .single();
+        
+      if (updatedOutline) {
+        setOutline(prev => ({ ...prev, ...updatedOutline }));
+      }
+      
       toast({
         title: "Rating Submitted",
         description: `You rated this outline ${rating} star${rating !== 1 ? 's' : ''}`,
         duration: 3000,
       });
     } catch (error) {
+      console.error('Error submitting rating:', error);
       toast({
         title: "Error",
         description: "Failed to submit rating. Please try again.",

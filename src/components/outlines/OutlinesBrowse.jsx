@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Search, Filter, Star, Download, Eye, FileText } from "lucide-react";
 import { Link } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
 
 const OutlinesBrowse = () => {
   const [filters, setFilters] = useState({
@@ -16,85 +17,90 @@ const OutlinesBrowse = () => {
     rating: "all",
     sort: "newest"
   });
-
-  // Mock data for demonstration - would come from Supabase in real implementation
-  const mockOutlines = [
-    {
-      id: 1,
-      title: "Constitutional Law Comprehensive Outline",
-      professor: "Prof. Johnson",
-      topic: "Constitutional Law",
-      year: "2L",
-      rating_avg: 4.8,
-      rating_count: 23,
-      downloads: 234,
-      file_size: 2.5,
-      file_type: "PDF",
-      user_id: "user1",
-      created_at: "2024-01-15",
-      notes: "Complete outline covering all major constitutional law topics including due process, equal protection, and judicial review.",
-      tags: ["Due Process", "Equal Protection", "Judicial Review"]
-    },
-    {
-      id: 2,
-      title: "Contracts Final Exam Outline",
-      professor: "Prof. Smith",
-      topic: "Contracts",
-      year: "1L",
-      rating_avg: 4.6,
-      rating_count: 18,
-      downloads: 189,
-      file_size: 1.8,
-      file_type: "DOCX",
-      user_id: "user2",
-      created_at: "2024-02-20",
-      notes: "Condensed outline perfect for final exam preparation with key cases and rules.",
-      tags: ["UCC", "Common Law", "Remedies"]
-    },
-    {
-      id: 3,
-      title: "Criminal Law Case Briefs & Outline",
-      professor: "Prof. Williams",
-      topic: "Criminal Law",
-      year: "1L",
-      rating_avg: 4.9,
-      rating_count: 31,
-      downloads: 156,
-      file_size: 3.2,
-      file_type: "PDF",
-      user_id: "user3",
-      created_at: "2024-01-10",
-      notes: "Detailed outline with case briefs for major criminal law decisions.",
-      tags: ["Mens Rea", "Actus Reus", "Defenses"]
-    },
-    {
-      id: 4,
-      title: "Property Law Study Guide",
-      professor: "Prof. Davis",
-      topic: "Property Law",
-      year: "2L",
-      rating_avg: 4.3,
-      rating_count: 15,
-      downloads: 92,
-      file_size: 2.1,
-      file_type: "PDF",
-      user_id: "user4",
-      created_at: "2024-03-05",
-      notes: "Comprehensive property law study guide with real estate focus.",
-      tags: ["Real Estate", "Landlord-Tenant", "Easements"]
-    }
-  ];
+  const [outlines, setOutlines] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const topics = ["All Topics", "Constitutional Law", "Contracts", "Criminal Law", "Torts", "Civil Procedure", "Property Law", "Administrative Law", "Evidence"];
   const years = ["All Years", "1L", "2L", "3L"];
   const ratings = ["All Ratings", "5 Stars", "4+ Stars", "3+ Stars", "2+ Stars", "1+ Stars"];
   const sortOptions = ["Newest", "Highest Rated", "Most Popular"];
 
+  useEffect(() => {
+    fetchOutlines();
+  }, [filters]);
+
+  const fetchOutlines = async () => {
+    try {
+      setLoading(true);
+      let query = supabase
+        .from('outlines')
+        .select('*');
+
+      // Apply filters
+      if (filters.keyword) {
+        query = query.or(`title.ilike.%${filters.keyword}%,notes.ilike.%${filters.keyword}%,tags.cs.{${filters.keyword}}`);
+      }
+      
+      if (filters.professor) {
+        query = query.ilike('professor', `%${filters.professor}%`);
+      }
+      
+      if (filters.topic && filters.topic !== 'all-topics') {
+        const topicValue = filters.topic.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase());
+        query = query.eq('topic', topicValue);
+      }
+      
+      if (filters.year && filters.year !== 'all-years') {
+        query = query.eq('year', filters.year.toUpperCase());
+      }
+      
+      if (filters.rating && filters.rating !== 'all-ratings') {
+        const minRating = parseInt(filters.rating.charAt(0));
+        query = query.gte('rating_avg', minRating);
+      }
+
+      // Apply sorting
+      switch (filters.sort) {
+        case 'highest-rated':
+          query = query.order('rating_avg', { ascending: false });
+          break;
+        case 'most-popular':
+          query = query.order('downloads', { ascending: false });
+          break;
+        default: // newest
+          query = query.order('created_at', { ascending: false });
+          break;
+      }
+
+      const { data, error } = await query;
+      
+      if (error) throw error;
+      
+      setOutlines(data || []);
+    } catch (error) {
+      console.error('Error fetching outlines:', error);
+      setOutlines([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleFilterChange = (key, value) => {
     setFilters(prev => ({
       ...prev,
       [key]: value
     }));
+  };
+
+  const clearFilters = () => {
+    setFilters({
+      keyword: "",
+      professor: "",
+      topic: "",
+      year: "all",
+      rating: "all",
+      sort: "newest"
+    });
   };
 
   const renderStars = (rating, count) => {
@@ -246,100 +252,124 @@ const OutlinesBrowse = () => {
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <h3 className="text-xl font-semibold text-white">
-            Found {mockOutlines.length} outlines
+            {loading ? 'Loading...' : `Found ${outlines.length} outlines`}
           </h3>
-          <Button variant="ghost" className="text-white/80 hover:text-white hover:bg-white/10">
+          <Button 
+            variant="ghost" 
+            className="text-white/80 hover:text-white hover:bg-white/10"
+            onClick={clearFilters}
+          >
             <Filter className="w-4 h-4 mr-2" />
             Clear Filters
           </Button>
         </div>
 
+        {/* Loading State */}
+        {loading && (
+          <div className="flex justify-center py-12">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gold-light"></div>
+          </div>
+        )}
+
+        {/* No Results */}
+        {!loading && outlines.length === 0 && (
+          <Card className="bg-white/95 backdrop-blur-sm border-white/20">
+            <CardContent className="p-12 text-center">
+              <FileText className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+              <h3 className="text-lg font-semibold text-primary mb-2">No outlines found</h3>
+              <p className="text-muted-foreground">Try adjusting your search criteria or clear the filters.</p>
+            </CardContent>
+          </Card>
+        )}
+
         {/* Outline Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {mockOutlines.map((outline) => (
-            <Card key={outline.id} className="bg-white/95 backdrop-blur-sm border-white/20 hover:shadow-gold transition-all duration-300 h-full flex flex-col">
-              <CardHeader className="pb-4">
-                <div className="flex items-start justify-between gap-2 mb-2">
-                  <Link to={`/outlines/${outline.id}`} className="flex-1">
-                    <CardTitle className="text-lg text-primary leading-tight hover:text-secondary-green transition-colors cursor-pointer">
-                      {outline.title}
-                    </CardTitle>
-                  </Link>
-                  <FileText className="w-5 h-5 text-muted-foreground flex-shrink-0" />
-                </div>
-                
-                {/* Professor and Year */}
-                <div className="flex items-center justify-between">
-                  <p className="text-sm font-medium text-primary">
-                    {outline.professor}
+        {!loading && outlines.length > 0 && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {outlines.map((outline) => (
+              <Card key={outline.id} className="bg-white/95 backdrop-blur-sm border-white/20 hover:shadow-gold transition-all duration-300 h-full flex flex-col">
+                <CardHeader className="pb-4">
+                  <div className="flex items-start justify-between gap-2 mb-2">
+                    <Link to={`/outlines/${outline.id}`} className="flex-1">
+                      <CardTitle className="text-lg text-primary leading-tight hover:text-secondary-green transition-colors cursor-pointer">
+                        {outline.title}
+                      </CardTitle>
+                    </Link>
+                    <FileText className="w-5 h-5 text-muted-foreground flex-shrink-0" />
+                  </div>
+                  
+                  {/* Professor and Year */}
+                  <div className="flex items-center justify-between">
+                    <p className="text-sm font-medium text-primary">
+                      {outline.professor}
+                    </p>
+                    <Badge className="bg-gold-light text-primary font-medium px-2 py-1">
+                      {outline.year}
+                    </Badge>
+                  </div>
+                  
+                  {/* Topic */}
+                  <p className="text-sm text-muted-foreground font-medium">
+                    {outline.topic}
                   </p>
-                  <Badge className="bg-gold-light text-primary font-medium px-2 py-1">
-                    {outline.year}
-                  </Badge>
-                </div>
+                </CardHeader>
                 
-                {/* Topic */}
-                <p className="text-sm text-muted-foreground font-medium">
-                  {outline.topic}
-                </p>
-              </CardHeader>
-              
-              <CardContent className="flex-1 flex flex-col">
-                <div className="space-y-4 flex-1">
-                  {/* File Info */}
-                  <div className="flex items-center justify-between text-sm text-muted-foreground">
-                    <span>{outline.file_size} MB • {outline.file_type}</span>
-                    <span>{outline.downloads} downloads</span>
+                <CardContent className="flex-1 flex flex-col">
+                  <div className="space-y-4 flex-1">
+                    {/* File Info */}
+                    <div className="flex items-center justify-between text-sm text-muted-foreground">
+                      <span>{outline.file_size || 'N/A'} MB • {outline.file_type || 'PDF'}</span>
+                      <span>{outline.downloads || 0} downloads</span>
+                    </div>
+
+                    {/* Rating */}
+                    <div>
+                      {renderStars(outline.rating_avg || 0, outline.rating_count || 0)}
+                    </div>
+
+                    {/* Tags */}
+                    <div className="flex flex-wrap gap-1">
+                      {(outline.tags || []).slice(0, 3).map((tag) => (
+                        <Badge 
+                          key={tag} 
+                          variant="secondary" 
+                          className="text-xs bg-light-green/20 text-primary hover:bg-light-green/30"
+                        >
+                          {tag}
+                        </Badge>
+                      ))}
+                      {(outline.tags || []).length > 3 && (
+                        <Badge variant="secondary" className="text-xs bg-muted/50 text-muted-foreground">
+                          +{(outline.tags || []).length - 3}
+                        </Badge>
+                      )}
+                    </div>
                   </div>
 
-                  {/* Rating */}
-                  <div>
-                    {renderStars(outline.rating_avg, outline.rating_count)}
-                  </div>
-
-                  {/* Tags */}
-                  <div className="flex flex-wrap gap-1">
-                    {outline.tags.slice(0, 3).map((tag) => (
-                      <Badge 
-                        key={tag} 
-                        variant="secondary" 
-                        className="text-xs bg-light-green/20 text-primary hover:bg-light-green/30"
+                  {/* Action Buttons */}
+                  <div className="flex gap-2 pt-4 mt-auto">
+                    <Link to={`/outlines/${outline.id}`} className="flex-1">
+                      <Button 
+                        size="sm" 
+                        variant="outline" 
+                        className="w-full border-primary text-primary hover:bg-primary/10"
                       >
-                        {tag}
-                      </Badge>
-                    ))}
-                    {outline.tags.length > 3 && (
-                      <Badge variant="secondary" className="text-xs bg-muted/50 text-muted-foreground">
-                        +{outline.tags.length - 3}
-                      </Badge>
-                    )}
-                  </div>
-                </div>
-
-                {/* Action Buttons */}
-                <div className="flex gap-2 pt-4 mt-auto">
-                  <Link to={`/outlines/${outline.id}`} className="flex-1">
+                        <Eye className="w-4 h-4 mr-1" />
+                        View
+                      </Button>
+                    </Link>
                     <Button 
                       size="sm" 
-                      variant="outline" 
-                      className="w-full border-primary text-primary hover:bg-primary/10"
+                      className="flex-1 bg-gold-light text-primary hover:bg-gold-dark"
                     >
-                      <Eye className="w-4 h-4 mr-1" />
-                      View
+                      <Download className="w-4 h-4 mr-1" />
+                      Download
                     </Button>
-                  </Link>
-                  <Button 
-                    size="sm" 
-                    className="flex-1 bg-gold-light text-primary hover:bg-gold-dark"
-                  >
-                    <Download className="w-4 h-4 mr-1" />
-                    Download
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
