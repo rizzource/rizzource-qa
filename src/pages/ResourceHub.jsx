@@ -90,7 +90,7 @@ const ResourceHub = () => {
                 </ul>
                 <Button 
                   size="lg" 
-                  className="w-full bg-primary hover:bg-secondary-green text-white transition-all duration-300"
+                  className="w-full bg-primary hover:bg-secondary-green text-white transition-all duration-300 py-3"
                   onClick={() => navigate('/outlines')}
                 >
                   Explore Outlines
