@@ -337,12 +337,12 @@ const OutlinesUpload = () => {
               >
                 {uploadStatus === 'uploading' ? (
                   <>
-                    <div className="animate-spin rounded-full h-12 border-b-2 border-primary mr-2"></div>
+                    <div className="animate-spin rounded-full h-20 border-b-2 border-primary mr-2"></div>
                     Uploading...
                   </>
                 ) : (
                   <>
-                    <Upload className="h-12 mr-2" />
+                    <Upload className="h-20 mr-2" />
                     Upload Outline
                   </>
                 )}
