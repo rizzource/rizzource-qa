@@ -60,7 +60,7 @@ const ResourceHub = () => {
                 <Link to="/apalsa-mentorship">
                   <Button 
                     size="lg" 
-                    className="w-full bg-primary hover:bg-secondary-green text-white transition-all duration-300"
+                    className="w-full bg-primary hover:bg-secondary-green text-white transition-all duration-300 py-3"
                   >
                     Join Program
                   </Button>
