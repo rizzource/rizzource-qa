@@ -8,8 +8,7 @@ import Footer from "@/components/Footer";
 import OutlinesBrowse from "./outlines/OutlinesBrowse";
 import OutlinesUpload from "./outlines/OutlinesUpload";
 
-const OutlinesHub = (onBack) => {
-  const handleBack = onBack ?? (() => navigate('/resources'));
+const OutlinesHub = () => {
   const [activeTab, setActiveTab] = useState("browse");
 
   return (
