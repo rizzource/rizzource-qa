@@ -1,11 +1,13 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Users, FileText, ArrowLeft } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
 const ResourceHub = () => {
+  const navigate = useNavigate();
+
   return (
     <>
       <Header />
@@ -84,9 +86,9 @@ const ResourceHub = () => {
                 <Button 
                   size="lg" 
                   className="w-full bg-primary hover:bg-secondary-green text-white transition-all duration-300"
-                  disabled
+                  onClick={() => navigate('/outlines')}
                 >
-                  Coming Soon
+                  Explore Outlines
                 </Button>
               </CardContent>
             </Card>
