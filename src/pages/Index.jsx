@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import HeroSection from "@/components/HeroSection";
 import MentorMenteeSelection from "@/components/MentorMenteeSelection";
 import SignupForm from "@/components/SignupForm";
@@ -8,6 +9,7 @@ import Footer from "@/components/Footer";
 import { Users, BookOpen, Zap } from "lucide-react";
 
 const Index = ({ mentorshipPage = false }) => {
+  const navigate = useNavigate();
   const [appState, setAppState] = useState('hero');
   const [userType, setUserType] = useState(null);
 
@@ -26,8 +28,7 @@ const Index = ({ mentorshipPage = false }) => {
   };
 
   const handleBackToHero = () => {
-    setAppState('hero');
-    setUserType(null);
+    navigate('/resources');
   };
 
   // Show minimalist homepage if not mentorship page
