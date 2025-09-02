@@ -40,7 +40,7 @@ const ResourceHub = () => {
             {/* APALSA Mentorship Program Card */}
             <Card className="group hover:shadow-gold transition-all duration-300 border-2 border-transparent hover:border-gold-light/30 bg-white/95 backdrop-blur-sm">
               <CardHeader className="text-center pb-4">
-                <div className="mx-auto mb-4 p-4 bg-gold-light/20 rounded-full w-fit group-hover:bg-gold-light/30 transition-colors">
+                <div className="w-16 h-16 mx-auto mb-4 bg-primary rounded-full flex items-center justify-center group-hover:bg-secondary-green transition-colors">
                   <Users className="h-12 w-12 text-gold-light" />
                 </div>
                 <CardTitle className="text-2xl text-primary">
@@ -71,7 +71,7 @@ const ResourceHub = () => {
             {/* Outlines Hub Card */}
             <Card className="group hover:shadow-gold transition-all duration-300 border-2 border-transparent hover:border-gold-light/30 bg-white/95 backdrop-blur-sm">
               <CardHeader className="text-center pb-4">
-                <div className="mx-auto mb-4 p-4 bg-gold-light/20 rounded-full w-fit group-hover:bg-gold-light/30 transition-colors">
+                <div className="w-16 h-16 mx-auto mb-4 bg-primary rounded-full flex items-center justify-center group-hover:bg-secondary-green transition-colors">
                   <FileText className="h-12 w-12 text-gold-light" />
                 </div>
                 <CardTitle className="text-2xl text-primary">
@@ -90,7 +90,7 @@ const ResourceHub = () => {
                 </ul>
                 <Button 
                   size="lg" 
-                  className="bg-gold-light text-primary hover:bg-gold-dark rounded-xl px-20 py-3"
+                  className="bg-gold-light text-primary hover:bg-gold-dark rounded-xl px-8 py-3"
                   onClick={() => navigate('/outlines')}
                 >
                   Explore Outlines
