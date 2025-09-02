@@ -28,6 +28,7 @@ const App = () => (
           <Route path="/outlines" element={<OutlinesHub />} />
           <Route path="/outlines/:id" element={<OutlineView />} />
           <Route path="/apalsa-mentorship" element={<Index mentorshipPage={true} />} />
+          <Route path="/mentorship-selection" element={<Index mentorshipPage={true} initialState="selection" />} />
           <Route path="/thank-you" element={<ThankYou />} />
           <Route path="/admin" element={
             <ProtectedRoute requireAdmin={true}>

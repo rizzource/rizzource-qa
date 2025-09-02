@@ -57,7 +57,7 @@ const ResourceHub = () => {
                   <li>• Professional development workshops</li>
                   <li>• Peer support community</li>
                 </ul>
-                <Link to="/apalsa-mentorship">
+                <Link to="/mentorship-selection">
                   <Button 
                     size="lg" 
                     className="w-full bg-primary hover:bg-secondary-green text-white transition-all duration-300 py-3"

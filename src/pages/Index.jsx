@@ -8,9 +8,9 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Users, BookOpen, Zap } from "lucide-react";
 
-const Index = ({ mentorshipPage = false }) => {
+const Index = ({ mentorshipPage = false, initialState = 'hero' }) => {
   const navigate = useNavigate();
-  const [appState, setAppState] = useState('hero');
+  const [appState, setAppState] = useState(initialState);
   const [userType, setUserType] = useState(null);
 
   const handleStartProgram = () => {
