@@ -12,7 +12,10 @@ const OutlinesHub = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("browse");
   
-  const handleBack = () => navigate('/resources');
+  // Navigate back to resource hub
+  const handleBack = () => {
+    navigate('/resources');
+  };
 
   return (
     <>
