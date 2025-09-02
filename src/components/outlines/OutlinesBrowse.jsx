@@ -326,7 +326,7 @@ const OutlinesBrowse = () => {
                   <div className="space-y-4 flex-1">
                     {/* File Info */}
                     <div className="flex items-center justify-between text-sm text-muted-foreground">
-                      <span>{outline.file_size || 'N/A'} MB • {outline.file_type || 'PDF'}</span>
+                      {/* <span>{outline.file_size || 'N/A'} MB • {outline.file_type || 'PDF'}</span> */}
                       <span>{outline.downloads || 0} downloads</span>
                     </div>
 
