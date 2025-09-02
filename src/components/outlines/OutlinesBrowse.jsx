@@ -13,8 +13,8 @@ const OutlinesBrowse = () => {
     keyword: "",
     professor: "",
     topic: "",
-    year: "all",
-    rating: "all",
+    year: "",
+    rating: "",
     sort: "newest"
   });
   const [outlines, setOutlines] = useState([]);
@@ -36,36 +36,42 @@ const OutlinesBrowse = () => {
         .from('outlines')
         .select('*');
 
-      // Apply filters
-      if (filters.keyword) {
-        query = query.or(`title.ilike.%${filters.keyword}%,notes.ilike.%${filters.keyword}%,tags.cs.{${filters.keyword}}`);
+      // Apply filters only when they have valid values
+      if (filters.keyword && filters.keyword.trim()) {
+        query = query.or(`title.ilike.%${filters.keyword}%,notes.ilike.%${filters.keyword}%`);
       }
       
-      if (filters.professor) {
+      if (filters.professor && filters.professor.trim()) {
         query = query.ilike('professor', `%${filters.professor}%`);
       }
       
-      if (filters.topic && filters.topic !== 'all-topics') {
-        const topicValue = filters.topic.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase());
+      if (filters.topic && filters.topic !== 'all-topics' && filters.topic !== '') {
+        const topicValue = filters.topic.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
         query = query.eq('topic', topicValue);
       }
       
-      if (filters.year && filters.year !== 'all-years') {
-        query = query.eq('year', filters.year.toUpperCase());
+      if (filters.year && filters.year !== 'all-years' && filters.year !== '' && filters.year !== 'all') {
+        const yearValue = filters.year.toUpperCase().replace('-', '');
+        query = query.eq('year', yearValue);
       }
       
-      if (filters.rating && filters.rating !== 'all-ratings') {
-        const minRating = parseInt(filters.rating.charAt(0));
-        query = query.gte('rating_avg', minRating);
+      if (filters.rating && filters.rating !== 'all-ratings' && filters.rating !== '' && filters.rating !== 'all') {
+        const ratingMatch = filters.rating.match(/(\d+)/);
+        if (ratingMatch) {
+          const minRating = parseInt(ratingMatch[1]);
+          if (!isNaN(minRating)) {
+            query = query.gte('rating_avg', minRating);
+          }
+        }
       }
 
       // Apply sorting
       switch (filters.sort) {
         case 'highest-rated':
-          query = query.order('rating_avg', { ascending: false });
+          query = query.order('rating_avg', { ascending: false, nullsLast: true });
           break;
         case 'most-popular':
-          query = query.order('downloads', { ascending: false });
+          query = query.order('downloads', { ascending: false, nullsLast: true });
           break;
         default: // newest
           query = query.order('created_at', { ascending: false });
@@ -74,7 +80,10 @@ const OutlinesBrowse = () => {
 
       const { data, error } = await query;
       
-      if (error) throw error;
+      if (error) {
+        console.error('Supabase error:', error);
+        throw error;
+      }
       
       setOutlines(data || []);
     } catch (error) {
@@ -97,8 +106,8 @@ const OutlinesBrowse = () => {
       keyword: "",
       professor: "",
       topic: "",
-      year: "all",
-      rating: "all",
+      year: "",
+      rating: "",
       sort: "newest"
     });
   };
@@ -186,7 +195,7 @@ const OutlinesBrowse = () => {
                 </SelectTrigger>
                 <SelectContent className="bg-white border border-border/50 shadow-lg z-50">
                   {topics.map((topic) => (
-                    <SelectItem key={topic} value={topic.toLowerCase().replace(" ", "-")}>
+                    <SelectItem key={topic} value={topic === "All Topics" ? "" : topic.toLowerCase().replace(/ /g, "-")}>
                       {topic}
                     </SelectItem>
                   ))}
@@ -203,7 +212,7 @@ const OutlinesBrowse = () => {
                 </SelectTrigger>
                 <SelectContent className="bg-white border border-border/50 shadow-lg z-50">
                   {years.map((year) => (
-                    <SelectItem key={year} value={year.toLowerCase().replace(" ", "-")}>
+                    <SelectItem key={year} value={year === "All Years" ? "" : year.toLowerCase().replace(/ /g, "-")}>
                       {year}
                     </SelectItem>
                   ))}
@@ -220,7 +229,7 @@ const OutlinesBrowse = () => {
                 </SelectTrigger>
                 <SelectContent className="bg-white border border-border/50 shadow-lg z-50">
                   {ratings.map((rating) => (
-                    <SelectItem key={rating} value={rating.toLowerCase().replace(" ", "-")}>
+                    <SelectItem key={rating} value={rating === "All Ratings" ? "" : rating.toLowerCase().replace(/ /g, "-")}>
                       {rating}
                     </SelectItem>
                   ))}
@@ -237,7 +246,7 @@ const OutlinesBrowse = () => {
                 </SelectTrigger>
                 <SelectContent className="bg-white border border-border/50 shadow-lg z-50">
                   {sortOptions.map((option) => (
-                    <SelectItem key={option} value={option.toLowerCase().replace(" ", "-")}>
+                    <SelectItem key={option} value={option.toLowerCase().replace(/ /g, "-")}>
                       {option}
                     </SelectItem>
                   ))}
