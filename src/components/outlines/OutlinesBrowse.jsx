@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Search, Filter, Star, Download, Eye, FileText } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const OutlinesBrowse = () => {
   const [filters, setFilters] = useState({
@@ -259,9 +260,11 @@ const OutlinesBrowse = () => {
             <Card key={outline.id} className="bg-white/95 backdrop-blur-sm border-white/20 hover:shadow-gold transition-all duration-300 h-full flex flex-col">
               <CardHeader className="pb-4">
                 <div className="flex items-start justify-between gap-2 mb-2">
-                  <CardTitle className="text-lg text-primary leading-tight flex-1">
-                    {outline.title}
-                  </CardTitle>
+                  <Link to={`/outlines/${outline.id}`} className="flex-1">
+                    <CardTitle className="text-lg text-primary leading-tight hover:text-secondary-green transition-colors cursor-pointer">
+                      {outline.title}
+                    </CardTitle>
+                  </Link>
                   <FileText className="w-5 h-5 text-muted-foreground flex-shrink-0" />
                 </div>
                 
@@ -315,14 +318,16 @@ const OutlinesBrowse = () => {
 
                 {/* Action Buttons */}
                 <div className="flex gap-2 pt-4 mt-auto">
-                  <Button 
-                    size="sm" 
-                    variant="outline" 
-                    className="flex-1 border-primary text-primary hover:bg-primary/10"
-                  >
-                    <Eye className="w-4 h-4 mr-1" />
-                    Preview
-                  </Button>
+                  <Link to={`/outlines/${outline.id}`} className="flex-1">
+                    <Button 
+                      size="sm" 
+                      variant="outline" 
+                      className="w-full border-primary text-primary hover:bg-primary/10"
+                    >
+                      <Eye className="w-4 h-4 mr-1" />
+                      View
+                    </Button>
+                  </Link>
                   <Button 
                     size="sm" 
                     className="flex-1 bg-gold-light text-primary hover:bg-gold-dark"
