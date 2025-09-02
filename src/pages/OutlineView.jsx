@@ -299,9 +299,9 @@ const OutlineView = () => {
                 <CardContent>
                   <div className="bg-gray-50 border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
                     <FileText className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                    {/* <p className="text-gray-600 mb-2">
+                    <p className="text-gray-600 mb-2">
                       {outline.file_type} File • {outline.file_size} MB
-                    </p> */}
+                    </p>
                     <p className="text-sm text-gray-500">
                       Preview functionality will be implemented with PDF.js for PDFs and document viewers for DOCX files
                     </p>
@@ -336,14 +336,14 @@ const OutlineView = () => {
 
                   {/* File Info */}
                   <div className="space-y-2 text-sm">
-                    <div className="flex justify-between">
+                    {/* <div className="flex justify-between">
                       <span className="text-muted-foreground">File Type:</span>
                       <span className="font-medium text-primary">{outline.file_type}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">File Size:</span>
                       <span className="font-medium text-primary">{outline.file_size} MB</span>
-                    </div>
+                    </div> */}
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Downloads:</span>
                       <span className="font-medium text-primary">{outline.downloads}</span>
