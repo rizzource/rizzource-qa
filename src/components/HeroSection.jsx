@@ -1,8 +1,10 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight, BookOpen, Users, Zap, Scale, ArrowLeft } from "lucide-react";
 import heroImage from "@/assets/hero-legal-illustration.jpg";
-
+import { useNavigate } from "react-router-dom";
 const HeroSection = ({ onStartProgram, onBack }) => {
+  const navigate = useNavigate();
+  const handleBack = onBack ?? (() => navigate('/resources'));
   return (
     <section className="relative min-h-screen bg-hero-gradient overflow-hidden">
       {/* Floating background elements */}
@@ -26,7 +28,7 @@ const HeroSection = ({ onStartProgram, onBack }) => {
             <div className="space-y-4">
               <Button
                 variant="ghost"
-                onClick={onBack}
+                onClick={handleBack}
                 className="mb-8 text-white hover:bg-white/10 whitespace-nowrap flex items-center"
               >
                 <ArrowLeft className="mr-2 h-4 w-4" />
