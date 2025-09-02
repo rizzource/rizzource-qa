@@ -328,12 +328,12 @@ const OutlinesUpload = () => {
             </div>
 
             {/* Submit Button */}
-            <div className="pt-4">
+            <div className="flex justify-center pt-4">
               <Button
                 type="submit"
                 size="lg"
                 disabled={!isFormValid || uploadStatus === 'uploading'}
-                className="w-full bg-gold-light text-primary hover:bg-gold-dark disabled:opacity-50"
+                className="bg-gold-light text-primary hover:bg-gold-dark disabled:opacity-50"
               >
                 {uploadStatus === 'uploading' ? (
                   <>
