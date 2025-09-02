@@ -33,34 +33,25 @@ const MinimalistHome = () => {
               </h1>
             </div>
             
-            {/* Main Content */}
-            <div className="space-y-6">
+            {/* Coming Soon Text */}
+            <div className="space-y-4">
               <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold text-white leading-tight break-words">
-                Your Academic Success Hub
+                Coming Soon...
               </h2>
               
               <p className="text-lg sm:text-xl lg:text-2xl text-white/90 leading-relaxed max-w-4xl mx-auto break-words">
-                Access mentorship programs and comprehensive outline databases to support your legal education journey
+                The ultimate resource platform for law students
               </p>
             </div>
             
-            {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
-              <Link to="/resource-hub" className="block">
+            {/* CTA Button */}
+            <div className="flex justify-center pt-4">
+              <Link to="/apalsa-mentorship" className="block">
                 <Button 
                   size="lg"
                   className="bg-gold-light text-primary hover:bg-gold-dark transition-all duration-300 shadow-gold text-base sm:text-lg px-6 sm:px-8 h-12 sm:h-14 touch-target touch-friendly whitespace-nowrap flex items-center rounded-xl font-medium"
                 >
-                  Explore Resources
-                </Button>
-              </Link>
-              <Link to="/auth" className="block">
-                <Button 
-                  variant="outline"
-                  size="lg"
-                  className="border-white/20 text-white hover:bg-white/10 text-base sm:text-lg px-6 sm:px-8 h-12 sm:h-14 touch-target touch-friendly whitespace-nowrap flex items-center rounded-xl font-medium"
-                >
-                  Sign In
+                  APALSA Mentorship Program
                 </Button>
               </Link>
             </div>
