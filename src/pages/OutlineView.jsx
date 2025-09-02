@@ -7,6 +7,7 @@ import { Separator } from "@/components/ui/separator";
 import { ArrowLeft, Star, Download, FileText, Eye, User } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { Link, useNavigate } from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
@@ -18,6 +19,7 @@ const OutlineView = () => {
   const [hoverRating, setHoverRating] = useState(0);
   const [loading, setLoading] = useState(true);
   const [ratingLoading, setRatingLoading] = useState(false);
+  const navigate = useNavigate();
 
   // Remove the mockOutline constant since we're now fetching from Supabase
 
@@ -217,13 +219,13 @@ const OutlineView = () => {
           {/* Back Navigation */}
           <div className="flex items-center gap-4 mb-8">
             <Button
-                variant="ghost"
-                onClick={() => navigate('/outlines')}
-                className="mb-8 text-white hover:bg-white/10 whitespace-nowrap flex items-center"
-              >
-                <ArrowLeft className="mr-2 h-4 w-4" />
-                Back to Outlines
-              </Button>
+              variant="ghost"
+              onClick={() => navigate('/outlines')}
+              className="mb-8 text-white hover:bg-white/10 whitespace-nowrap flex items-center"
+            >
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Back to Outlines
+            </Button>
           </div>
 
           <div className="grid lg:grid-cols-3 gap-8">
