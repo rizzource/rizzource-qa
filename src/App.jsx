@@ -7,6 +7,7 @@ import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import ThankYou from "./pages/ThankYou";
 import NotFound from "./pages/NotFound";
+import ResourceHub from "./pages/ResourceHub";
 import { AdminDashboard } from "./pages/AdminDashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
 
@@ -21,6 +22,7 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/auth" element={<Auth />} />
+          <Route path="/resources" element={<ResourceHub />} />
           <Route path="/apalsa-mentorship" element={<Index mentorshipPage={true} />} />
           <Route path="/thank-you" element={<ThankYou />} />
           <Route path="/admin" element={
