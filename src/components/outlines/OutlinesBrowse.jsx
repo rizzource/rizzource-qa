@@ -12,9 +12,9 @@ const OutlinesBrowse = () => {
   const [filters, setFilters] = useState({
     keyword: "",
     professor: "",
-    topic: "",
-    year: "",
-    rating: "",
+    topic: "all",
+    year: "all", 
+    rating: "all",
     sort: "newest"
   });
   const [outlines, setOutlines] = useState([]);
@@ -45,17 +45,17 @@ const OutlinesBrowse = () => {
         query = query.ilike('professor', `%${filters.professor}%`);
       }
       
-      if (filters.topic && filters.topic !== 'all-topics' && filters.topic !== '') {
+      if (filters.topic && filters.topic !== 'all' && filters.topic !== '') {
         const topicValue = filters.topic.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
         query = query.eq('topic', topicValue);
       }
       
-      if (filters.year && filters.year !== 'all-years' && filters.year !== '' && filters.year !== 'all') {
+      if (filters.year && filters.year !== 'all' && filters.year !== '') {
         const yearValue = filters.year.toUpperCase().replace('-', '');
         query = query.eq('year', yearValue);
       }
       
-      if (filters.rating && filters.rating !== 'all-ratings' && filters.rating !== '' && filters.rating !== 'all') {
+      if (filters.rating && filters.rating !== 'all' && filters.rating !== '') {
         const ratingMatch = filters.rating.match(/(\d+)/);
         if (ratingMatch) {
           const minRating = parseInt(ratingMatch[1]);
@@ -105,9 +105,9 @@ const OutlinesBrowse = () => {
     setFilters({
       keyword: "",
       professor: "",
-      topic: "",
-      year: "",
-      rating: "",
+      topic: "all",
+      year: "all",
+      rating: "all", 
       sort: "newest"
     });
   };
@@ -195,7 +195,7 @@ const OutlinesBrowse = () => {
                 </SelectTrigger>
                 <SelectContent className="bg-white border border-border/50 shadow-lg z-50">
                   {topics.map((topic) => (
-                    <SelectItem key={topic} value={topic === "All Topics" ? "" : topic.toLowerCase().replace(/ /g, "-")}>
+                    <SelectItem key={topic} value={topic === "All Topics" ? "all" : topic.toLowerCase().replace(/ /g, "-")}>
                       {topic}
                     </SelectItem>
                   ))}
@@ -212,7 +212,7 @@ const OutlinesBrowse = () => {
                 </SelectTrigger>
                 <SelectContent className="bg-white border border-border/50 shadow-lg z-50">
                   {years.map((year) => (
-                    <SelectItem key={year} value={year === "All Years" ? "" : year.toLowerCase().replace(/ /g, "-")}>
+                    <SelectItem key={year} value={year === "All Years" ? "all" : year.toLowerCase().replace(/ /g, "-")}>
                       {year}
                     </SelectItem>
                   ))}
@@ -229,7 +229,7 @@ const OutlinesBrowse = () => {
                 </SelectTrigger>
                 <SelectContent className="bg-white border border-border/50 shadow-lg z-50">
                   {ratings.map((rating) => (
-                    <SelectItem key={rating} value={rating === "All Ratings" ? "" : rating.toLowerCase().replace(/ /g, "-")}>
+                    <SelectItem key={rating} value={rating === "All Ratings" ? "all" : rating.toLowerCase().replace(/ /g, "-")}>
                       {rating}
                     </SelectItem>
                   ))}
