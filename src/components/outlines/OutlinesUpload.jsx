@@ -230,7 +230,7 @@ const OutlinesUpload = () => {
                 </div>
               </div>
 
-              <div className="space-y-2">
+              {/* <div className="space-y-2">
                 <Label htmlFor="notes" className="text-primary">Notes *</Label>
                 <Textarea
                   id="notes"
@@ -243,7 +243,7 @@ const OutlinesUpload = () => {
                 <div className="text-sm text-muted-foreground text-right">
                   {formData.notes.length}/1000 characters
                 </div>
-              </div>
+              </div> */}
             </div>
 
             {/* File Upload */}
@@ -337,12 +337,12 @@ const OutlinesUpload = () => {
               >
                 {uploadStatus === 'uploading' ? (
                   <>
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary mr-2"></div>
+                    <div className="animate-spin rounded-full h-8 border-b-2 border-primary mr-2"></div>
                     Uploading...
                   </>
                 ) : (
                   <>
-                    <Upload className="w-4 h-4 mr-2" />
+                    <Upload className="h-8 mr-2" />
                     Upload Outline
                   </>
                 )}
