@@ -7,6 +7,7 @@ import Footer from "@/components/Footer";
 
 const ResourceHub = () => {
   const navigate = useNavigate();
+  const onBack = () => navigate('/')
 
   return (
     <>
