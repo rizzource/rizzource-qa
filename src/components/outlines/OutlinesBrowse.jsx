@@ -13,9 +13,9 @@ const OutlinesBrowse = () => {
   const [outlines, setOutlines] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
-  const [professorFilter, setProfessorFilter] = useState("");
-  const [topicFilter, setTopicFilter] = useState("");
-  const [yearFilter, setYearFilter] = useState("");
+  const [professorFilter, setProfessorFilter] = useState("all");
+  const [topicFilter, setTopicFilter] = useState("all");
+  const [yearFilter, setYearFilter] = useState("all");
   const [sortBy, setSortBy] = useState("newest");
 
   const [professors, setProfessors] = useState([]);
@@ -36,13 +36,13 @@ const OutlinesBrowse = () => {
       if (searchTerm) {
         query = query.or(`title.ilike.%${searchTerm}%,professor.ilike.%${searchTerm}%,topic.ilike.%${searchTerm}%,tags.cs.{${searchTerm}}`);
       }
-      if (professorFilter) {
+      if (professorFilter && professorFilter !== 'all') {
         query = query.eq('professor', professorFilter);
       }
-      if (topicFilter) {
+      if (topicFilter && topicFilter !== 'all') {
         query = query.eq('topic', topicFilter);
       }
-      if (yearFilter) {
+      if (yearFilter && yearFilter !== 'all') {
         query = query.eq('year', yearFilter);
       }
 
@@ -109,9 +109,9 @@ const OutlinesBrowse = () => {
 
   const clearFilters = () => {
     setSearchTerm("");
-    setProfessorFilter("");
-    setTopicFilter("");
-    setYearFilter("");
+    setProfessorFilter("all");
+    setTopicFilter("all");
+    setYearFilter("all");
     setSortBy("newest");
   };
 
@@ -135,7 +135,7 @@ const OutlinesBrowse = () => {
               <SelectValue placeholder="Filter by Professor" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All Professors</SelectItem>
+              <SelectItem value="all">All Professors</SelectItem>
               {professors.map((prof) => (
                 <SelectItem key={prof} value={prof}>{prof}</SelectItem>
               ))}
@@ -147,7 +147,7 @@ const OutlinesBrowse = () => {
               <SelectValue placeholder="Filter by Topic" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All Topics</SelectItem>
+              <SelectItem value="all">All Topics</SelectItem>
               {topics.map((topic) => (
                 <SelectItem key={topic} value={topic}>{topic}</SelectItem>
               ))}
@@ -159,7 +159,7 @@ const OutlinesBrowse = () => {
               <SelectValue placeholder="Filter by Year" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All Years</SelectItem>
+              <SelectItem value="all">All Years</SelectItem>
               <SelectItem value="1L">1L</SelectItem>
               <SelectItem value="2L">2L</SelectItem>
               <SelectItem value="3L">3L</SelectItem>
