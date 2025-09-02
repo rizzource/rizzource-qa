@@ -8,7 +8,8 @@ import Footer from "@/components/Footer";
 import OutlinesBrowse from "./outlines/OutlinesBrowse";
 import OutlinesUpload from "./outlines/OutlinesUpload";
 
-const OutlinesHub = () => {
+const OutlinesHub = (onBack) => {
+  const handleBack = onBack ?? (() => navigate('/resources'));
   const [activeTab, setActiveTab] = useState("browse");
 
   return (
@@ -20,7 +21,7 @@ const OutlinesHub = () => {
           <div className="flex items-center gap-4 mb-8">
             <Button
               variant="ghost"
-              onClick={() => navigate('/resources')}
+              onClick={handleBack}
               className="mb-8 text-white hover:bg-white/10 whitespace-nowrap flex items-center"
             >
               <ArrowLeft className="mr-2 h-4 w-4" />
