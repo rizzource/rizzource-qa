@@ -41,20 +41,22 @@ const OutlinesHub = () => {
           {/* Tabbed Interface */}
           <div className="max-w-6xl mx-auto">
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-              <TabsList className="grid w-full grid-cols-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl p-1">
-                <TabsTrigger 
-                  value="browse" 
-                  className="data-[state=active]:bg-gold-light data-[state=active]:text-primary text-white/80 hover:text-white transition-all rounded-lg font-medium"
-                >
-                  Browse Outlines
-                </TabsTrigger>
-                <TabsTrigger 
-                  value="upload" 
-                  className="data-[state=active]:bg-gold-light data-[state=active]:text-primary text-white/80 hover:text-white transition-all rounded-lg font-medium"
-                >
-                  Upload Outline
-                </TabsTrigger>
-              </TabsList>
+              <div className="flex justify-center">
+                <TabsList className="grid grid-cols-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl p-1">
+                  <TabsTrigger 
+                    value="browse" 
+                    className="data-[state=active]:bg-gold-light data-[state=active]:text-primary text-white/80 hover:text-white transition-all rounded-lg font-medium"
+                  >
+                    Browse Outlines
+                  </TabsTrigger>
+                  <TabsTrigger 
+                    value="upload" 
+                    className="data-[state=active]:bg-gold-light data-[state=active]:text-primary text-white/80 hover:text-white transition-all rounded-lg font-medium"
+                  >
+                    Upload Outline
+                  </TabsTrigger>
+                </TabsList>
+              </div>
 
               <TabsContent value="browse" className="mt-8">
                 <OutlinesBrowse />
