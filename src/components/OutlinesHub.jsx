@@ -18,10 +18,14 @@ const OutlinesHub = () => {
         <div className="container mx-auto px-4 py-8">
           {/* Header */}
           <div className="flex items-center gap-4 mb-8">
-            <Link to="/resources" className="flex items-center gap-2 text-white hover:text-gold-light transition-colors">
-              <ArrowLeft className="w-5 h-5" />
-              <span>Back to Resources</span>
-            </Link>
+            <Button
+            variant="ghost"
+            onClick={onBack}
+            className="mb-8 text-white hover:bg-white/10 whitespace-nowrap flex items-center"
+          >
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Back to Resources
+          </Button>
           </div>
 
           <div className="text-center mb-12">
