@@ -33,7 +33,7 @@ const Header = () => {
             </div>
           </a>
 
-          {/* Authentication Controls */}
+          {/* Right-hand controls */}
           <div className="flex items-center gap-2 sm:gap-4">
             {location.pathname === "/auth" ? (
               // Show Back to Home Button on Auth Page
@@ -54,35 +54,19 @@ const Header = () => {
                   <ArrowLeft className="h-4 w-4 mr-1" />
                   <span className="hidden sm:inline">Back to Home</span>
                 </Link>
-                {/* Resource Hub link */}
-                <Link 
-                  to="/resources" 
-                  className="font-bold text-primary hover:text-accent transition-colors"
-                >
-                  Resource Hub
-                </Link>
-                <Link
-                  to="#"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    handleSignOut();
-                  }}
-                  className="inline-flex items-center px-3 py-1.5 text-sm font-medium text-muted-foreground hover:text-destructive transition-colors"
-                >
-                  <LogOut className="h-4 w-4 mr-1" />
-                  <span className="hidden sm:inline">Sign Out</span>
-                </Link>
               </>
-            ) : user ? (
-              // Default User/Admin View
+            ) : null}
+
+            {/* ✅ Resource Hub is always visible */}
+            <Link 
+              to="/resources" 
+              className="font-bold text-primary hover:text-accent transition-colors"
+            >
+              Resource Hub
+            </Link>
+
+            {user ? (
               <>
-                {/* Resource Hub link */}
-                <Link 
-                  to="/resources" 
-                  className="font-bold text-primary hover:text-accent transition-colors"
-                >
-                  Resource Hub
-                </Link>
                 <span className="text-xs sm:text-sm text-muted-foreground">
                   {isAdmin() ? 'Admin' : 'User'}
                 </span>
