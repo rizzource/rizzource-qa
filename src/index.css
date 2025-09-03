@@ -8,66 +8,66 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* Enhanced Law Platform Color System - Green & Gold Theme */
-    --background: 0 0% 98%;
-    --foreground: 210 11% 15%;
+    /* Professional Academic Color System - Cream, Dark Green & Gold */
+    --background: 45 22% 97%;        /* #FAF9F6 - light cream */
+    --foreground: 0 0% 10%;          /* #1A1A1A - near black */
 
-    --card: 0 0% 100%;
-    --card-foreground: 210 11% 15%;
+    --card: 0 0% 100%;               /* #FFFFFF - white */
+    --card-foreground: 0 0% 10%;     /* #1A1A1A - near black */
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 210 11% 15%;
+    --popover: 0 0% 100%;            /* #FFFFFF - white */
+    --popover-foreground: 0 0% 10%;  /* #1A1A1A - near black */
 
-    /* Primary: Dark Forest Green (#2D5016) */
-    --primary-green: 98 67% 19%;
-    --primary: 98 67% 19%;
-    --primary-foreground: 0 0% 98%;
+    /* Primary: Dark Green (#2F4F2F) */
+    --primary-green: 120 25% 25%;
+    --primary: 120 25% 25%;          /* #2F4F2F - dark green */
+    --primary-foreground: 0 0% 100%; /* white on dark green */
 
-    /* Secondary: Medium Green (#4A7C2A) */
-    --secondary-green: 94 48% 32%;
-    --secondary: 94 48% 32%;
-    --secondary-foreground: 0 0% 98%;
+    /* Secondary: Lighter version of dark green for hover states */
+    --secondary-green: 120 25% 35%;
+    --secondary: 120 25% 35%;
+    --secondary-foreground: 0 0% 100%;
 
     /* Light Green for hover states */
-    --light-green: 85 39% 45%;
+    --light-green: 120 25% 30%;
 
-    /* Gold System */
+    /* Gold System - Highlight/Rating Stars */
     --gold-primary: 51 100% 50%;     /* #FFD700 */
-    --gold-rizz: 51 100% 50%;        /* #FFD900 */
-    --gold-secondary: 43 74% 38%;    /* #B8860B */
-    --gold-accent: 45 77% 77%;       /* #F4E6A1 */
-    --accent: 51 100% 50%;
-    --accent-foreground: 98 67% 19%;
+    --gold-rizz: 51 100% 50%;        /* #FFD700 */
+    --gold-secondary: 51 100% 45%;   /* Slightly darker gold */
+    --gold-accent: 51 100% 85%;      /* Light gold for backgrounds */
+    --accent: 51 100% 50%;           /* #FFD700 - gold */
+    --accent-foreground: 0 0% 10%;   /* dark text on gold */
 
     /* Supporting colors */
-    --gold-dark: 43 74% 38%;
+    --gold-dark: 51 100% 45%;
     --gold-light: 51 100% 50%;
 
     /* Neutral colors */
-    --neutral-light: 240 33% 99%;    /* #F8F9FA */
-    --neutral-dark: 210 11% 21%;     /* #343A40 */
+    --neutral-light: 0 0% 90%;       /* #E5E5E5 - for tags/pills */
+    --neutral-dark: 0 0% 33%;        /* #555555 - medium gray */
 
     /* Enhanced muted tones */
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 0 0% 90%;               /* #E5E5E5 - light gray */
+    --muted-foreground: 0 0% 33%;    /* #555555 - medium gray */
 
     --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 85 39% 45%; /* Green focus ring for text inputs */
-    --ring-yellow: 51 100% 50%; /* Yellow focus ring for buttons and accents */
+    --border: 0 0% 87%;              /* #DDDDDD - light gray borders */
+    --input: 0 0% 87%;               /* #DDDDDD - light gray borders */
+    --ring: 120 25% 25%;             /* Dark green focus ring */
+    --ring-yellow: 51 100% 50%;      /* Gold focus ring for special elements */
 
     /* Enhanced gradients */
-    --gradient-hero: linear-gradient(135deg, hsl(98 67% 19%), hsl(94 48% 32%));
-    --gradient-gold: linear-gradient(135deg, hsl(51 100% 50%), hsl(43 74% 38%));
-    --gradient-card: linear-gradient(135deg, hsl(0 0% 100%), hsl(45 77% 97%));
+    --gradient-hero: linear-gradient(135deg, hsl(120 25% 25%), hsl(120 25% 35%));
+    --gradient-gold: linear-gradient(135deg, hsl(51 100% 50%), hsl(51 100% 45%));
+    --gradient-card: linear-gradient(135deg, hsl(0 0% 100%), hsl(45 22% 98%));
     
     /* Enhanced shadows */
     --shadow-gold: 0 10px 30px -10px hsl(51 100% 50% / 0.3);
-    --shadow-green: 0 10px 30px -10px hsl(98 67% 19% / 0.2);
-    --shadow-card: 0 4px 20px -4px hsl(98 67% 19% / 0.1);
+    --shadow-green: 0 10px 30px -10px hsl(120 25% 25% / 0.2);
+    --shadow-card: 0 4px 20px -4px hsl(120 25% 25% / 0.1);
 
     --radius: 0.5rem;
 
@@ -89,41 +89,41 @@ All colors MUST be HSL.
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
+    --background: 0 0% 8%;           /* Very dark background */
+    --foreground: 0 0% 95%;          /* Light text */
 
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
+    --card: 0 0% 12%;                /* Slightly lighter than background */
+    --card-foreground: 0 0% 95%;     /* Light text */
 
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 0 0% 12%;             /* Slightly lighter than background */
+    --popover-foreground: 0 0% 95%;  /* Light text */
 
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
+    --primary: 120 25% 40%;          /* Lighter green for dark mode */
+    --primary-foreground: 0 0% 95%;  /* Light text */
 
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
+    --secondary: 120 25% 25%;        /* Darker green */
+    --secondary-foreground: 0 0% 95%; /* Light text */
 
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
+    --muted: 0 0% 20%;               /* Muted dark gray */
+    --muted-foreground: 0 0% 65%;    /* Medium light gray */
 
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
+    --accent: 51 100% 60%;           /* Brighter gold for dark mode */
+    --accent-foreground: 0 0% 8%;    /* Dark text on gold */
 
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 50%;      /* Destructive red */
+    --destructive-foreground: 0 0% 95%; /* Light text */
 
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --border: 0 0% 25%;              /* Dark borders */
+    --input: 0 0% 25%;               /* Dark input borders */
+    --ring: 120 25% 40%;             /* Green focus ring */
+    --sidebar-background: 0 0% 10%;
+    --sidebar-foreground: 0 0% 95%;
+    --sidebar-primary: 120 25% 40%;
+    --sidebar-primary-foreground: 0 0% 95%;
+    --sidebar-accent: 0 0% 20%;
+    --sidebar-accent-foreground: 0 0% 95%;
+    --sidebar-border: 0 0% 25%;
+    --sidebar-ring: 120 25% 40%;
   }
 }
 
