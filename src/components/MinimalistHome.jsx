@@ -34,7 +34,7 @@ const MinimalistHome = () => {
               </h1>
             </div>
             
-            <div className="space-y-4">
+            <div style={{marginTop: -15}}>
               <p className="text-lg sm:text-xl lg:text-2xl text-muted-foreground leading-relaxed max-w-4xl mx-auto break-words">
                 The ultimate resource platform for law students
               </p>
