@@ -8,56 +8,46 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* Enhanced Law Platform Color System - Green & Gold Theme */
-    --background: 0 0% 98%;
-    --foreground: 210 11% 15%;
+    /* Light Cream Theme - Clean Minimalist Design */
+    --background: 50 33% 98%;        /* #FAF9F6 - light cream */
+    --foreground: 0 0% 11%;          /* #1C1C1C - near-black for body text */
 
-    --card: 0 0% 100%;
-    --card-foreground: 210 11% 15%;
+    --card: 0 0% 100%;               /* #FFFFFF - white cards */
+    --card-foreground: 0 0% 11%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 210 11% 15%;
+    --popover-foreground: 0 0% 11%;
 
-    /* Primary: Dark Forest Green (#2D5016) */
-    --primary-green: 98 67% 19%;
-    --primary: 98 67% 19%;
-    --primary-foreground: 0 0% 98%;
+    /* Primary: Dark Green for headings and logo */
+    --primary: 98 67% 10%;           /* #14290A - dark green */
+    --primary-foreground: 50 33% 98%; /* cream on dark green */
 
-    /* Secondary: Medium Green (#4A7C2A) */
-    --secondary-green: 94 48% 32%;
-    --secondary: 94 48% 32%;
-    --secondary-foreground: 0 0% 98%;
+    /* Secondary: Muted green for icons */
+    --secondary: 98 29% 18%;         /* #2C3A20 - muted green */
+    --secondary-foreground: 50 33% 98%;
 
-    /* Light Green for hover states */
-    --light-green: 85 39% 45%;
+    /* Muted colors */
+    --muted: 0 0% 90%;               /* #E5E5E5 - light gray for backgrounds */
+    --muted-foreground: 0 0% 33%;    /* #555555 - muted text */
 
-    /* Gold System */
-    --gold-primary: 51 100% 50%;     /* #FFD700 */
-    --gold-rizz: 51 100% 50%;        /* #FFD900 */
-    --gold-secondary: 43 74% 38%;    /* #B8860B */
-    --gold-accent: 45 77% 77%;       /* #F4E6A1 */
-    --accent: 51 100% 50%;
-    --accent-foreground: 98 67% 19%;
+    /* Gold accent system */
+    --gold-primary: 45 67% 54%;      /* #D4AF37 - warm muted gold */
+    --gold-light: 45 67% 54%;        /* same as primary */
+    --gold-dark: 45 61% 47%;         /* #C19A2E - darker gold for hover */
+    --gold-accent: 45 67% 54%;
+    --accent: 45 67% 54%;            /* muted gold for highlights */
+    --accent-foreground: 98 67% 10%; /* dark green on gold */
 
-    /* Supporting colors */
-    --gold-dark: 43 74% 38%;
-    --gold-light: 51 100% 50%;
+    /* Soft gray for alternative icons */
+    --soft-gray: 0 0% 55%;           /* #8C8C8C */
 
-    /* Neutral colors */
-    --neutral-light: 240 33% 99%;    /* #F8F9FA */
-    --neutral-dark: 210 11% 21%;     /* #343A40 */
-
-    /* Enhanced muted tones */
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    /* Border and input styling */
+    --border: 0 0% 87%;              /* #DDDDDD - light gray borders */
+    --input: 0 0% 87%;
+    --ring: 45 67% 54%;              /* Gold focus ring */
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
-
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 85 39% 45%; /* Green focus ring for text inputs */
-    --ring-yellow: 51 100% 50%; /* Yellow focus ring for buttons and accents */
 
     /* Enhanced gradients */
     --gradient-hero: linear-gradient(135deg, hsl(98 67% 19%), hsl(94 48% 32%));

@@ -81,19 +81,19 @@ const ThankYou = () => {
   }
 
   return (
-    <div className="min-h-screen bg-hero-gradient">
+    <div className="min-h-screen bg-background">
       <Header />
       <main className="py-20">
         <div className="container mx-auto px-4">
           <div className="max-w-2xl mx-auto">
             
             {showFeedbackForm && !feedbackSubmitted && (
-              <Card className="bg-white/10 backdrop-blur-sm border-white/20">
+              <Card className="bg-card backdrop-blur-sm border-border">
                 <CardHeader className="text-center">
-                  <div className="mx-auto mb-4 p-4 bg-green-500/20 rounded-full w-fit">
-                    <CheckCircle className="h-12 w-12 text-green-400" />
+                  <div className="mx-auto mb-4 p-4 bg-accent/20 rounded-full w-fit">
+                    <CheckCircle className="h-12 w-12 text-accent" />
                   </div>
-                  <CardTitle className="text-3xl text-white mb-2">
+                  <CardTitle className="text-3xl text-foreground mb-2">
                     Application Submitted Successfully!
                   </CardTitle>
                   <img
@@ -173,14 +173,14 @@ const ThankYou = () => {
                             type="button"
                             variant="outline"
                             onClick={handleBackToHome}
-                            className="flex-1 border-white/20 text-green hover:bg-light-green whitespace-nowrap flex items-center"
+                            className="flex-1 flex items-center"
                           >
                             <ArrowLeft className="mr-2 h-4 w-4" />
                             Back to Home
                           </Button>
                           <Button
                             type="submit"
-                            className="flex-1 bg-gold-light text-primary hover:bg-gold-dark"
+                            className="flex-1"
                           >
                             Submit Feedback
                           </Button>

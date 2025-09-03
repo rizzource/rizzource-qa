@@ -437,12 +437,12 @@ export const AdminDashboard = () => {
             type="button"
             variant="outline"
             onClick={handlePrev}
-            className="w-full sm:w-auto border-white/20 text-green hover:bg-light-green flex items-center justify-center"
+            className="w-full sm:w-auto flex items-center justify-center"
           >
             <ArrowLeft className="mr-2 h-4 w-4" />
             Previous
           </Button>
-          <div className="hidden sm:block text-white/70 text-sm font-medium">
+          <div className="hidden sm:block text-muted-foreground text-sm font-medium">
             {activeSection === 0 && 'Mentees'} 
             {activeSection === 1 && 'Mentors'} 
             {activeSection === 2 && 'Feedback'}
@@ -451,7 +451,7 @@ export const AdminDashboard = () => {
             type="button"
             variant="outline"
             onClick={handleNext}
-            className="w-full sm:w-auto border-white/20 text-green hover:bg-light-green flex items-center justify-center"
+            className="w-full sm:w-auto flex items-center justify-center"
           >
             Next
             <ArrowRight className="ml-2 h-4 w-4" />

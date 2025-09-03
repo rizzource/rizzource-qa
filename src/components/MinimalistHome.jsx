@@ -4,17 +4,17 @@ import { Link } from "react-router-dom";
 
 const MinimalistHome = () => {
   return (
-    <section className="relative min-h-screen bg-hero-gradient overflow-hidden">
+    <section className="relative min-h-screen bg-background overflow-hidden">
       {/* Floating background elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-20 left-4 md:left-10 animate-float opacity-20">
-          <Scale className="w-12 h-12 md:w-16 md:h-16 text-gold-light" />
+          <Scale className="w-12 h-12 md:w-16 md:h-16 text-secondary" />
         </div>
         <div className="absolute top-40 right-4 md:right-20 animate-float-delayed opacity-20">
-          <BookOpen className="w-10 h-10 md:w-12 md:h-12 text-gold-light" />
+          <BookOpen className="w-10 h-10 md:w-12 md:h-12 text-secondary" />
         </div>
         <div className="absolute bottom-40 left-4 md:left-20 animate-float opacity-20">
-          <Users className="w-12 h-12 md:w-14 md:h-14 text-gold-light" />
+          <Users className="w-12 h-12 md:w-14 md:h-14 text-secondary" />
         </div>
       </div>
 
@@ -24,22 +24,22 @@ const MinimalistHome = () => {
           <div className="text-center space-y-6 lg:space-y-8">
             {/* RIZZource Logo */}
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 md:gap-6 mb-8 sm:mb-10 md:mb-12">
-              <div className="w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 bg-white/10 rounded-lg flex items-center justify-center flex-shrink-0 backdrop-blur-sm">
-                <Scale className="w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10 text-gold-light" />
+              <div className="w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 bg-secondary/10 rounded-lg flex items-center justify-center flex-shrink-0 backdrop-blur-sm border border-border">
+                <Scale className="w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10 text-secondary" />
               </div>
-              <h1 className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl xl:text-7xl leading-tight break-words">
-                <span className="text-gold-light font-bold">RIZZ</span>
-                <span className="text-white font-semibold">ource</span>
+              <h1 className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl xl:text-7xl leading-tight break-words font-bold">
+                <span className="text-accent">RIZZ</span>
+                <span className="text-primary">ource</span>
               </h1>
             </div>
             
             {/* Coming Soon Text */}
             <div className="space-y-4">
-              <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold text-white leading-tight break-words">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold text-primary leading-tight break-words">
                 Coming Soon...
               </h2>
               
-              <p className="text-lg sm:text-xl lg:text-2xl text-white/90 leading-relaxed max-w-4xl mx-auto break-words">
+              <p className="text-lg sm:text-xl lg:text-2xl text-muted-foreground leading-relaxed max-w-4xl mx-auto break-words">
                 The ultimate resource platform for law students
               </p>
             </div>
@@ -49,7 +49,7 @@ const MinimalistHome = () => {
               <Link to="/resources" className="block">
                 <Button 
                   size="lg"
-                  className="bg-gold-light text-primary hover:bg-gold-dark transition-all duration-300 shadow-gold text-base sm:text-lg px-6 sm:px-8 h-12 sm:h-14 touch-target touch-friendly whitespace-nowrap flex items-center rounded-xl font-medium"
+                  className="text-base sm:text-lg px-6 sm:px-8 h-12 sm:h-14 touch-target touch-friendly whitespace-nowrap flex items-center rounded-xl font-medium"
                 >
                   Resource Hub
                 </Button>
