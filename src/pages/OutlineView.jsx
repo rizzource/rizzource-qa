@@ -9,6 +9,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { useNavigateWithScroll } from "@/hooks/use-navigate-scroll";
 
 const OutlineView = () => {
   const { id } = useParams();
