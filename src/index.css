@@ -283,30 +283,49 @@ All colors MUST be HSL.
   
   /* Search and form enhancements */
   .search-focus {
-    @apply ring-2 ring-light-green border-light-green;
+    /* uses theme token instead of fixed color */
+    outline-color: hsl(var(--light-green));
+    @apply ring-2 border;
+    border-color: hsl(var(--light-green));
+    box-shadow: 0 0 0 2px hsl(var(--light-green));
   }
   
   /* Text input focus styles */
   .input-focus-green {
-    @apply focus-visible:ring-2 focus-visible:ring-light-green focus-visible:border-light-green;
+    @apply focus-visible:ring-2;
+    --tw-ring-color: hsl(var(--light-green));
+    border-color: hsl(var(--light-green));
   }
   
   .input-focus-yellow {
-    @apply focus-visible:ring-2 focus-visible:ring-gold-primary focus-visible:border-gold-primary;
+    @apply focus-visible:ring-2;
+    --tw-ring-color: hsl(var(--gold-primary));
+    border-color: hsl(var(--gold-primary));
   }
   
   .filter-checkbox:checked {
-    @apply bg-secondary-green border-secondary-green;
+    /* replaced with theme green */
+    background-color: hsl(var(--secondary-green));
+    border-color: hsl(var(--secondary-green));
   }
   
   /* Resource card styling */
   .resource-card {
-    @apply bg-white border border-gold-accent/30 hover:border-gold-primary/50 transition-all duration-300 hover:shadow-card;
+    @apply bg-card border transition-all duration-300 hover:shadow-card;
+    border-color: hsl(var(--gold-accent) / 0.30);
+  }
+  .resource-card:hover {
+    border-color: hsl(var(--gold-primary) / 0.50);
   }
   
-  /* Loading shimmer effect */
+  /* Loading shimmer effect (now using tokens only) */
   .shimmer {
-    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background: linear-gradient(
+      90deg,
+      hsl(var(--neutral-light)) 25%,
+      hsl(var(--border)) 50%,
+      hsl(var(--neutral-light)) 75%
+    );
     background-size: 200% 100%;
     animation: shimmer 1.5s infinite;
   }
@@ -322,12 +341,13 @@ All colors MUST be HSL.
   
   /* Accessibility focus indicators */
   .focus-gold {
-    @apply focus:outline-none focus:ring-2 focus:ring-gold-primary focus:ring-offset-2;
+    @apply focus:outline-none focus:ring-2 focus:ring-offset-2;
+    --tw-ring-color: hsl(var(--gold-primary));
   }
   
   /* Enhanced dropdown styling */
   .dropdown-content {
-    @apply bg-white border border-border shadow-lg rounded-lg z-50 max-h-64 overflow-y-auto;
+    @apply bg-card border shadow-lg rounded-lg z-50 max-h-64 overflow-y-auto;
   }
   
   .dropdown-item {
@@ -335,7 +355,8 @@ All colors MUST be HSL.
   }
   
   .dropdown-item-selected {
-    @apply bg-primary/10 text-primary;
+    background-color: hsl(var(--primary) / 0.10);
+    color: hsl(var(--primary));
   }
   
   /* Custom Select styling - hide tick marks and improve appearance */
@@ -376,12 +397,12 @@ All colors MUST be HSL.
   }
   
   [data-radix-select-item]:focus {
-    background-color: rgb(243 244 246) !important;
+    background-color: hsl(var(--muted)) !important;
     outline: none !important;
   }
   
   [data-radix-select-item][data-state="checked"] {
-    background-color: rgb(243 244 246) !important;
+    background-color: hsl(var(--muted)) !important;
   }
   
   [data-radix-select-item][data-state="checked"]::after {
