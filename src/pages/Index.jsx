@@ -44,7 +44,13 @@ const Index = ({ mentorshipPage = false, initialState = 'hero' }) => {
     );
   }
 
-  return (
+  return (<><div className="p-4 grid gap-3">
+  <div className="h-10 bg-background border border-border" />
+  <div className="h-10 bg-primary text-primary-foreground flex items-center justify-center">Primary</div>
+  <div className="h-10 bg-card text-card-foreground border border-border flex items-center justify-center">Card</div>
+  <div className="h-10 bg-gold-light text-foreground flex items-center justify-center">Gold</div>
+</div>
+
     <div className="min-h-screen">
       <Header />
       <main>
@@ -93,7 +99,7 @@ const Index = ({ mentorshipPage = false, initialState = 'hero' }) => {
         )}
       </main>
       <Footer />
-    </div>
+    </div></>
   );
 };
 
