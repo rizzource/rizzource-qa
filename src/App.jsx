@@ -12,6 +12,7 @@ import OutlinesHub from "./components/OutlinesHub";
 import OutlineView from "./pages/OutlineView";
 import { AdminDashboard } from "./pages/AdminDashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
+import ScrollToTop from "./components/ScrollToTop";
 
 const queryClient = new QueryClient();
 
