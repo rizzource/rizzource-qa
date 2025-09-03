@@ -49,10 +49,10 @@ All colors MUST be HSL.
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
 
-    /* Enhanced gradients */
-    --gradient-hero: linear-gradient(135deg, hsl(98 67% 19%), hsl(94 48% 32%));
-    --gradient-gold: linear-gradient(135deg, hsl(51 100% 50%), hsl(43 74% 38%));
-    --gradient-card: linear-gradient(135deg, hsl(0 0% 100%), hsl(45 77% 97%));
+    /* Enhanced gradients - Light Cream Theme */
+    --gradient-hero: linear-gradient(135deg, hsl(50 33% 98%), hsl(50 33% 96%));
+    --gradient-gold: linear-gradient(135deg, hsl(45 67% 54%), hsl(45 61% 47%));
+    --gradient-card: linear-gradient(135deg, hsl(0 0% 100%), hsl(50 33% 99%));
     
     /* Enhanced shadows */
     --shadow-gold: 0 10px 30px -10px hsl(51 100% 50% / 0.3);

@@ -163,13 +163,13 @@ const OutlineView = () => {
         >
           {isHalfFilled ? (
             <div className={`relative ${size}`}>
-              <Star className={`${size} text-gold-light absolute`} />
+              <Star className={`${size} text-accent absolute`} />
               <div className="overflow-hidden w-1/2">
-                <Star className={`${size} fill-gold-light text-gold-light`} />
+                <Star className={`${size} fill-accent text-accent`} />
               </div>
             </div>
           ) : (
-            <Star className={`${size} ${isFilled ? 'fill-gold-light text-gold-light' : 'text-gray-300'} transition-colors`} />
+            <Star className={`${size} ${isFilled ? 'fill-accent text-accent' : 'text-muted-foreground/40'} transition-colors`} />
           )}
         </button>
       );
@@ -181,8 +181,8 @@ const OutlineView = () => {
     return (
       <>
         <Header />
-        <div className="min-h-screen bg-hero-gradient pt-16 flex items-center justify-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gold-light"></div>
+        <div className="min-h-screen bg-background pt-16 flex items-center justify-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-accent"></div>
         </div>
         <Footer />
       </>
@@ -193,13 +193,13 @@ const OutlineView = () => {
     return (
       <>
         <Header />
-        <div className="min-h-screen bg-hero-gradient pt-16 flex items-center justify-center">
-          <Card className="max-w-md mx-auto bg-white/95 backdrop-blur-sm">
+        <div className="min-h-screen bg-background pt-16 flex items-center justify-center">
+          <Card className="max-w-md mx-auto bg-card backdrop-blur-sm">
             <CardContent className="p-6 text-center">
               <h2 className="text-xl font-semibold text-primary mb-2">Outline Not Found</h2>
               <p className="text-muted-foreground mb-4">The outline you're looking for doesn't exist.</p>
               <Link to="/outlines">
-                <Button className="bg-primary hover:bg-secondary-green">
+                <Button className="">
                   Back to Outlines
                 </Button>
               </Link>
@@ -214,14 +214,14 @@ const OutlineView = () => {
   return (
     <>
       <Header />
-      <section className="min-h-screen bg-hero-gradient pt-16">
+      <section className="min-h-screen bg-background pt-16">
         <div className="container mx-auto px-4 py-8 max-w-6xl">
           {/* Back Navigation */}
           <div className="flex items-center gap-4 mb-8">
             <Button
               variant="ghost"
               onClick={() => navigate('/outlines')}
-              className="mb-8 text-white hover:bg-white/10 whitespace-nowrap flex items-center"
+              className="mb-8 text-foreground hover:bg-muted whitespace-nowrap flex items-center"
             >
               <ArrowLeft className="mr-2 h-4 w-4" />
               Back to Outlines
@@ -232,7 +232,7 @@ const OutlineView = () => {
             {/* Main Content */}
             <div className="lg:col-span-2 space-y-6">
               {/* Outline Header */}
-              <Card className="bg-white/95 backdrop-blur-sm border-white/20">
+              <Card className="bg-card backdrop-blur-sm border-border">
                 <CardHeader>
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex-1">
@@ -244,11 +244,11 @@ const OutlineView = () => {
                           <User className="w-4 h-4 text-muted-foreground" />
                           <span className="font-medium text-primary">{outline.professor}</span>
                         </div>
-                        <Badge className="bg-gold-light text-primary font-medium px-2 py-1">
+                        <Badge className="bg-accent text-accent-foreground font-medium px-2 py-1">
                           {outline.year}
                         </Badge>
                       </div>
-                      <p className="text-lg font-medium text-secondary-green mb-2">
+                      <p className="text-lg font-medium text-secondary mb-2">
                         {outline.topic}
                       </p>
                     </div>
@@ -266,7 +266,7 @@ const OutlineView = () => {
                           <Badge
                             key={tag}
                             variant="secondary"
-                            className="bg-light-green/20 text-primary hover:bg-light-green/30 px-2 py-1"
+                            className="bg-muted/50 text-foreground hover:bg-muted px-2 py-1"
                           >
                             {tag}
                           </Badge>
@@ -278,7 +278,7 @@ const OutlineView = () => {
               </Card>
 
               {/* Notes */}
-              <Card className="bg-white/95 backdrop-blur-sm border-white/20">
+              <Card className="bg-card backdrop-blur-sm border-border">
                 <CardContent className="p-6">
                   <h3 className="text-lg font-semibold text-primary mb-4">Description & Notes</h3>
                   <div className="prose prose-sm max-w-none text-muted-foreground">
@@ -290,7 +290,7 @@ const OutlineView = () => {
               </Card>
 
               {/* File Preview */}
-              {/* <Card className="bg-white/95 backdrop-blur-sm border-white/20">
+              {/* <Card className="bg-card backdrop-blur-sm border-border">
                 <CardHeader>
                   <CardTitle className="text-lg text-primary flex items-center gap-2">
                     <Eye className="w-5 h-5" />
@@ -314,7 +314,7 @@ const OutlineView = () => {
             {/* Sidebar */}
             <div className="space-y-6">
               {/* Rating Card */}
-              <Card className="bg-white/95 backdrop-blur-sm border-white/20 sticky top-6">
+              <Card className="bg-card backdrop-blur-sm border-border sticky top-6">
                 <CardHeader>
                   <CardTitle className="text-lg text-primary">Rate This Outline</CardTitle>
                   <CardDescription>
@@ -356,7 +356,7 @@ const OutlineView = () => {
                   {/* Download Buttons */}
                   <div className="space-y-2">
                     <Button 
-                      className="w-full bg-gold-light text-primary hover:bg-gold-dark"
+                      className="w-full"
                       onClick={() => handleDownload('PDF')}
                     >
                       <Download className="w-4 h-4 mr-2" />

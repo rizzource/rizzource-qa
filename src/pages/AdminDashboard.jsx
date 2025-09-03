@@ -273,12 +273,12 @@ export const AdminDashboard = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-hero-gradient flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center space-y-4">
-          <div className="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center mx-auto backdrop-blur-sm">
-            <Loader2 className="w-8 h-8 text-white animate-spin" />
+          <div className="w-16 h-16 bg-muted/20 rounded-full flex items-center justify-center mx-auto backdrop-blur-sm">
+            <Loader2 className="w-8 h-8 text-accent animate-spin" />
           </div>
-          <p className="text-white/80">Loading dashboard...</p>
+          <p className="text-muted-foreground">Loading dashboard...</p>
         </div>
       </div>
     );
@@ -311,14 +311,14 @@ export const AdminDashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-hero-gradient flex flex-col relative overflow-hidden">
+    <div className="min-h-screen bg-background flex flex-col relative overflow-hidden">
       {/* Floating background law-related icons */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-20 left-4 md:left-10 animate-float opacity-10">
-          <Scale className="w-12 h-12 md:w-16 md:h-16 text-gold-light" />
+          <Scale className="w-12 h-12 md:w-16 md:h-16 text-secondary" />
         </div>
         <div className="absolute top-40 right-4 md:right-20 animate-float-delayed opacity-10">
-          <BookOpen className="w-10 h-10 md:w-12 md:h-12 text-white" />
+          <BookOpen className="w-10 h-10 md:w-12 md:h-12 text-secondary" />
         </div>
         <div className="absolute bottom-60 left-4 md:left-20 animate-float opacity-10">
           <Users className="w-12 h-12 md:w-14 md:h-14 text-gold-light" />

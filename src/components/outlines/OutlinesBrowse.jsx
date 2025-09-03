@@ -154,7 +154,7 @@ const OutlinesBrowse = () => {
   return (
     <div className="space-y-6">
       {/* Filter Section */}
-      <Card className="bg-white/95 backdrop-blur-sm border-white/20">
+      <Card className="bg-card backdrop-blur-sm border-border">
         <CardHeader>
           <CardTitle className="text-primary flex items-center gap-2">
             <Search className="w-5 h-5" />
@@ -169,7 +169,7 @@ const OutlinesBrowse = () => {
               placeholder="Search outlines by keyword..."
               value={filters.keyword}
               onChange={(e) => handleFilterChange('keyword', e.target.value)}
-              className="pl-10 bg-white border-border/50 focus:border-light-green"
+              className="pl-10 bg-card border-border focus:border-accent focus:ring-2 focus:ring-accent"
             />
           </div>
 
@@ -182,7 +182,7 @@ const OutlinesBrowse = () => {
                 placeholder="Professor name..."
                 value={filters.professor}
                 onChange={(e) => handleFilterChange('professor', e.target.value)}
-                className="bg-white border-border/50 focus:border-light-green"
+                className="bg-card border-border focus:border-accent focus:ring-2 focus:ring-accent"
               />
             </div>
 
@@ -190,10 +190,10 @@ const OutlinesBrowse = () => {
             <div>
               <label className="text-sm font-medium text-primary mb-2 block">Topic</label>
               <Select value={filters.topic} onValueChange={(value) => handleFilterChange('topic', value)}>
-                <SelectTrigger className="bg-white border-border/50">
+                <SelectTrigger className="bg-card border-border">
                   <SelectValue placeholder="Select Topic" />
                 </SelectTrigger>
-                <SelectContent className="bg-white border border-border/50 shadow-lg z-50">
+                <SelectContent className="bg-card border border-border shadow-lg z-50">
                   {topics.map((topic) => (
                     <SelectItem key={topic} value={topic === "All Topics" ? "all" : topic.toLowerCase().replace(/ /g, "-")}>
                       {topic}
@@ -207,10 +207,10 @@ const OutlinesBrowse = () => {
             <div>
               <label className="text-sm font-medium text-primary mb-2 block">Year</label>
               <Select value={filters.year} onValueChange={(value) => handleFilterChange('year', value)}>
-                <SelectTrigger className="bg-white border-border/50">
+                <SelectTrigger className="bg-card border-border">
                   <SelectValue placeholder="Select Year" />
                 </SelectTrigger>
-                <SelectContent className="bg-white border border-border/50 shadow-lg z-50">
+                <SelectContent className="bg-card border border-border shadow-lg z-50">
                   {years.map((year) => (
                     <SelectItem key={year} value={year === "All Years" ? "all" : year.toLowerCase().replace(/ /g, "-")}>
                       {year}
@@ -224,10 +224,10 @@ const OutlinesBrowse = () => {
             <div>
               <label className="text-sm font-medium text-primary mb-2 block">Rating</label>
               <Select value={filters.rating} onValueChange={(value) => handleFilterChange('rating', value)}>
-                <SelectTrigger className="bg-white border-border/50">
+                <SelectTrigger className="bg-card border-border">
                   <SelectValue placeholder="Min Rating" />
                 </SelectTrigger>
-                <SelectContent className="bg-white border border-border/50 shadow-lg z-50">
+                <SelectContent className="bg-card border border-border shadow-lg z-50">
                   {ratings.map((rating) => (
                     <SelectItem key={rating} value={rating === "All Ratings" ? "all" : rating.toLowerCase().replace(/ /g, "-")}>
                       {rating}
@@ -241,10 +241,10 @@ const OutlinesBrowse = () => {
             <div>
               <label className="text-sm font-medium text-primary mb-2 block">Sort By</label>
               <Select value={filters.sort} onValueChange={(value) => handleFilterChange('sort', value)}>
-                <SelectTrigger className="bg-white border-border/50">
+                <SelectTrigger className="bg-card border-border">
                   <SelectValue placeholder="Sort By" />
                 </SelectTrigger>
-                <SelectContent className="bg-white border border-border/50 shadow-lg z-50">
+                <SelectContent className="bg-card border border-border shadow-lg z-50">
                   {sortOptions.map((option) => (
                     <SelectItem key={option} value={option.toLowerCase().replace(/ /g, "-")}>
                       {option}
@@ -260,12 +260,12 @@ const OutlinesBrowse = () => {
       {/* Results Section */}
       <div className="space-y-6">
         <div className="flex items-center justify-between">
-          <h3 className="text-xl font-semibold text-white">
+          <h3 className="text-xl font-semibold text-foreground">
             {loading ? 'Loading...' : `Found ${outlines.length} outlines`}
           </h3>
           <Button 
             variant="ghost" 
-            className="text-white/80 hover:text-white hover:bg-white/10"
+            className="text-muted-foreground hover:text-foreground hover:bg-muted"
             onClick={clearFilters}
           >
             <Filter className="w-4 h-4 mr-2" />
@@ -276,13 +276,13 @@ const OutlinesBrowse = () => {
         {/* Loading State */}
         {loading && (
           <div className="flex justify-center py-12">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gold-light"></div>
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-accent"></div>
           </div>
         )}
 
         {/* No Results */}
         {!loading && outlines.length === 0 && (
-          <Card className="bg-white/95 backdrop-blur-sm border-white/20">
+          <Card className="bg-card backdrop-blur-sm border-border">
             <CardContent className="p-12 text-center">
               <FileText className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
               <h3 className="text-lg font-semibold text-primary mb-2">No outlines found</h3>
@@ -295,7 +295,7 @@ const OutlinesBrowse = () => {
         {!loading && outlines.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {outlines.map((outline) => (
-              <Card key={outline.id} className="bg-white/95 backdrop-blur-sm border-white/20 hover:shadow-gold transition-all duration-300 h-full flex flex-col">
+              <Card key={outline.id} className="bg-card backdrop-blur-sm border-border hover:shadow-lg transition-all duration-300 h-full flex flex-col">
                 <CardHeader className="pb-4">
                   <div className="flex items-start justify-between gap-2 mb-2">
                     <Link to={`/outlines/${outline.id}`} className="flex-1">
@@ -311,7 +311,7 @@ const OutlinesBrowse = () => {
                     <p className="text-sm font-medium text-primary">
                       {outline.professor}
                     </p>
-                    <Badge className="bg-gold-light text-primary font-medium px-2 py-1">
+                    <Badge className="bg-accent text-accent-foreground font-medium px-2 py-1">
                       {outline.year}
                     </Badge>
                   </div>
@@ -341,7 +341,7 @@ const OutlinesBrowse = () => {
                         <Badge 
                           key={tag} 
                           variant="secondary" 
-                          className="text-xs bg-light-green/20 text-primary hover:bg-light-green/30 px-2 py-1"
+                          className="text-xs bg-muted/50 text-foreground hover:bg-muted px-2 py-1"
                         >
                           {tag}
                         </Badge>
@@ -368,7 +368,7 @@ const OutlinesBrowse = () => {
                     </Link>
                     <Button 
                       size="default" 
-                      className="px-4 py-3 bg-gold-light text-primary hover:bg-gold-dark"
+                      className="px-4 py-3"
                     >
                       <Download className="w-4 h-4 mr-1" />
                       Download

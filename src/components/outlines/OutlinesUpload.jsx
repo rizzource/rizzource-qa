@@ -115,7 +115,7 @@ const OutlinesUpload = () => {
 
   return (
     <div className="max-w-2xl mx-auto">
-      <Card className="bg-white/95 backdrop-blur-sm border-white/20">
+      <Card className="bg-card backdrop-blur-sm border-border">
         <CardHeader>
           <CardTitle className="text-2xl text-primary flex items-center gap-2">
             <Upload className="w-6 h-6" />
@@ -127,8 +127,8 @@ const OutlinesUpload = () => {
         </CardHeader>
         <CardContent className="space-y-6">
           {/* Upload Guidelines */}
-          <Alert className="border-gold-light/30 bg-gold-light/10">
-            <AlertCircle className="h-4 w-4 text-gold-dark" />
+          <Alert className="border-accent/30 bg-accent/10">
+            <AlertCircle className="h-4 w-4 text-accent" />
             <AlertDescription className="text-primary">
               <strong>Upload Guidelines:</strong> Please ensure your outline is your original work or properly attributed. 
               Accepted formats: PDF, DOCX. Maximum file size: 10MB.
@@ -137,8 +137,8 @@ const OutlinesUpload = () => {
 
           {/* Upload Status */}
           {uploadStatus === 'success' && (
-            <Alert className="border-light-green/30 bg-light-green/10">
-              <CheckCircle className="h-4 w-4 text-light-green" />
+            <Alert className="border-accent/30 bg-accent/10">
+              <CheckCircle className="h-4 w-4 text-accent" />
               <AlertDescription className="text-primary">
                 <strong>Upload Successful!</strong> Your outline has been submitted for review and will be available shortly.
               </AlertDescription>
@@ -161,36 +161,36 @@ const OutlinesUpload = () => {
               
               <div className="space-y-2">
                 <Label htmlFor="title" className="text-primary">Outline Title *</Label>
-                <Input
-                  id="title"
-                  placeholder="e.g., Constitutional Law Comprehensive Outline"
-                  value={formData.title}
-                  onChange={(e) => handleInputChange('title', e.target.value)}
-                  className="bg-white border-border/50 focus:border-light-green"
-                  required
-                />
+                  <Input
+                    id="title"
+                    placeholder="e.g., Constitutional Law Comprehensive Outline"
+                    value={formData.title}
+                    onChange={(e) => handleInputChange('title', e.target.value)}
+                    className="bg-card border-border focus:border-accent focus:ring-2 focus:ring-accent"
+                    required
+                  />
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="professor" className="text-primary">Professor *</Label>
-                  <Input
-                    id="professor"
-                    placeholder="e.g., Professor Smith"
-                    value={formData.professor}
-                    onChange={(e) => handleInputChange('professor', e.target.value)}
-                    className="bg-white border-border/50 focus:border-light-green"
-                    required
-                  />
+                    <Input
+                      id="professor"
+                      placeholder="e.g., Professor Smith"
+                      value={formData.professor}
+                      onChange={(e) => handleInputChange('professor', e.target.value)}
+                      className="bg-card border-border focus:border-accent focus:ring-2 focus:ring-accent"
+                      required
+                    />
                 </div>
 
                 <div className="space-y-2">
                   <Label htmlFor="topic" className="text-primary">Topic *</Label>
                   <Select value={formData.topic} onValueChange={(value) => handleInputChange('topic', value)}>
-                    <SelectTrigger className="bg-white border-border/50">
+                    <SelectTrigger className="bg-card border-border">
                       <SelectValue placeholder="Select Topic" />
                     </SelectTrigger>
-                    <SelectContent className="bg-white border border-border/50 shadow-lg z-50">
+                    <SelectContent className="bg-card border border-border shadow-lg z-50">
                       {topics.map((topic) => (
                         <SelectItem key={topic} value={topic}>
                           {topic}
@@ -205,10 +205,10 @@ const OutlinesUpload = () => {
                 <div className="space-y-2">
                   <Label htmlFor="year" className="text-primary">Year Level *</Label>
                   <Select value={formData.year} onValueChange={(value) => handleInputChange('year', value)}>
-                    <SelectTrigger className="bg-white border-border/50">
+                    <SelectTrigger className="bg-card border-border">
                       <SelectValue placeholder="Select Year" />
                     </SelectTrigger>
-                    <SelectContent className="bg-white border border-border/50 shadow-lg z-50">
+                    <SelectContent className="bg-card border border-border shadow-lg z-50">
                       {years.map((year) => (
                         <SelectItem key={year} value={year}>
                           {year}
@@ -220,13 +220,13 @@ const OutlinesUpload = () => {
 
                 <div className="space-y-2">
                   <Label htmlFor="tags" className="text-primary">Tags (Optional)</Label>
-                  <Input
-                    id="tags"
-                    placeholder="e.g., Due Process, Equal Protection (separate with commas)"
-                    value={formData.tags}
-                    onChange={(e) => handleInputChange('tags', e.target.value)}
-                    className="bg-white border-border/50 focus:border-light-green"
-                  />
+                    <Input
+                      id="tags"
+                      placeholder="e.g., Due Process, Equal Protection (separate with commas)"
+                      value={formData.tags}
+                      onChange={(e) => handleInputChange('tags', e.target.value)}
+                      className="bg-card border-border focus:border-accent focus:ring-2 focus:ring-accent"
+                    />
                 </div>
               </div>
 
@@ -255,10 +255,10 @@ const OutlinesUpload = () => {
                 <div 
                   className={`border-2 border-dashed rounded-lg p-6 text-center transition-all duration-200 ${
                     dragActive 
-                      ? 'border-gold-light bg-gold-light/10' 
+                      ? 'border-accent bg-accent/10' 
                       : formData.file 
-                        ? 'border-light-green bg-light-green/5' 
-                        : 'border-border/50 hover:border-light-green/50'
+                        ? 'border-accent bg-accent/5' 
+                        : 'border-border hover:border-accent/50'
                   }`}
                   onDragEnter={handleDrag}
                   onDragLeave={handleDrag}
@@ -276,10 +276,10 @@ const OutlinesUpload = () => {
                   />
                   
                   {formData.file ? (
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-center">
-                        <FileText className="w-12 h-12 text-light-green" />
-                      </div>
+                      <div className="space-y-3">
+                        <div className="flex items-center justify-center">
+                          <FileText className="w-12 h-12 text-accent" />
+                        </div>
                       <div className="space-y-1">
                         <p className="text-primary font-medium">{formData.file.name}</p>
                         <p className="text-sm text-muted-foreground">
@@ -333,7 +333,7 @@ const OutlinesUpload = () => {
                 type="submit"
                 size="lg"
                 disabled={!isFormValid || uploadStatus === 'uploading'}
-                className="bg-gold-light text-primary hover:bg-gold-dark disabled:opacity-50"
+                className="disabled:opacity-50"
               >
                 {uploadStatus === 'uploading' ? (
                   <>
