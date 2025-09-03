@@ -44,18 +44,6 @@ const MinimalistHome = () => {
                 The ultimate resource platform for law students
               </p>
             </div>
-            
-            {/* CTA Button */}
-            <div className="flex justify-center pt-4">
-              <Link to="/resources" className="block">
-                <Button 
-                  size="lg"
-                  className="text-base sm:text-lg px-6 sm:px-8 h-12 sm:h-14 touch-target touch-friendly whitespace-nowrap flex items-center rounded-xl font-medium"
-                >
-                  Resource Hub
-                </Button>
-              </Link>
-            </div>
           </div>
 
           {/* Timeline Component */}

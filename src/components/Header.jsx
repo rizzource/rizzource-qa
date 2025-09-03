@@ -4,7 +4,6 @@ import { Scale, Shield, LogOut, User, ArrowLeft } from "lucide-react";
 import { useAuth } from './AuthProvider';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 
-
 const Header = () => {
   const { user, isAdmin, signOut } = useAuth();
   const navigate = useNavigate();
@@ -55,6 +54,13 @@ const Header = () => {
                   <ArrowLeft className="h-4 w-4 mr-1" />
                   <span className="hidden sm:inline">Back to Home</span>
                 </Link>
+                {/* Resource Hub link */}
+                <Link 
+                  to="/resources" 
+                  className="font-bold text-primary hover:text-accent transition-colors"
+                >
+                  Resource Hub
+                </Link>
                 <Link
                   to="#"
                   onClick={(e) => {
@@ -70,6 +76,13 @@ const Header = () => {
             ) : user ? (
               // Default User/Admin View
               <>
+                {/* Resource Hub link */}
+                <Link 
+                  to="/resources" 
+                  className="font-bold text-primary hover:text-accent transition-colors"
+                >
+                  Resource Hub
+                </Link>
                 <span className="text-xs sm:text-sm text-muted-foreground">
                   {isAdmin() ? 'Admin' : 'User'}
                 </span>
