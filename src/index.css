@@ -8,122 +8,131 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* Professional Academic Color System - Cream, Dark Green & Gold */
-    --background: 45 22% 97%;        /* #FAF9F6 - light cream */
-    --foreground: 0 0% 10%;          /* #1A1A1A - near black */
-
-    --card: 0 0% 100%;               /* #FFFFFF - white */
-    --card-foreground: 0 0% 10%;     /* #1A1A1A - near black */
-
-    --popover: 0 0% 100%;            /* #FFFFFF - white */
-    --popover-foreground: 0 0% 10%;  /* #1A1A1A - near black */
-
-    /* Primary: Dark Green (#2F4F2F) */
-    --primary-green: 120 25% 25%;
-    --primary: 120 25% 25%;          /* #2F4F2F - dark green */
-    --primary-foreground: 0 0% 100%; /* white on dark green */
-
-    /* Secondary: Lighter version of dark green for hover states */
-    --secondary-green: 120 25% 35%;
-    --secondary: 120 25% 35%;
-    --secondary-foreground: 0 0% 100%;
-
-    /* Light Green for hover states */
-    --light-green: 120 25% 30%;
-
-    /* Gold System - Highlight/Rating Stars */
-    --gold-primary: 51 100% 50%;     /* #FFD700 */
-    --gold-rizz: 51 100% 50%;        /* #FFD700 */
-    --gold-secondary: 51 100% 45%;   /* Slightly darker gold */
-    --gold-accent: 51 100% 85%;      /* Light gold for backgrounds */
-    --accent: 51 100% 50%;           /* #FFD700 - gold */
-    --accent-foreground: 0 0% 10%;   /* dark text on gold */
-
-    /* Supporting colors */
-    --gold-dark: 51 100% 45%;
-    --gold-light: 51 100% 50%;
-
-    /* Neutral colors */
-    --neutral-light: 0 0% 90%;       /* #E5E5E5 - for tags/pills */
-    --neutral-dark: 0 0% 33%;        /* #555555 - medium gray */
-
-    /* Enhanced muted tones */
-    --muted: 0 0% 90%;               /* #E5E5E5 - light gray */
-    --muted-foreground: 0 0% 33%;    /* #555555 - medium gray */
-
-    --destructive: 0 84.2% 60.2%;
+    /* Light Mode Colors - HSL Format */
+    --background: 32 26% 97%; /* Light cream - #FAF9F6 */
+    --foreground: 0 0% 10%; /* Near black - #1A1A1A */
+    --muted: 0 0% 90%; /* Light gray - #E5E5E5 */
+    --muted-foreground: 0 0% 33%; /* Medium gray - #555555 */
+    
+    /* Primary Brand Colors */
+    --primary: 120 25% 18%; /* Dark green - #2F4F2F */
+    --primary-foreground: 0 0% 100%; /* White - #FFFFFF */
+    --primary-green: 120 25% 18%; /* Dark green - #2F4F2F */
+    
+    /* Secondary colors */
+    --secondary: 0 0% 90%; /* Light gray - #E5E5E5 */
+    --secondary-foreground: 0 0% 10%; /* Near black - #1A1A1A */
+    --secondary-green: 120 25% 22%; /* Lighter green variant */
+    
+    /* UI Colors */
+    --accent: 120 25% 18%; /* Dark green - #2F4F2F */
+    --accent-foreground: 0 0% 100%; /* White - #FFFFFF */
+    --border: 0 0% 87%; /* Light gray - #DDDDDD */
+    --input: 0 0% 87%; /* Light gray - #DDDDDD */
+    --ring: 120 25% 18%; /* Dark green - #2F4F2F */
+    
+    /* Card/Surface colors */
+    --card: 0 0% 100%; /* Pure white - #FFFFFF */
+    --card-foreground: 0 0% 10%; /* Near black - #1A1A1A */
+    --popover: 0 0% 100%; /* Pure white - #FFFFFF */
+    --popover-foreground: 0 0% 10%; /* Near black - #1A1A1A */
+    
+    /* Special colors */
+    --gold-primary: 51 100% 50%; /* Gold - #FFD700 */
+    --gold-secondary: 51 100% 45%; /* Darker gold */
+    --gold-accent: 51 100% 55%; /* Lighter gold */
+    --gold-light: 51 100% 50%; /* Gold - #FFD700 */
+    --gold-dark: 51 100% 40%; /* Darker gold */
+    --gold-rizz: 51 100% 50%; /* Gold - #FFD700 */
+    
+    /* Utility colors */
+    --light-green: 120 25% 85%; /* Very light green */
+    --neutral-light: 0 0% 90%; /* Light neutral - #E5E5E5 */
+    --neutral-dark: 0 0% 33%; /* Dark neutral - #555555 */
+    
+    /* Destructive */
+    --destructive: 0 85% 60%;
     --destructive-foreground: 0 0% 100%;
-
-    --border: 0 0% 87%;              /* #DDDDDD - light gray borders */
-    --input: 0 0% 87%;               /* #DDDDDD - light gray borders */
-    --ring: 120 25% 25%;             /* Dark green focus ring */
-    --ring-yellow: 51 100% 50%;      /* Gold focus ring for special elements */
-
-    /* Enhanced gradients */
+    
+    /* Gradients */
     --gradient-hero: linear-gradient(135deg, hsl(120 25% 25%), hsl(120 25% 35%));
     --gradient-gold: linear-gradient(135deg, hsl(51 100% 50%), hsl(51 100% 45%));
-    --gradient-card: linear-gradient(135deg, hsl(0 0% 100%), hsl(45 22% 98%));
+    --gradient-card: linear-gradient(135deg, hsl(0 0% 100%), hsl(32 26% 98%));
     
-    /* Enhanced shadows */
+    /* Shadows */
     --shadow-gold: 0 10px 30px -10px hsl(51 100% 50% / 0.3);
     --shadow-green: 0 10px 30px -10px hsl(120 25% 25% / 0.2);
     --shadow-card: 0 4px 20px -4px hsl(120 25% 25% / 0.1);
-
+    
+    /* Sidebar colors */
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 0 0% 10%;
+    --sidebar-primary: 120 25% 18%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 0 0% 90%;
+    --sidebar-accent-foreground: 0 0% 10%;
+    --sidebar-border: 0 0% 87%;
+    --sidebar-ring: 120 25% 18%;
+    
     --radius: 0.5rem;
-
-    --sidebar-background: 0 0% 98%;
-
-    --sidebar-foreground: 240 5.3% 26.1%;
-
-    --sidebar-primary: 240 5.9% 10%;
-
-    --sidebar-primary-foreground: 0 0% 98%;
-
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
   .dark {
-    --background: 0 0% 8%;           /* Very dark background */
-    --foreground: 0 0% 95%;          /* Light text */
-
-    --card: 0 0% 12%;                /* Slightly lighter than background */
-    --card-foreground: 0 0% 95%;     /* Light text */
-
-    --popover: 0 0% 12%;             /* Slightly lighter than background */
-    --popover-foreground: 0 0% 95%;  /* Light text */
-
-    --primary: 120 25% 40%;          /* Lighter green for dark mode */
-    --primary-foreground: 0 0% 95%;  /* Light text */
-
-    --secondary: 120 25% 25%;        /* Darker green */
-    --secondary-foreground: 0 0% 95%; /* Light text */
-
-    --muted: 0 0% 20%;               /* Muted dark gray */
-    --muted-foreground: 0 0% 65%;    /* Medium light gray */
-
-    --accent: 51 100% 60%;           /* Brighter gold for dark mode */
-    --accent-foreground: 0 0% 8%;    /* Dark text on gold */
-
-    --destructive: 0 62.8% 50%;      /* Destructive red */
-    --destructive-foreground: 0 0% 95%; /* Light text */
-
-    --border: 0 0% 25%;              /* Dark borders */
-    --input: 0 0% 25%;               /* Dark input borders */
-    --ring: 120 25% 40%;             /* Green focus ring */
+    /* Dark Mode Colors - HSL Format */
+    --background: 120 25% 8%; /* Dark background */
+    --foreground: 0 0% 90%; /* Light text */
+    --muted: 0 0% 15%; /* Dark gray */
+    --muted-foreground: 0 0% 70%; /* Light gray */
+    
+    /* Primary Brand Colors */
+    --primary: 120 25% 35%; /* Lighter green for dark mode */
+    --primary-foreground: 0 0% 100%; /* White */
+    --primary-green: 120 25% 35%; /* Lighter green for dark mode */
+    
+    /* Secondary colors */
+    --secondary: 0 0% 15%; /* Dark gray */
+    --secondary-foreground: 0 0% 90%; /* Light text */
+    --secondary-green: 120 25% 40%; /* Lighter green variant */
+    
+    /* UI Colors */
+    --accent: 51 100% 50%; /* Gold - #FFD700 */
+    --accent-foreground: 0 0% 8%; /* Dark text */
+    --border: 0 0% 20%; /* Dark border */
+    --input: 0 0% 20%; /* Dark input */
+    --ring: 120 25% 35%; /* Green ring */
+    
+    /* Card/Surface colors */
+    --card: 0 0% 10%; /* Dark card */
+    --card-foreground: 0 0% 90%; /* Light text */
+    --popover: 0 0% 10%; /* Dark popover */
+    --popover-foreground: 0 0% 90%; /* Light text */
+    
+    /* Special colors */
+    --gold-primary: 51 100% 50%; /* Gold - #FFD700 */
+    --gold-secondary: 51 100% 45%; /* Darker gold */
+    --gold-accent: 51 100% 55%; /* Lighter gold */
+    --gold-light: 51 100% 50%; /* Gold - #FFD700 */
+    --gold-dark: 51 100% 40%; /* Darker gold */
+    --gold-rizz: 51 100% 50%; /* Gold - #FFD700 */
+    
+    /* Utility colors */
+    --light-green: 120 25% 25%; /* Green for dark mode */
+    --neutral-light: 0 0% 15%; /* Dark neutral */
+    --neutral-dark: 0 0% 5%; /* Very dark neutral */
+    
+    /* Destructive */
+    --destructive: 0 85% 60%;
+    --destructive-foreground: 0 0% 100%;
+    
+    /* Sidebar colors */
     --sidebar-background: 0 0% 10%;
-    --sidebar-foreground: 0 0% 95%;
-    --sidebar-primary: 120 25% 40%;
-    --sidebar-primary-foreground: 0 0% 95%;
-    --sidebar-accent: 0 0% 20%;
-    --sidebar-accent-foreground: 0 0% 95%;
-    --sidebar-border: 0 0% 25%;
-    --sidebar-ring: 120 25% 40%;
+    --sidebar-foreground: 0 0% 90%;
+    --sidebar-primary: 120 25% 35%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 0 0% 15%;
+    --sidebar-accent-foreground: 0 0% 90%;
+    --sidebar-border: 0 0% 20%;
+    --sidebar-ring: 120 25% 35%;
   }
 }
 

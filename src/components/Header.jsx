@@ -17,8 +17,8 @@ const Header = () => {
 
   return (
     <header className={location.pathname === "/admin" 
-      ? "fixed top-0 left-0 right-0 z-50 bg-gradient-to-r from-green-800/70 to-emerald-700/70 backdrop-blur-lg border-b border-white/30" 
-      : "fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-b border-border/50"
+      ? "fixed top-0 left-0 right-0 z-50 bg-primary/90 backdrop-blur-lg border-b border-primary-foreground/30" 
+      : "fixed top-0 left-0 right-0 z-50 bg-card/95 backdrop-blur-sm border-b border-border/50"
     }>
       <div className="container mx-auto mobile-optimized">
         <div className="flex items-center justify-between h-14 sm:h-16">
@@ -29,11 +29,11 @@ const Header = () => {
               <Scale className={`w-5 h-5 sm:w-6 sm:h-6 ${location.pathname === "/admin" ? "text-gold-light" : "text-primary-foreground"}`} />
             </div>
             <div className="flex-1 sm:block">
-              <h1 className={`text-base sm:text-lg md:text-xl leading-tight ${location.pathname === "/admin" ? "text-white" : "text-primary"}`}>
+              <h1 className={`text-base sm:text-lg md:text-xl leading-tight ${location.pathname === "/admin" ? "text-primary-foreground" : "text-primary"}`}>
                 <span className="font-bold text-accent">RIZZ</span>
-                <span className={`font-semibold ${location.pathname === "/admin" ? "text-white" : "text-primary"}`}>ource</span>
+                <span className={`font-semibold ${location.pathname === "/admin" ? "text-primary-foreground" : "text-primary"}`}>ource</span>
               </h1>
-              <p className={`text-xs hidden sm:block ${location.pathname === "/admin" ? "text-white/70" : "text-muted-foreground"}`}>Law School and Beyond</p>
+              <p className={`text-xs hidden sm:block ${location.pathname === "/admin" ? "text-primary-foreground/70" : "text-muted-foreground"}`}>Law School and Beyond</p>
             </div>
           </a>
 
@@ -45,7 +45,7 @@ const Header = () => {
                 to="/"
                 className={`inline-flex items-center px-3 py-1.5 text-sm font-medium rounded-md border transition-colors ${
                   location.pathname === "/admin" 
-                    ? "border-white/30 text-white hover:text-accent hover:border-accent" 
+                    ? "border-primary-foreground/30 text-primary-foreground hover:text-accent hover:border-accent" 
                     : "border-border text-foreground hover:text-primary hover:border-primary"
                 }`}
               >
@@ -57,7 +57,7 @@ const Header = () => {
               <>
                 <Link
                   to="/"
-                  className="inline-flex items-center px-3 py-1.5 text-sm font-medium rounded-md border border-white/30 text-white hover:text-accent hover:border-accent transition-colors"
+                  className="inline-flex items-center px-3 py-1.5 text-sm font-medium rounded-md border border-primary-foreground/30 text-primary-foreground hover:text-accent hover:border-accent transition-colors"
                 >
                   <ArrowLeft className="h-4 w-4 mr-1" />
                   <span className="hidden sm:inline">Back to Home</span>
@@ -77,7 +77,7 @@ const Header = () => {
             ) : user ? (
               // Default User/Admin View
               <>
-                <span className={`text-xs sm:text-sm ${location.pathname === "/admin" ? "text-white/80" : "text-muted-foreground"}`}>
+                <span className={`text-xs sm:text-sm ${location.pathname === "/admin" ? "text-primary-foreground/80" : "text-muted-foreground"}`}>
                   {isAdmin() ? 'Admin' : 'User'}
                 </span>
                 {isAdmin() && (
@@ -85,7 +85,7 @@ const Header = () => {
                     to="/admin"
                      className={`inline-flex items-center px-2 sm:px-3 py-1.5 text-xs sm:text-sm font-medium rounded-md border transition-colors ${
                        location.pathname === "/admin"
-                         ? "border-white/30 text-white hover:text-accent hover:border-accent"
+                         ? "border-primary-foreground/30 text-primary-foreground hover:text-accent hover:border-accent"
                          : "border-border text-foreground hover:text-primary hover:border-primary"
                      }`}
                   >
@@ -114,7 +114,7 @@ const Header = () => {
                 to="/auth"
                  className={`inline-flex items-center px-3 py-1.5 text-sm font-medium rounded-md border transition-colors ${
                    location.pathname === "/admin"
-                     ? "border-white/30 text-white hover:text-accent hover:border-accent"
+                     ? "border-primary-foreground/30 text-primary-foreground hover:text-accent hover:border-accent"
                      : "border-border text-foreground hover:text-primary hover:border-primary"
                  }`}
               >
