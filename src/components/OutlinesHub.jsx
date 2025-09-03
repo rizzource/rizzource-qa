@@ -2,20 +2,19 @@ import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import OutlinesBrowse from "./outlines/OutlinesBrowse";
 import OutlinesUpload from "./outlines/OutlinesUpload";
+import { useNavigateWithScroll } from "@/hooks/use-navigate-scroll";
 
 const OutlinesHub = () => {
-  const navigate = useNavigate();
+  const navigate = useNavigateWithScroll();
   const [activeTab, setActiveTab] = useState("browse");
   
   // Navigate back to resource hub
   const handleBack = () => {
     navigate('/resources');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return (

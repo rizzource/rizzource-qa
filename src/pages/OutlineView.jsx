@@ -18,7 +18,7 @@ const OutlineView = () => {
   const [hoverRating, setHoverRating] = useState(0);
   const [loading, setLoading] = useState(true);
   const [ratingLoading, setRatingLoading] = useState(false);
-  const navigate = useNavigate();
+  const navigate = useNavigateWithScroll();
 
   // Remove the mockOutline constant since we're now fetching from Supabase
 

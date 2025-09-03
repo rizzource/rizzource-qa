@@ -1,13 +1,21 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Users, FileText, ArrowLeft } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { useNavigateWithScroll } from "@/hooks/use-navigate-scroll";
 
 const ResourceHub = () => {
-  const navigate = useNavigate();
-  const onBack = () => navigate('/')
+  const navigate = useNavigateWithScroll();
+  const onBack = () => navigate('/');
+
+  const handleMentorshipClick = () => {
+    navigate('/mentorship-selection');
+  };
+
+  const handleOutlinesClick = () => {
+    navigate('/outlines');
+  };
 
   return (
     <>
