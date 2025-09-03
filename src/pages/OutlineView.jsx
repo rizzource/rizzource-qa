@@ -290,7 +290,7 @@ const OutlineView = () => {
               </Card>
 
               {/* File Preview */}
-              <Card className="bg-white/95 backdrop-blur-sm border-white/20">
+              {/* <Card className="bg-white/95 backdrop-blur-sm border-white/20">
                 <CardHeader>
                   <CardTitle className="text-lg text-primary flex items-center gap-2">
                     <Eye className="w-5 h-5" />
@@ -308,7 +308,7 @@ const OutlineView = () => {
                     </p>
                   </div>
                 </CardContent>
-              </Card>
+              </Card> */}
             </div>
 
             {/* Sidebar */}
