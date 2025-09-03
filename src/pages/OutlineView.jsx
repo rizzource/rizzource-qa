@@ -261,25 +261,23 @@ const OutlineView = () => {
                       </p>
                     </div>
                   </div>
-                </CardHeader>
-              </Card>
-
-              {/* Tags */}
-              <Card className="bg-white/95 backdrop-blur-sm border-white/20">
-                <CardContent className="p-6">
-                  <h3 className="text-lg font-semibold text-primary mb-3">Tags</h3>
-                  <div className="flex flex-wrap gap-2">
-                    {outline.tags.map((tag) => (
-                      <Badge 
-                        key={tag} 
-                        variant="secondary" 
-                        className="bg-light-green/20 text-primary hover:bg-light-green/30"
-                      >
-                        {tag}
-                      </Badge>
-                    ))}
+              
+                  {/* Tags below rating */}
+                  <div className="mt-4">
+                    <h3 className="text-lg font-semibold text-primary mb-2">Tags</h3>
+                    <div className="flex flex-wrap gap-2">
+                      {outline.tags.map((tag) => (
+                        <Badge
+                          key={tag}
+                          variant="secondary"
+                          className="bg-light-green/20 text-primary hover:bg-light-green/30 px-2 py-1"
+                        >
+                          {tag}
+                        </Badge>
+                      ))}
+                    </div>
                   </div>
-                </CardContent>
+                </CardHeader>
               </Card>
 
               {/* Notes */}
