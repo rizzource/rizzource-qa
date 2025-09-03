@@ -258,7 +258,7 @@ const OutlineView = () => {
                       <div className="flex items-center gap-1 mb-1 justify-end">
                         {renderStars(outline.rating_avg)}
                       </div>
-                      <p className="text-sm text-muted-foreground mb-2">
+                      <p className="text-sm text-muted-foreground mb-5">
                         {outline.rating_avg.toFixed(1)} ({outline.rating_count} reviews)
                       </p>
                       <div className="flex flex-wrap gap-2 justify-end">
