@@ -128,19 +128,28 @@ const Timeline = () => {
         onClick={() => setIsExpanded(true)}
       >
         {/* Events above timeline */}
-        <div className="mb-8 relative h-32">
-          {months.map((month, index) => (
-            <div key={month} className="absolute" style={{ left: `${(index / 11) * 100}%`, transform: 'translateX(-50%)' }}>
-              <div className="space-y-1">
-                {eventsByMonth[index].map((event, eventIndex) => (
-                  <div key={event.id} className="w-24">
-                    <TimelineEvent event={event} />
-                  </div>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
+       <div className="mb-6 relative h-28">
+  {months.map((month, index) => (
+    <div
+      key={month}
+      className="absolute bottom-0"
+      style={{ left: `${(index / 11) * 100}%`, transform: 'translateX(-50%)' }}
+    >
+      {/* 
+        - bottom-0 anchors the month’s stack to the timeline
+        - flex-col-reverse makes the first/only card sit closest to the line
+        - gap-2 controls vertical spacing between multiple cards 
+      */}
+      <div className="flex flex-col-reverse items-center gap-2">
+        {eventsByMonth[index].map((event) => (
+          <div key={event.id} className="w-28">
+            <TimelineEvent event={event} />
+          </div>
+        ))}
+      </div>
+    </div>
+  ))}
+</div>
 
         {/* Timeline line */}
         <div className="relative">
