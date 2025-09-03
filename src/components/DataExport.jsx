@@ -93,7 +93,7 @@ export const DataExport = () => {
       <Card className="w-full max-w-md mx-auto">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Shield className="h-5 w-5 text-destructive" />
+            <Shield className="h-5 w-5 text-red-500" />
             Access Restricted
           </CardTitle>
           <CardDescription>

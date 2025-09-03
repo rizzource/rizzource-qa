@@ -133,7 +133,7 @@ const OutlinesBrowse = () => {
         );
       } else {
         stars.push(
-          <Star key={i} className="w-4 h-4 text-muted" />
+          <Star key={i} className="w-4 h-4 text-gray-300" />
         );
       }
     }
@@ -154,7 +154,7 @@ const OutlinesBrowse = () => {
   return (
     <div className="space-y-6">
       {/* Filter Section */}
-      <Card className="bg-card/95 backdrop-blur-sm border-border/20">
+      <Card className="bg-white/95 backdrop-blur-sm border-white/20">
         <CardHeader>
           <CardTitle className="text-primary flex items-center gap-2">
             <Search className="w-5 h-5" />
@@ -169,7 +169,7 @@ const OutlinesBrowse = () => {
               placeholder="Search outlines by keyword..."
               value={filters.keyword}
               onChange={(e) => handleFilterChange('keyword', e.target.value)}
-              className="pl-10 bg-card border-border/50 focus:border-accent"
+              className="pl-10 bg-white border-border/50 focus:border-light-green"
             />
           </div>
 
@@ -182,7 +182,7 @@ const OutlinesBrowse = () => {
                 placeholder="Professor name..."
                 value={filters.professor}
                 onChange={(e) => handleFilterChange('professor', e.target.value)}
-                className="bg-card border-border/50 focus:border-accent"
+                className="bg-white border-border/50 focus:border-light-green"
               />
             </div>
 
@@ -190,10 +190,10 @@ const OutlinesBrowse = () => {
             <div>
               <label className="text-sm font-medium text-primary mb-2 block">Topic</label>
               <Select value={filters.topic} onValueChange={(value) => handleFilterChange('topic', value)}>
-                <SelectTrigger className="bg-card border-border/50">
+                <SelectTrigger className="bg-white border-border/50">
                   <SelectValue placeholder="Select Topic" />
                 </SelectTrigger>
-                <SelectContent className="bg-card border border-border/50 shadow-lg z-50">
+                <SelectContent className="bg-white border border-border/50 shadow-lg z-50">
                   {topics.map((topic) => (
                     <SelectItem key={topic} value={topic === "All Topics" ? "all" : topic.toLowerCase().replace(/ /g, "-")}>
                       {topic}
@@ -207,10 +207,10 @@ const OutlinesBrowse = () => {
             <div>
               <label className="text-sm font-medium text-primary mb-2 block">Year</label>
               <Select value={filters.year} onValueChange={(value) => handleFilterChange('year', value)}>
-                <SelectTrigger className="bg-card border-border/50">
+                <SelectTrigger className="bg-white border-border/50">
                   <SelectValue placeholder="Select Year" />
                 </SelectTrigger>
-                <SelectContent className="bg-card border border-border/50 shadow-lg z-50">
+                <SelectContent className="bg-white border border-border/50 shadow-lg z-50">
                   {years.map((year) => (
                     <SelectItem key={year} value={year === "All Years" ? "all" : year.toLowerCase().replace(/ /g, "-")}>
                       {year}
@@ -224,10 +224,10 @@ const OutlinesBrowse = () => {
             <div>
               <label className="text-sm font-medium text-primary mb-2 block">Rating</label>
               <Select value={filters.rating} onValueChange={(value) => handleFilterChange('rating', value)}>
-                <SelectTrigger className="bg-card border-border/50">
+                <SelectTrigger className="bg-white border-border/50">
                   <SelectValue placeholder="Min Rating" />
                 </SelectTrigger>
-                <SelectContent className="bg-card border border-border/50 shadow-lg z-50">
+                <SelectContent className="bg-white border border-border/50 shadow-lg z-50">
                   {ratings.map((rating) => (
                     <SelectItem key={rating} value={rating === "All Ratings" ? "all" : rating.toLowerCase().replace(/ /g, "-")}>
                       {rating}
@@ -241,10 +241,10 @@ const OutlinesBrowse = () => {
             <div>
               <label className="text-sm font-medium text-primary mb-2 block">Sort By</label>
               <Select value={filters.sort} onValueChange={(value) => handleFilterChange('sort', value)}>
-                <SelectTrigger className="bg-card border-border/50">
+                <SelectTrigger className="bg-white border-border/50">
                   <SelectValue placeholder="Sort By" />
                 </SelectTrigger>
-                <SelectContent className="bg-card border border-border/50 shadow-lg z-50">
+                <SelectContent className="bg-white border border-border/50 shadow-lg z-50">
                   {sortOptions.map((option) => (
                     <SelectItem key={option} value={option.toLowerCase().replace(/ /g, "-")}>
                       {option}
@@ -260,12 +260,12 @@ const OutlinesBrowse = () => {
       {/* Results Section */}
       <div className="space-y-6">
         <div className="flex items-center justify-between">
-          <h3 className="text-xl font-semibold text-primary-foreground">
+          <h3 className="text-xl font-semibold text-white">
             {loading ? 'Loading...' : `Found ${outlines.length} outlines`}
           </h3>
           <Button 
             variant="ghost" 
-            className="text-primary-foreground/80 hover:text-primary-foreground hover:bg-primary-foreground/10"
+            className="text-white/80 hover:text-white hover:bg-white/10"
             onClick={clearFilters}
           >
             <Filter className="w-4 h-4 mr-2" />

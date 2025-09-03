@@ -1,7 +1,6 @@
 export default {
 	darkMode: ["class"],
 	content: [
-       "./index.html",    
 		"./pages/**/*.{js,jsx}",
 		"./components/**/*.{js,jsx}",
 		"./app/**/*.{js,jsx}",
