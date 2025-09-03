@@ -133,7 +133,32 @@ All colors MUST be HSL.
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-inter;
+  }
+  
+  /* Typography System */
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-merriweather font-bold;
+  }
+  
+  h1 {
+    @apply font-black; /* 900 weight */
+  }
+  
+  h2, h3 {
+    @apply font-bold; /* 700 weight */
+  }
+  
+  p, span, div, button, input, textarea, select, label {
+    @apply font-inter;
+  }
+  
+  button {
+    @apply font-medium; /* 500 weight */
+  }
+  
+  input, textarea, select {
+    @apply font-normal; /* 400 weight */
   }
   
   html {
