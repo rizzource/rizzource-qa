@@ -77,7 +77,10 @@ const ResourceHub = () => {
             </Card>
 
             {/* Outlines Hub Card */}
-            <Card className="group hover:shadow-gold transition-all duration-300 border-2 border-transparent hover:border-gold-light/30 bg-white/95 backdrop-blur-sm">
+            <Card 
+              className="group hover:shadow-gold transition-all duration-300 border-2 border-transparent hover:border-gold-light/30 bg-white/95 backdrop-blur-sm cursor-pointer"
+              onClick={handleOutlinesClick}
+            >
               <CardHeader className="text-center pb-4">
                 <div className="w-16 h-16 mx-auto mb-4 bg-primary rounded-full flex items-center justify-center group-hover:bg-secondary-green transition-colors">
                   <FileText className="w-8 h-8 text-white" />
@@ -99,7 +102,7 @@ const ResourceHub = () => {
                 <Button 
                   size="lg" 
                   className="w-full bg-primary hover:bg-secondary-green text-white transition-all duration-300 py-3"
-                  onClick={() => navigate('/outlines')}
+                  onClick={(e) => { e.stopPropagation(); handleOutlinesClick(); }}
                 >
                   Explore Outlines
                 </Button>
