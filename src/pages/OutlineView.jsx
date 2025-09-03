@@ -252,29 +252,26 @@ const OutlineView = () => {
                         {outline.topic}
                       </p>
                     </div>
+              
+                    {/* Right section with ratings + tags */}
                     <div className="text-right">
-                      <div className="flex items-center gap-1 mb-1">
+                      <div className="flex items-center gap-1 mb-1 justify-end">
                         {renderStars(outline.rating_avg)}
                       </div>
-                      <p className="text-sm text-muted-foreground">
+                      <p className="text-sm text-muted-foreground mb-2">
                         {outline.rating_avg.toFixed(1)} ({outline.rating_count} reviews)
                       </p>
-                    </div>
-                  </div>
-              
-                  {/* Tags below rating */}
-                  <div className="mt-4">
-                    <h3 className="text-lg font-semibold text-primary mb-2">Tags</h3>
-                    <div className="flex flex-wrap gap-2">
-                      {outline.tags.map((tag) => (
-                        <Badge
-                          key={tag}
-                          variant="secondary"
-                          className="bg-light-green/20 text-primary hover:bg-light-green/30 px-2 py-1"
-                        >
-                          {tag}
-                        </Badge>
-                      ))}
+                      <div className="flex flex-wrap gap-2 justify-end">
+                        {outline.tags.map((tag) => (
+                          <Badge
+                            key={tag}
+                            variant="secondary"
+                            className="bg-light-green/20 text-primary hover:bg-light-green/30 px-2 py-1"
+                          >
+                            {tag}
+                          </Badge>
+                        ))}
+                      </div>
                     </div>
                   </div>
                 </CardHeader>
