@@ -356,21 +356,21 @@ const OutlinesBrowse = () => {
 
                   {/* Action Buttons */}
                   <div className="flex gap-2 pt-4 mt-auto">
-                    <Link to={`/outlines/${outline.id}`} className="flex-1">
+                    <Link to={`/outlines/${outline.id}`}>
                       <Button 
-                        size="sm" 
+                        size="default" 
                         variant="outline" 
-                        className="w-full border-primary text-primary hover:bg-primary/10"
+                        className="px-4 py-3 border-primary text-primary hover:bg-primary/10"
                       >
-                        <Eye className="w-3 h-6 mr-1" />
+                        <Eye className="w-4 h-4 mr-1" />
                         View
                       </Button>
                     </Link>
                     <Button 
-                      size="sm" 
-                      className="flex-1 bg-gold-light text-primary hover:bg-gold-dark"
+                      size="default" 
+                      className="px-4 py-3 bg-gold-light text-primary hover:bg-gold-dark"
                     >
-                      <Download className="w-3 h-6 mr-1" />
+                      <Download className="w-4 h-4 mr-1" />
                       Download
                     </Button>
                   </div>
