@@ -15,6 +15,7 @@ const OutlinesHub = () => {
   // Navigate back to resource hub
   const handleBack = () => {
     navigate('/resources');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return (
