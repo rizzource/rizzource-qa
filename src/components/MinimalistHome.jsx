@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Scale, BookOpen, Users } from "lucide-react";
 import { Link } from "react-router-dom";
+import Timeline from "./Timeline";
 
 const MinimalistHome = () => {
   return (
@@ -56,6 +57,9 @@ const MinimalistHome = () => {
               </Link>
             </div>
           </div>
+
+          {/* Timeline Component */}
+          <Timeline />
         </div>
       </div>
     </section>
