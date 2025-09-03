@@ -46,7 +46,10 @@ const ResourceHub = () => {
           {/* Resource Cards */}
           <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
             {/* APALSA Mentorship Program Card */}
-            <Card className="group hover:shadow-gold transition-all duration-300 border-2 border-transparent hover:border-gold-light/30 bg-white/95 backdrop-blur-sm">
+            <Card 
+              className="group hover:shadow-gold transition-all duration-300 border-2 border-transparent hover:border-gold-light/30 bg-white/95 backdrop-blur-sm cursor-pointer"
+              onClick={handleMentorshipClick}
+            >
               <CardHeader className="text-center pb-4">
                 <div className="w-16 h-16 mx-auto mb-4 bg-primary rounded-full flex items-center justify-center group-hover:bg-secondary-green transition-colors">
                   <Users className="w-8 h-8 text-white" />
@@ -65,14 +68,13 @@ const ResourceHub = () => {
                   <li>• Professional development workshops</li>
                   <li>• Peer support community</li>
                 </ul>
-                <Link to="/mentorship-selection">
-                  <Button 
-                    size="lg" 
-                    className="w-full bg-primary hover:bg-secondary-green text-white transition-all duration-300 py-3"
-                  >
-                    Join Program
-                  </Button>
-                </Link>
+                <Button 
+                  size="lg" 
+                  className="w-full bg-primary hover:bg-secondary-green text-white transition-all duration-300 py-3"
+                  onClick={(e) => { e.stopPropagation(); handleMentorshipClick(); }}
+                >
+                  Join Program
+                </Button>
               </CardContent>
             </Card>
 
