@@ -6,10 +6,10 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import OutlinesBrowse from "./outlines/OutlinesBrowse";
 import OutlinesUpload from "./outlines/OutlinesUpload";
-import { useNavigateWithScroll } from "@/hooks/use-navigate-scroll";
+import { useNavigate } from "react-router-dom";
 
 const OutlinesHub = () => {
-  const navigate = useNavigateWithScroll();
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("browse");
   
   // Navigate back to resource hub

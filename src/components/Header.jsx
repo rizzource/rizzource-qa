@@ -2,12 +2,12 @@ import { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Scale, Shield, LogOut, User, ArrowLeft } from "lucide-react";
 import { useAuth } from './AuthProvider';
-import { Link, useLocation } from 'react-router-dom';
-import { useNavigateWithScroll } from '@/hooks/use-navigate-scroll';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+
 
 const Header = () => {
   const { user, isAdmin, signOut } = useAuth();
-  const navigate = useNavigateWithScroll();
+  const navigate = useNavigate();
   const location = useLocation(); // Get current path
 
   const handleSignOut = async () => {

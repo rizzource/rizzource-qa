@@ -3,10 +3,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Users, FileText, ArrowLeft } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { useNavigateWithScroll } from "@/hooks/use-navigate-scroll";
+import { useNavigate } from "react-router-dom";
 
 const ResourceHub = () => {
-  const navigate = useNavigateWithScroll();
+  const navigate = useNavigate();
   const onBack = () => navigate('/');
 
   const handleMentorshipClick = () => {
