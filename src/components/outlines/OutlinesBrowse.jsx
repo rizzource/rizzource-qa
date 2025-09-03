@@ -362,7 +362,7 @@ const OutlinesBrowse = () => {
                         variant="outline" 
                         className="w-full border-primary text-primary hover:bg-primary/10"
                       >
-                        <Eye className="w-4 h-4 mr-1" />
+                        <Eye className="w-3 h-6 mr-1" />
                         View
                       </Button>
                     </Link>
@@ -370,7 +370,7 @@ const OutlinesBrowse = () => {
                       size="sm" 
                       className="flex-1 bg-gold-light text-primary hover:bg-gold-dark"
                     >
-                      <Download className="w-4 h-4 mr-1" />
+                      <Download className="w-3 h-6 mr-1" />
                       Download
                     </Button>
                   </div>
