@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Calendar, MapPin, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { createPortal } from 'react-dom';
 
 const mockEvents = [
   {
@@ -127,28 +128,19 @@ const Timeline = () => {
         onClick={() => setIsExpanded(true)}
       >
         {/* Events above timeline */}
-        <div className="mb-6 relative h-28">
-  {months.map((month, index) => (
-    <div
-      key={month}
-      className="absolute bottom-0"
-      style={{ left: `${(index / 11) * 100}%`, transform: 'translateX(-50%)' }}
-    >
-      {/* 
-        - bottom-0 anchors the month’s stack to the timeline
-        - flex-col-reverse makes the first/only card sit closest to the line
-        - gap-2 controls vertical spacing between multiple cards 
-      */}
-      <div className="flex flex-col-reverse items-center gap-2">
-        {eventsByMonth[index].map((event) => (
-          <div key={event.id} className="w-28">
-            <TimelineEvent event={event} />
-          </div>
-        ))}
-      </div>
-    </div>
-  ))}
-</div>
+        <div className="mb-8 relative h-32">
+          {months.map((month, index) => (
+            <div key={month} className="absolute" style={{ left: `${(index / 11) * 100}%`, transform: 'translateX(-50%)' }}>
+              <div className="space-y-1">
+                {eventsByMonth[index].map((event, eventIndex) => (
+                  <div key={event.id} className="w-24">
+                    <TimelineEvent event={event} />
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
 
         {/* Timeline line */}
         <div className="relative">
@@ -224,15 +216,21 @@ const Timeline = () => {
     </motion.div>
   );
 
-  const EventModal = () => (
-    <AnimatePresence>
-      {selectedEvent && (
+ const EventModal = () => {
+  // Nothing to render? Return null (prevents creating the portal at all)
+  if (!selectedEvent) return null;
+
+  // Render the modal into document.body so it escapes any stacking contexts
+  return createPortal(
+    (
+      <AnimatePresence>
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 bg-background/80 backdrop-blur-sm z-60 flex items-center justify-center p-4"
+          className="fixed inset-0 bg-background/80 backdrop-blur-sm z-[70] flex items-center justify-center p-4"
           onClick={() => setSelectedEvent(null)}
+          aria-hidden="true"
         >
           <motion.div
             initial={{ scale: 0.9, opacity: 0 }}
@@ -240,6 +238,9 @@ const Timeline = () => {
             exit={{ scale: 0.9, opacity: 0 }}
             className="bg-card border border-border rounded-lg p-6 max-w-md w-full shadow-lg"
             onClick={(e) => e.stopPropagation()}
+            role="dialog"
+            aria-modal="true"
+            aria-label={selectedEvent.title}
           >
             <div className="flex justify-between items-start mb-4">
               <h3 className="text-xl font-bold text-foreground">{selectedEvent.title}</h3>
@@ -252,7 +253,7 @@ const Timeline = () => {
                 <X className="h-5 w-5" />
               </Button>
             </div>
-            
+
             <div className="space-y-3 mb-4">
               <div className="flex items-center gap-2 text-muted-foreground">
                 <Calendar className="h-4 w-4" />
@@ -267,13 +268,18 @@ const Timeline = () => {
                 <span>{selectedEvent.location}</span>
               </div>
             </div>
-            
-            <p className="text-foreground leading-relaxed">{selectedEvent.description}</p>
+
+            <p className="text-foreground leading-relaxed">
+              {selectedEvent.description}
+            </p>
           </motion.div>
         </motion.div>
-      )}
-    </AnimatePresence>
+      </AnimatePresence>
+    ),
+    document.body
   );
+};
+
 
   return (
     <>
