@@ -341,13 +341,13 @@ const OutlinesBrowse = () => {
                         <Badge 
                           key={tag} 
                           variant="secondary" 
-                          className="text-xs bg-light-green/20 text-primary hover:bg-light-green/30"
+                          className="text-xs bg-light-green/20 text-primary hover:bg-light-green/30 px-2 py-1"
                         >
                           {tag}
                         </Badge>
                       ))}
                       {(outline.tags || []).length > 3 && (
-                        <Badge variant="secondary" className="text-xs bg-muted/50 text-muted-foreground">
+                        <Badge variant="secondary" className="text-xs bg-muted/50 text-muted-foreground px-2 py-1">
                           +{(outline.tags || []).length - 3}
                         </Badge>
                       )}
@@ -356,21 +356,21 @@ const OutlinesBrowse = () => {
 
                   {/* Action Buttons */}
                   <div className="flex gap-2 pt-4 mt-auto">
-                    <Link to={`/outlines/${outline.id}`}>
+                    <Link to={`/outlines/${outline.id}`} className="flex-1">
                       <Button 
-                        size="default" 
+                        size="sm" 
                         variant="outline" 
-                        className="px-4 py-3 border-primary text-primary hover:bg-primary/10"
+                        className="w-full border-primary text-primary hover:bg-primary/10"
                       >
-                        <Eye className="w-4 h-4 mr-1" />
+                        <Eye className="w-3 h-6 mr-1" />
                         View
                       </Button>
                     </Link>
                     <Button 
-                      size="default" 
-                      className="px-4 py-3 bg-gold-light text-primary hover:bg-gold-dark"
+                      size="sm" 
+                      className="flex-1 bg-gold-light text-primary hover:bg-gold-dark"
                     >
-                      <Download className="w-4 h-4 mr-1" />
+                      <Download className="w-3 h-6 mr-1" />
                       Download
                     </Button>
                   </div>
