@@ -34,12 +34,7 @@ const MinimalistHome = () => {
               </h1>
             </div>
             
-            {/* Coming Soon Text */}
             <div className="space-y-4">
-              <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold text-primary leading-tight break-words">
-                Coming Soon...
-              </h2>
-              
               <p className="text-lg sm:text-xl lg:text-2xl text-muted-foreground leading-relaxed max-w-4xl mx-auto break-words">
                 The ultimate resource platform for law students
               </p>
