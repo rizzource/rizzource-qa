@@ -7,7 +7,6 @@ import MinimalistHome from "@/components/MinimalistHome";
 import Header from "@/components/Header";  
 import Footer from "@/components/Footer";
 import { Users, BookOpen, Zap } from "lucide-react";
-import "./index.css";
 
 const Index = ({ mentorshipPage = false, initialState = 'hero' }) => {
   const navigate = useNavigate();
