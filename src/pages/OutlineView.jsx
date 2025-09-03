@@ -244,7 +244,7 @@ const OutlineView = () => {
                           <User className="w-4 h-4 text-muted-foreground" />
                           <span className="font-medium text-primary">{outline.professor}</span>
                         </div>
-                        <Badge className="bg-gold-light text-primary font-medium">
+                        <Badge className="bg-gold-light text-primary font-medium px-2 py-1">
                           {outline.year}
                         </Badge>
                       </div>
