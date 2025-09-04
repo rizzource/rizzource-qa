@@ -20,9 +20,6 @@ const OutlinesBrowse = () => {
   });
   const [outlines, setOutlines] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
-  const openPreview = () => setIsPreviewOpen(true);
-  const closePreview = () => setIsPreviewOpen(false);
 
   const topics = ["All Topics", "Constitutional Law", "Contracts", "Criminal Law", "Torts", "Civil Procedure", "Property Law", "Administrative Law", "Evidence"];
   const years = ["All Years", "1L", "2L", "3L"];
@@ -155,28 +152,6 @@ const OutlinesBrowse = () => {
     );
   };
 
-  // Parse outline notes to extract description and bullet points
-  const parseOutlineContent = (outline) => {
-    const notes = outline.notes || "";
-    
-    // Split notes into sentences for description (first 200 chars) and remaining for bullet points
-    const description = notes.length > 200 ? notes.substring(0, 197) + "..." : notes;
-    
-    // Extract bullet points - look for sentences that could be key points
-    const sentences = notes.split(/[.!?]+/).filter(s => s.trim().length > 20);
-    const bulletPoints = sentences.slice(0, 4).map(s => s.trim()).filter(s => s.length > 0);
-    
-    return {
-      title: outline.title,
-      description: description || "Comprehensive study outline covering key legal concepts and principles.",
-      bulletPoints: bulletPoints.length > 0 ? bulletPoints : [
-        "Core legal principles and foundational concepts",
-        "Case law analysis and judicial interpretations", 
-        "Practical applications and real-world examples",
-        "Exam strategies and key points to remember"
-      ]
-    };
-  };
 
   return (
     <div className="space-y-6">
@@ -394,98 +369,72 @@ const OutlinesBrowse = () => {
                       </Button>
                     </Link>
                     
-   <>
-  {/* Trigger */}
-  <DialogTrigger asChild>
-    <Button
-      type="button"
-      size="sm"
-      variant="outline"
-      className="px-3 py-2 border-accent text-accent hover:bg-accent/10"
-      onClick={(e) => { e.stopPropagation(); openPreview(); }}
-    >
-      <BookOpen className="w-4 h-4 mr-1" />
-      Preview
-    </Button>
-  </DialogTrigger>
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="px-3 py-2 border-accent text-accent hover:bg-accent/10"
+                        >
+                          <BookOpen className="w-4 h-4 mr-1" />
+                          Preview
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+                        <DialogHeader>
+                          <DialogTitle className="text-xl font-semibold text-primary">
+                            {outline.title}
+                          </DialogTitle>
+                          <DialogDescription className="text-sm text-muted-foreground">
+                            Professor {outline.professor} • {outline.topic} • {outline.year}
+                          </DialogDescription>
+                        </DialogHeader>
+                        
+                        <div className="space-y-6 pt-4">
+                          <div>
+                            <h4 className="text-lg font-medium text-primary mb-3">Description</h4>
+                            <p className="text-foreground leading-relaxed">
+                              {(() => {
+                                const notes = outline.notes || "";
+                                return notes.length > 200 ? notes.substring(0, 197) + "..." : notes || "Comprehensive study outline covering key legal concepts and principles.";
+                              })()}
+                            </p>
+                          </div>
 
-  {/* Simple inline modal (no portal) */}
-  {isPreviewOpen && (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center">
-      {/* Backdrop */}
-      <div className="absolute inset-0 bg-black/50" onClick={closePreview} />
+                          <div>
+                            <h4 className="text-lg font-medium text-primary mb-3">Key Topics Covered</h4>
+                            <ul className="space-y-2">
+                              {(() => {
+                                const notes = outline.notes || "";
+                                const sentences = notes.split(/[.!?]+/).filter(s => s.trim().length > 20);
+                                const bulletPoints = sentences.slice(0, 4).map(s => s.trim()).filter(s => s.length > 0);
+                                const finalBulletPoints = bulletPoints.length > 0 ? bulletPoints : [
+                                  "Core legal principles and foundational concepts",
+                                  "Case law analysis and judicial interpretations", 
+                                  "Practical applications and real-world examples",
+                                  "Exam strategies and key points to remember"
+                                ];
+                                return finalBulletPoints.map((point, index) => (
+                                  <li key={index} className="flex items-start gap-3">
+                                    <span className="mt-2.5 h-2 w-2 flex-shrink-0 rounded-full bg-accent" />
+                                    <span className="text-foreground">{point}</span>
+                                  </li>
+                                ));
+                              })()}
+                            </ul>
+                          </div>
 
-      {/* Panel */}
-      <div
-        role="dialog"
-        aria-modal="true"
-        className="relative z-[101] w-[92vw] max-w-2xl max-h-[80vh] overflow-y-auto rounded-2xl border border-border bg-card p-6 shadow-2xl"
-        onClick={(e) => e.stopPropagation()}
-      >
-        {/* Close button */}
-        <button
-          type="button"
-          onClick={closePreview}
-          aria-label="Close"
-          className="absolute right-3 top-3 inline-flex h-8 w-8 items-center justify-center rounded-md border border-border text-foreground/70 hover:bg-foreground/5"
-        >
-          ×
-        </button>
-
-        {/* Your original content, guarded */}
-        {outline ? (
-          (() => {
-            const previewData = parseOutlineContent(outline);
-            return (
-              <>
-                <div className="mb-2">
-                  <h3 className="text-xl font-semibold text-primary">
-                    {previewData.title}
-                  </h3>
-                  <p className="text-sm text-muted-foreground">
-                    Professor {outline.professor} • {outline.topic} • {outline.year}
-                  </p>
-                </div>
-
-                <div className="space-y-6 pt-4">
-                  <div>
-                    <h4 className="text-lg font-medium text-primary mb-3">Description</h4>
-                    <p className="text-foreground leading-relaxed">
-                      {previewData.description}
-                    </p>
-                  </div>
-
-                  <div>
-                    <h4 className="text-lg font-medium text-primary mb-3">Key Topics Covered</h4>
-                    <ul className="space-y-2">
-                      {previewData.bulletPoints.map((point, index) => (
-                        <li key={index} className="flex items-start gap-3">
-                          <span className="mt-2.5 h-2 w-2 flex-shrink-0 rounded-full bg-accent" />
-                          <span className="text-foreground">{point}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-
-                  <div className="flex items-center justify-between pt-4 border-t border-border">
-                    <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                      <span>{outline.downloads || 0} downloads</span>
-                      <div className="flex items-center gap-1">
-                        {renderStars(outline.rating_avg || 0, outline.rating_count || 0)}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </>
-            );
-          })()
-        ) : (
-          <div className="p-6 text-sm text-muted-foreground">No outline to preview.</div>
-        )}
-      </div>
-    </div>
-  )}
-</>
+                          <div className="flex items-center justify-between pt-4 border-t border-border">
+                            <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                              <span>{outline.downloads || 0} downloads</span>
+                              <div className="flex items-center gap-1">
+                                {renderStars(outline.rating_avg || 0, outline.rating_count || 0)}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </DialogContent>
+                    </Dialog>
 
 
                     
