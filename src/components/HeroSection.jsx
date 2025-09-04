@@ -24,7 +24,7 @@ const HeroSection = ({ onStartProgram, onBack }) => {
         <div className="w-full space-y-12">
           
           {/* Content Section */}
-          <div className="text-center space-y-6 lg:space-y-8 bg-black">
+          <div className="text-center space-y-6 lg:space-y-8">
             <div className="space-y-4">
               <Button
                 variant="ghost"
