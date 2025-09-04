@@ -20,7 +20,7 @@ const ResourceHub = () => {
   return (
     <>
       <Header />
-      <section className="min-h-screen bg-background pt-16">
+      <section className="min-h-screen bg-black pt-16">
         {/* Header */}
         <div className="container mx-auto px-4 py-8">
           <div className="flex items-center gap-4 mb-8">
