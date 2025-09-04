@@ -13,6 +13,7 @@ const mockEvents = [
     date: 'Late October 2025',
     month: 'Oct',
     monthIndex: 9,
+    year: 2025,
     description: 'Start first-pass drafts for each course; map topics and headings.',
     location: 'Self-paced',
     time: '—'
@@ -23,6 +24,7 @@ const mockEvents = [
     date: 'Early November 2025',
     month: 'Nov',
     monthIndex: 10,
+    year: 2025,
     description: 'Tighten organization and add case notes; finalize before reading days.',
     location: 'Self-paced',
     time: '—'
@@ -33,6 +35,7 @@ const mockEvents = [
     date: 'Nov 24, 2025',
     month: 'Nov',
     monthIndex: 10,
+    year: 2025,
     description: 'Instruction ends for the fall term.',
     location: 'Campus-wide',
     time: '—'
@@ -43,6 +46,7 @@ const mockEvents = [
     date: 'Dec 1–2, 2025',
     month: 'Dec',
     monthIndex: 11,
+    year: 2025,
     description: 'No classes; dedicated study time before finals.',
     location: '—',
     time: '—'
@@ -53,6 +57,7 @@ const mockEvents = [
     date: 'Dec 3–12, 2025',
     month: 'Dec',
     monthIndex: 11,
+    year: 2025,
     description: 'Comprehensive examinations for fall courses.',
     location: 'Exam venues',
     time: '—'
@@ -63,19 +68,20 @@ const mockEvents = [
     date: 'Early January 2026',
     month: 'Jan',
     monthIndex: 0,
+    year: 2026,
     description: 'New term begins. Also use early January for résumé updates, interview practice, and career planning.',
     location: 'Campus-wide',
     time: '—'
   },
 
   // --- Emory Career Center Spring Interview Programs (2025) ---
-  // (Registration openings aligned to Oct 1, 2024 to match Jan–May 2025 interview dates.)
   {
     id: 7,
     title: 'Spring Interview Programs – Registration opens',
     date: 'Oct 1, 2024',
     month: 'Oct',
     monthIndex: 9,
+    year: 2024,
     description: 'Registration opens for 1L Mock Interview, February, March, April Interview Programs, and Meet the Employer.',
     location: 'Emory Career Center',
     time: 'Opens'
@@ -86,6 +92,7 @@ const mockEvents = [
     date: 'Jan 3, 2025',
     month: 'Jan',
     monthIndex: 0,
+    year: 2025,
     description: 'Last day to register for the 1L Mock Interview Program.',
     location: 'Emory Career Center',
     time: 'Deadline'
@@ -96,6 +103,7 @@ const mockEvents = [
     date: 'Jan 27, 29 & 31, 2025',
     month: 'Jan',
     monthIndex: 0,
+    year: 2025,
     description: 'Practice interviews with feedback.',
     location: 'Virtual',
     time: '—'
@@ -106,6 +114,7 @@ const mockEvents = [
     date: 'Jan 3, 2025',
     month: 'Jan',
     monthIndex: 0,
+    year: 2025,
     description: 'Final day to register for February Interview Program.',
     location: 'Emory Career Center',
     time: 'Deadline'
@@ -116,6 +125,7 @@ const mockEvents = [
     date: 'Feb 4–5, 2025',
     month: 'Feb',
     monthIndex: 1,
+    year: 2025,
     description: 'Employer interviews held virtually.',
     location: 'Virtual',
     time: '—'
@@ -126,6 +136,7 @@ const mockEvents = [
     date: 'Feb 6, 2025',
     month: 'Feb',
     monthIndex: 1,
+    year: 2025,
     description: 'On-campus interviews with participating employers.',
     location: 'On-campus',
     time: '—'
@@ -136,6 +147,7 @@ const mockEvents = [
     date: 'Feb 14, 2025',
     month: 'Feb',
     monthIndex: 1,
+    year: 2025,
     description: 'Final day to register for March Interview Program.',
     location: 'Emory Career Center',
     time: 'Deadline'
@@ -146,6 +158,7 @@ const mockEvents = [
     date: 'Mar 18–19, 2025',
     month: 'Mar',
     monthIndex: 2,
+    year: 2025,
     description: 'Two days of virtual interviews.',
     location: 'Virtual',
     time: '—'
@@ -156,6 +169,7 @@ const mockEvents = [
     date: 'Mar 20, 2025',
     month: 'Mar',
     monthIndex: 2,
+    year: 2025,
     description: 'On-campus interview day.',
     location: 'On-campus',
     time: '—'
@@ -166,6 +180,7 @@ const mockEvents = [
     date: 'Feb 28, 2025',
     month: 'Feb',
     monthIndex: 1,
+    year: 2025,
     description: 'Final day to register for April Interview Program.',
     location: 'Emory Career Center',
     time: 'Deadline'
@@ -176,6 +191,7 @@ const mockEvents = [
     date: 'Apr 1–2, 2025',
     month: 'Apr',
     monthIndex: 3,
+    year: 2025,
     description: 'Two virtual interview days.',
     location: 'Virtual',
     time: '—'
@@ -186,6 +202,7 @@ const mockEvents = [
     date: 'Apr 25, 2025',
     month: 'Apr',
     monthIndex: 3,
+    year: 2025,
     description: 'Last day to register for Meet the Employer.',
     location: 'Emory Career Center',
     time: 'Deadline'
@@ -196,6 +213,7 @@ const mockEvents = [
     date: 'May 5, 2025',
     month: 'May',
     monthIndex: 4,
+    year: 2025,
     description: 'Virtual networking with employers.',
     location: 'Virtual',
     time: '—'
@@ -206,6 +224,7 @@ const mockEvents = [
     date: 'May 6, 2025',
     month: 'May',
     monthIndex: 4,
+    year: 2025,
     description: 'On-campus networking and employer booths.',
     location: 'On-campus',
     time: '—'
@@ -218,6 +237,7 @@ const mockEvents = [
     date: 'Dec 1, 2025',
     month: 'Dec',
     monthIndex: 11,
+    year: 2025,
     description: 'Most firms accept 1L apps starting Dec 1; decisions often Feb–Mar 2026.',
     location: 'Various',
     time: 'Opens'
@@ -228,6 +248,7 @@ const mockEvents = [
     date: 'Dec 1, 2025',
     month: 'Dec',
     monthIndex: 11,
+    year: 2025,
     description: 'Many public sector employers begin accepting 1L apps.',
     location: 'Various',
     time: 'Opens'
@@ -238,6 +259,7 @@ const mockEvents = [
     date: 'Dec 2025 – Jan 2026',
     month: 'Dec',
     monthIndex: 11,
+    year: 2025,
     description: 'Most applications submitted in Dec–Jan.',
     location: 'Courts',
     time: '—'
@@ -248,6 +270,7 @@ const mockEvents = [
     date: 'Jan–Mar 2026',
     month: 'Jan',
     monthIndex: 0,
+    year: 2026,
     description: 'Many small firms move after first-semester grades post.',
     location: 'Various',
     time: '—'
@@ -258,6 +281,7 @@ const mockEvents = [
     date: 'May–June (trend)',
     month: 'May',
     monthIndex: 4,
+    year: 2025,
     description: 'Some schools moved OCI to May–June; Emory still uses fall OCI. Monitor for changes.',
     location: 'Career Services',
     time: '—'
@@ -270,6 +294,7 @@ const mockEvents = [
     date: 'Nov 1 – Dec 27, 2024',
     month: 'Nov',
     monthIndex: 10,
+    year: 2024,
     description: 'Application period for 1L Diversity Fellowship.',
     location: 'External',
     time: '—'
@@ -280,6 +305,7 @@ const mockEvents = [
     date: 'Nov 15, 2024',
     month: 'Nov',
     monthIndex: 10,
+    year: 2024,
     description: 'Applications open.',
     location: 'External',
     time: 'Opens'
@@ -290,6 +316,7 @@ const mockEvents = [
     date: 'Dec 31, 2024',
     month: 'Dec',
     monthIndex: 11,
+    year: 2024,
     description: 'Final day to apply.',
     location: 'External',
     time: 'Deadline'
@@ -302,6 +329,7 @@ const mockEvents = [
     date: 'Jan 6, 2025',
     month: 'Jan',
     monthIndex: 0,
+    year: 2025,
     description: 'Application deadline.',
     location: 'External',
     time: 'Deadline'
@@ -312,6 +340,7 @@ const mockEvents = [
     date: 'Jan 17, 2025',
     month: 'Jan',
     monthIndex: 0,
+    year: 2025,
     description: 'Application deadline.',
     location: 'External',
     time: 'Deadline'
@@ -322,6 +351,7 @@ const mockEvents = [
     date: 'Nov 15, 2024',
     month: 'Nov',
     monthIndex: 10,
+    year: 2024,
     description: '1L application opening.',
     location: 'External',
     time: 'Opens'
@@ -332,6 +362,7 @@ const mockEvents = [
     date: 'Mar 31, 2025 (5 p.m.)',
     month: 'Mar',
     monthIndex: 2,
+    year: 2025,
     description: 'EPIC summer funding applications due.',
     location: 'Emory',
     time: '5:00 PM'
@@ -344,6 +375,7 @@ const mockEvents = [
     date: 'Aug 22 – Sep 2, 2025',
     month: 'Aug',
     monthIndex: 7,
+    year: 2025,
     description: 'Apply for DOJ Summer Law Intern Program.',
     location: 'USAJOBS',
     time: '—'
@@ -354,6 +386,7 @@ const mockEvents = [
     date: 'Dec 1, 2024 – Jan 31, 2025',
     month: 'Dec',
     monthIndex: 11,
+    year: 2024,
     description: 'Example timeline for state AG offices.',
     location: 'External',
     time: '—'
@@ -364,6 +397,7 @@ const mockEvents = [
     date: 'Jun 30 – Jul 18, 2025',
     month: 'Jun',
     monthIndex: 5,
+    year: 2025,
     description: 'Applications accepted during this period.',
     location: 'External',
     time: '—'
@@ -376,6 +410,7 @@ const mockEvents = [
     date: 'Nov 15, 2024',
     month: 'Nov',
     monthIndex: 10,
+    year: 2024,
     description: 'Deadline for Cisco LEAP program.',
     location: 'External',
     time: 'Deadline'
@@ -386,6 +421,7 @@ const mockEvents = [
     date: 'May 20, 2025',
     month: 'May',
     monthIndex: 4,
+    year: 2025,
     description: 'Target start date (example).',
     location: 'In-house',
     time: '—'
@@ -398,6 +434,7 @@ const mockEvents = [
     date: 'Oct–Nov 2025',
     month: 'Oct',
     monthIndex: 9,
+    year: 2025,
     description: 'Draft/refine outlines; register for Spring Interview Programs; research diversity fellowships; prep materials.',
     location: '—',
     time: '—'
@@ -408,6 +445,7 @@ const mockEvents = [
     date: 'Dec 2025',
     month: 'Dec',
     monthIndex: 11,
+    year: 2025,
     description: 'Apply starting Dec 1 to big law, government, public interest; submit fellowships with Dec deadlines; begin judicial externship apps.',
     location: '—',
     time: '—'
@@ -418,6 +456,7 @@ const mockEvents = [
     date: 'Jan–Mar 2026',
     month: 'Jan',
     monthIndex: 0,
+    year: 2026,
     description: 'Do Mock Interview Program; attend Feb & Mar Interview Programs; submit Burns/EPIC/Peggy Browning; send transcripts where needed.',
     location: '—',
     time: '—'
@@ -428,6 +467,7 @@ const mockEvents = [
     date: 'Apr–Jul 2026',
     month: 'Apr',
     monthIndex: 3,
+    year: 2026,
     description: 'Attend April Program & May Meet the Employer; secure EPIC funding; apply to HNBA/VIA Avanza (June–July).',
     location: '—',
     time: '—'
@@ -438,11 +478,13 @@ const mockEvents = [
     date: 'Aug–Sep 2025',
     month: 'Aug',
     monthIndex: 7,
+    year: 2025,
     description: 'Apply to DOJ SLIP (Aug 22–Sep 2); watch state AG & corporate postings.',
     location: '—',
     time: '—'
   }
 ];
+
 
 
 const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
