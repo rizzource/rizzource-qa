@@ -596,23 +596,18 @@ const Timeline = () => {
         {/* Events above timeline */}
        <div className="mb-6 relative h-28">
  {/* Events above timeline — beeswarm stacking with “+N more” */}
+{/* Events above timeline — 2-up stacker with tight spacing */}
 {(() => {
-  const MAX_VISIBLE = 3;  // show up to 3 cards per month in compact view
-  const DY = 24;          // vertical spacing between stacked cards
+  const MAX_VISIBLE = 2;  // show at most 2 cards per month
+  const GAP = 12;         // vertical gap between the two cards (px)
 
-  const beeswarmOffsets = (n) => {
-    const seq = [0];
-    for (let i = 1; seq.length < n; i++) seq.push(i, -i);
-    return seq.slice(0, n).map(step => step * DY);
-  };
-
-  // Dynamic container height based on busiest month (only visible rows)
+  // Dynamic container height so nothing clips when 2 are stacked
   const counts = months.map((_, i) =>
     Math.min((eventsByMonth[i] || []).length, MAX_VISIBLE)
   );
   const maxRows = Math.max(1, ...counts);
-  const base = 56; // enough space for one row above the rail
-  const containerHeight = base + (maxRows - 1) * DY + 8;
+  const base = 56; // space for a single row above the rail
+  const containerHeight = base + (maxRows - 1) * GAP + 8;
 
   return (
     <div className="mb-6 relative" style={{ height: containerHeight }}>
@@ -620,7 +615,6 @@ const Timeline = () => {
         const list = eventsByMonth[index] || [];
         const visible = list.slice(0, MAX_VISIBLE);
         const hiddenCount = Math.max(0, list.length - MAX_VISIBLE);
-        const offsets = beeswarmOffsets(visible.length);
 
         return (
           <div
@@ -633,7 +627,7 @@ const Timeline = () => {
                 <motion.div
                   key={event.id}
                   className="w-28"
-                  style={{ marginBottom: offsets[i] }}
+                  style={{ marginBottom: i * GAP }}  // 0px for bottom, GAP for the second card
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.03 + i * 0.02 }}
@@ -647,8 +641,8 @@ const Timeline = () => {
                   type="button"
                   className="absolute -top-5 translate-x-1/2 right-1/2 text-[11px] underline text-accent"
                   onClick={(e) => {
-                    e.stopPropagation();     // don’t trigger expand via container
-                    setIsExpanded(true);     // open expanded view to see all
+                    e.stopPropagation();   // don’t trigger expand by clicking the rail
+                    setIsExpanded(true);   // open expanded view to see all for that month
                   }}
                 >
                   +{hiddenCount} more
@@ -661,6 +655,7 @@ const Timeline = () => {
     </div>
   );
 })()}
+
 
 </div>
 
