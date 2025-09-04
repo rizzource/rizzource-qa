@@ -9,7 +9,7 @@ All colors MUST be HSL.
 @layer base {
   :root {
     /* Light Cream Theme - Clean Minimalist Design */
-    --background: 50 33% 98%;        /* #FAF9F6 - light cream */
+    --background: 39 36% 91%;        /* #EDE5D3 - palette light beige */
     --foreground: 0 0% 11%;          /* #1C1C1C - near-black for body text */
 
     --card: 0 0% 100%;               /* #FFFFFF - white cards */
