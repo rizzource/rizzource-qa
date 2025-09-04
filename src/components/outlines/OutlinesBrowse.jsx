@@ -20,6 +20,9 @@ const OutlinesBrowse = () => {
   });
   const [outlines, setOutlines] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+  const openPreview = () => setIsPreviewOpen(true);
+  const closePreview = () => setIsPreviewOpen(false);
 
   const topics = ["All Topics", "Constitutional Law", "Contracts", "Criminal Law", "Torts", "Civil Procedure", "Property Law", "Administrative Law", "Evidence"];
   const years = ["All Years", "1L", "2L", "3L"];
@@ -391,72 +394,99 @@ const OutlinesBrowse = () => {
                       </Button>
                     </Link>
                     
-                  <Dialog>
+   <>
+  {/* Trigger */}
   <DialogTrigger asChild>
     <Button
       type="button"
-      onClick={(e) => e.stopPropagation()}
       size="sm"
       variant="outline"
       className="px-3 py-2 border-accent text-accent hover:bg-accent/10"
+      onClick={(e) => { e.stopPropagation(); openPreview(); }}
     >
       <BookOpen className="w-4 h-4 mr-1" />
       Preview
     </Button>
   </DialogTrigger>
 
-  <DialogContent className="bg-card border-border max-w-2xl max-h-[80vh] overflow-y-auto z-[100]">
-    {outline ? (
-      (() => {
-        const previewData = parseOutlineContent(outline);
-        return (
-          <>
-            <DialogHeader>
-              <DialogTitle className="text-xl font-semibold text-primary">
-                {previewData.title}
-              </DialogTitle>
-              <DialogDescription className="text-muted-foreground">
-                Professor {outline.professor} • {outline.topic} • {outline.year}
-              </DialogDescription>
-            </DialogHeader>
+  {/* Simple inline modal (no portal) */}
+  {isPreviewOpen && (
+    <div className="fixed inset-0 z-[100] flex items-center justify-center">
+      {/* Backdrop */}
+      <div className="absolute inset-0 bg-black/50" onClick={closePreview} />
 
-            <div className="space-y-6 pt-4">
-              <div>
-                <h4 className="text-lg font-medium text-primary mb-3">Description</h4>
-                <p className="text-foreground leading-relaxed">
-                  {previewData.description}
-                </p>
-              </div>
+      {/* Panel */}
+      <div
+        role="dialog"
+        aria-modal="true"
+        className="relative z-[101] w-[92vw] max-w-2xl max-h-[80vh] overflow-y-auto rounded-2xl border border-border bg-card p-6 shadow-2xl"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Close button */}
+        <button
+          type="button"
+          onClick={closePreview}
+          aria-label="Close"
+          className="absolute right-3 top-3 inline-flex h-8 w-8 items-center justify-center rounded-md border border-border text-foreground/70 hover:bg-foreground/5"
+        >
+          ×
+        </button>
 
-              <div>
-                <h4 className="text-lg font-medium text-primary mb-3">Key Topics Covered</h4>
-                <ul className="space-y-2">
-                  {previewData.bulletPoints.map((point, index) => (
-                    <li key={index} className="flex items-start gap-3">
-                      <div className="w-2 h-2 bg-accent rounded-full mt-2.5 flex-shrink-0" />
-                      <span className="text-foreground">{point}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
+        {/* Your original content, guarded */}
+        {outline ? (
+          (() => {
+            const previewData = parseOutlineContent(outline);
+            return (
+              <>
+                <div className="mb-2">
+                  <h3 className="text-xl font-semibold text-primary">
+                    {previewData.title}
+                  </h3>
+                  <p className="text-sm text-muted-foreground">
+                    Professor {outline.professor} • {outline.topic} • {outline.year}
+                  </p>
+                </div>
 
-              <div className="flex items-center justify-between pt-4 border-t border-border">
-                <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                  <span>{outline.downloads || 0} downloads</span>
-                  <div className="flex items-center gap-1">
-                    {renderStars(outline.rating_avg || 0, outline.rating_count || 0)}
+                <div className="space-y-6 pt-4">
+                  <div>
+                    <h4 className="text-lg font-medium text-primary mb-3">Description</h4>
+                    <p className="text-foreground leading-relaxed">
+                      {previewData.description}
+                    </p>
+                  </div>
+
+                  <div>
+                    <h4 className="text-lg font-medium text-primary mb-3">Key Topics Covered</h4>
+                    <ul className="space-y-2">
+                      {previewData.bulletPoints.map((point, index) => (
+                        <li key={index} className="flex items-start gap-3">
+                          <span className="mt-2.5 h-2 w-2 flex-shrink-0 rounded-full bg-accent" />
+                          <span className="text-foreground">{point}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  <div className="flex items-center justify-between pt-4 border-t border-border">
+                    <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                      <span>{outline.downloads || 0} downloads</span>
+                      <div className="flex items-center gap-1">
+                        {renderStars(outline.rating_avg || 0, outline.rating_count || 0)}
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </div>
-          </>
-        );
-      })()
-    ) : (
-      <div className="p-6 text-sm text-muted-foreground">No outline to preview.</div>
-    )}
-  </DialogContent>
-</Dialog>
+              </>
+            );
+          })()
+        ) : (
+          <div className="p-6 text-sm text-muted-foreground">No outline to preview.</div>
+        )}
+      </div>
+    </div>
+  )}
+</>
+
 
                     
                     <Button 
