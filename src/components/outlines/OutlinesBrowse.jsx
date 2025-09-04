@@ -391,64 +391,73 @@ const OutlinesBrowse = () => {
                       </Button>
                     </Link>
                     
-                    <Dialog>
-                      <DialogTrigger asChild>
-                        <Button
-                          size="sm" 
-                          variant="outline"
-                          className="px-3 py-2 border-accent text-accent hover:bg-accent/10"
-                        >
-                          <BookOpen className="w-4 h-4 mr-1" />
-                          Preview
-                        </Button>
-                      </DialogTrigger>
-                      <DialogContent className="bg-card border-border max-w-2xl max-h-[80vh] overflow-y-auto">
-                        {(() => {
-                          const previewData = parseOutlineContent(outline);
-                          return (
-                            <>
-                              <DialogHeader>
-                                <DialogTitle className="text-xl font-semibold text-primary">
-                                  {previewData.title}
-                                </DialogTitle>
-                                <DialogDescription className="text-muted-foreground">
-                                  Professor {outline.professor} • {outline.topic} • {outline.year}
-                                </DialogDescription>
-                              </DialogHeader>
-                              <div className="space-y-6 pt-4">
-                                <div>
-                                  <h4 className="text-lg font-medium text-primary mb-3">Description</h4>
-                                  <p className="text-foreground leading-relaxed">
-                                    {previewData.description}
-                                  </p>
-                                </div>
-                                
-                                <div>
-                                  <h4 className="text-lg font-medium text-primary mb-3">Key Topics Covered</h4>
-                                  <ul className="space-y-2">
-                                    {previewData.bulletPoints.map((point, index) => (
-                                      <li key={index} className="flex items-start gap-3">
-                                        <div className="w-2 h-2 bg-accent rounded-full mt-2.5 flex-shrink-0"></div>
-                                        <span className="text-foreground">{point}</span>
-                                      </li>
-                                    ))}
-                                  </ul>
-                                </div>
-                                
-                                <div className="flex items-center justify-between pt-4 border-t border-border">
-                                  <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                                    <span>{outline.downloads || 0} downloads</span>
-                                    <div className="flex items-center gap-1">
-                                      {renderStars(outline.rating_avg || 0, outline.rating_count || 0)}
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                            </>
-                          );
-                        })()}
-                      </DialogContent>
-                    </Dialog>
+                  <Dialog>
+  <DialogTrigger asChild>
+    <Button
+      type="button"
+      onClick={(e) => e.stopPropagation()}
+      size="sm"
+      variant="outline"
+      className="px-3 py-2 border-accent text-accent hover:bg-accent/10"
+    >
+      <BookOpen className="w-4 h-4 mr-1" />
+      Preview
+    </Button>
+  </DialogTrigger>
+
+  <DialogContent className="bg-card border-border max-w-2xl max-h-[80vh] overflow-y-auto z-[100]">
+    {outline ? (
+      (() => {
+        const previewData = parseOutlineContent(outline);
+        return (
+          <>
+            <DialogHeader>
+              <DialogTitle className="text-xl font-semibold text-primary">
+                {previewData.title}
+              </DialogTitle>
+              <DialogDescription className="text-muted-foreground">
+                Professor {outline.professor} • {outline.topic} • {outline.year}
+              </DialogDescription>
+            </DialogHeader>
+
+            <div className="space-y-6 pt-4">
+              <div>
+                <h4 className="text-lg font-medium text-primary mb-3">Description</h4>
+                <p className="text-foreground leading-relaxed">
+                  {previewData.description}
+                </p>
+              </div>
+
+              <div>
+                <h4 className="text-lg font-medium text-primary mb-3">Key Topics Covered</h4>
+                <ul className="space-y-2">
+                  {previewData.bulletPoints.map((point, index) => (
+                    <li key={index} className="flex items-start gap-3">
+                      <div className="w-2 h-2 bg-accent rounded-full mt-2.5 flex-shrink-0" />
+                      <span className="text-foreground">{point}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <div className="flex items-center justify-between pt-4 border-t border-border">
+                <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                  <span>{outline.downloads || 0} downloads</span>
+                  <div className="flex items-center gap-1">
+                    {renderStars(outline.rating_avg || 0, outline.rating_count || 0)}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </>
+        );
+      })()
+    ) : (
+      <div className="p-6 text-sm text-muted-foreground">No outline to preview.</div>
+    )}
+  </DialogContent>
+</Dialog>
+
                     
                     <Button 
                       size="sm" 
