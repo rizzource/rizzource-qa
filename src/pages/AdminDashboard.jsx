@@ -496,7 +496,10 @@ const MenteesTable = ({ data, currentPage, onPageChange, exportToExcel, exportin
                 <TableRow className="border-border bg-muted/50 backdrop-blur-sm">
                   <TableHead className="text-foreground font-semibold min-w-[120px]">Name</TableHead>
                   <TableHead className="text-foreground font-semibold min-w-[180px]">Email</TableHead>
-...
+                  <TableHead className="text-foreground font-semibold min-w-[120px]">Field of Law</TableHead> 
+                  <TableHead className="text-foreground font-semibold min-w-[150px]">University</TableHead> 
+                  <TableHead className="text-foreground font-semibold min-w-[100px]">Hometown</TableHead> 
+                  <TableHead className="text-foreground font-semibold min-w-[140px]">Time Commitment</TableHead>
                   <TableHead className="text-foreground font-semibold min-w-[100px]">Created At</TableHead>
                 </TableRow>
               </TableHeader>
