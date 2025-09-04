@@ -596,21 +596,21 @@ const Timeline = () => {
         {/* Events above timeline */}
        <div className="mb-6 relative h-28">
  {/* Events above timeline — beeswarm stacking with “+N more” */}
-{/* Events above timeline — 2-up stacker with tight spacing */}
+{/* Events above timeline — 2-up, tighter, closer to rail */}
 {(() => {
-  const MAX_VISIBLE = 2;  // show at most 2 cards per month
-  const GAP = 12;         // vertical gap between the two cards (px)
+  const MAX_VISIBLE = 2; // at most 2 cards per month
+  const GAP = 8;         // vertical space between the 2 cards
+  const BASE = 40;       // distance from rail to the first card (smaller = closer)
 
-  // Dynamic container height so nothing clips when 2 are stacked
+  // Dynamic container height so content never clips
   const counts = months.map((_, i) =>
     Math.min((eventsByMonth[i] || []).length, MAX_VISIBLE)
   );
   const maxRows = Math.max(1, ...counts);
-  const base = 56; // space for a single row above the rail
-  const containerHeight = base + (maxRows - 1) * GAP + 8;
+  const containerHeight = BASE + (maxRows - 1) * GAP + 6;
 
   return (
-    <div className="mb-6 relative" style={{ height: containerHeight }}>
+    <div className="mb-4 relative" style={{ height: containerHeight }}>
       {months.map((month, index) => {
         const list = eventsByMonth[index] || [];
         const visible = list.slice(0, MAX_VISIBLE);
@@ -620,15 +620,15 @@ const Timeline = () => {
           <div
             key={month}
             className="absolute bottom-0"
-            style={{ left: `${(index / 11) * 100}%`, transform: 'translateX(-50%)' }}
+            style={{ left: `${(index / 11) * 100)%`, transform: 'translateX(-50%)' }}
           >
             <div className="relative flex flex-col-reverse items-center">
               {visible.map((event, i) => (
                 <motion.div
                   key={event.id}
                   className="w-28"
-                  style={{ marginBottom: i * GAP }}  // 0px for bottom, GAP for the second card
-                  initial={{ opacity: 0, y: 10 }}
+                  style={{ marginBottom: i * GAP }} // 0 for bottom card, GAP for top card
+                  initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.03 + i * 0.02 }}
                 >
@@ -639,10 +639,10 @@ const Timeline = () => {
               {hiddenCount > 0 && (
                 <button
                   type="button"
-                  className="absolute -top-5 translate-x-1/2 right-1/2 text-[11px] underline text-accent"
+                  className="absolute -top-4 translate-x-1/2 right-1/2 text-[11px] underline text-accent"
                   onClick={(e) => {
                     e.stopPropagation();   // don’t trigger expand by clicking the rail
-                    setIsExpanded(true);   // open expanded view to see all for that month
+                    setIsExpanded(true);   // open expanded view to see all
                   }}
                 >
                   +{hiddenCount} more
