@@ -620,7 +620,7 @@ const Timeline = () => {
           <div
             key={month}
             className="absolute bottom-0"
-            style={{ left: `${(index / 11) * 100)%`, transform: 'translateX(-50%)' }}
+            style={{ left: `${(index / 11) * 100}%`, transform: 'translateX(-50%)' }}
           >
             <div className="relative flex flex-col-reverse items-center">
               {visible.map((event, i) => (
