@@ -596,23 +596,26 @@ const Timeline = () => {
         {/* Events above timeline */}
        <div className="mb-6 relative h-28">
  {/* Events above timeline — beeswarm stacking with “+N more” */}
+{/* Events above timeline — tighter beeswarm with special case for 2 items */}
 {(() => {
-  const MAX_VISIBLE = 2;  // show up to 3 cards per month in compact view
-  const DY = 28;          // vertical spacing between stacked cards
+  const MAX_VISIBLE = 2;
+  const DY_BASE = 24;   // default vertical step
+  const DY_TWO  = 12;   // use smaller step when exactly 2 items
 
   const beeswarmOffsets = (n) => {
+    const dy = n === 2 ? DY_TWO : DY_BASE;
     const seq = [0];
     for (let i = 1; seq.length < n; i++) seq.push(i, -i);
-    return seq.slice(0, n).map(step => step * DY);
+    return seq.slice(0, n).map(step => step * dy);
   };
 
-  // Dynamic container height based on busiest month (only visible rows)
+  // container height uses the worst-case step so nothing clips
   const counts = months.map((_, i) =>
     Math.min((eventsByMonth[i] || []).length, MAX_VISIBLE)
   );
   const maxRows = Math.max(1, ...counts);
-  const base = 56; // enough space for one row above the rail
-  const containerHeight = base + (maxRows - 1) * DY + 8;
+  const base = 56;
+  const containerHeight = base + (maxRows - 1) * DY_BASE + 8;
 
   return (
     <div className="mb-6 relative" style={{ height: containerHeight }}>
@@ -647,8 +650,8 @@ const Timeline = () => {
                   type="button"
                   className="absolute -top-5 translate-x-1/2 right-1/2 text-[11px] underline text-accent"
                   onClick={(e) => {
-                    e.stopPropagation();     // don’t trigger expand via container
-                    setIsExpanded(true);     // open expanded view to see all
+                    e.stopPropagation();
+                    setIsExpanded(true);
                   }}
                 >
                   +{hiddenCount} more
@@ -661,6 +664,7 @@ const Timeline = () => {
     </div>
   );
 })()}
+
 
 </div>
 
