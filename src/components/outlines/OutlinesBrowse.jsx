@@ -4,7 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Search, Filter, Star, Download, Eye, FileText } from "lucide-react";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Search, Filter, Star, Download, Eye, FileText, BookOpen } from "lucide-react";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -149,6 +150,54 @@ const OutlinesBrowse = () => {
         </span>
       </div>
     );
+  };
+
+  // Generate mock preview data for an outline
+  const getMockPreviewData = (outline) => {
+    const mockDescriptions = [
+      "Comprehensive overview of key concepts and legal principles with detailed case studies and practical applications.",
+      "In-depth analysis of fundamental theories and landmark cases with strategic insights for examinations.",
+      "Complete study guide covering essential topics with bullet-point summaries and critical legal analysis.",
+      "Structured outline featuring major doctrines, case law, and practical examples for thorough understanding."
+    ];
+
+    const mockBulletPoints = {
+      "Constitutional Law": [
+        "Separation of Powers and Checks & Balances",
+        "Due Process Clause Analysis and Applications",
+        "Equal Protection Standards and Scrutiny Levels",
+        "Commerce Clause and Federal vs State Authority"
+      ],
+      "Contracts": [
+        "Formation Requirements: Offer, Acceptance, Consideration",
+        "Contract Interpretation and Parol Evidence Rule",
+        "Breach of Contract and Available Remedies",
+        "Third Party Rights and Assignment Rules"
+      ],
+      "Criminal Law": [
+        "Elements of Criminal Liability and Mens Rea",
+        "Homicide Classifications and Defenses",
+        "Property Crimes and Theft Offenses",
+        "Constitutional Criminal Procedure Rights"
+      ],
+      "Torts": [
+        "Negligence Elements and Standard of Care",
+        "Intentional Torts and Available Defenses",
+        "Strict Liability and Product Liability",
+        "Damages Calculation and Compensation"
+      ]
+    };
+
+    return {
+      title: outline.title,
+      description: mockDescriptions[Math.floor(Math.random() * mockDescriptions.length)],
+      bulletPoints: mockBulletPoints[outline.topic] || [
+        "Core legal principles and foundational concepts",
+        "Case law analysis and judicial interpretations", 
+        "Practical applications and real-world examples",
+        "Exam strategies and key points to remember"
+      ]
+    };
   };
 
   return (
@@ -358,17 +407,70 @@ const OutlinesBrowse = () => {
                   <div className="flex gap-2 pt-4 mt-auto">
                     <Link to={`/outlines/${outline.id}`}>
                       <Button 
-                        size="default" 
+                        size="sm" 
                         variant="outline" 
-                        className="px-4 py-3 border-primary text-primary hover:bg-primary/10"
+                        className="px-3 py-2 border-primary text-primary hover:bg-primary/10"
                       >
                         <Eye className="w-4 h-4 mr-1" />
                         View
                       </Button>
                     </Link>
+                    
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button 
+                          size="sm" 
+                          variant="outline"
+                          className="px-3 py-2 border-accent text-accent hover:bg-accent/10"
+                        >
+                          <BookOpen className="w-4 h-4 mr-1" />
+                          Preview
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent className="bg-card border-border max-w-2xl max-h-[80vh] overflow-y-auto">
+                        <DialogHeader>
+                          <DialogTitle className="text-xl font-semibold text-primary">
+                            {getMockPreviewData(outline).title}
+                          </DialogTitle>
+                          <DialogDescription className="text-muted-foreground">
+                            Professor {outline.professor} • {outline.topic} • {outline.year}
+                          </DialogDescription>
+                        </DialogHeader>
+                        <div className="space-y-6 pt-4">
+                          <div>
+                            <h4 className="text-lg font-medium text-primary mb-3">Description</h4>
+                            <p className="text-foreground leading-relaxed">
+                              {getMockPreviewData(outline).description}
+                            </p>
+                          </div>
+                          
+                          <div>
+                            <h4 className="text-lg font-medium text-primary mb-3">Key Topics Covered</h4>
+                            <ul className="space-y-2">
+                              {getMockPreviewData(outline).bulletPoints.map((point, index) => (
+                                <li key={index} className="flex items-start gap-3">
+                                  <div className="w-2 h-2 bg-accent rounded-full mt-2.5 flex-shrink-0"></div>
+                                  <span className="text-foreground">{point}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                          
+                          <div className="flex items-center justify-between pt-4 border-t border-border">
+                            <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                              <span>{outline.downloads || 0} downloads</span>
+                              <div className="flex items-center gap-1">
+                                {renderStars(outline.rating_avg || 0, outline.rating_count || 0)}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </DialogContent>
+                    </Dialog>
+                    
                     <Button 
-                      size="default" 
-                      className="px-4 py-3"
+                      size="sm" 
+                      className="px-3 py-2"
                     >
                       <Download className="w-4 h-4 mr-1" />
                       Download
