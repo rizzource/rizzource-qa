@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Search, Filter, Star, Download, Eye, FileText, BookOpen } from "lucide-react";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -14,81 +14,93 @@ const OutlinesBrowse = () => {
     keyword: "",
     professor: "",
     topic: "all",
-    year: "all", 
+    year: "all",
     rating: "all",
-    sort: "newest"
+    sort: "newest",
   });
   const [outlines, setOutlines] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const topics = ["All Topics", "Constitutional Law", "Contracts", "Criminal Law", "Torts", "Civil Procedure", "Property Law", "Administrative Law", "Evidence"];
+  // NEW: single, page-level dialog state
+  const [previewOutline, setPreviewOutline] = useState(null);
+
+  const topics = [
+    "All Topics",
+    "Constitutional Law",
+    "Contracts",
+    "Criminal Law",
+    "Torts",
+    "Civil Procedure",
+    "Property Law",
+    "Administrative Law",
+    "Evidence",
+  ];
   const years = ["All Years", "1L", "2L", "3L"];
   const ratings = ["All Ratings", "5 Stars", "4+ Stars", "3+ Stars", "2+ Stars", "1+ Stars"];
   const sortOptions = ["Newest", "Highest Rated", "Most Popular"];
 
   useEffect(() => {
     fetchOutlines();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filters]);
 
   const fetchOutlines = async () => {
     try {
       setLoading(true);
-      let query = supabase
-        .from('outlines')
-        .select('*');
+      let query = supabase.from("outlines").select("*");
 
       // Apply filters only when they have valid values
       if (filters.keyword && filters.keyword.trim()) {
         query = query.or(`title.ilike.%${filters.keyword}%,notes.ilike.%${filters.keyword}%`);
       }
-      
+
       if (filters.professor && filters.professor.trim()) {
-        query = query.ilike('professor', `%${filters.professor}%`);
+        query = query.ilike("professor", `%${filters.professor}%`);
       }
-      
-      if (filters.topic && filters.topic !== 'all' && filters.topic !== '') {
-        const topicValue = filters.topic.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-        query = query.eq('topic', topicValue);
+
+      if (filters.topic && filters.topic !== "all" && filters.topic !== "") {
+        const topicValue = filters.topic.replace(/-/g, " ").replace(/\b\w/g, (l) => l.toUpperCase());
+        query = query.eq("topic", topicValue);
       }
-      
-      if (filters.year && filters.year !== 'all' && filters.year !== '') {
-        const yearValue = filters.year.toUpperCase().replace('-', '');
-        query = query.eq('year', yearValue);
+
+      if (filters.year && filters.year !== "all" && filters.year !== "") {
+        const yearValue = filters.year.toUpperCase().replace("-", "");
+        query = query.eq("year", yearValue);
       }
-      
-      if (filters.rating && filters.rating !== 'all' && filters.rating !== '') {
+
+      if (filters.rating && filters.rating !== "all" && filters.rating !== "") {
         const ratingMatch = filters.rating.match(/(\d+)/);
         if (ratingMatch) {
           const minRating = parseInt(ratingMatch[1]);
           if (!isNaN(minRating)) {
-            query = query.gte('rating_avg', minRating);
+            query = query.gte("rating_avg", minRating);
           }
         }
       }
 
       // Apply sorting
       switch (filters.sort) {
-        case 'highest-rated':
-          query = query.order('rating_avg', { ascending: false, nullsLast: true });
+        case "highest-rated":
+          query = query.order("rating_avg", { ascending: false, nullsLast: true });
           break;
-        case 'most-popular':
-          query = query.order('downloads', { ascending: false, nullsLast: true });
+        case "most-popular":
+          query = query.order("downloads", { ascending: false, nullsLast: true });
           break;
         default: // newest
-          query = query.order('created_at', { ascending: false });
+          query = query.order("created_at", { ascending: false });
           break;
       }
 
       const { data, error } = await query;
-      
+
       if (error) {
-        console.error('Supabase error:', error);
+        console.error("Supabase error:", error);
         throw error;
       }
-      
+
       setOutlines(data || []);
     } catch (error) {
-      console.error('Error fetching outlines:', error);
+      console.error("Error fetching outlines:", error);
       setOutlines([]);
     } finally {
       setLoading(false);
@@ -96,9 +108,9 @@ const OutlinesBrowse = () => {
   };
 
   const handleFilterChange = (key, value) => {
-    setFilters(prev => ({
+    setFilters((prev) => ({
       ...prev,
-      [key]: value
+      [key]: value,
     }));
   };
 
@@ -108,8 +120,8 @@ const OutlinesBrowse = () => {
       professor: "",
       topic: "all",
       year: "all",
-      rating: "all", 
-      sort: "newest"
+      rating: "all",
+      sort: "newest",
     });
   };
 
@@ -117,12 +129,10 @@ const OutlinesBrowse = () => {
     const stars = [];
     const fullStars = Math.floor(rating);
     const hasHalfStar = rating % 1 >= 0.5;
-    
+
     for (let i = 0; i < 5; i++) {
       if (i < fullStars) {
-        stars.push(
-          <Star key={i} className="w-4 h-4 fill-gold-light text-gold-light" />
-        );
+        stars.push(<Star key={i} className="w-4 h-4 fill-gold-light text-gold-light" />);
       } else if (i === fullStars && hasHalfStar) {
         stars.push(
           <div key={i} className="relative w-4 h-4">
@@ -133,25 +143,18 @@ const OutlinesBrowse = () => {
           </div>
         );
       } else {
-        stars.push(
-          <Star key={i} className="w-4 h-4 text-gray-300" />
-        );
+        stars.push(<Star key={i} className="w-4 h-4 text-gray-300" />);
       }
     }
-    
+
     return (
       <div className="flex items-center gap-1">
         <div className="flex">{stars}</div>
-        <span className="text-sm font-medium text-primary ml-1">
-          {rating.toFixed(1)}
-        </span>
-        <span className="text-sm text-muted-foreground">
-          ({count})
-        </span>
+        <span className="text-sm font-medium text-primary ml-1">{Number(rating || 0).toFixed(1)}</span>
+        <span className="text-sm text-muted-foreground">({count || 0})</span>
       </div>
     );
   };
-
 
   return (
     <div className="space-y-6">
@@ -170,7 +173,7 @@ const OutlinesBrowse = () => {
             <Input
               placeholder="Search outlines by keyword..."
               value={filters.keyword}
-              onChange={(e) => handleFilterChange('keyword', e.target.value)}
+              onChange={(e) => handleFilterChange("keyword", e.target.value)}
               className="pl-10 bg-card border-border focus:border-accent focus:ring-2 focus:ring-accent"
             />
           </div>
@@ -183,7 +186,7 @@ const OutlinesBrowse = () => {
               <Input
                 placeholder="Professor name..."
                 value={filters.professor}
-                onChange={(e) => handleFilterChange('professor', e.target.value)}
+                onChange={(e) => handleFilterChange("professor", e.target.value)}
                 className="bg-card border-border focus:border-accent focus:ring-2 focus:ring-accent"
               />
             </div>
@@ -191,13 +194,16 @@ const OutlinesBrowse = () => {
             {/* Topic Filter */}
             <div>
               <label className="text-sm font-medium text-primary mb-2 block">Topic</label>
-              <Select value={filters.topic} onValueChange={(value) => handleFilterChange('topic', value)}>
+              <Select value={filters.topic} onValueChange={(value) => handleFilterChange("topic", value)}>
                 <SelectTrigger className="bg-card border-border">
                   <SelectValue placeholder="Select Topic" />
                 </SelectTrigger>
                 <SelectContent className="bg-card border border-border shadow-lg z-50">
                   {topics.map((topic) => (
-                    <SelectItem key={topic} value={topic === "All Topics" ? "all" : topic.toLowerCase().replace(/ /g, "-")}>
+                    <SelectItem
+                      key={topic}
+                      value={topic === "All Topics" ? "all" : topic.toLowerCase().replace(/ /g, "-")}
+                    >
                       {topic}
                     </SelectItem>
                   ))}
@@ -208,7 +214,7 @@ const OutlinesBrowse = () => {
             {/* Year Filter */}
             <div>
               <label className="text-sm font-medium text-primary mb-2 block">Year</label>
-              <Select value={filters.year} onValueChange={(value) => handleFilterChange('year', value)}>
+              <Select value={filters.year} onValueChange={(value) => handleFilterChange("year", value)}>
                 <SelectTrigger className="bg-card border-border">
                   <SelectValue placeholder="Select Year" />
                 </SelectTrigger>
@@ -225,13 +231,16 @@ const OutlinesBrowse = () => {
             {/* Rating Filter */}
             <div>
               <label className="text-sm font-medium text-primary mb-2 block">Rating</label>
-              <Select value={filters.rating} onValueChange={(value) => handleFilterChange('rating', value)}>
+              <Select value={filters.rating} onValueChange={(value) => handleFilterChange("rating", value)}>
                 <SelectTrigger className="bg-card border-border">
                   <SelectValue placeholder="Min Rating" />
                 </SelectTrigger>
                 <SelectContent className="bg-card border border-border shadow-lg z-50">
                   {ratings.map((rating) => (
-                    <SelectItem key={rating} value={rating === "All Ratings" ? "all" : rating.toLowerCase().replace(/ /g, "-")}>
+                    <SelectItem
+                      key={rating}
+                      value={rating === "All Ratings" ? "all" : rating.toLowerCase().replace(/ /g, "-")}
+                    >
                       {rating}
                     </SelectItem>
                   ))}
@@ -242,7 +251,7 @@ const OutlinesBrowse = () => {
             {/* Sort Filter */}
             <div>
               <label className="text-sm font-medium text-primary mb-2 block">Sort By</label>
-              <Select value={filters.sort} onValueChange={(value) => handleFilterChange('sort', value)}>
+              <Select value={filters.sort} onValueChange={(value) => handleFilterChange("sort", value)}>
                 <SelectTrigger className="bg-card border-border">
                   <SelectValue placeholder="Sort By" />
                 </SelectTrigger>
@@ -263,13 +272,9 @@ const OutlinesBrowse = () => {
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <h3 className="text-xl font-semibold text-foreground">
-            {loading ? 'Loading...' : `Found ${outlines.length} outlines`}
+            {loading ? "Loading..." : `Found ${outlines.length} outlines`}
           </h3>
-          <Button 
-            variant="ghost" 
-            className="text-muted-foreground hover:text-foreground hover:bg-muted"
-            onClick={clearFilters}
-          >
+          <Button variant="ghost" className="text-muted-foreground hover:text-foreground hover:bg-muted" onClick={clearFilters}>
             <Filter className="w-4 h-4 mr-2" />
             Clear Filters
           </Button>
@@ -297,7 +302,10 @@ const OutlinesBrowse = () => {
         {!loading && outlines.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {outlines.map((outline) => (
-              <Card key={outline.id} className="bg-card backdrop-blur-sm border-border hover:shadow-lg transition-all duration-300 h-full flex flex-col">
+              <Card
+                key={outline.id}
+                className="bg-card backdrop-blur-sm border-border hover:shadow-lg transition-all duration-300 h-full flex flex-col"
+              >
                 <CardHeader className="pb-4">
                   <div className="flex items-start justify-between gap-2 mb-2">
                     <Link to={`/outlines/${outline.id}`} className="flex-1">
@@ -307,44 +315,31 @@ const OutlinesBrowse = () => {
                     </Link>
                     <FileText className="w-5 h-5 text-muted-foreground flex-shrink-0" />
                   </div>
-                  
+
                   {/* Professor and Year */}
                   <div className="flex items-center justify-between">
-                    <p className="text-sm font-medium text-primary">
-                      {outline.professor}
-                    </p>
-                    <Badge className="bg-accent text-accent-foreground font-medium px-2 py-1">
-                      {outline.year}
-                    </Badge>
+                    <p className="text-sm font-medium text-primary">{outline.professor}</p>
+                    <Badge className="bg-accent text-accent-foreground font-medium px-2 py-1">{outline.year}</Badge>
                   </div>
-                  
+
                   {/* Topic */}
-                  <p className="text-sm text-muted-foreground font-medium">
-                    {outline.topic}
-                  </p>
+                  <p className="text-sm text-muted-foreground font-medium">{outline.topic}</p>
                 </CardHeader>
-                
+
                 <CardContent className="flex-1 flex flex-col">
                   <div className="space-y-4 flex-1">
                     {/* File Info */}
                     <div className="flex items-center justify-between text-sm text-muted-foreground">
-                      {/* <span>{outline.file_size || 'N/A'} MB • {outline.file_type || 'PDF'}</span> */}
                       <span>{outline.downloads || 0} downloads</span>
                     </div>
 
                     {/* Rating */}
-                    <div>
-                      {renderStars(outline.rating_avg || 0, outline.rating_count || 0)}
-                    </div>
+                    <div>{renderStars(outline.rating_avg || 0, outline.rating_count || 0)}</div>
 
                     {/* Tags */}
                     <div className="flex flex-wrap gap-1">
                       {(outline.tags || []).slice(0, 3).map((tag) => (
-                        <Badge 
-                          key={tag} 
-                          variant="secondary" 
-                          className="text-xs bg-muted/50 text-foreground hover:bg-muted px-2 py-1"
-                        >
+                        <Badge key={tag} variant="secondary" className="text-xs bg-muted/50 text-foreground hover:bg-muted px-2 py-1">
                           {tag}
                         </Badge>
                       ))}
@@ -359,89 +354,24 @@ const OutlinesBrowse = () => {
                   {/* Action Buttons */}
                   <div className="flex gap-2 pt-4 mt-auto">
                     <Link to={`/outlines/${outline.id}`}>
-                      <Button 
-                        size="sm" 
-                        variant="outline" 
-                        className="px-3 py-2 border-primary text-primary hover:bg-primary/10"
-                      >
+                      <Button size="sm" variant="outline" className="px-3 py-2 border-primary text-primary hover:bg-primary/10">
                         <Eye className="w-4 h-4 mr-1" />
                         View
                       </Button>
                     </Link>
-                    
-                    <Dialog>
-                      <DialogTrigger asChild>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          className="px-3 py-2 border-accent text-accent hover:bg-accent/10"
-                        >
-                          <BookOpen className="w-4 h-4 mr-1" />
-                          Preview
-                        </Button>
-                      </DialogTrigger>
-                      <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
-                        <DialogHeader>
-                          <DialogTitle className="text-xl font-semibold text-primary">
-                            {outline.title}
-                          </DialogTitle>
-                          <DialogDescription className="text-sm text-muted-foreground">
-                            Professor {outline.professor} • {outline.topic} • {outline.year}
-                          </DialogDescription>
-                        </DialogHeader>
-                        
-                        <div className="space-y-6 pt-4">
-                          <div>
-                            <h4 className="text-lg font-medium text-primary mb-3">Description</h4>
-                            <p className="text-foreground leading-relaxed">
-                              {(() => {
-                                const notes = outline.notes || "";
-                                return notes.length > 200 ? notes.substring(0, 197) + "..." : notes || "Comprehensive study outline covering key legal concepts and principles.";
-                              })()}
-                            </p>
-                          </div>
 
-                          <div>
-                            <h4 className="text-lg font-medium text-primary mb-3">Key Topics Covered</h4>
-                            <ul className="space-y-2">
-                              {(() => {
-                                const notes = outline.notes || "";
-                                const sentences = notes.split(/[.!?]+/).filter(s => s.trim().length > 20);
-                                const bulletPoints = sentences.slice(0, 4).map(s => s.trim()).filter(s => s.length > 0);
-                                const finalBulletPoints = bulletPoints.length > 0 ? bulletPoints : [
-                                  "Core legal principles and foundational concepts",
-                                  "Case law analysis and judicial interpretations", 
-                                  "Practical applications and real-world examples",
-                                  "Exam strategies and key points to remember"
-                                ];
-                                return finalBulletPoints.map((point, index) => (
-                                  <li key={index} className="flex items-start gap-3">
-                                    <span className="mt-2.5 h-2 w-2 flex-shrink-0 rounded-full bg-accent" />
-                                    <span className="text-foreground">{point}</span>
-                                  </li>
-                                ));
-                              })()}
-                            </ul>
-                          </div>
-
-                          <div className="flex items-center justify-between pt-4 border-t border-border">
-                            <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                              <span>{outline.downloads || 0} downloads</span>
-                              <div className="flex items-center gap-1">
-                                {renderStars(outline.rating_avg || 0, outline.rating_count || 0)}
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </DialogContent>
-                    </Dialog>
-
-
-                    
-                    <Button 
-                      size="sm" 
-                      className="px-3 py-2"
+                    {/* NEW: simple button that opens the single page-level dialog */}
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="px-3 py-2 border-accent text-accent hover:bg-accent/10"
+                      onClick={() => setPreviewOutline(outline)}
                     >
+                      <BookOpen className="w-4 h-4 mr-1" />
+                      Preview
+                    </Button>
+
+                    <Button size="sm" className="px-3 py-2">
                       <Download className="w-4 h-4 mr-1" />
                       Download
                     </Button>
@@ -452,6 +382,76 @@ const OutlinesBrowse = () => {
           </div>
         )}
       </div>
+
+      {/* NEW: single, global Dialog rendered once at the page root */}
+      <Dialog
+        open={!!previewOutline}
+        onOpenChange={(open) => {
+          if (!open) setPreviewOutline(null);
+        }}
+      >
+        <DialogContent className="bg-card border-border max-w-2xl max-h-[80vh] overflow-y-auto z-[100]">
+          {previewOutline && (
+            <>
+              <DialogHeader>
+                <DialogTitle className="text-xl font-semibold text-primary">{previewOutline.title}</DialogTitle>
+                <DialogDescription className="text-sm text-muted-foreground">
+                  Professor {previewOutline.professor} • {previewOutline.topic} • {previewOutline.year}
+                </DialogDescription>
+              </DialogHeader>
+
+              <div className="space-y-6 pt-4">
+                <div>
+                  <h4 className="text-lg font-medium text-primary mb-3">Description</h4>
+                  <p className="text-foreground leading-relaxed">
+                    {(() => {
+                      const notes = previewOutline.notes || "";
+                      return notes.length > 200
+                        ? notes.substring(0, 197) + "..."
+                        : notes || "Comprehensive study outline covering key legal concepts and principles.";
+                    })()}
+                  </p>
+                </div>
+
+                <div>
+                  <h4 className="text-lg font-medium text-primary mb-3">Key Topics Covered</h4>
+                  <ul className="space-y-2">
+                    {(() => {
+                      const notes = previewOutline.notes || "";
+                      const sentences = notes.split(/[.!?]+/).filter((s) => s.trim().length > 20);
+                      const bulletPoints = sentences.slice(0, 4).map((s) => s.trim()).filter((s) => s.length > 0);
+                      const finalBulletPoints =
+                        bulletPoints.length > 0
+                          ? bulletPoints
+                          : [
+                              "Core legal principles and foundational concepts",
+                              "Case law analysis and judicial interpretations",
+                              "Practical applications and real-world examples",
+                              "Exam strategies and key points to remember",
+                            ];
+                      return finalBulletPoints.map((point, index) => (
+                        <li key={index} className="flex items-start gap-3">
+                          <span className="mt-2.5 h-2 w-2 flex-shrink-0 rounded-full bg-accent" />
+                          <span className="text-foreground">{point}</span>
+                        </li>
+                      ));
+                    })()}
+                  </ul>
+                </div>
+
+                <div className="flex items-center justify-between pt-4 border-t border-border">
+                  <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                    <span>{previewOutline.downloads || 0} downloads</span>
+                    <div className="flex items-center gap-1">
+                      {renderStars(previewOutline.rating_avg || 0, previewOutline.rating_count || 0)}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
