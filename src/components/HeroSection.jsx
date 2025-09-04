@@ -6,7 +6,7 @@ const HeroSection = ({ onStartProgram, onBack }) => {
   const navigate = useNavigate();
   const handleBack = onBack ?? (() => navigate('/resources'));
   return (
-    <section className="relative min-h-screen bg-background overflow-hidden">
+    <section className="relative min-h-screen bg-[#D0AE8A] overflow-hidden">
       {/* Floating background elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-20 left-4 md:left-10 animate-float opacity-20">
