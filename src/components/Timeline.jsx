@@ -735,38 +735,41 @@ const Timeline = () => {
           transition={{ duration: 0.4 }}
           className="grid gap-6 md:grid-cols-2 lg:grid-cols-3"
         >
-          {filteredEvents.map((event, eventIndex) => (
-            <motion.div
-              key={event.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: eventIndex * 0.05 }}
-              whileHover={{ scale: 1.02 }}
-              className="bg-card border border-border rounded-lg p-6 shadow-sm hover:shadow-md transition-all cursor-pointer"
-              onClick={() => setSelectedEvent(event)}
-            >
-              <div className="flex items-start justify-between mb-3">
-                <h3 className="font-semibold text-foreground">{event.title}</h3>
-                <span className="text-xs bg-accent/10 text-accent px-2 py-1 rounded-full font-medium">
-                  {event.month}
-                </span>
-              </div>
-              <div className="space-y-2 text-sm text-muted-foreground">
-                <div className="flex items-center gap-2">
-                  <Calendar className="h-4 w-4" />
-                  {event.date}
-                </div>
-                <div className="flex items-center gap-2">
-                  <Clock className="h-4 w-4" />
-                  {event.time}
-                </div>
-                <div className="flex items-center gap-2">
-                  <MapPin className="h-4 w-4" />
-                  {event.location}
-                </div>
-              </div>
-            </motion.div>
-          ))}
+        {[...filteredEvents]
+  .sort((a, b) => a.monthIndex - b.monthIndex)
+  .map((event, eventIndex) => (
+    <motion.div
+      key={event.id}
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: eventIndex * 0.05 }}
+      whileHover={{ scale: 1.02 }}
+      className="bg-card border border-border rounded-lg p-6 shadow-sm hover:shadow-md transition-all cursor-pointer"
+      onClick={() => setSelectedEvent(event)}
+    >
+      <div className="flex items-start justify-between mb-3">
+        <h3 className="font-semibold text-foreground">{event.title}</h3>
+        <span className="text-xs bg-accent/10 text-accent px-2 py-1 rounded-full font-medium">
+          {event.month}
+        </span>
+      </div>
+      <div className="space-y-2 text-sm text-muted-foreground">
+        <div className="flex items-center gap-2">
+          <Calendar className="h-4 w-4" />
+          {event.date}
+        </div>
+        <div className="flex items-center gap-2">
+          <Clock className="h-4 w-4" />
+          {event.time}
+        </div>
+        <div className="flex items-center gap-2">
+          <MapPin className="h-4 w-4" />
+          {event.location}
+        </div>
+      </div>
+    </motion.div>
+))}
+
         </motion.div>
       </div>
     </motion.div>
