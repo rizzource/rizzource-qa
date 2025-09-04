@@ -81,7 +81,7 @@ const Auth = () => {
       {/* Main Content */}
       <main className="flex-1 bg-background flex flex-col lg:flex-row items-stretch justify-center mt-16 lg:mt-20">
           {/* Left Side - Logo Section */}
-          <div className="w-full lg:w-1/2 p-4 sm:p-6 bg-hero-gradient flex items-center justify-center min-h-[40vh] lg:min-h-screen">
+          <div className="w-full lg:w-1/2 p-4 sm:p-6 bg-primary flex items-center justify-center min-h-[40vh] lg:min-h-screen">
             <div className="relative z-10 container mx-auto px-4 mobile-optimized py-10 lg:py-20 flex items-center justify-center h-full">
               <div className="w-full space-y-6 lg:space-y-12">
                 <div className="text-center space-y-4 lg:space-y-6">
