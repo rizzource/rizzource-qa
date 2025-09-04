@@ -393,12 +393,7 @@ const OutlinesBrowse = () => {
                     
                     <Dialog>
                       <DialogTrigger asChild>
-                        <Button 
-                          size="sm" 
-                          variant="outline"
-                          className="px-3 py-2 border-accent text-accent hover:bg-accent/10"
-                        >
-                          <BookOpen className="w-4 h-4 mr-1" />
+                        <Button>
                           Preview
                         </Button>
                       </DialogTrigger>
