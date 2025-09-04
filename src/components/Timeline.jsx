@@ -599,8 +599,8 @@ const Timeline = () => {
 {/* Events above timeline — 2-up, tighter, closer to rail */}
 {(() => {
   const MAX_VISIBLE = 2; // at most 2 cards per month
-  const GAP = 8;         // vertical space between the 2 cards
-  const BASE = 40;       // distance from rail to the first card (smaller = closer)
+  const GAP = 4;         // vertical space between the 2 cards
+  const BASE = 30;       // distance from rail to the first card (smaller = closer)
 
   // Dynamic container height so content never clips
   const counts = months.map((_, i) =>
