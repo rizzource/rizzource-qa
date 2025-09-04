@@ -595,27 +595,73 @@ const Timeline = () => {
       >
         {/* Events above timeline */}
        <div className="mb-6 relative h-28">
-  {months.map((month, index) => (
-    <div
-      key={month}
-      className="absolute bottom-0"
-      style={{ left: `${(index / 11) * 100}%`, transform: 'translateX(-50%)' }}
-    >
-      <div className="flex flex-col-reverse items-center gap-2">
-        {eventsByMonth[index].map((event) => (
-          <motion.div 
-            key={event.id} 
-            className="w-28"
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: index * 0.05 }}
+ {/* Events above timeline — beeswarm stacking with “+N more” */}
+{(() => {
+  const MAX_VISIBLE = 3;  // show up to 3 cards per month in compact view
+  const DY = 28;          // vertical spacing between stacked cards
+
+  const beeswarmOffsets = (n) => {
+    const seq = [0];
+    for (let i = 1; seq.length < n; i++) seq.push(i, -i);
+    return seq.slice(0, n).map(step => step * DY);
+  };
+
+  // Dynamic container height based on busiest month (only visible rows)
+  const counts = months.map((_, i) =>
+    Math.min((eventsByMonth[i] || []).length, MAX_VISIBLE)
+  );
+  const maxRows = Math.max(1, ...counts);
+  const base = 56; // enough space for one row above the rail
+  const containerHeight = base + (maxRows - 1) * DY + 8;
+
+  return (
+    <div className="mb-6 relative" style={{ height: containerHeight }}>
+      {months.map((month, index) => {
+        const list = eventsByMonth[index] || [];
+        const visible = list.slice(0, MAX_VISIBLE);
+        const hiddenCount = Math.max(0, list.length - MAX_VISIBLE);
+        const offsets = beeswarmOffsets(visible.length);
+
+        return (
+          <div
+            key={month}
+            className="absolute bottom-0"
+            style={{ left: `${(index / 11) * 100}%`, transform: 'translateX(-50%)' }}
           >
-            <TimelineEvent event={event} />
-          </motion.div>
-        ))}
-      </div>
+            <div className="relative flex flex-col-reverse items-center">
+              {visible.map((event, i) => (
+                <motion.div
+                  key={event.id}
+                  className="w-28"
+                  style={{ marginBottom: offsets[i] }}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.03 + i * 0.02 }}
+                >
+                  <TimelineEvent event={event} />
+                </motion.div>
+              ))}
+
+              {hiddenCount > 0 && (
+                <button
+                  type="button"
+                  className="absolute -top-5 translate-x-1/2 right-1/2 text-[11px] underline text-accent"
+                  onClick={(e) => {
+                    e.stopPropagation();     // don’t trigger expand via container
+                    setIsExpanded(true);     // open expanded view to see all
+                  }}
+                >
+                  +{hiddenCount} more
+                </button>
+              )}
+            </div>
+          </div>
+        );
+      })}
     </div>
-  ))}
+  );
+})()}
+
 </div>
 
         {/* Timeline line */}
