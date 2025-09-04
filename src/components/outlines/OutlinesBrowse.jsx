@@ -152,46 +152,21 @@ const OutlinesBrowse = () => {
     );
   };
 
-  // Generate mock preview data for an outline
-  const getMockPreviewData = (outline) => {
-    const mockDescriptions = [
-      "Comprehensive overview of key concepts and legal principles with detailed case studies and practical applications.",
-      "In-depth analysis of fundamental theories and landmark cases with strategic insights for examinations.",
-      "Complete study guide covering essential topics with bullet-point summaries and critical legal analysis.",
-      "Structured outline featuring major doctrines, case law, and practical examples for thorough understanding."
-    ];
-
-    const mockBulletPoints = {
-      "Constitutional Law": [
-        "Separation of Powers and Checks & Balances",
-        "Due Process Clause Analysis and Applications",
-        "Equal Protection Standards and Scrutiny Levels",
-        "Commerce Clause and Federal vs State Authority"
-      ],
-      "Contracts": [
-        "Formation Requirements: Offer, Acceptance, Consideration",
-        "Contract Interpretation and Parol Evidence Rule",
-        "Breach of Contract and Available Remedies",
-        "Third Party Rights and Assignment Rules"
-      ],
-      "Criminal Law": [
-        "Elements of Criminal Liability and Mens Rea",
-        "Homicide Classifications and Defenses",
-        "Property Crimes and Theft Offenses",
-        "Constitutional Criminal Procedure Rights"
-      ],
-      "Torts": [
-        "Negligence Elements and Standard of Care",
-        "Intentional Torts and Available Defenses",
-        "Strict Liability and Product Liability",
-        "Damages Calculation and Compensation"
-      ]
-    };
-
+  // Parse outline notes to extract description and bullet points
+  const parseOutlineContent = (outline) => {
+    const notes = outline.notes || "";
+    
+    // Split notes into sentences for description (first 200 chars) and remaining for bullet points
+    const description = notes.length > 200 ? notes.substring(0, 197) + "..." : notes;
+    
+    // Extract bullet points - look for sentences that could be key points
+    const sentences = notes.split(/[.!?]+/).filter(s => s.trim().length > 20);
+    const bulletPoints = sentences.slice(0, 4).map(s => s.trim()).filter(s => s.length > 0);
+    
     return {
       title: outline.title,
-      description: mockDescriptions[Math.floor(Math.random() * mockDescriptions.length)],
-      bulletPoints: mockBulletPoints[outline.topic] || [
+      description: description || "Comprehensive study outline covering key legal concepts and principles.",
+      bulletPoints: bulletPoints.length > 0 ? bulletPoints : [
         "Core legal principles and foundational concepts",
         "Case law analysis and judicial interpretations", 
         "Practical applications and real-world examples",
@@ -429,7 +404,7 @@ const OutlinesBrowse = () => {
                       </DialogTrigger>
                       <DialogContent className="bg-card border-border max-w-2xl max-h-[80vh] overflow-y-auto">
                         {(() => {
-                          const previewData = getMockPreviewData(outline);
+                          const previewData = parseOutlineContent(outline);
                           return (
                             <>
                               <DialogHeader>
