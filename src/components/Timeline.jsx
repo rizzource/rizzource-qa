@@ -597,7 +597,7 @@ const Timeline = () => {
        <div className="mb-6 relative h-28">
  {/* Events above timeline — beeswarm stacking with “+N more” */}
 {(() => {
-  const MAX_VISIBLE = 3;  // show up to 3 cards per month in compact view
+  const MAX_VISIBLE = 2;  // show up to 3 cards per month in compact view
   const DY = 28;          // vertical spacing between stacked cards
 
   const beeswarmOffsets = (n) => {
