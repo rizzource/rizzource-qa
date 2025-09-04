@@ -600,7 +600,7 @@ const Timeline = () => {
 {(() => {
   const MAX_VISIBLE = 2; // at most 2 cards per month
   const GAP = 4;         // vertical space between the 2 cards
-  const BASE = 20;       // distance from rail to the first card (smaller = closer)
+  const BASE = 60;       // distance from rail to the first card (smaller = closer)
 
   // Dynamic container height so content never clips
   const counts = months.map((_, i) =>
