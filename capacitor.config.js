@@ -9,7 +9,7 @@ const config = {
   plugins: {
     SplashScreen: {
       launchShowDuration: 2000,
-      backgroundColor: '#D0AE8A',
+      backgroundColor: '#2D5016',
       androidScaleType: 'CENTER_CROP',
       splashFullScreen: true,
       splashImmersive: true,
