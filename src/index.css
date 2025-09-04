@@ -12,7 +12,7 @@ All colors MUST be HSL.
     --background: 39 36% 91%;        /* #EDE5D3 - palette light beige */
     --foreground: 0 0% 11%;          /* #1C1C1C - near-black for body text */
 
-    --card:42 42% 95%;              /* #F7F3EB - light cream cards */
+    --card:50 33% 98%;               /* #FAF9F6 - light cream cards */
     --card-foreground: 0 0% 11%;
 
     --popover: 0 0% 100%;
