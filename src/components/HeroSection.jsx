@@ -6,7 +6,7 @@ const HeroSection = ({ onStartProgram, onBack }) => {
   const navigate = useNavigate();
   const handleBack = onBack ?? (() => navigate('/resources'));
   return (
-    <section className="relative min-h-screen bg-[#D0AE8A] overflow-hidden">
+    <section className="relative min-h-screen bg-background overflow-hidden">
       {/* Floating background elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-20 left-4 md:left-10 animate-float opacity-20">
@@ -24,7 +24,7 @@ const HeroSection = ({ onStartProgram, onBack }) => {
         <div className="w-full space-y-12">
           
           {/* Content Section */}
-          <div className="text-center space-y-6 lg:space-y-8">
+          <div className="text-center space-y-6 lg:space-y-8 bg-black">
             <div className="space-y-4">
               <Button
                 variant="ghost"
