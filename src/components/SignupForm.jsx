@@ -195,46 +195,15 @@ const SignupForm = ({ userType, onBack }) => {
         case 1:
           return (
             <div className="space-y-4">
-              <FormField
-                control={form.control}
-                name="firstName"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-foreground">First Name</FormLabel>
-                    <FormControl>
-                      <Input 
-                        {...field}
-                        className="bg-card border-input text-foreground placeholder:text-muted-foreground focus:border-accent focus:ring-2 focus:ring-accent"
-                      />
-                    </FormControl>
-                    <FormMessage className="text-accent" />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="lastName"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-foreground">Last Name</FormLabel>
-                    <FormControl>
-                      <Input 
-                        {...field}
-                        className="bg-card border-input text-foreground placeholder:text-muted-foreground focus:border-accent focus:ring-2 focus:ring-accent"
-                      />
-                    </FormControl>
-                    <FormMessage className="text-accent" />
-                  </FormItem>
-                )}
-              />
+              {/* Email */}
               <FormField
                 control={form.control}
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-foreground">Email</FormLabel>
+                    <FormLabel className="text-foreground">Enter Email</FormLabel>
                     <FormControl>
-                      <Input 
+                      <Input
                         type="email"
                         {...field}
                         className="bg-card border-input text-foreground placeholder:text-muted-foreground focus:border-accent focus:ring-2 focus:ring-accent"
@@ -244,117 +213,32 @@ const SignupForm = ({ userType, onBack }) => {
                   </FormItem>
                 )}
               />
-            </div>
-          );
-        case 2:
-          return (
-            <div className="space-y-4">
+            
+              {/* Next Academic Event */}
               <FormField
                 control={form.control}
-                name="lawFieldInterest"
+                name="nextAcademicEvent"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-foreground">Field of law you are interested in?</FormLabel>
-                    <FormControl>
-                      <Input 
-                        {...field}
-                        className="bg-card border-input text-foreground placeholder:text-muted-foreground focus:border-accent focus:ring-2 focus:ring-accent"
-                      />
-                    </FormControl>
-                    <FormMessage className="text-accent" />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="hometown"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-foreground">Where is your hometown?</FormLabel>
-                    <FormControl>
-                      <Input 
-                        {...field}
-                        className="bg-card border-input text-foreground placeholder:text-muted-foreground focus:border-accent focus:ring-2 focus:ring-accent"
-                      />
-                    </FormControl>
-                    <FormMessage className="text-accent" />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="undergraduateUniversity"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-foreground">Where did you go to undergraduate?</FormLabel>
-                    <FormControl>
-                      <Input 
-                        {...field}
-                        className="bg-card border-input text-foreground placeholder:text-muted-foreground focus:border-accent focus:ring-2 focus:ring-accent"
-                      />
-                    </FormControl>
-                    <FormMessage className="text-accent" />
-                  </FormItem>
-                )}
-              />
-            </div>
-          );
-        case 3:
-          return (
-            <div className="space-y-4">
-              <FormField
-                control={form.control}
-                name="hobbiesInterests"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-foreground">Any hobbies/interests outside law school?</FormLabel>
-                    <FormControl>
-                      <Textarea 
-                        {...field}
-                        className="bg-card border-input text-foreground placeholder:text-muted-foreground min-h-[100px] focus:border-accent focus:ring-2 focus:ring-accent"
-                      />
-                    </FormControl>
-                    <FormMessage className="text-accent" />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="expectations"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-foreground">What do you expect from mentors or this program?</FormLabel>
-                    <FormControl>
-                      <Textarea 
-                        {...field}
-                        className="bg-card border-input text-foreground placeholder:text-muted-foreground min-h-[100px] focus:border-accent focus:ring-2 focus:ring-accent"
-                      />
-                    </FormControl>
-                    <FormMessage className="text-accent" />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="hasCar"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-foreground">Do you have a car?</FormLabel>
+                    <FormLabel className="text-foreground">What next academic event would you like?</FormLabel>
                     <Select onValueChange={field.onChange} defaultValue={field.value}>
                       <FormControl>
                         <SelectTrigger className="bg-card border-input text-foreground focus:border-accent focus:ring-2 focus:ring-accent">
-                          <SelectValue placeholder="Select if you have a car" />
+                          <SelectValue placeholder="Select an event" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent className="bg-card border border-border rounded-md shadow-lg z-50">
-                        <SelectItem value="yes" className="text-foreground hover:bg-muted cursor-pointer">
-                          <span className="block">Yes</span>
+                        <SelectItem value="workshop" className="text-foreground hover:bg-muted cursor-pointer">
+                          Workshop
                         </SelectItem>
-                        <SelectItem value="no" className="text-foreground hover:bg-muted cursor-pointer">
-                          <span className="block">No</span>
+                        <SelectItem value="networking" className="text-foreground hover:bg-muted cursor-pointer">
+                          Networking Session
                         </SelectItem>
-                        <SelectItem value="planning" className="text-foreground hover:bg-muted cursor-pointer">
-                          <span className="block">Planning on getting one</span>
+                        <SelectItem value="panel" className="text-foreground hover:bg-muted cursor-pointer">
+                          Panel Discussion
+                        </SelectItem>
+                        <SelectItem value="career-fair" className="text-foreground hover:bg-muted cursor-pointer">
+                          Career Fair
                         </SelectItem>
                       </SelectContent>
                     </Select>
@@ -362,55 +246,35 @@ const SignupForm = ({ userType, onBack }) => {
                   </FormItem>
                 )}
               />
+            
+              {/* Mentor Meetup Preference */}
               <FormField
                 control={form.control}
-                name="timeCommitment"
+                name="meetupPreference"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-foreground">How much time would you like to be dedicated to the mentorship?</FormLabel>
-                    <div className="text-xs text-muted-foreground mb-2">
-                      1 = "I would like to check in for any help every once in a while" | 5 = "I would love a new friend, let's hang out"
-                    </div>
+                    <FormLabel className="text-foreground">How and when would you like to meet up with the mentor?</FormLabel>
                     <Select onValueChange={field.onChange} defaultValue={field.value}>
                       <FormControl>
                         <SelectTrigger className="bg-card border-input text-foreground focus:border-accent focus:ring-2 focus:ring-accent">
-                          <SelectValue placeholder="Select your time commitment level" />
+                          <SelectValue placeholder="Select meetup preference" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent className="bg-card border border-border rounded-md shadow-lg z-50">
-                        <SelectItem value="1" className="text-foreground hover:bg-muted cursor-pointer">
-                          <span className="block">1 - Check in occasionally</span>
+                        <SelectItem value="date-time" className="text-foreground hover:bg-muted cursor-pointer">
+                          Choose Date & Time
                         </SelectItem>
-                        <SelectItem value="2" className="text-foreground hover:bg-muted cursor-pointer">
-                          <span className="block">2</span>
+                        <SelectItem value="coffee" className="text-foreground hover:bg-muted cursor-pointer">
+                          Coffee
                         </SelectItem>
-                        <SelectItem value="3" className="text-foreground hover:bg-muted cursor-pointer">
-                          <span className="block">3 - Moderate engagement</span>
+                        <SelectItem value="dinner" className="text-foreground hover:bg-muted cursor-pointer">
+                          Dinner
                         </SelectItem>
-                        <SelectItem value="4" className="text-foreground hover:bg-muted cursor-pointer">
-                          <span className="block">4</span>
-                        </SelectItem>
-                        <SelectItem value="5" className="text-foreground hover:bg-muted cursor-pointer">
-                          <span className="block">5 - High engagement, new friend</span>
+                        <SelectItem value="walk" className="text-foreground hover:bg-muted cursor-pointer">
+                          Walk/Outdoor Meetup
                         </SelectItem>
                       </SelectContent>
                     </Select>
-                    <FormMessage className="text-accent" />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="concerns"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-foreground">Any other concerns/comments? (Optional)</FormLabel>
-                    <FormControl>
-                      <Textarea 
-                        {...field}
-                        className="bg-card border-input text-foreground placeholder:text-muted-foreground min-h-[80px] focus:border-accent focus:ring-2 focus:ring-accent"
-                      />
-                    </FormControl>
                     <FormMessage className="text-accent" />
                   </FormItem>
                 )}
