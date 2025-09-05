@@ -33,6 +33,10 @@ const SignupForm = ({ userType, onBack }) => {
 
   const schema = userType === "mentor" ? mentorSchema : menteeSchema;
 
+  const handleOutlinesClick = () => {
+    navigate('/outlines');
+  };
+
   const form = useForm({
     resolver: zodResolver(schema),
     defaultValues:
@@ -140,10 +144,10 @@ const SignupForm = ({ userType, onBack }) => {
                           Upload an outline and rate at least one outline
                         </FormLabel>
                         <div className="flex flex-col gap-3">
-                          <Button
-                            type="button"
-                            variant="secondary"
-                            onClick={() => (window.location.href = "/outlines")}
+                          <Button 
+                            size="sm" 
+                            className="px-3 py-2 border-accent text-accent hover:bg-accent/10"
+                            onClick={(e) => { e.stopPropagation(); handleOutlinesClick(); }}
                           >
                             Go to Outlines
                           </Button>
