@@ -39,10 +39,8 @@ const formatDisplay = (date) => {
   }
 };
 
-// Parses “3pm, Tuesday 12th Sep, 2025” and similar.
-// If parsing fails, returns null (countdown + ICS are hidden).
+// parses “3pm, Tuesday 12th Sep, 2025”
 const parseMeetupTime = (meetupTime) => {
-  // Try native first
   const direct = new Date(meetupTime);
   if (!isNaN(direct.getTime())) return direct;
 
@@ -51,7 +49,6 @@ const parseMeetupTime = (meetupTime) => {
     .replace(/,/g, "")
     .trim();
 
-  // e.g. "3pm Tuesday 12 Sep 2025" or "3:15 pm Tue 12 Sep 2025"
   const re =
     /(?:(\d{1,2})(?::(\d{2}))?\s*(am|pm))?\s*(?:mon|tue|wed|thu|fri|sat|sun|monday|tuesday|wednesday|thursday|friday|saturday|sunday)?\s*(\d{1,2})\s*(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\s*(\d{4})/i;
   const m = cleaned.match(re);
@@ -59,18 +56,8 @@ const parseMeetupTime = (meetupTime) => {
 
   const [, hh = "9", mm = "00", ampm = "am", day, mon, year] = m;
   const monthMap = {
-    jan: 0,
-    feb: 1,
-    mar: 2,
-    apr: 3,
-    may: 4,
-    jun: 5,
-    jul: 6,
-    aug: 7,
-    sep: 8,
-    oct: 9,
-    nov: 10,
-    dec: 11,
+    jan: 0, feb: 1, mar: 2, apr: 3, may: 4, jun: 5,
+    jul: 6, aug: 7, sep: 8, oct: 9, nov: 10, dec: 11,
   };
   let H = parseInt(hh, 10) % 12;
   if (ampm && ampm.toLowerCase() === "pm") H += 12;
@@ -125,9 +112,9 @@ const downloadICS = ({ title, description, start, end, location }) => {
 /* -------------------- component -------------------- */
 const MatchupScreen = ({
   mentorName = "Sher Khan",
-  meetupTime = "3pm, Tuesday 12th Sep, 2025", // human-friendly string
+  meetupTime = "3pm, Tuesday 12th Sep, 2025",
   activity = "coffee",
-  location, // optional e.g. "Campus Café"
+  location,                // e.g. "Campus Café"
   durationMinutes = 60,
   docHref = "#",
   docLabel = "General document (expectations of mentors and mentees)",
@@ -173,126 +160,108 @@ Activity: ${activity}${location ? `\nLocation: ${location}` : ""}`;
     <>
       <Header />
 
-      <div className="relative min-h-[70vh] w-full flex items-center justify-center overflow-hidden px-4 py-10">
-        {/* soft gradient + grid background */}
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(1000px_600px_at_50%_-100px,rgba(209,213,219,0.45),transparent)]" />
-        <div className="pointer-events-none absolute inset-0 [background:linear-gradient(to_right,transparent_0,transparent_24px,rgba(0,0,0,0.04)_25px),linear-gradient(to_bottom,transparent_0,transparent_24px,rgba(0,0,0,0.04)_25px)] bg-[length:26px_26px]" />
-
-        <div className="relative">
-          {/* gradient glow frame */}
-          <div className="p-[2px] rounded-2xl bg-gradient-to-br from-amber-300/50 via-rose-300/50 to-emerald-300/50">
-            <Card className="w-full max-w-2xl rounded-2xl backdrop-blur bg-white/70 border-white/60 shadow-xl">
-              <CardContent className="p-8 sm:p-10">
-                {/* header row */}
-                <div className="flex items-center justify-between gap-3 mb-6">
-                  <div className="flex items-center gap-3">
-                    <div className="h-10 w-10 rounded-xl bg-emerald-100 flex items-center justify-center">
-                      <Sparkles className="h-5 w-5 text-emerald-600" />
-                    </div>
-                    <span className="inline-flex items-center rounded-full bg-emerald-600 text-white px-3 py-1 text-xs font-medium">
-                      Matched
-                    </span>
-                  </div>
-
-                  {startDate && countdown && (
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <Clock className="h-4 w-4" />
-                      <span className="font-medium">
-                        {countdown === "Happening now" ? countdown : `${countdown} left`}
-                      </span>
-                    </div>
-                  )}
+      <div className="min-h-[70vh] w-full flex items-center justify-center px-4 py-10 bg-background">
+        <Card className="w-full max-w-2xl rounded-xl border border-border bg-card shadow-sm">
+          <CardContent className="p-7 sm:p-9">
+            {/* header row (neutral) */}
+            <div className="flex items-center justify-between gap-3 mb-5">
+              <div className="flex items-center gap-2">
+                <div className="h-8 w-8 rounded-md bg-muted flex items-center justify-center">
+                  <Sparkles className="h-4 w-4 text-foreground/70" />
                 </div>
+                <span className="inline-flex items-center rounded-full bg-accent/10 text-accent px-2.5 py-1 text-xs font-medium">
+                  Matched
+                </span>
+              </div>
 
-                {/* title */}
-                <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight mb-2">
-                  <span className="bg-clip-text text-transparent bg-gradient-to-r from-zinc-900 to-zinc-600">
-                    You’re matched with {mentorName}
+              {startDate && countdown && (
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <Clock className="h-4 w-4" />
+                  <span className="font-medium">
+                    {countdown === "Happening now" ? countdown : `${countdown} left`}
                   </span>
-                </h1>
-
-                {/* info panels */}
-                <div className="mt-6 grid sm:grid-cols-3 gap-4">
-                  <div className="col-span-2 rounded-xl border border-zinc-200/70 bg-white/60 p-5">
-                    <div className="flex items-center gap-2 text-zinc-600">
-                      <Calendar className="h-4 w-4" />
-                      <span className="text-sm font-medium uppercase tracking-wide">
-                        Time of meetup
-                      </span>
-                    </div>
-                    <div className="mt-2 text-xl font-semibold text-zinc-900">{line1}</div>
-                    {line2 && <div className="text-sm text-zinc-600">{line2}</div>}
-                  </div>
-
-                  <div className="rounded-xl border border-zinc-200/70 bg-white/60 p-5">
-                    <div className="flex items-center gap-2 text-zinc-600">
-                      <Coffee className="h-4 w-4" />
-                      <span className="text-sm font-medium uppercase tracking-wide">
-                        Activity
-                      </span>
-                    </div>
-                    <div className="mt-2 text-xl font-semibold text-zinc-900 capitalize">
-                      {activity}
-                    </div>
-                    {location && (
-                      <div className="mt-1 flex items-center gap-2 text-sm text-zinc-600">
-                        <MapPin className="h-4 w-4" />
-                        <span>{location}</span>
-                      </div>
-                    )}
-                  </div>
                 </div>
+              )}
+            </div>
 
-                {/* actions */}
-                <div className="mt-6 flex flex-wrap items-center gap-3">
-                  {startDate && endDate && (
-                    <Button
-                      onClick={() =>
-                        downloadICS({
-                          title: `Meetup with ${mentorName}`,
-                          description: `Activity: ${activity}${
-                            location ? ` \\nLocation: ${location}` : ""
-                          }`,
-                          start: startDate,
-                          end: endDate,
-                          location,
-                        })
-                      }
-                      className="shadow-sm"
-                    >
-                      <Download className="h-4 w-4 mr-2" />
-                      Add to calendar
-                    </Button>
-                  )}
+            {/* title */}
+            <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight text-foreground">
+              You’re matched with {mentorName}
+            </h1>
 
-                  <Button variant="outline" onClick={copyDetails} className="border-zinc-300">
-                    <Copy className="h-4 w-4 mr-2" />
-                    Copy details
-                  </Button>
-
-                  {docHref && (
-                    <a
-                      href={docHref}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="inline-flex items-center gap-2 rounded-full border border-zinc-300 px-4 py-2 text-sm hover:bg-zinc-50"
-                    >
-                      {docLabel}
-                      <ExternalLink className="h-3.5 w-3.5" />
-                    </a>
-                  )}
+            {/* info panels */}
+            <div className="mt-6 grid sm:grid-cols-3 gap-4">
+              <div className="col-span-2 rounded-lg border border-border bg-muted/30 p-4">
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <Calendar className="h-4 w-4" />
+                  <span className="text-xs font-medium uppercase tracking-wide">
+                    Time of meetup
+                  </span>
                 </div>
-              </CardContent>
-            </Card>
-          </div>
+                <div className="mt-2 text-lg font-semibold text-foreground">{line1}</div>
+                {line2 && <div className="text-sm text-muted-foreground">{line2}</div>}
+              </div>
 
-          {/* subtle spotlight hover */}
-          <div className="pointer-events-none absolute inset-0 rounded-2xl bg-[radial-gradient(300px_200px_at_var(--x,50%)_var(--y,50%),rgba(255,255,255,0.7),transparent)]" />
-        </div>
+              <div className="rounded-lg border border-border bg-muted/30 p-4">
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <Coffee className="h-4 w-4" />
+                  <span className="text-xs font-medium uppercase tracking-wide">
+                    Activity
+                  </span>
+                </div>
+                <div className="mt-2 text-lg font-semibold text-foreground capitalize">
+                  {activity}
+                </div>
+                {location && (
+                  <div className="mt-1 flex items-center gap-2 text-sm text-muted-foreground">
+                    <MapPin className="h-4 w-4" />
+                    <span>{location}</span>
+                  </div>
+                )}
+              </div>
+            </div>
 
-        {/* ambient blobs */}
-        <div className="pointer-events-none absolute left-1/4 top-[15%] h-32 w-32 rounded-full blur-2xl bg-amber-200/40" />
-        <div className="pointer-events-none absolute right-1/4 bottom-[12%] h-40 w-40 rounded-full blur-3xl bg-emerald-200/40" />
+            {/* actions */}
+            <div className="mt-6 flex flex-wrap items-center gap-3">
+              {startDate && endDate && (
+                <Button
+                  onClick={() =>
+                    downloadICS({
+                      title: `Meetup with ${mentorName}`,
+                      description: `Activity: ${activity}${
+                        location ? ` \\nLocation: ${location}` : ""
+                      }`,
+                      start: startDate,
+                      end: endDate,
+                      location,
+                    })
+                  }
+                  className="shadow-none"
+                >
+                  <Download className="h-4 w-4 mr-2" />
+                  Add to calendar
+                </Button>
+              )}
+
+              <Button variant="outline" onClick={copyDetails} className="border-border">
+                <Copy className="h-4 w-4 mr-2" />
+                Copy details
+              </Button>
+
+              {docHref && (
+                <a
+                  href={docHref}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center gap-2 rounded-full border border-border px-4 py-2 text-sm text-foreground hover:bg-muted/40"
+                >
+                  {docLabel}
+                  <ExternalLink className="h-3.5 w-3.5" />
+                </a>
+              )}
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
       <Footer />
