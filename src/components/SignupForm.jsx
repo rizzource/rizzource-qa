@@ -247,23 +247,22 @@ const SignupForm = ({ userType, onBack }) => {
                 )}
               />
             
-              {/* Mentor Meetup Preference */}
+              {/* Mentor Meetup Preference - How */}
               <FormField
                 control={form.control}
-                name="meetupPreference"
+                name="meetupHow"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-foreground">How and when would you like to meet up with the mentor?</FormLabel>
+                    <FormLabel className="text-foreground">
+                      How would you like to meet up with the mentee?
+                    </FormLabel>
                     <Select onValueChange={field.onChange} defaultValue={field.value}>
                       <FormControl>
                         <SelectTrigger className="bg-card border-input text-foreground focus:border-accent focus:ring-2 focus:ring-accent">
-                          <SelectValue placeholder="Select meetup preference" />
+                          <SelectValue placeholder="Select meetup method" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent className="bg-card border border-border rounded-md shadow-lg z-50">
-                        <SelectItem value="date-time" className="text-foreground hover:bg-muted cursor-pointer">
-                          Choose Date & Time
-                        </SelectItem>
                         <SelectItem value="coffee" className="text-foreground hover:bg-muted cursor-pointer">
                           Coffee
                         </SelectItem>
@@ -271,7 +270,48 @@ const SignupForm = ({ userType, onBack }) => {
                           Dinner
                         </SelectItem>
                         <SelectItem value="walk" className="text-foreground hover:bg-muted cursor-pointer">
-                          Walk/Outdoor Meetup
+                          Walk / Outdoor Meetup
+                        </SelectItem>
+                        <SelectItem value="virtual" className="text-foreground hover:bg-muted cursor-pointer">
+                          Virtual (Zoom/Google Meet)
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage className="text-accent" />
+                  </FormItem>
+                )}
+              />
+              
+              {/* Mentor Meetup Preference - When */}
+              <FormField
+                control={form.control}
+                name="meetupWhen"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-foreground">
+                      When would you prefer to meet up with the mentee?
+                    </FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormControl>
+                        <SelectTrigger className="bg-card border-input text-foreground focus:border-accent focus:ring-2 focus:ring-accent">
+                          <SelectValue placeholder="Select preferred time" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent className="bg-card border border-border rounded-md shadow-lg z-50">
+                        <SelectItem value="weekdays" className="text-foreground hover:bg-muted cursor-pointer">
+                          Weekdays
+                        </SelectItem>
+                        <SelectItem value="weekends" className="text-foreground hover:bg-muted cursor-pointer">
+                          Weekends
+                        </SelectItem>
+                        <SelectItem value="mornings" className="text-foreground hover:bg-muted cursor-pointer">
+                          Mornings
+                        </SelectItem>
+                        <SelectItem value="afternoons" className="text-foreground hover:bg-muted cursor-pointer">
+                          Afternoons
+                        </SelectItem>
+                        <SelectItem value="evenings" className="text-foreground hover:bg-muted cursor-pointer">
+                          Evenings
                         </SelectItem>
                       </SelectContent>
                     </Select>
@@ -291,48 +331,17 @@ const SignupForm = ({ userType, onBack }) => {
       case 1:
         return (
           <div className="space-y-4">
-            <FormField
-              control={form.control}
-              name="firstName"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-foreground">First Name</FormLabel>
-                  <FormControl>
-                    <Input 
-                      {...field} 
-                      className="bg-card border-input text-foreground placeholder:text-muted-foreground focus:border-accent focus:ring-2 focus:ring-accent"
-                    />
-                  </FormControl>
-                  <FormMessage className="text-accent" />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="lastName"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-foreground">Last Name</FormLabel>
-                  <FormControl>
-                    <Input 
-                      {...field} 
-                      className="bg-card border-input text-foreground placeholder:text-muted-foreground focus:border-accent focus:ring-2 focus:ring-accent"
-                    />
-                  </FormControl>
-                  <FormMessage className="text-accent" />
-                </FormItem>
-              )}
-            />
+            {/* Email */}
             <FormField
               control={form.control}
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-foreground">Email</FormLabel>
+                  <FormLabel className="text-foreground">Enter Email</FormLabel>
                   <FormControl>
-                    <Input 
+                    <Input
                       type="email"
-                      {...field} 
+                      {...field}
                       className="bg-card border-input text-foreground placeholder:text-muted-foreground focus:border-accent focus:ring-2 focus:ring-accent"
                     />
                   </FormControl>
@@ -340,24 +349,72 @@ const SignupForm = ({ userType, onBack }) => {
                 </FormItem>
               )}
             />
+          
+            {/* Upload an Outline & Rate */}
+            <FormItem>
+              <FormLabel className="text-foreground">
+                Upload an outline and rate at least one outline
+              </FormLabel>
+              <div className="flex flex-col gap-3">
+                {/* Go to outlines button */}
+                <Button
+                  type="button"
+                  variant="secondary"
+                  onClick={() => (window.location.href = "/outlines")}
+                >
+                  Go to Outlines
+                </Button>
+            
+                {/* Checkbox if already uploaded */}
+                <FormField
+                  control={form.control}
+                  name="alreadyUploaded"
+                  render={({ field }) => (
+                    <FormItem className="flex items-center space-x-2">
+                      <FormControl>
+                        <input
+                          type="checkbox"
+                          checked={field.value}
+                          onChange={(e) => field.onChange(e.target.checked)}
+                          className="h-4 w-4 rounded border-input text-accent focus:ring-2 focus:ring-accent"
+                        />
+                      </FormControl>
+                      <FormLabel className="text-foreground text-sm">
+                        I’ve already uploaded & rated
+                      </FormLabel>
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </FormItem>
+          
+            {/* Mentor Meetup Preference - How */}
             <FormField
               control={form.control}
-              name="classYear"
+              name="meetupHow"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-foreground">Class Year</FormLabel>
+                  <FormLabel className="text-foreground">
+                    How would you like to meet up with the mentee?
+                  </FormLabel>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
                       <SelectTrigger className="bg-card border-input text-foreground focus:border-accent focus:ring-2 focus:ring-accent">
-                        <SelectValue placeholder="Select your class year" />
+                        <SelectValue placeholder="Select meetup method" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent className="bg-card border border-border rounded-md shadow-lg z-50">
-                      <SelectItem value="2L" className="text-foreground hover:bg-muted cursor-pointer">
-                        <span className="block">2L</span>
+                      <SelectItem value="coffee" className="text-foreground hover:bg-muted cursor-pointer">
+                        Coffee
                       </SelectItem>
-                      <SelectItem value="3L" className="text-foreground hover:bg-muted cursor-pointer">
-                        <span className="block">3L</span>
+                      <SelectItem value="dinner" className="text-foreground hover:bg-muted cursor-pointer">
+                        Dinner
+                      </SelectItem>
+                      <SelectItem value="walk" className="text-foreground hover:bg-muted cursor-pointer">
+                        Walk / Outdoor Meetup
+                      </SelectItem>
+                      <SelectItem value="virtual" className="text-foreground hover:bg-muted cursor-pointer">
+                        Virtual (Zoom/Google Meet)
                       </SelectItem>
                     </SelectContent>
                   </Select>
@@ -365,173 +422,40 @@ const SignupForm = ({ userType, onBack }) => {
                 </FormItem>
               )}
             />
-          </div>
-        );
-      case 2:
-        return (
-          <div className="space-y-4">
+            
+            {/* Mentor Meetup Preference - When */}
             <FormField
               control={form.control}
-              name="lawFieldInterest"
+              name="meetupWhen"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-foreground">What field of law are you interested in?</FormLabel>
-                  <FormControl>
-                    <Input 
-                      {...field}
-                      className="bg-card border-input text-foreground placeholder:text-muted-foreground focus:border-accent focus:ring-2 focus:ring-accent"
-                    />
-                  </FormControl>
-                  <FormMessage className="text-accent" />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="hometown"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-foreground">Where is your hometown?</FormLabel>
-                  <FormControl>
-                    <Input 
-                      {...field}
-                      className="bg-card border-input text-foreground placeholder:text-muted-foreground focus:border-accent focus:ring-2 focus:ring-accent"
-                    />
-                  </FormControl>
-                  <FormMessage className="text-accent" />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="undergraduateUniversity"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-foreground">Where did you go to undergraduate university?</FormLabel>
-                  <FormControl>
-                    <Input 
-                      {...field}
-                      className="bg-card border-input text-foreground placeholder:text-muted-foreground focus:border-accent focus:ring-2 focus:ring-accent"
-                    />
-                  </FormControl>
-                  <FormMessage className="text-accent" />
-                </FormItem>
-              )}
-            />
-          </div>
-        );
-      case 3:
-        return (
-          <div className="space-y-4">
-            <FormField
-              control={form.control}
-              name="hobbiesInterests"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-foreground">What are your hobbies/interests outside of law school?</FormLabel>
-                  <FormControl>
-                    <Textarea 
-                      {...field}
-                      className="bg-card border-input text-foreground placeholder:text-muted-foreground min-h-[100px] focus:border-accent focus:ring-2 focus:ring-accent"
-                    />
-                  </FormControl>
-                  <FormMessage className="text-accent" />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="timeCommitment"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-foreground">How much time would you like to be dedicated to the mentorship?</FormLabel>
-                  <div className="text-xs text-muted-foreground mb-2">
-                    1 = "I would like to check in for help every once in a while" | 5 = "I would love a new friend, let's hang out!"
-                  </div>
+                  <FormLabel className="text-foreground">
+                    When would you prefer to meet up with the mentee?
+                  </FormLabel>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
                       <SelectTrigger className="bg-card border-input text-foreground focus:border-accent focus:ring-2 focus:ring-accent">
-                        <SelectValue placeholder="Select your time commitment level" />
+                        <SelectValue placeholder="Select preferred time" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent className="bg-card border border-border rounded-md shadow-lg z-50">
-                      <SelectItem value="1" className="text-foreground hover:bg-muted cursor-pointer">
-                        <span className="block">1 - Check in occasionally</span>
+                      <SelectItem value="weekdays" className="text-foreground hover:bg-muted cursor-pointer">
+                        Weekdays
                       </SelectItem>
-                      <SelectItem value="2" className="text-foreground hover:bg-muted cursor-pointer">
-                        <span className="block">2</span>
+                      <SelectItem value="weekends" className="text-foreground hover:bg-muted cursor-pointer">
+                        Weekends
                       </SelectItem>
-                      <SelectItem value="3" className="text-foreground hover:bg-muted cursor-pointer">
-                        <span className="block">3 - Moderate engagement</span>
+                      <SelectItem value="mornings" className="text-foreground hover:bg-muted cursor-pointer">
+                        Mornings
                       </SelectItem>
-                      <SelectItem value="4" className="text-foreground hover:bg-muted cursor-pointer">
-                        <span className="block">4</span>
+                      <SelectItem value="afternoons" className="text-foreground hover:bg-muted cursor-pointer">
+                        Afternoons
                       </SelectItem>
-                      <SelectItem value="5" className="text-foreground hover:bg-muted cursor-pointer">
-                        <span className="block">5 - High engagement, new friend</span>
-                      </SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <FormMessage className="text-accent" />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="hasCar"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-foreground">Do you have a car?</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <FormControl>
-                      <SelectTrigger className="bg-card border-input text-foreground focus:border-accent focus:ring-2 focus:ring-accent">
-                        <SelectValue placeholder="Select if you have a car" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent className="bg-card border border-border rounded-md shadow-lg z-50">
-                      <SelectItem value="yes" className="text-foreground hover:bg-muted cursor-pointer">
-                        <span className="block">Yes</span>
-                      </SelectItem>
-                      <SelectItem value="no" className="text-foreground hover:bg-muted cursor-pointer">
-                        <span className="block">No</span>
-                      </SelectItem>
-                      <SelectItem value="planning" className="text-foreground hover:bg-muted cursor-pointer">
-                        <span className="block">Planning on getting one</span>
+                      <SelectItem value="evenings" className="text-foreground hover:bg-muted cursor-pointer">
+                        Evenings
                       </SelectItem>
                     </SelectContent>
                   </Select>
-                  <FormMessage className="text-accent" />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="coMentors"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-foreground">Is there someone you would like to be co-mentors with? (Optional)</FormLabel>
-                  <FormControl>
-                    <Input 
-                      {...field}
-                      className="bg-card border-input text-foreground placeholder:text-muted-foreground focus:border-accent focus:ring-2 focus:ring-accent"
-                    />
-                  </FormControl>
-                  <FormMessage className="text-accent" />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="lastComments"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-foreground">Any last comments? (Optional)</FormLabel>
-                  <FormControl>
-                    <Textarea 
-                      {...field}
-                      className="bg-card border-input text-foreground placeholder:text-muted-foreground min-h-[80px] focus:border-accent focus:ring-2 focus:ring-accent"
-                    />
-                  </FormControl>
                   <FormMessage className="text-accent" />
                 </FormItem>
               )}
