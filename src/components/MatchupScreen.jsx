@@ -160,109 +160,108 @@ Activity: ${activity}${location ? `\nLocation: ${location}` : ""}`;
     <>
       <Header />
 
-      <div className="min-h-[70vh] w-full flex items-center justify-center px-4 py-10 bg-background">
-        <Card className="w-full max-w-2xl rounded-xl border border-border bg-card shadow-sm">
-          <CardContent className="p-7 sm:p-9">
-            {/* header row (neutral) */}
-            <div className="flex items-center justify-between gap-3 mb-5">
-              <div className="flex items-center gap-2">
-                <div className="h-8 w-8 rounded-md bg-muted flex items-center justify-center">
-                  <Sparkles className="h-4 w-4 text-foreground/70" />
-                </div>
-                <span className="inline-flex items-center rounded-full bg-accent/10 text-accent px-2.5 py-1 text-xs font-medium">
-                  Matched
-                </span>
-              </div>
-
-              {startDate && countdown && (
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <Clock className="h-4 w-4" />
-                  <span className="font-medium">
-                    {countdown === "Happening now" ? countdown : `${countdown} left`}
+      {/* ADDED: generous vertical padding so the card breathes away from header/footer */}
+      <main className="bg-background">
+        <section className="container mx-auto px-4 py-14 md:py-20 lg:py-28">
+          {/* ADDED: top/bottom margin on the card itself, and kept a comfortable max width */}
+          <Card className="mx-auto max-w-2xl rounded-xl border border-border bg-card shadow-sm mt-6 mb-12 md:mt-8 md:mb-16">
+            <CardContent className="p-7 sm:p-9">
+              {/* header row */}
+              <div className="flex items-center justify-between gap-3 mb-5">
+                <div className="flex items-center gap-2">
+                  <div className="h-8 w-8 rounded-md bg-muted flex items-center justify-center">
+                    <Sparkles className="h-4 w-4 text-foreground/70" />
+                  </div>
+                  <span className="inline-flex items-center rounded-full bg-accent/10 text-accent px-2.5 py-1 text-xs font-medium">
+                    Matched
                   </span>
                 </div>
-              )}
-            </div>
 
-            {/* title */}
-            <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight text-foreground">
-              You’re matched with {mentorName}
-            </h1>
-
-            {/* info panels */}
-            <div className="mt-6 grid sm:grid-cols-3 gap-4">
-              <div className="col-span-2 rounded-lg border border-border bg-muted/30 p-4">
-                <div className="flex items-center gap-2 text-muted-foreground">
-                  <Calendar className="h-4 w-4" />
-                  <span className="text-xs font-medium uppercase tracking-wide">
-                    Time of meetup
-                  </span>
-                </div>
-                <div className="mt-2 text-lg font-semibold text-foreground">{line1}</div>
-                {line2 && <div className="text-sm text-muted-foreground">{line2}</div>}
-              </div>
-
-              <div className="rounded-lg border border-border bg-muted/30 p-4">
-                <div className="flex items-center gap-2 text-muted-foreground">
-                  <Coffee className="h-4 w-4" />
-                  <span className="text-xs font-medium uppercase tracking-wide">
-                    Activity
-                  </span>
-                </div>
-                <div className="mt-2 text-lg font-semibold text-foreground capitalize">
-                  {activity}
-                </div>
-                {location && (
-                  <div className="mt-1 flex items-center gap-2 text-sm text-muted-foreground">
-                    <MapPin className="h-4 w-4" />
-                    <span>{location}</span>
+                {startDate && countdown && (
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <Clock className="h-4 w-4" />
+                    <span className="font-medium">
+                      {countdown === "Happening now" ? countdown : `${countdown} left`}
+                    </span>
                   </div>
                 )}
               </div>
-            </div>
 
-            {/* actions */}
-            <div className="mt-6 flex flex-wrap items-center gap-3">
-              {startDate && endDate && (
-                <Button
-                  onClick={() =>
-                    downloadICS({
-                      title: `Meetup with ${mentorName}`,
-                      description: `Activity: ${activity}${
-                        location ? ` \\nLocation: ${location}` : ""
-                      }`,
-                      start: startDate,
-                      end: endDate,
-                      location,
-                    })
-                  }
-                  className="shadow-none"
-                >
-                  <Download className="h-4 w-4 mr-2" />
-                  Add to calendar
+              <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight text-foreground">
+                You’re matched with {mentorName}
+              </h1>
+
+              <div className="mt-6 grid sm:grid-cols-3 gap-4">
+                <div className="col-span-2 rounded-lg border border-border bg-muted/30 p-4">
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <Calendar className="h-4 w-4" />
+                    <span className="text-xs font-medium uppercase tracking-wide">
+                      Time of meetup
+                    </span>
+                  </div>
+                  <div className="mt-2 text-lg font-semibold text-foreground">{line1}</div>
+                  {line2 && <div className="text-sm text-muted-foreground">{line2}</div>}
+                </div>
+
+                <div className="rounded-lg border border-border bg-muted/30 p-4">
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <Coffee className="h-4 w-4" />
+                    <span className="text-xs font-medium uppercase tracking-wide">
+                      Activity
+                    </span>
+                  </div>
+                  <div className="mt-2 text-lg font-semibold text-foreground capitalize">
+                    {activity}
+                  </div>
+                  {location && (
+                    <div className="mt-1 flex items-center gap-2 text-sm text-muted-foreground">
+                      <MapPin className="h-4 w-4" />
+                      <span>{location}</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div className="mt-6 flex flex-wrap items-center gap-3">
+                {startDate && endDate && (
+                  <Button
+                    onClick={() =>
+                      downloadICS({
+                        title: `Meetup with ${mentorName}`,
+                        description: `Activity: ${activity}${location ? ` \\nLocation: ${location}` : ""}`,
+                        start: startDate,
+                        end: endDate,
+                        location,
+                      })
+                    }
+                    className="shadow-none"
+                  >
+                    <Download className="h-4 w-4 mr-2" />
+                    Add to calendar
+                  </Button>
+                )}
+
+                <Button variant="outline" onClick={copyDetails} className="border-border">
+                  <Copy className="h-4 w-4 mr-2" />
+                  Copy details
                 </Button>
-              )}
 
-              <Button variant="outline" onClick={copyDetails} className="border-border">
-                <Copy className="h-4 w-4 mr-2" />
-                Copy details
-              </Button>
-
-              {docHref && (
-                <a
-                  href={docHref}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="inline-flex items-center gap-2 rounded-full border border-border px-4 py-2 text-sm text-foreground hover:bg-muted/40"
-                >
-                  {docLabel}
-                  <ExternalLink className="h-3.5 w-3.5" />
-                </a>
-              )}
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+                {docHref && (
+                  <a
+                    href={docHref}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center gap-2 rounded-full border border-border px-4 py-2 text-sm text-foreground hover:bg-muted/40"
+                  >
+                    {docLabel}
+                    <ExternalLink className="h-3.5 w-3.5" />
+                  </a>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        </section>
+      </main>
 
       <Footer />
     </>
