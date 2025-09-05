@@ -146,7 +146,7 @@ const SignupForm = ({ userType, onBack }) => {
                         <div className="flex flex-col gap-3">
                           <Button 
                             size="sm" 
-                            className="px-3 py-2 border-accent hover:bg-accent/10"
+                            className="w-auto px-3 py-2 border-accent hover:bg-accent/10"
                             onClick={(e) => { e.stopPropagation(); handleOutlinesClick(); }}
                           >
                             Go to Outlines
