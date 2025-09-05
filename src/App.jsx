@@ -13,6 +13,8 @@ import OutlineView from "./pages/OutlineView";
 import { AdminDashboard } from "./pages/AdminDashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
 import ScrollToTop from "./components/ScrollToTop";
+import Screen from "./components/MatchupScreen";
+
 
 const queryClient = new QueryClient();
 
@@ -29,6 +31,7 @@ const App = () => (
           <Route path="/resources" element={<ResourceHub />} />
           <Route path="/outlines" element={<OutlinesHub />} />
           <Route path="/outlines/:id" element={<OutlineView />} />
+          <Route path="/screen" element={<Screen />} />
           <Route path="/apalsa-mentorship" element={<Index mentorshipPage={true} />} />
           <Route path="/mentorship-selection" element={<Index mentorshipPage={true} initialState="selection" />} />
           <Route path="/thank-you" element={<ThankYou />} />
