@@ -87,7 +87,7 @@ const Timeline = () => {
         <div className="flex items-center mb-8">
           <Button 
             variant="outline" 
-            className="flex items-center bg-primary text-primary-foreground hover:bg-primary/90"
+            className="flex items-center justify-center bg-primary text-primary-foreground hover:bg-primary/90"
           >
             {eventType}
           </Button>
