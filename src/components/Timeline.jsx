@@ -93,13 +93,13 @@ const Timeline = () => {
     Academic Events
   </Button>
 
-  <Button 
+  {/* <Button 
     variant="outline" 
     onClick={() => setEventType("Job Events")} 
     className="flex items-center bg-yellow-500 text-white hover:bg-yellow-600"
   >
     Job Events
-  </Button>
+  </Button> */}
 </div>
 
         {/* Timeline Header */}
