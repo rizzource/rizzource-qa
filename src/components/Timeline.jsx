@@ -82,16 +82,9 @@ const Timeline = () => {
   return (
     <div className="min-h-screen bg-background p-8">
       <div className="max-w-6xl mx-auto">
-        {/* Header */}
-        <div className="text-center mb-12">
-          <div className="flex items-center justify-center gap-8 mb-4">
-            <div className="text-4xl font-bold text-primary">RIZZource</div>
-          </div>
-          <p className="text-muted-foreground">The ultimate resource platform for law students</p>
-        </div>
 
         {/* Event Type Toggle */}
-        <div className="flex mb-8">
+        <div className="flex items-center mb-8">
           <Button 
             variant="outline" 
             className="flex items-center bg-primary text-primary-foreground hover:bg-primary/90"
