@@ -84,14 +84,23 @@ const Timeline = () => {
       <div className="max-w-6xl mx-auto">
 
         {/* Event Type Toggle */}
-        <div className="flex items-center mb-8">
-          <Button 
-            variant="outline" 
-            className="flex items-center justify-center bg-primary text-primary-foreground hover:bg-primary/90"
-          >
-            {eventType}
-          </Button>
-        </div>
+      <div className="flex items-center mb-8 space-x-4">
+  <Button 
+    variant="outline" 
+    onClick={() => setEventType("Academic Events")} 
+    className="flex items-center bg-primary text-primary-foreground hover:bg-primary/90"
+  >
+    Academic Events
+  </Button>
+
+  <Button 
+    variant="outline" 
+    onClick={() => setEventType("Job Events")} 
+    className="flex items-center bg-yellow-500 text-white hover:bg-yellow-600"
+  >
+    Job Events
+  </Button>
+</div>
 
         {/* Timeline Header */}
         <h2 className="text-2xl font-semibold text-center mb-8">Timeline - 1L (2025/2026)</h2>
