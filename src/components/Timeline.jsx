@@ -91,10 +91,10 @@ const Timeline = () => {
         </div>
 
         {/* Event Type Toggle */}
-        <div className="mb-8">
+        <div className="flex mb-8">
           <Button 
             variant="outline" 
-            className="bg-primary text-primary-foreground hover:bg-primary/90"
+            className="flex items-center bg-primary text-primary-foreground hover:bg-primary/90"
           >
             {eventType}
           </Button>
@@ -130,13 +130,6 @@ const Timeline = () => {
                   <div className="text-sm font-medium text-foreground uppercase tracking-wider">
                     {month}
                   </div>
-                  
-                  {/* Year indicator in the middle */}
-                  {index === 4 && (
-                    <div className="absolute -bottom-8 text-lg font-semibold text-foreground">
-                      2025
-                    </div>
-                  )}
                   
                   {/* Events Dropdown */}
                   <AnimatePresence>
