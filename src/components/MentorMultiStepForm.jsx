@@ -236,7 +236,7 @@ const MentorMultiStepForm = ({ onBack }) => {
                       size="lg"
                       className="px-3 py-2"
                     >
-                      <Upload className="mr-2 h-4 w-4" />
+                      <Upload className="ml-2 h-4 w-4" />
                       Upload Outline
                     </Button>
                   </div>
