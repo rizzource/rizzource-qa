@@ -7,6 +7,7 @@ import {
   Clock,
   Copy,
   Download,
+  ExternalLink,
   Sparkles,
 } from "lucide-react";
 import Header from "@/components/Header";
