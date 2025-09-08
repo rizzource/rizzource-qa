@@ -13,18 +13,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
 const mentorFormSchema = z.object({
-  firstName: z.string().min(1, "First name is required"),
-  lastName: z.string().min(1, "Last name is required"),
   email: z.string().email("Please enter a valid email address"),
-  classYear: z.string().min(1, "Please select your class year"),
-  fieldOfLaw: z.string().min(1, "Please select your field of law"),
-  hometown: z.string().min(1, "Hometown is required"),
-  undergraduateUniversity: z.string().min(1, "Undergraduate university is required"),
-  hobbies: z.string().optional(),
-  mentorshipTimeCommitment: z.string().min(1, "Please select time commitment"),
-  coMentorPreference: z.string().optional(),
-  comments: z.string().optional(),
-  carAvailability: z.boolean().optional(),
   meetupHow: z.string().min(1, "Please select how you'd like to meet"),
   meetupWhen: z.string().min(1, "Please select when you'd like to meet"),
 });
@@ -38,18 +27,7 @@ const MentorMultiStepForm = ({ onBack }) => {
   const form = useForm({
     resolver: zodResolver(mentorFormSchema),
     defaultValues: {
-      firstName: "",
-      lastName: "",
       email: "",
-      classYear: "",
-      fieldOfLaw: "",
-      hometown: "",
-      undergraduateUniversity: "",
-      hobbies: "",
-      mentorshipTimeCommitment: "",
-      coMentorPreference: "",
-      comments: "",
-      carAvailability: false,
       meetupHow: "",
       meetupWhen: "",
     },
@@ -75,7 +53,7 @@ const MentorMultiStepForm = ({ onBack }) => {
 
         if (mentorData && mentorData.had_uploaded_outline) {
           // Redirect to matchup screen
-          navigate("/matchup", { state: { mentorName: `${data.firstName} ${data.lastName}` } });
+          navigate("/matchup", { state: { mentorEmail: data.email } });
         } else {
           // Go to upload outline step
           setCurrentStep(2);
@@ -105,18 +83,9 @@ const MentorMultiStepForm = ({ onBack }) => {
       setLoading(true);
 
       const { error } = await supabase.from('mentors').insert([{
-        first_name: data.firstName,
-        last_name: data.lastName,
         email: data.email,
-        class_year: data.classYear,
-        field_of_law: data.fieldOfLaw,
-        hometown: data.hometown,
-        undergraduate_university: data.undergraduateUniversity,
-        hobbies: data.hobbies,
-        mentorship_time_commitment: data.mentorshipTimeCommitment,
-        co_mentor_preference: data.coMentorPreference,
-        comments: data.comments,
-        car_availability: data.carAvailability || false,
+        meetup_how: data.meetupHow,
+        meetup_when: data.meetupWhen,
         had_uploaded_outline: false,
       }]);
 
@@ -181,36 +150,6 @@ const MentorMultiStepForm = ({ onBack }) => {
               {currentStep === 1 ? (
                 <Form {...form}>
                   <form onSubmit={form.handleSubmit(handleNextStep)} className="space-y-6">
-                    {/* Personal Information */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <FormField
-                        control={form.control}
-                        name="firstName"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className="text-foreground">First Name</FormLabel>
-                            <FormControl>
-                              <Input {...field} className="bg-card border-input" />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={form.control}
-                        name="lastName"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className="text-foreground">Last Name</FormLabel>
-                            <FormControl>
-                              <Input {...field} className="bg-card border-input" />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-
                     <FormField
                       control={form.control}
                       name="email"
@@ -220,110 +159,6 @@ const MentorMultiStepForm = ({ onBack }) => {
                           <FormControl>
                             <Input type="email" {...field} className="bg-card border-input" />
                           </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <FormField
-                        control={form.control}
-                        name="classYear"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className="text-foreground">Class Year</FormLabel>
-                            <Select onValueChange={field.onChange} defaultValue={field.value}>
-                              <FormControl>
-                                <SelectTrigger className="bg-card border-input">
-                                  <SelectValue placeholder="Select year" />
-                                </SelectTrigger>
-                              </FormControl>
-                              <SelectContent>
-                                <SelectItem value="2L">2L</SelectItem>
-                                <SelectItem value="3L">3L</SelectItem>
-                                <SelectItem value="Graduate">Graduate</SelectItem>
-                              </SelectContent>
-                            </Select>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={form.control}
-                        name="fieldOfLaw"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className="text-foreground">Field of Law</FormLabel>
-                            <Select onValueChange={field.onChange} defaultValue={field.value}>
-                              <FormControl>
-                                <SelectTrigger className="bg-card border-input">
-                                  <SelectValue placeholder="Select field" />
-                                </SelectTrigger>
-                              </FormControl>
-                              <SelectContent>
-                                <SelectItem value="Constitutional Law">Constitutional Law</SelectItem>
-                                <SelectItem value="Criminal Law">Criminal Law</SelectItem>
-                                <SelectItem value="Corporate Law">Corporate Law</SelectItem>
-                                <SelectItem value="Family Law">Family Law</SelectItem>
-                                <SelectItem value="Employment Law">Employment Law</SelectItem>
-                                <SelectItem value="Environmental Law">Environmental Law</SelectItem>
-                                <SelectItem value="Tax Law">Tax Law</SelectItem>
-                                <SelectItem value="Other">Other</SelectItem>
-                              </SelectContent>
-                            </Select>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <FormField
-                        control={form.control}
-                        name="hometown"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className="text-foreground">Hometown</FormLabel>
-                            <FormControl>
-                              <Input {...field} className="bg-card border-input" />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={form.control}
-                        name="undergraduateUniversity"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className="text-foreground">Undergraduate University</FormLabel>
-                            <FormControl>
-                              <Input {...field} className="bg-card border-input" />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-
-                    <FormField
-                      control={form.control}
-                      name="mentorshipTimeCommitment"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="text-foreground">Time Commitment</FormLabel>
-                          <Select onValueChange={field.onChange} defaultValue={field.value}>
-                            <FormControl>
-                              <SelectTrigger className="bg-card border-input">
-                                <SelectValue placeholder="Select time commitment" />
-                              </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                              <SelectItem value="1-2 hours/week">1-2 hours/week</SelectItem>
-                              <SelectItem value="3-5 hours/week">3-5 hours/week</SelectItem>
-                              <SelectItem value="5+ hours/week">5+ hours/week</SelectItem>
-                            </SelectContent>
-                          </Select>
                           <FormMessage />
                         </FormItem>
                       )}
@@ -387,7 +222,7 @@ const MentorMultiStepForm = ({ onBack }) => {
               ) : (
                 <div className="text-center space-y-6">
                   <p className="text-muted-foreground">
-                    To become a mentor, you need to upload an outline first. This helps us match you with mentees
+                    To become a mentor, you need to upload an outline and rate at least one outline. This helps us match you with mentees
                     and demonstrates your expertise in your field of law.
                   </p>
                   <Button 
