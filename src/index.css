@@ -359,10 +359,21 @@ All colors MUST be HSL.
   [data-radix-select-item]:focus {
     background-color: rgb(243 244 246) !important;
     outline: none !important;
+    transition: background-color 0.2s ease-in-out !important;
   }
-  
+
+  [data-radix-select-item]:hover {
+    background-color: rgb(243 244 246) !important;
+    transition: background-color 0.2s ease-in-out !important;
+  }
+
   [data-radix-select-item][data-state="checked"] {
     background-color: rgb(243 244 246) !important;
+    transition: background-color 0.2s ease-in-out !important;
+  }
+
+  [data-radix-select-item] {
+    transition: background-color 0.2s ease-in-out !important;
   }
   
   [data-radix-select-item][data-state="checked"]::after {
