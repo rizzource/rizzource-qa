@@ -212,28 +212,26 @@ const OutlinesUpload = ({ onUploadSuccess }) => {
 
       setUploadStatus('success');
       
+      toast({
+        title: "Success!",
+        description: "Your outline has been uploaded successfully.",
+      });
+      
       // Handle mentor flow if mentor data exists
       if (mentorData) {
         await handleMentorFlow(outlineData);
-      } else if (onUploadSuccess) {
-        // Call the onUploadSuccess callback if provided
-        setTimeout(() => {
-          onUploadSuccess(outlineData);
-        }, 1500);
       } else {
-        // Reset form after success (standalone usage)
+        // For standalone outline upload, redirect to matchup screen
         setTimeout(() => {
-          setFormData({
-            title: "",
-            professor: "",
-            topic: "",
-            year: "",
-            tags: "",
-            notes: "",
-            file: null
+          navigate("/matchup", { 
+            state: { 
+              mentorName: "Your Mentor",
+              activity: "coffee",
+              meetupTime: "3pm, Tuesday 12th Sep, 2025",
+              location: "Campus Café"
+            }
           });
-          setUploadStatus(null);
-        }, 3000);
+        }, 1500);
       }
     } catch (error) {
       console.error('Upload error:', error);
