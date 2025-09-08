@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -8,9 +8,14 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Upload, FileText, AlertCircle, CheckCircle, X } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { useNavigate } from "react-router-dom";
+import { useToast } from "@/hooks/use-toast";
 
 const OutlinesUpload = ({ onUploadSuccess }) => {
   const fileInputRef = useRef(null);
+  const navigate = useNavigate();
+  const { toast } = useToast();
+  const [mentorData, setMentorData] = useState(null);
   const [formData, setFormData] = useState({
     title: "",
     professor: "",
@@ -22,6 +27,14 @@ const OutlinesUpload = ({ onUploadSuccess }) => {
   });
   const [uploadStatus, setUploadStatus] = useState(null); // null, 'uploading', 'success', 'error'
   const [dragActive, setDragActive] = useState(false);
+
+  useEffect(() => {
+    // Check for mentor data from session storage
+    const storedData = sessionStorage.getItem("mentorFormData");
+    if (storedData) {
+      setMentorData(JSON.parse(storedData));
+    }
+  }, []);
 
   const topics = ["Constitutional Law", "Contracts", "Criminal Law", "Torts", "Civil Procedure", "Property Law", "Administrative Law", "Evidence", "Tax Law", "Corporate Law", "Employment Law", "Environmental Law"];
   const years = ["1L", "2L", "3L"];
@@ -89,6 +102,71 @@ const OutlinesUpload = ({ onUploadSuccess }) => {
     }
   };
 
+  const handleMentorFlow = async (outlineData) => {
+    if (!mentorData) {
+      toast({
+        title: "Error",
+        description: "Mentor information not found. Please start over.",
+        variant: "destructive",
+      });
+      navigate("/mentorship-selection");
+      return;
+    }
+
+    try {
+      // First, save the mentor to the database
+      const { error: mentorError } = await supabase.from('mentors').insert([{
+        email: mentorData.email,
+        meetup_how: mentorData.meetupHow,
+        meetup_when: mentorData.meetupWhen,
+        had_uploaded_outline: true, // Set to true since they're uploading now
+      }]);
+
+      if (mentorError) {
+        throw mentorError;
+      }
+
+      // Update the outline with the mentor's email
+      const { error: outlineError } = await supabase
+        .from('outlines')
+        .update({ mentor_email: mentorData.email })
+        .eq('id', outlineData.id);
+
+      if (outlineError) {
+        console.error("Error updating outline with mentor email:", outlineError);
+        // Continue anyway as the main flow is complete
+      }
+
+      // Clear session storage
+      sessionStorage.removeItem("mentorFormData");
+
+      toast({
+        title: "Success!",
+        description: "Your mentor application and outline have been submitted successfully.",
+      });
+
+      // Navigate to matchup screen
+      setTimeout(() => {
+        navigate("/matchup", { 
+          state: { 
+            mentorName: `Mentor`,
+            activity: mentorData.meetupHow || "coffee",
+            meetupTime: mentorData.meetupWhen || "3pm, Tuesday 12th Sep, 2025",
+            location: "Campus Café"
+          } 
+        });
+      }, 1500);
+
+    } catch (error) {
+      console.error("Error in mentor flow:", error);
+      toast({
+        title: "Error",
+        description: "There was an error completing your registration. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setUploadStatus('uploading');
@@ -136,8 +214,11 @@ const OutlinesUpload = ({ onUploadSuccess }) => {
 
       setUploadStatus('success');
       
-      // Call the onUploadSuccess callback if provided (for the flow)
-      if (onUploadSuccess) {
+      // Handle mentor flow if mentor data exists
+      if (mentorData) {
+        await handleMentorFlow(outlineData);
+      } else if (onUploadSuccess) {
+        // Call the onUploadSuccess callback if provided
         setTimeout(() => {
           onUploadSuccess(outlineData);
         }, 1500);

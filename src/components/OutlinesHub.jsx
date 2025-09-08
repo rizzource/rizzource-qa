@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
@@ -6,11 +6,19 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import OutlinesBrowse from "./outlines/OutlinesBrowse";
 import OutlinesUpload from "./outlines/OutlinesUpload";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 const OutlinesHub = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [activeTab, setActiveTab] = useState("browse");
+
+  useEffect(() => {
+    const tabParam = searchParams.get("tab");
+    if (tabParam === "upload") {
+      setActiveTab("upload");
+    }
+  }, [searchParams]);
   
   // Navigate back to resource hub
   const handleBack = () => {

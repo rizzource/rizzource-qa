@@ -14,7 +14,7 @@ import { AdminDashboard } from "./pages/AdminDashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
 import ScrollToTop from "./components/ScrollToTop";
 import MatchupPage from "./pages/MatchupPage";
-import OutlineUploadFlow from "./components/OutlineUploadFlow";
+
 
 
 const queryClient = new QueryClient();
@@ -31,7 +31,7 @@ const App = () => (
           <Route path="/auth" element={<Auth />} />
           <Route path="/resources" element={<ResourceHub />} />
           <Route path="/outlines" element={<OutlinesHub />} />
-          <Route path="/outlines/upload" element={<OutlineUploadFlow />} />
+          
           <Route path="/outlines/:id" element={<OutlineView />} />
           <Route path="/matchup" element={<MatchupPage />} />
           <Route path="/apalsa-mentorship" element={<Index mentorshipPage={true} />} />

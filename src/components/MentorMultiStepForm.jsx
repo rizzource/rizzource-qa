@@ -75,7 +75,7 @@ const MentorMultiStepForm = ({ onBack }) => {
     // Store current form data before navigating
     const currentFormData = form.getValues();
     sessionStorage.setItem("mentorFormData", JSON.stringify(currentFormData));
-    navigate("/outlines/upload");
+    navigate("/outlines?tab=upload");
   };
 
   const onSubmit = async (data) => {
