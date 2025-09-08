@@ -117,18 +117,18 @@ const SchedulingForm = ({ onBack, initialUserType }) => {
       
       const insertPromise = supabase
         .from("scheduling_responses")
-        .insert([formattedData])
-        .select()
-        .single();
+        .insert([formattedData], { returning: "minimal" });
 
       const timeoutPromise = new Promise((_, reject) =>
         setTimeout(() => reject(new Error("Database insertion timed out after 10 seconds")), 10000)
       );
 
-      const { data: insertedData, error: schedulingError } = await Promise.race([
+      const insertResult = await Promise.race([
         insertPromise,
         timeoutPromise
       ]);
+
+      const schedulingError = insertResult?.error;
 
       if (schedulingError) {
         console.error("Database insertion error:", {
@@ -141,7 +141,7 @@ const SchedulingForm = ({ onBack, initialUserType }) => {
         throw new Error(schedulingError.message || "Failed to save to database");
       }
 
-      console.log("Database insertion successful:", insertedData);
+      console.log("Database insertion successful");
 
       toast({
         title: "Success!",
