@@ -241,6 +241,54 @@ export type Database = {
         }
         Relationships: []
       }
+      scheduling_responses: {
+        Row: {
+          activities: string[]
+          created_at: string
+          date_type: string
+          earliest_time: string
+          email: string
+          full_name: string
+          id: string
+          latest_time: string
+          mentor_options: string[] | null
+          selected_dates: string[] | null
+          selected_days: string[] | null
+          updated_at: string
+          user_type: string
+        }
+        Insert: {
+          activities: string[]
+          created_at?: string
+          date_type: string
+          earliest_time: string
+          email: string
+          full_name: string
+          id?: string
+          latest_time: string
+          mentor_options?: string[] | null
+          selected_dates?: string[] | null
+          selected_days?: string[] | null
+          updated_at?: string
+          user_type: string
+        }
+        Update: {
+          activities?: string[]
+          created_at?: string
+          date_type?: string
+          earliest_time?: string
+          email?: string
+          full_name?: string
+          id?: string
+          latest_time?: string
+          mentor_options?: string[] | null
+          selected_dates?: string[] | null
+          selected_days?: string[] | null
+          updated_at?: string
+          user_type?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

@@ -1,8 +1,32 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowLeft, GraduationCap, Users } from "lucide-react";
+import SchedulingForm from "@/components/SchedulingForm";
 
 const MentorMenteeSelection = ({ onSelectType, onBack }) => {
+  const [selectedType, setSelectedType] = useState(null);
+  const [showForm, setShowForm] = useState(false);
+
+  const handleSelectType = (type) => {
+    setSelectedType(type);
+    setShowForm(true);
+  };
+
+  const handleBackToSelection = () => {
+    setShowForm(false);
+    setSelectedType(null);
+  };
+
+  if (showForm) {
+    return (
+      <SchedulingForm 
+        onBack={handleBackToSelection}
+        initialUserType={selectedType}
+      />
+    );
+  }
+
   return (
     <section className="min-h-screen bg-background flex items-center py-20">
       <div className="container mx-auto px-4">
@@ -30,7 +54,7 @@ const MentorMenteeSelection = ({ onSelectType, onBack }) => {
           {/* Selection Cards */}
           <div className="grid md:grid-cols-2 gap-8">
             <Card className="p-6 bg-card backdrop-blur-sm border-border hover:bg-muted/50 transition-all duration-300 cursor-pointer group"
-                  onClick={() => onSelectType('mentor')}>
+                  onClick={() => handleSelectType('mentor')}>
               <CardHeader className="text-center pb-4">
                 <div className="mx-auto mb-4 p-4 bg-accent/20 rounded-full w-fit group-hover:bg-accent/30 transition-colors">
                   <GraduationCap className="h-12 w-12 text-accent" />
@@ -52,7 +76,7 @@ const MentorMenteeSelection = ({ onSelectType, onBack }) => {
                   className="rounded-xl px-8 py-3"
                   onClick={(e) => {
                     e.stopPropagation();
-                    onSelectType('mentor');
+                    handleSelectType('mentor');
                   }}
                 >
                   Join as Mentor
@@ -61,7 +85,7 @@ const MentorMenteeSelection = ({ onSelectType, onBack }) => {
             </Card>
           
             <Card className="p-6 bg-card backdrop-blur-sm border-border hover:bg-muted/50 transition-all duration-300 cursor-pointer group"
-                  onClick={() => onSelectType('mentee')}>
+                  onClick={() => handleSelectType('mentee')}>
               <CardHeader className="text-center pb-4">
                 <div className="mx-auto mb-4 p-4 bg-accent/20 rounded-full w-fit group-hover:bg-accent/30 transition-colors">
                   <Users className="h-12 w-12 text-accent" />
@@ -83,7 +107,7 @@ const MentorMenteeSelection = ({ onSelectType, onBack }) => {
                   className="rounded-xl px-8 py-3"
                   onClick={(e) => {
                     e.stopPropagation();
-                    onSelectType('mentee');
+                    handleSelectType('mentee');
                   }}
                 >
                   Join as Mentee
