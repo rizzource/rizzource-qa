@@ -67,49 +67,28 @@ export type Database = {
       }
       mentees: {
         Row: {
-          car_availability: boolean | null
-          comments: string | null
           created_at: string
           email: string
-          expectations: string | null
-          field_of_law: string
-          first_name: string
-          hobbies: string | null
-          hometown: string
+          event: string
           id: string
-          last_name: string
-          mentorship_time_commitment: string
-          undergraduate_university: string
+          meetup_how: string
+          meetup_when: string
         }
         Insert: {
-          car_availability?: boolean | null
-          comments?: string | null
           created_at?: string
           email: string
-          expectations?: string | null
-          field_of_law: string
-          first_name: string
-          hobbies?: string | null
-          hometown: string
+          event: string
           id?: string
-          last_name: string
-          mentorship_time_commitment: string
-          undergraduate_university: string
+          meetup_how: string
+          meetup_when: string
         }
         Update: {
-          car_availability?: boolean | null
-          comments?: string | null
           created_at?: string
           email?: string
-          expectations?: string | null
-          field_of_law?: string
-          first_name?: string
-          hobbies?: string | null
-          hometown?: string
+          event?: string
           id?: string
-          last_name?: string
-          mentorship_time_commitment?: string
-          undergraduate_university?: string
+          meetup_how?: string
+          meetup_when?: string
         }
         Relationships: []
       }
@@ -119,24 +98,24 @@ export type Database = {
           email: string
           had_uploaded_outline: boolean | null
           id: string
-          meetup_how: string | null
-          meetup_when: string | null
+          meetup_how: string
+          meetup_when: string
         }
         Insert: {
           created_at?: string
           email: string
           had_uploaded_outline?: boolean | null
           id?: string
-          meetup_how?: string | null
-          meetup_when?: string | null
+          meetup_how: string
+          meetup_when: string
         }
         Update: {
           created_at?: string
           email?: string
           had_uploaded_outline?: boolean | null
           id?: string
-          meetup_how?: string | null
-          meetup_when?: string | null
+          meetup_how?: string
+          meetup_when?: string
         }
         Relationships: []
       }
