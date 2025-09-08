@@ -91,6 +91,7 @@ const SchedulingForm = ({ onBack, initialUserType }) => {
   const watchUserType = form.watch("userType");
 
   const onSubmit = async (data) => {
+    console.log("Form submission started", data);
     setLoading(true);
     try {
       const formattedData = {
@@ -108,20 +109,27 @@ const SchedulingForm = ({ onBack, initialUserType }) => {
         mentor_options: data.userType === "mentor" ? data.mentorOptions : null,
       };
 
+      console.log("Formatted data:", formattedData);
+
       // Insert into scheduling_responses table
+      console.log("Inserting into database...");
       const { error: schedulingError } = await supabase
         .from("scheduling_responses")
         .insert([formattedData]);
 
       if (schedulingError) {
+        console.error("Database insertion error:", schedulingError);
         throw schedulingError;
       }
+
+      console.log("Database insertion successful");
 
       toast({
         title: "Success!",
         description: "Your scheduling preferences have been saved.",
       });
 
+      console.log("Navigating to matchup page...");
       // Navigate to matchup page
       navigate("/matchup", {
         state: {
@@ -141,6 +149,7 @@ const SchedulingForm = ({ onBack, initialUserType }) => {
         variant: "destructive",
       });
     } finally {
+      console.log("Setting loading to false");
       setLoading(false);
     }
   };
