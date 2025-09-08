@@ -10,11 +10,13 @@ import { Upload, FileText, AlertCircle, CheckCircle, X } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/components/AuthProvider";
 
 const OutlinesUpload = ({ onUploadSuccess }) => {
   const fileInputRef = useRef(null);
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { user } = useAuth();
   const [mentorData, setMentorData] = useState(null);
   const [formData, setFormData] = useState({
     title: "",
@@ -169,14 +171,26 @@ const OutlinesUpload = ({ onUploadSuccess }) => {
     e.preventDefault();
     setUploadStatus('uploading');
     
+    // Check if user is authenticated
+    if (!user) {
+      toast({
+        title: "Authentication Required",
+        description: "Please log in to upload outlines.",
+        variant: "destructive",
+      });
+      setUploadStatus(null);
+      return;
+    }
+    
     try {
-      // Upload file to Supabase storage
+      // Upload file to Supabase storage with user-specific path
       const fileExt = formData.file.name.split('.').pop();
       const fileName = `${Date.now()}.${fileExt}`;
+      const filePath = `outlines/${user.id}/${fileName}`;
       
       const { data: uploadData, error: uploadError } = await supabase.storage
         .from('assets')
-        .upload(`outlines/${fileName}`, formData.file);
+        .upload(filePath, formData.file);
 
       if (uploadError) {
         throw uploadError;
@@ -185,9 +199,9 @@ const OutlinesUpload = ({ onUploadSuccess }) => {
       // Get the public URL
       const { data: { publicUrl } } = supabase.storage
         .from('assets')
-        .getPublicUrl(`outlines/${fileName}`);
+        .getPublicUrl(filePath);
 
-      // Save outline data to database
+      // Save outline data to database with real user ID
       const { data: outlineData, error: dbError } = await supabase
         .from('outlines')
         .insert([{
@@ -201,7 +215,7 @@ const OutlinesUpload = ({ onUploadSuccess }) => {
           file_url: publicUrl,
           file_size: formData.file.size,
           file_type: formData.file.type,
-          user_id: '00000000-0000-0000-0000-000000000000', // Placeholder for now
+          user_id: user.id,
         }])
         .select()
         .single();
@@ -236,6 +250,15 @@ const OutlinesUpload = ({ onUploadSuccess }) => {
     } catch (error) {
       console.error('Upload error:', error);
       setUploadStatus('error');
+      
+      // Show specific error message from Supabase
+      const errorMessage = error.message || "An unexpected error occurred during upload.";
+      toast({
+        title: "Upload Failed",
+        description: errorMessage,
+        variant: "destructive",
+      });
+      
       setTimeout(() => setUploadStatus(null), 3000);
     }
   };
