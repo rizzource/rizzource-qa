@@ -115,55 +115,28 @@ export type Database = {
       }
       mentors: {
         Row: {
-          car_availability: boolean | null
-          class_year: string
-          co_mentor_preference: string | null
-          comments: string | null
           created_at: string
           email: string
-          field_of_law: string
-          first_name: string
           had_uploaded_outline: boolean | null
-          hobbies: string | null
-          hometown: string
           id: string
-          last_name: string
-          mentorship_time_commitment: string
-          undergraduate_university: string
+          meetup_how: string | null
+          meetup_when: string | null
         }
         Insert: {
-          car_availability?: boolean | null
-          class_year: string
-          co_mentor_preference?: string | null
-          comments?: string | null
           created_at?: string
           email: string
-          field_of_law: string
-          first_name: string
           had_uploaded_outline?: boolean | null
-          hobbies?: string | null
-          hometown: string
           id?: string
-          last_name: string
-          mentorship_time_commitment: string
-          undergraduate_university: string
+          meetup_how?: string | null
+          meetup_when?: string | null
         }
         Update: {
-          car_availability?: boolean | null
-          class_year?: string
-          co_mentor_preference?: string | null
-          comments?: string | null
           created_at?: string
           email?: string
-          field_of_law?: string
-          first_name?: string
           had_uploaded_outline?: boolean | null
-          hobbies?: string | null
-          hometown?: string
           id?: string
-          last_name?: string
-          mentorship_time_commitment?: string
-          undergraduate_university?: string
+          meetup_how?: string | null
+          meetup_when?: string | null
         }
         Relationships: []
       }
