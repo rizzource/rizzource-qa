@@ -222,8 +222,8 @@ const MentorMultiStepForm = ({ onBack }) => {
                         </FormItem>
                       )}
                     />
-                    <div className="flex justify-end">
-                      <Button type="submit" disabled={loading} className="ml-auto">
+                    <div className="flex justify-end space-x-4">
+                      <Button type="submit" disabled={loading} className="flex-1">
                         {loading ? "Checking..." : "Next"}
                       </Button>
                     </div>
