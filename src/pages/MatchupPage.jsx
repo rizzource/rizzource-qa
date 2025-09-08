@@ -5,7 +5,7 @@ import Footer from "@/components/Footer";
 
 const MatchupPage = () => {
   const location = useLocation();
-  const { mentorName, activity, meetupTime, location: meetupLocation } = location.state || {};
+  const { mentorName, activity, meetupTime, selectedDates } = location.state || {};
 
   return (
     <div className="min-h-screen">
@@ -15,7 +15,7 @@ const MatchupPage = () => {
           mentorName={mentorName || "Sher Khan"} 
           meetupTime={meetupTime || "3pm, Tuesday 12th Sep, 2025"}
           activity={activity || "coffee"}
-          location={meetupLocation || "Campus Café"}
+          selectedDates={selectedDates || ["Monday", "Wednesday"]}
         />
       </main>
       <Footer />

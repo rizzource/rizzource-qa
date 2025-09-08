@@ -7,8 +7,6 @@ import {
   Clock,
   Copy,
   Download,
-  ExternalLink,
-  MapPin,
   Sparkles,
 } from "lucide-react";
 import Header from "@/components/Header";
@@ -71,7 +69,7 @@ const MatchupScreen = ({
   mentorName = "Sher Khan",
   meetupTime = "3pm, Tuesday 12th Sep, 2025",
   activity = "coffee",
-  location = "Campus Café",      // <-- NEW default, can be omitted
+  selectedDates = ["Monday", "Wednesday"],      // <-- NEW: dates or days
   durationMinutes = 60,
   docHref = "#",
   docLabel = "General document (expectations of mentors and mentees)",
@@ -79,7 +77,6 @@ const MatchupScreen = ({
   const startDate = useMemo(() => parseMeetupTime(meetupTime), [meetupTime]);
   const endDate = useMemo(() => (startDate ? new Date(startDate.getTime() + durationMinutes * 60000) : null), [startDate, durationMinutes]);
   const { line1, line2 } = startDate ? formatDisplay(startDate) : { line1: meetupTime, line2: "" };
-  const mapsHref = location ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(location)}` : null;
 
   const [countdown, setCountdown] = useState("");
   useEffect(() => {
@@ -98,7 +95,8 @@ const MatchupScreen = ({
   const copyDetails = async () => {
     const text = `You’re matched with ${mentorName}
 Time: ${line1}${line2 ? `, ${line2}` : ""}
-Activity: ${activity}${location ? `\nLocation: ${location}` : ""}`;
+Activity: ${activity}
+Decided Dates: ${Array.isArray(selectedDates) && selectedDates.length > 0 ? selectedDates.join(", ") : "To be confirmed"}`;
     try { await navigator.clipboard.writeText(text); } catch {}
   };
 
@@ -161,28 +159,21 @@ Activity: ${activity}${location ? `\nLocation: ${location}` : ""}`;
                   </div>
                 </div>
 
-                {/* Location (NEW) */}
-                {location && (
-                  <div className="rounded-lg border border-border bg-muted/30 p-4">
-                    <div className="flex items-center gap-2 text-muted-foreground">
-                      <MapPin className="h-4 w-4" />
-                      <span className="text-xs font-medium uppercase tracking-wide">
-                        Location
-                      </span>
-                    </div>
-                    <div className="mt-2 text-lg font-semibold text-foreground">{location}</div>
-                    {mapsHref && (
-                      <a
-                        href={mapsHref}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="mt-1 inline-flex items-center gap-1 text-sm text-accent hover:underline"
-                      >
-                        Open in Maps <ExternalLink className="h-3.5 w-3.5" />
-                      </a>
-                    )}
+                {/* Dates/Days */}
+                <div className="rounded-lg border border-border bg-muted/30 p-4">
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <Calendar className="h-4 w-4" />
+                    <span className="text-xs font-medium uppercase tracking-wide">
+                      Decided Dates
+                    </span>
                   </div>
-                )}
+                  <div className="mt-2 text-lg font-semibold text-foreground">
+                    {Array.isArray(selectedDates) && selectedDates.length > 0 
+                      ? selectedDates.join(", ")
+                      : "To be confirmed"
+                    }
+                  </div>
+                </div>
               </div>
 
               {/* actions */}
@@ -192,10 +183,10 @@ Activity: ${activity}${location ? `\nLocation: ${location}` : ""}`;
                     onClick={() =>
                       downloadICS({
                         title: `Meetup with ${mentorName}`,
-                        description: `Activity: ${activity}${location ? ` \\nLocation: ${location}` : ""}`,
+                        description: `Activity: ${activity}\\nDecided Dates: ${Array.isArray(selectedDates) && selectedDates.length > 0 ? selectedDates.join(", ") : "To be confirmed"}`,
                         start: startDate,
                         end: endDate,
-                        location,
+                        location: "",
                       })
                     }
                     className="shadow-none"
