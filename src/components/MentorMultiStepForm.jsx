@@ -230,14 +230,16 @@ const MentorMultiStepForm = ({ onBack }) => {
                     To become a mentor, you need to upload an outline and rate at least one outline. This helps us match you with mentees
                     and demonstrates your expertise in your field of law.
                   </p>
-                  <Button 
-                    onClick={handleUploadOutline}
-                    size="lg"
-                    className="w-full"
-                  >
-                    <Upload className="mr-2 h-4 w-4" />
-                    Upload Outline
-                  </Button>
+                  <div className="flex gap-2 pt-4 mt-auto">
+                    <Button 
+                      onClick={handleUploadOutline}
+                      size="lg"
+                      className="px-3 py-2"
+                    >
+                      <Upload className="mr-2 h-4 w-4" />
+                      Upload Outline
+                    </Button>
+                  </div>
                 </div>
               )}
             </CardContent>
