@@ -93,6 +93,7 @@ const SchedulingForm = ({ onBack, initialUserType }) => {
   const onSubmit = async (data) => {
     console.log("Form submission started", data);
     setLoading(true);
+    
     try {
       const formattedData = {
         full_name: data.fullName,
@@ -111,18 +112,36 @@ const SchedulingForm = ({ onBack, initialUserType }) => {
 
       console.log("Formatted data:", formattedData);
 
-      // Insert into scheduling_responses table
+      // Insert into scheduling_responses table with timeout
       console.log("Inserting into database...");
-      const { error: schedulingError } = await supabase
+      
+      const insertPromise = supabase
         .from("scheduling_responses")
-        .insert([formattedData]);
+        .insert([formattedData])
+        .select()
+        .single();
+
+      const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error("Database insertion timed out after 10 seconds")), 10000)
+      );
+
+      const { data: insertedData, error: schedulingError } = await Promise.race([
+        insertPromise,
+        timeoutPromise
+      ]);
 
       if (schedulingError) {
-        console.error("Database insertion error:", schedulingError);
-        throw schedulingError;
+        console.error("Database insertion error:", {
+          error: schedulingError,
+          message: schedulingError.message,
+          details: schedulingError.details,
+          hint: schedulingError.hint,
+          code: schedulingError.code
+        });
+        throw new Error(schedulingError.message || "Failed to save to database");
       }
 
-      console.log("Database insertion successful");
+      console.log("Database insertion successful:", insertedData);
 
       toast({
         title: "Success!",
@@ -142,7 +161,11 @@ const SchedulingForm = ({ onBack, initialUserType }) => {
         },
       });
     } catch (error) {
-      console.error("Submission error:", error);
+      console.error("Submission error:", {
+        error: error,
+        message: error.message,
+        stack: error.stack
+      });
       toast({
         title: "Error",
         description: error.message || "Failed to save your preferences. Please try again.",
