@@ -222,10 +222,11 @@ const MentorMultiStepForm = ({ onBack }) => {
                         </FormItem>
                       )}
                     />
-
-                    <Button type="submit" disabled={loading} className="w-full">
-                      {loading ? "Checking..." : "Next"}
-                    </Button>
+                    <div className="flex space-x-4">
+                      <Button type="submit" disabled={loading} className="flex-1">
+                        {loading ? "Checking..." : "Next"}
+                      </Button>
+                    </div>
                   </form>
                 </Form>
               )}
