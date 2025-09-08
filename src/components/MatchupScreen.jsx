@@ -165,7 +165,13 @@ Decided Dates: ${Array.isArray(selectedDates) && selectedDates.length > 0 ? sele
                   <div className="flex items-center gap-2 text-muted-foreground">
                     <Calendar className="h-4 w-4" />
                     <span className="text-xs font-medium uppercase tracking-wide">
-                      Decided Dates
+                      {(() => {
+                        if (!Array.isArray(selectedDates) || selectedDates.length === 0) return "Decided Dates";
+                        // Check if first item looks like a date (contains numbers/hyphens) vs day name
+                        const firstItem = selectedDates[0];
+                        const isDate = /^\d{4}-\d{2}-\d{2}$|^\d{1,2}\/\d{1,2}\/\d{4}$|^\d{1,2}-\d{1,2}-\d{4}$/.test(firstItem);
+                        return isDate ? "Decided Dates" : "Decided Days";
+                      })()}
                     </span>
                   </div>
                   <div className="mt-2 text-lg font-semibold text-foreground">
