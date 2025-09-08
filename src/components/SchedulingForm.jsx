@@ -273,28 +273,6 @@ const SchedulingForm = ({ onBack, initialUserType }) => {
                         )}
                       />
 
-                      <FormField
-                        control={form.control}
-                        name="userType"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className="text-foreground">I am a</FormLabel>
-                            <Select onValueChange={field.onChange} defaultValue={field.value}>
-                              <FormControl>
-                                <SelectTrigger className="bg-card border-input text-foreground focus:border-accent focus:ring-2 focus:ring-accent">
-                                  <SelectValue />
-                                </SelectTrigger>
-                              </FormControl>
-                              <SelectContent className="bg-card border border-border rounded-md shadow-lg z-50">
-                                <SelectItem value="mentor">Mentor</SelectItem>
-                                <SelectItem value="mentee">Mentee</SelectItem>
-                              </SelectContent>
-                            </Select>
-                            <FormMessage className="text-accent" />
-                          </FormItem>
-                        )}
-                      />
-
                       <div className="flex justify-end">
                         <Button
                           type="button"
