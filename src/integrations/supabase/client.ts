@@ -1,13 +1,9 @@
 import { createClient } from "@supabase/supabase-js";
-import type { Database } from "./supabase-types";
+import type { Database } from "./types";
 
-// Env vars
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL as string;
-const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string;
-
-if (!SUPABASE_URL || !SUPABASE_KEY) {
-  console.error("❌ Missing Supabase environment variables");
-}
+// Supabase URL and anon key - using project config (no env vars in Lovable)
+const SUPABASE_URL = "https://ixwnucfebopjqcokohhw.supabase.co";
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml4d251Y2ZlYm9wanFjb2tvaGh3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU3ODMxMjQsImV4cCI6MjA3MTM1OTEyNH0.6XjMw9dOjDgc_pwYNa-J6bBdfKtyDT2I4UcQQlUvplE";
 
 // ✅ Only one client instance
 export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_KEY, {
