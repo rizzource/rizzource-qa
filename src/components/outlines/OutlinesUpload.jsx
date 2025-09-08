@@ -114,13 +114,11 @@ const OutlinesUpload = ({ onUploadSuccess }) => {
     }
 
     try {
-      // First, save the mentor to the database
-      const { error: mentorError } = await supabase.from('mentors').insert([{
-        email: mentorData.email,
-        meetup_how: mentorData.meetupHow,
-        meetup_when: mentorData.meetupWhen,
-        had_uploaded_outline: true, // Set to true since they're uploading now
-      }]);
+      // Update the existing mentor's upload status
+      const { error: mentorError } = await supabase
+        .from('mentors')
+        .update({ had_uploaded_outline: true })
+        .eq('email', mentorData.email);
 
       if (mentorError) {
         throw mentorError;

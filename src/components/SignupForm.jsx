@@ -34,7 +34,7 @@ const SignupForm = ({ userType, onBack }) => {
         email: data.email,
         meetup_how: data.meetupHow,
         meetup_when: data.meetupWhen,
-        next_academic_event: data.nextAcademicEvent,
+        event: data.nextAcademicEvent,
       };
 
       const { error } = await supabase.from("mentees").insert([dbData]);
@@ -49,7 +49,14 @@ const SignupForm = ({ userType, onBack }) => {
       }
 
       sessionStorage.setItem("signupData", JSON.stringify({ ...data, userType: "mentee" }));
-      navigate("/thank-you");
+      navigate("/matchup", { 
+        state: { 
+          mentorName: "Your Assigned Mentor",
+          activity: data.meetupHow || "coffee",
+          meetupTime: data.meetupWhen || "3pm, Tuesday 12th Sep, 2025",
+          location: "Campus Café"
+        }
+      });
     } catch (error) {
       console.error("Submission error:", error);
       toast({
