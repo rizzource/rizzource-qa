@@ -123,6 +123,7 @@ export type Database = {
           email: string
           field_of_law: string
           first_name: string
+          had_uploaded_outline: boolean | null
           hobbies: string | null
           hometown: string
           id: string
@@ -139,6 +140,7 @@ export type Database = {
           email: string
           field_of_law: string
           first_name: string
+          had_uploaded_outline?: boolean | null
           hobbies?: string | null
           hometown: string
           id?: string
@@ -155,12 +157,111 @@ export type Database = {
           email?: string
           field_of_law?: string
           first_name?: string
+          had_uploaded_outline?: boolean | null
           hobbies?: string | null
           hometown?: string
           id?: string
           last_name?: string
           mentorship_time_commitment?: string
           undergraduate_university?: string
+        }
+        Relationships: []
+      }
+      outline_ratings: {
+        Row: {
+          created_at: string
+          id: string
+          outline_id: string
+          rating: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          outline_id: string
+          rating: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          outline_id?: string
+          rating?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "outline_ratings_outline_id_fkey"
+            columns: ["outline_id"]
+            isOneToOne: false
+            referencedRelation: "outlines"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      outlines: {
+        Row: {
+          created_at: string
+          downloads: number | null
+          file_name: string | null
+          file_size: number | null
+          file_type: string | null
+          file_url: string | null
+          id: string
+          mentor_email: string | null
+          notes: string | null
+          professor: string
+          rating_avg: number | null
+          rating_count: number | null
+          tags: string[] | null
+          title: string
+          topic: string
+          updated_at: string
+          user_id: string
+          year: string
+        }
+        Insert: {
+          created_at?: string
+          downloads?: number | null
+          file_name?: string | null
+          file_size?: number | null
+          file_type?: string | null
+          file_url?: string | null
+          id?: string
+          mentor_email?: string | null
+          notes?: string | null
+          professor: string
+          rating_avg?: number | null
+          rating_count?: number | null
+          tags?: string[] | null
+          title: string
+          topic: string
+          updated_at?: string
+          user_id: string
+          year: string
+        }
+        Update: {
+          created_at?: string
+          downloads?: number | null
+          file_name?: string | null
+          file_size?: number | null
+          file_type?: string | null
+          file_url?: string | null
+          id?: string
+          mentor_email?: string | null
+          notes?: string | null
+          professor?: string
+          rating_avg?: number | null
+          rating_count?: number | null
+          tags?: string[] | null
+          title?: string
+          topic?: string
+          updated_at?: string
+          user_id?: string
+          year?: string
         }
         Relationships: []
       }

@@ -1,4 +1,5 @@
 import { useState, useRef } from "react";
+import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Upload, FileText, AlertCircle, CheckCircle, X } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 
-const OutlinesUpload = () => {
+const OutlinesUpload = ({ onUploadSuccess }) => {
   const fileInputRef = useRef(null);
   const [formData, setFormData] = useState({
     title: "",
@@ -88,27 +89,78 @@ const OutlinesUpload = () => {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setUploadStatus('uploading');
     
-    // Simulate upload process
-    setTimeout(() => {
+    try {
+      // Upload file to Supabase storage
+      const fileExt = formData.file.name.split('.').pop();
+      const fileName = `${Date.now()}.${fileExt}`;
+      
+      const { data: uploadData, error: uploadError } = await supabase.storage
+        .from('assets')
+        .upload(`outlines/${fileName}`, formData.file);
+
+      if (uploadError) {
+        throw uploadError;
+      }
+
+      // Get the public URL
+      const { data: { publicUrl } } = supabase.storage
+        .from('assets')
+        .getPublicUrl(`outlines/${fileName}`);
+
+      // Save outline data to database
+      const { data: outlineData, error: dbError } = await supabase
+        .from('outlines')
+        .insert([{
+          title: formData.title,
+          professor: formData.professor,
+          topic: formData.topic,
+          year: formData.year,
+          tags: formData.tags ? formData.tags.split(',').map(tag => tag.trim()) : null,
+          notes: formData.notes || "Uploaded via mentor registration",
+          file_name: formData.file.name,
+          file_url: publicUrl,
+          file_size: formData.file.size,
+          file_type: formData.file.type,
+          user_id: '00000000-0000-0000-0000-000000000000', // Placeholder for now
+        }])
+        .select()
+        .single();
+
+      if (dbError) {
+        throw dbError;
+      }
+
       setUploadStatus('success');
-      // Reset form after success
-      setTimeout(() => {
-        setFormData({
-          title: "",
-          professor: "",
-          topic: "",
-          year: "",
-          tags: "",
-          notes: "",
-          file: null
-        });
-        setUploadStatus(null);
-      }, 3000);
-    }, 2000);
+      
+      // Call the onUploadSuccess callback if provided (for the flow)
+      if (onUploadSuccess) {
+        setTimeout(() => {
+          onUploadSuccess(outlineData);
+        }, 1500);
+      } else {
+        // Reset form after success (standalone usage)
+        setTimeout(() => {
+          setFormData({
+            title: "",
+            professor: "",
+            topic: "",
+            year: "",
+            tags: "",
+            notes: "",
+            file: null
+          });
+          setUploadStatus(null);
+        }, 3000);
+      }
+    } catch (error) {
+      console.error('Upload error:', error);
+      setUploadStatus('error');
+      setTimeout(() => setUploadStatus(null), 3000);
+    }
   };
 
   const isFormValid = formData.title && formData.professor && formData.topic && formData.year && formData.notes && formData.file;
@@ -230,20 +282,20 @@ const OutlinesUpload = () => {
                 </div>
               </div>
 
-              {/* <div className="space-y-2">
+              <div className="space-y-2">
                 <Label htmlFor="notes" className="text-primary">Notes *</Label>
                 <Textarea
                   id="notes"
                   placeholder="Provide detailed notes about your outline. Describe what topics it covers, study strategies used, key cases included, and what makes it useful for other students. (500-1000 words recommended)"
                   value={formData.notes}
                   onChange={(e) => handleInputChange('notes', e.target.value)}
-                  className="bg-white border-border/50 focus:border-light-green min-h-[200px] resize-y"
+                  className="bg-card border-border focus:border-accent focus:ring-2 focus:ring-accent min-h-[200px] resize-y"
                   required
                 />
                 <div className="text-sm text-muted-foreground text-right">
                   {formData.notes.length}/1000 characters
                 </div>
-              </div> */}
+              </div>
             </div>
 
             {/* File Upload */}

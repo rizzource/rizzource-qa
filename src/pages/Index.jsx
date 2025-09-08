@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import HeroSection from "@/components/HeroSection";
 import MentorMenteeSelection from "@/components/MentorMenteeSelection";
 import SignupForm from "@/components/SignupForm";
+import MentorMultiStepForm from "@/components/MentorMultiStepForm";
 import MinimalistHome from "@/components/MinimalistHome";
 import Header from "@/components/Header";  
 import Footer from "@/components/Footer";
@@ -86,10 +87,16 @@ const Index = ({ mentorshipPage = false, initialState = 'hero' }) => {
           />
         )}
         {appState === 'signup' && userType && (
-          <SignupForm 
-            userType={userType}
-            onBack={handleBackToSelection}
-          />
+          <>
+            {userType === 'mentor' ? (
+              <MentorMultiStepForm onBack={handleBackToSelection} />
+            ) : (
+              <SignupForm 
+                userType={userType}
+                onBack={handleBackToSelection}
+              />
+            )}
+          </>
         )}
       </main>
       <Footer />
