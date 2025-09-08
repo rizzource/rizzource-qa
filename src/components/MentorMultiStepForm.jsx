@@ -164,55 +164,60 @@ const MentorMultiStepForm = ({ onBack }) => {
                       )}
                     />
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <FormField
-                        control={form.control}
-                        name="meetupHow"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className="text-foreground">How would you like to meet?</FormLabel>
-                            <Select onValueChange={field.onChange} defaultValue={field.value}>
-                              <FormControl>
-                                <SelectTrigger className="bg-card border-input">
-                                  <SelectValue placeholder="Select meetup method" />
-                                </SelectTrigger>
-                              </FormControl>
-                              <SelectContent>
-                                <SelectItem value="coffee">Coffee</SelectItem>
-                                <SelectItem value="dinner">Dinner</SelectItem>
-                                <SelectItem value="walk">Walk / Outdoor Meetup</SelectItem>
-                                <SelectItem value="virtual">Virtual (Zoom/Google Meet)</SelectItem>
-                              </SelectContent>
-                            </Select>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={form.control}
-                        name="meetupWhen"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className="text-foreground">When would you prefer to meet?</FormLabel>
-                            <Select onValueChange={field.onChange} defaultValue={field.value}>
-                              <FormControl>
-                                <SelectTrigger className="bg-card border-input">
-                                  <SelectValue placeholder="Select preferred time" />
-                                </SelectTrigger>
-                              </FormControl>
-                              <SelectContent>
-                                <SelectItem value="weekdays">Weekdays</SelectItem>
-                                <SelectItem value="weekends">Weekends</SelectItem>
-                                <SelectItem value="mornings">Mornings</SelectItem>
-                                <SelectItem value="afternoons">Afternoons</SelectItem>
-                                <SelectItem value="evenings">Evenings</SelectItem>
-                              </SelectContent>
-                            </Select>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
+                    {/* Meetup How */}
+                  <FormField
+                    control={form.control}
+                    name="meetupHow"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-foreground">
+                          How would you like to meet up?
+                        </FormLabel>
+                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                          <FormControl>
+                            <SelectTrigger className="bg-card border-input text-foreground focus:border-accent focus:ring-2 focus:ring-accent">
+                              <SelectValue placeholder="Select meetup method" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent className="bg-card border border-border rounded-md shadow-lg z-50">
+                            <SelectItem value="coffee">Coffee</SelectItem>
+                            <SelectItem value="dinner">Dinner</SelectItem>
+                            <SelectItem value="walk">Walk / Outdoor Meetup</SelectItem>
+                            <SelectItem value="virtual">Virtual (Zoom/Google Meet)</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <FormMessage className="text-accent" />
+                      </FormItem>
+                    )}
+                  />
+
+                  {/* Meetup When */}
+                  <FormField
+                    control={form.control}
+                    name="meetupWhen"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-foreground">
+                          When would you prefer to meet up?
+                        </FormLabel>
+                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                          <FormControl>
+                            <SelectTrigger className="bg-card border-input text-foreground focus:border-accent focus:ring-2 focus:ring-accent">
+                              <SelectValue placeholder="Select preferred time" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent className="bg-card border border-border rounded-md shadow-lg z-50">
+                            <SelectItem value="weekdays">Weekdays</SelectItem>
+                            <SelectItem value="weekends">Weekends</SelectItem>
+                            <SelectItem value="mornings">Mornings</SelectItem>
+                            <SelectItem value="afternoons">Afternoons</SelectItem>
+                            <SelectItem value="evenings">Evenings</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <FormMessage className="text-accent" />
+                      </FormItem>
+                    )}
+                  />
 
                     <Button type="submit" disabled={loading} className="w-full">
                       {loading ? "Checking..." : "Next"}
