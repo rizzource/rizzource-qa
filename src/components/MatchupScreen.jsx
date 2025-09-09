@@ -499,7 +499,7 @@ Decided Dates: ${
 
   const handleUploadOutline = () => navigate("/outlines?tab=upload");
   const handleRateOutline = () => navigate("/outlines?tab=browse");
-
+console.log("mentorOptions", mentorOptions)
   return (
     <>
       <ToastContainer />
