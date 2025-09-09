@@ -11,7 +11,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { ArrowLeft, Calendar as CalendarIcon, Clock, Users, GraduationCap } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { toast } from 'react-toastify';
+import { toast } from "react-toastify";
 import { format } from "date-fns";
 
 const schedulingSchema = z.object({
@@ -32,7 +32,7 @@ const schedulingSchema = z.object({
 });
 
 const timeOptions = Array.from({ length: 24 }, (_, i) => {
-  const hour = i.toString().padStart(2, '0');
+  const hour = i.toString().padStart(2, "0");
   return `${hour}:00`;
 });
 
@@ -56,10 +56,13 @@ const activityOptions = [
 
 const mentorActionOptions = [
   "Upload an outline",
-  "Rate an outline", 
+  "Rate an outline",
   "Do both",
   "I'll just sit back and nod wisely 😏",
 ];
+
+// helper to normalize "HH:MM" -> "HH:MM:SS"
+const toTime = (t) => (t?.length === 5 ? `${t}:00` : (t || "00:00:00"));
 
 const SchedulingForm = ({ onBack, initialUserType }) => {
   const [currentStep, setCurrentStep] = useState(1);
@@ -68,7 +71,7 @@ const SchedulingForm = ({ onBack, initialUserType }) => {
 
   // Scroll to top when step changes
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }, [currentStep]);
 
   const form = useForm({
@@ -95,82 +98,85 @@ const SchedulingForm = ({ onBack, initialUserType }) => {
   const watchUserType = form.watch("userType");
 
   const onSubmit = async (data) => {
-    console.log("Form submission started", data);
     setLoading(true);
-    
+
     try {
+      // Build safe payload: never send nulls to array columns; normalize times.
       const formattedData = {
         full_name: data.fullName,
         email: data.email,
-        date_type: data.dateType,
-        selected_days: data.dateType === "days" ? data.selectedDays : null,
-        selected_dates: data.dateType === "specific" 
-          ? data.selectedDates?.map(date => format(date, "yyyy-MM-dd")) 
-          : null,
-        earliest_time: data.earliestTime,
-        latest_time: data.latestTime,
-        activities: data.activities,
-        user_type: data.userType,
-        mentor_options: data.userType === "mentor" ? data.mentorOptions : null,
+        date_type: data.dateType, // 'days' | 'specific'
+        selected_days: data.dateType === "days" ? (data.selectedDays ?? []) : [],
+        selected_dates:
+          data.dateType === "specific"
+            ? (data.selectedDates ?? []).map((d) => format(d, "yyyy-MM-dd"))
+            : [],
+        earliest_time: toTime(data.earliestTime),
+        latest_time: toTime(data.latestTime),
+        activities: data.activities ?? [],
+        user_type: data.userType, // 'mentor' | 'mentee'
+        mentor_options: data.userType === "mentor" ? (data.mentorOptions ?? []) : [],
       };
 
-      console.log("Formatted data:", formattedData);
-
-      // Insert into scheduling_responses table with timeout
-      console.log("Inserting into database...");
-      
-      const insertPromise = supabase
-        .from("scheduling_responses")
-        .insert([formattedData], { returning: "minimal" });
-
-      const timeoutPromise = new Promise((_, reject) =>
-        setTimeout(() => reject(new Error("Database insertion timed out after 10 seconds")), 10000)
-      );
-
-      const insertResult = await Promise.race([
-        insertPromise,
-        timeoutPromise
-      ]);
-
-      const schedulingError = insertResult?.error;
-
-      if (schedulingError) {
-        console.error("Database insertion error:", {
-          error: schedulingError,
-          message: schedulingError.message,
-          details: schedulingError.details,
-          hint: schedulingError.hint,
-          code: schedulingError.code
-        });
-        throw new Error(schedulingError.message || "Failed to save to database");
+      // Optional local check mirroring common DB CHECK constraints
+      if (formattedData.earliest_time > formattedData.latest_time) {
+        toast.error("Earliest time must be before or equal to latest time.");
+        setLoading(false);
+        return;
       }
 
-      console.log("Database insertion successful");
+      // Perform insert and surface the true DB error (no manual timeout).
+      const { data: inserted, error, status } = await supabase
+        .from("scheduling_responses")
+        .insert([formattedData])
+        .select();
+
+      if (error) {
+        console.error("Insert failed:", {
+          status,
+          code: error.code,
+          message: error.message,
+          details: error.details,
+          hint: error.hint,
+        });
+
+        // Friendly messaging for common Postgres errors
+        if (error.code === "23505") {
+          toast.error("That email is already used. Try a different email.");
+        } else if (error.code === "23502") {
+          toast.error("A required field is missing.");
+        } else if (error.code === "23514") {
+          toast.error("Your time/date choices violated a rule.");
+        } else {
+          toast.error(error.message || "Failed to save your preferences.");
+        }
+        return;
+      }
 
       toast.success("Your scheduling preferences have been saved.");
 
-      console.log("Navigating to matchup page...");
-      // Navigate to matchup page
+      // Navigate to matchup page (keep your original display values)
       navigate("/matchup", {
         state: {
           mentorName: data.userType === "mentor" ? data.fullName : "Your Assigned Mentor",
           activity: data.activities[0] || "networking",
           meetupTime: `Between ${data.earliestTime} - ${data.latestTime}`,
-          selectedDates: data.dateType === "days" 
-            ? data.selectedDays?.map(day => day.charAt(0).toUpperCase() + day.slice(1)) || []
-            : data.selectedDates?.map(date => format(date, "yyyy-MM-dd")) || [],
-          mentorOptions: data.mentorOptions || []
+          selectedDates:
+            data.dateType === "days"
+              ? (data.selectedDays ?? []).map((day) => day.charAt(0).toUpperCase() + day.slice(1))
+              : (data.selectedDates ?? []).map((date) => format(date, "yyyy-MM-dd")),
         },
       });
     } catch (error) {
       console.error("Submission error:", {
-        error: error,
         message: error.message,
-        stack: error.stack
+        details: error.details,
+        hint: error.hint,
+        code: error.code,
+        stack: error.stack,
       });
       toast.error(error.message || "Failed to save your preferences. Please try again.");
     } finally {
-      console.log("Setting loading to false");
       setLoading(false);
     }
   };
@@ -178,7 +184,7 @@ const SchedulingForm = ({ onBack, initialUserType }) => {
   const toggleDay = (day) => {
     const currentDays = watchSelectedDays || [];
     const newDays = currentDays.includes(day)
-      ? currentDays.filter(d => d !== day)
+      ? currentDays.filter((d) => d !== day)
       : [...currentDays, day];
     form.setValue("selectedDays", newDays);
   };
@@ -186,7 +192,7 @@ const SchedulingForm = ({ onBack, initialUserType }) => {
   const toggleActivity = (activity) => {
     const currentActivities = watchActivities || [];
     const newActivities = currentActivities.includes(activity)
-      ? currentActivities.filter(a => a !== activity)
+      ? currentActivities.filter((a) => a !== activity)
       : [...currentActivities, activity];
     form.setValue("activities", newActivities);
   };
@@ -194,34 +200,45 @@ const SchedulingForm = ({ onBack, initialUserType }) => {
   const toggleMentorOption = (option) => {
     const currentOptions = watchMentorOptions || [];
     const newOptions = currentOptions.includes(option)
-      ? currentOptions.filter(o => o !== option)
+      ? currentOptions.filter((o) => o !== option)
       : [...currentOptions, option];
     form.setValue("mentorOptions", newOptions);
   };
 
   const getStepIcon = () => {
     switch (currentStep) {
-      case 1: return <Users className="h-8 w-8 text-accent" />;
-      case 2: return <CalendarIcon className="h-8 w-8 text-accent" />;
-      case 3: return <Clock className="h-8 w-8 text-accent" />;
-      case 4: return <GraduationCap className="h-8 w-8 text-accent" />;
-      default: return <Users className="h-8 w-8 text-accent" />;
+      case 1:
+        return <Users className="h-8 w-8 text-accent" />;
+      case 2:
+        return <CalendarIcon className="h-8 w-8 text-accent" />;
+      case 3:
+        return <Clock className="h-8 w-8 text-accent" />;
+      case 4:
+        return <GraduationCap className="h-8 w-8 text-accent" />;
+      default:
+        return <Users className="h-8 w-8 text-accent" />;
     }
   };
 
   const getStepTitle = () => {
     switch (currentStep) {
-      case 1: return "Personal Information";
-      case 2: return "Available Dates";
-      case 3: return "Time Preferences";
-      case 4: return "Activities & Options";
-      default: return "Schedule Your Meetup";
+      case 1:
+        return "Personal Information";
+      case 2:
+        return "Available Dates";
+      case 3:
+        return "Time Preferences";
+      case 4:
+        return "Activities & Options";
+      default:
+        return "Schedule Your Meetup";
     }
   };
 
   const canProceedToStep2 = form.watch("fullName") && form.watch("email");
-  const canProceedToStep3 = (watchDateType === "days" && watchSelectedDays?.length > 0) || 
-                           (watchDateType === "specific" && watchSelectedDates?.length > 0);
+  const canProceedToStep3 =
+    (watchDateType === "days" && watchSelectedDays?.length > 0) ||
+    (watchDateType === "specific" && watchSelectedDates?.length > 0);
   const canProceedToStep4 = form.watch("earliestTime") && form.watch("latestTime");
 
   return (
@@ -240,16 +257,10 @@ const SchedulingForm = ({ onBack, initialUserType }) => {
 
           <Card className="bg-card backdrop-blur-sm border-border">
             <CardHeader className="text-center">
-              <div className="mx-auto mb-4 p-3 bg-accent/20 rounded-full w-fit">
-                {getStepIcon()}
-              </div>
-              <CardTitle className="text-2xl text-foreground">
-                {getStepTitle()}
-              </CardTitle>
-              <CardDescription className="text-muted-foreground">
-                Step {currentStep} of 4
-              </CardDescription>
-              
+              <div className="mx-auto mb-4 p-3 bg-accent/20 rounded-full w-fit">{getStepIcon()}</div>
+              <CardTitle className="text-2xl text-foreground">{getStepTitle()}</CardTitle>
+              <CardDescription className="text-muted-foreground">Step {currentStep} of 4</CardDescription>
+
               {/* Step indicator */}
               <div className="flex justify-center mt-4 space-x-2">
                 {[1, 2, 3, 4].map((step) => (
@@ -266,7 +277,6 @@ const SchedulingForm = ({ onBack, initialUserType }) => {
             <CardContent>
               <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                  
                   {/* Step 1: Personal Information */}
                   {currentStep === 1 && (
                     <div className="space-y-6">
@@ -344,13 +354,17 @@ const SchedulingForm = ({ onBack, initialUserType }) => {
 
                       {watchDateType === "days" && (
                         <div>
-                          <FormLabel className="text-foreground mb-3 block">Select available days</FormLabel>
+                          <FormLabel className="text-foreground mb-3 block">
+                            Select available days
+                          </FormLabel>
                           <div className="grid grid-cols-7 gap-2">
                             {dayOptions.map((day) => (
                               <Button
                                 key={day.value}
                                 type="button"
-                                variant={watchSelectedDays?.includes(day.value) ? "default" : "outline"}
+                                variant={
+                                  watchSelectedDays?.includes(day.value) ? "default" : "outline"
+                                }
                                 className="h-12 text-sm"
                                 onClick={() => toggleDay(day.value)}
                               >
@@ -367,7 +381,9 @@ const SchedulingForm = ({ onBack, initialUserType }) => {
                           control={form.control}
                           render={({ field }) => (
                             <div>
-                              <FormLabel className="text-foreground mb-3 block">Select specific dates</FormLabel>
+                              <FormLabel className="text-foreground mb-3 block">
+                                Select specific dates
+                              </FormLabel>
                               <Calendar
                                 mode="multiple"
                                 selected={field.value}
@@ -405,7 +421,7 @@ const SchedulingForm = ({ onBack, initialUserType }) => {
                   {currentStep === 3 && (
                     <div className="space-y-6">
                       <h3 className="text-foreground font-medium">What times might work?</h3>
-                      
+
                       <div className="grid grid-cols-2 gap-4">
                         <FormField
                           control={form.control}
@@ -517,7 +533,9 @@ const SchedulingForm = ({ onBack, initialUserType }) => {
                               <Button
                                 key={option}
                                 type="button"
-                                variant={watchMentorOptions?.includes(option) ? "default" : "outline"}
+                                variant={
+                                  watchMentorOptions?.includes(option) ? "default" : "outline"
+                                }
                                 size="sm"
                                 className="rounded-full px-4 py-2"
                                 onClick={() => toggleMentorOption(option)}
