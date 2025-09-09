@@ -15,6 +15,7 @@ import {
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { useLocation, useNavigate } from "react-router-dom";
+import { toast, ToastContainer } from "react-toastify";
 
 /* ----------------------- helpers ----------------------- */
 const ordinal = (n) => {
@@ -117,6 +118,7 @@ Decided Dates: ${Array.isArray(selectedDates) && selectedDates.length > 0 ? sele
 
   return (
     <>
+      <ToastContainer />
       <Header />
 
       <main className="bg-background">
