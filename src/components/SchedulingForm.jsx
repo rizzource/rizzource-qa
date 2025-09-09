@@ -165,6 +165,7 @@ const SchedulingForm = ({ onBack, initialUserType }) => {
             data.dateType === "days"
               ? (data.selectedDays ?? []).map((day) => day.charAt(0).toUpperCase() + day.slice(1))
               : (data.selectedDates ?? []).map((date) => format(date, "yyyy-MM-dd")),
+          mentorOptions: data.mentorOptions || []
         },
       });
     } catch (error) {
