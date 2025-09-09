@@ -422,7 +422,8 @@ export const AdminDashboard = () => {
             pageSize={PAGE_SIZE}
           />
         )}
-        /* {activeSection === 2 && (
+        {/* Feedback section commented out - not currently implemented
+        {activeSection === 2 && (
           <FeedbackTable
             data={feedbackData}
             currentPage={feedbackPage}
@@ -431,7 +432,8 @@ export const AdminDashboard = () => {
             exportingTable={exportingTable}
             pageSize={PAGE_SIZE}
           />
-        )} */
+        )}
+        */}
 
         {/* Pagination Controls */}
         <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mt-6">
