@@ -460,11 +460,14 @@ const MatchupScreen = ({
       if (!error && data) {
         setMentorOptions(data.mentor_options);
       }
+      console.log("MentorOptions", data.mentor_options)
     };
 
     fetchMentorOptions();
   }, []);
 
+  useEffect(() => {console.log("mentorOptionsState", mentorOptions)} ,[mentorOptions])
+  
   // countdown
   useEffect(() => {
     if (!startDate) return;
