@@ -17,7 +17,7 @@ export const DataExport = () => {
   const tableOptions = [
     { value: 'mentees', label: 'Mentees', description: 'All mentee applications and details' },
     { value: 'mentors', label: 'Mentors', description: 'All mentor applications and details' },
-    { value: 'feedback', label: 'Feedback', description: 'User feedback submissions' },
+    // { value: 'feedback', label: 'Feedback', description: 'User feedback submissions' },
   ];
 
   const exportToExcel = async () => {
