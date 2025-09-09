@@ -9,13 +9,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Upload, FileText, AlertCircle, CheckCircle, X } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useNavigate } from "react-router-dom";
-import { useToast } from "@/hooks/use-toast";
+// import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/components/AuthProvider";
+import { ToastContainer, toast } from "react-toastify";
 
 const OutlinesUpload = ({ onUploadSuccess }) => {
   const fileInputRef = useRef(null);
   const navigate = useNavigate();
-  const { toast } = useToast();
+  // const { toast } = useToast();
   const { user } = useAuth();
   const [mentorData, setMentorData] = useState(null);
   const [formData, setFormData] = useState({
@@ -106,11 +107,7 @@ const OutlinesUpload = ({ onUploadSuccess }) => {
 
   const handleMentorFlow = async (outlineData) => {
     if (!mentorData) {
-      toast({
-        title: "Error",
-        description: "Mentor information not found. Please start over.",
-        variant: "destructive"
-      });
+      toast.error("Mentor information not found. Please start over.");
       navigate("/mentorship-selection");
       return;
     }
@@ -140,10 +137,7 @@ const OutlinesUpload = ({ onUploadSuccess }) => {
       // Clear session storage
       sessionStorage.removeItem("mentorFormData");
 
-      toast({
-        title: "Success!",
-        description: "Your mentor application and outline have been submitted successfully.",
-      });
+      toast.success("Your mentor application and outline have been submitted successfully.");
 
       // Navigate to matchup screen
       setTimeout(() => {
@@ -159,11 +153,7 @@ const OutlinesUpload = ({ onUploadSuccess }) => {
 
     } catch (error) {
       console.error("Error in mentor flow:", error);
-      toast({
-        title: "Error",
-        description: "There was an error completing your registration. Please try again.",
-        variant: "destructive",
-      });
+      toast.error("There was an error completing your registration. Please try again.""There was an error completing your registration. Please try again.");
     }
   };
 
@@ -173,11 +163,7 @@ const OutlinesUpload = ({ onUploadSuccess }) => {
     
     // Check if user is authenticated
     if (!user) {
-      toast({
-        title: "Error", 
-        description: "Please log in to upload outlines.",
-        variant: "destructive"
-      });
+      toast.error("Please log in to upload outlines.");
       setUploadStatus(null);
       return;
     }
@@ -226,10 +212,7 @@ const OutlinesUpload = ({ onUploadSuccess }) => {
 
       setUploadStatus('success');
       
-      toast({
-        title: "Success!",
-        description: "Your outline has been uploaded successfully.",
-      });
+      toast.success("Your outline has been uploaded successfully.");
       
       // Handle mentor flow if mentor data exists
       if (mentorData) {
@@ -246,11 +229,7 @@ const OutlinesUpload = ({ onUploadSuccess }) => {
       
       // Show specific error message from Supabase
       const errorMessage = error.message || "An unexpected error occurred during upload.";
-      toast({
-        title: "Upload Failed",
-        description: errorMessage,
-        variant: "destructive",
-      });
+      toast.error("Upload Failed");
       
       setTimeout(() => setUploadStatus(null), 3000);
     }
@@ -260,6 +239,7 @@ const OutlinesUpload = ({ onUploadSuccess }) => {
 
   return (
     <div className="max-w-2xl mx-auto">
+      <ToastContainer />
       <Card className="bg-card backdrop-blur-sm border-border">
         <CardHeader>
           <CardTitle className="text-2xl text-primary flex items-center gap-2">
