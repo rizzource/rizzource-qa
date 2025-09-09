@@ -75,6 +75,7 @@ const MatchupScreen = ({
   meetupTime = "3pm, Tuesday 12th Sep, 2025",
   activity = "coffee",
   selectedDates = ["Monday", "Wednesday"],      // <-- NEW: dates or days
+  outlinePreference,
   durationMinutes = 60,
   docHref = "#",
   docLabel = "General document (expectations of mentors and mentees)",
@@ -243,18 +244,20 @@ Decided Dates: ${Array.isArray(selectedDates) && selectedDates.length > 0 ? sele
                   <h3 className="text-sm font-medium text-muted-foreground mb-3">
                     Complete Your Mentor Registration:
                   </h3>
-                  <div className="mt-6 flex gap-4">
-                      {mentorOptions.includes("Upload an outline") && (
-                        <Button asChild>
-                          <a href="/outlines?tab=upload">Upload Outline</a>
-                        </Button>
-                      )}
-                      {mentorOptions.includes("Rate an outline") && (
-                        <Button asChild>
-                          <a href="/outlines?tab=browse">Rate Outline</a>
-                        </Button>
-                      )}
-                    </div>
+                  <div className="flex gap-3">
+                    {(outlinePreference === 'upload' || outlinePreference === 'both') && (
+                      <Button onClick={handleUploadOutline}>
+                        <Upload className="h-4 w-4 mr-2" />
+                        Upload Outline
+                      </Button>
+                    )}
+                    {(outlinePreference === 'rate' || outlinePreference === 'both') && (
+                      <Button variant="outline" onClick={handleRateOutline}>
+                        <Star className="h-4 w-4 mr-2" />
+                        Rate Outline
+                      </Button>
+                    )}
+                  </div>
                 </div>
               )}
             </CardContent>
