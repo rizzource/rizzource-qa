@@ -22,11 +22,7 @@ const queryClient = new QueryClient();
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
-      <Toaster
-        toastOptions={{
-          className: "fixed top-20 right-4 z-[9999]", // adjust offset so it clears your header
-        }}
-      />
+      <Toaster />
       <Sonner />
       <BrowserRouter>
         <ScrollToTop />
