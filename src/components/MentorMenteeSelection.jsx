@@ -59,7 +59,7 @@ const MentorMenteeSelection = ({ onSelectType, onBack }) => {
                 <div className="mx-auto mb-4 p-4 bg-accent/20 rounded-full w-fit group-hover:bg-accent/30 transition-colors">
                   <GraduationCap className="h-12 w-12 text-accent" />
                 </div>
-                <CardTitle className="text-2xl text-foreground">Become a Mentor</CardTitle>
+                <CardTitle className="text-2xl text-foreground">Mentor</CardTitle>
                 <CardDescription className="text-muted-foreground text-base">
                   Share your experience and guide fellow law students
                 </CardDescription>
@@ -90,7 +90,7 @@ const MentorMenteeSelection = ({ onSelectType, onBack }) => {
                 <div className="mx-auto mb-4 p-4 bg-accent/20 rounded-full w-fit group-hover:bg-accent/30 transition-colors">
                   <Users className="h-12 w-12 text-accent" />
                 </div>
-                <CardTitle className="text-2xl text-foreground">Become a Mentee</CardTitle>
+                <CardTitle className="text-2xl text-foreground">Mentee</CardTitle>
                 <CardDescription className="text-muted-foreground text-base">
                   Learn from upper-year law students and accelerate your academic success
                 </CardDescription>
