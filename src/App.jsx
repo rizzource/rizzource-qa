@@ -36,11 +36,12 @@ const App = () => (
         style={{
           zIndex: 2147483647
         }}
-        toastStyle={{
-          backgroundColor: 'hsl(var(--primary))',
-          color: 'hsl(var(--primary-foreground))',
-          border: '1px solid hsl(var(--primary))'
-        }}
+        toastClassName={() => 
+          "relative flex p-4 min-h-12 rounded-lg justify-between overflow-hidden cursor-pointer " +
+          "bg-primary text-primary-foreground border border-primary shadow-lg"
+        }
+        bodyClassName={() => "text-sm font-medium"}
+        progressClassName="!bg-primary-foreground/30"
       />
       <BrowserRouter>
         <ScrollToTop />
