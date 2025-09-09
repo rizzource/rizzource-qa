@@ -10,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { ArrowLeft, GraduationCap, Users, Upload } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from 'react-toastify';
 
 const emailSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
@@ -32,7 +32,6 @@ const MentorMultiStepForm = ({ onBack }) => {
   const [meetupData, setMeetupData] = useState({ meetupHow: "", meetupWhen: "" });
   const [outlinePreferenceData, setOutlinePreferenceData] = useState({ outlinePreference: "" });
   const navigate = useNavigate();
-  const { toast } = useToast();
 
   // Scroll to top when step changes
   useEffect(() => {
@@ -100,11 +99,7 @@ const MentorMultiStepForm = ({ onBack }) => {
       setCurrentStep(2);
     } catch (error) {
       console.error("Error checking mentor data:", error);
-      toast({
-        title: "Error",
-        description: "Failed to check your information. Please try again.",
-        variant: "destructive",
-      });
+      toast.error("Failed to check your information. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -129,11 +124,7 @@ const MentorMultiStepForm = ({ onBack }) => {
       setCurrentStep(3);
     } catch (error) {
       console.error("Error saving mentor data:", error);
-      toast({
-        title: "Error",
-        description: "Failed to save your information. Please try again.",
-        variant: "destructive",
-      });
+      toast.error("Failed to save your information. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -166,11 +157,7 @@ const MentorMultiStepForm = ({ onBack }) => {
       });
     } catch (error) {
       console.error("Error saving outline preference:", error);
-      toast({
-        title: "Error",
-        description: "Failed to save your preference. Please try again.",
-        variant: "destructive",
-      });
+      toast.error("Failed to save your preference. Please try again.");
     } finally {
       setLoading(false);
     }

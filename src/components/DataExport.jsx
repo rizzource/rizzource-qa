@@ -5,14 +5,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Download, FileSpreadsheet, Shield } from 'lucide-react';
 import { useAuth } from './AuthProvider';
 import { supabase } from '@/integrations/supabase/client';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'react-toastify';
 import * as XLSX from 'xlsx';
 
 export const DataExport = () => {
   const [selectedTable, setSelectedTable] = useState('');
   const [isExporting, setIsExporting] = useState(false);
   const { isAdmin } = useAuth();
-  const { toast } = useToast();
 
   const tableOptions = [
     { value: 'mentees', label: 'Mentees', description: 'All mentee applications and details' },
@@ -22,20 +21,12 @@ export const DataExport = () => {
 
   const exportToExcel = async () => {
     if (!selectedTable) {
-      toast({
-        title: "Selection Required",
-        description: "Please select a table to export",
-        variant: "destructive",
-      });
+      toast.error("Please select a table to export");
       return;
     }
 
     if (!isAdmin()) {
-      toast({
-        title: "Access Denied",
-        description: "Admin privileges required for data export",
-        variant: "destructive",
-      });
+      toast.error("Admin privileges required for data export");
       return;
     }
 
@@ -51,10 +42,7 @@ export const DataExport = () => {
       }
 
       if (!data || data.length === 0) {
-        toast({
-          title: "No Data",
-          description: `No records found in ${selectedTable} table`,
-        });
+        toast.info(`No records found in ${selectedTable} table`);
         setIsExporting(false);
         return;
       }
@@ -71,18 +59,11 @@ export const DataExport = () => {
       // Download file
       XLSX.writeFile(workbook, filename);
 
-      toast({
-        title: "Export Successful",
-        description: `${data.length} records exported to ${filename}`,
-      });
+      toast.success(`${data.length} records exported to ${filename}`);
 
     } catch (error) {
       console.error('Export error:', error);
-      toast({
-        title: "Export Failed",
-        description: error.message || "Failed to export data",
-        variant: "destructive",
-      });
+      toast.error(error.message || "Failed to export data");
     } finally {
       setIsExporting(false);
     }

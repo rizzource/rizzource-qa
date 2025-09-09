@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { ArrowLeft, Star, Download, FileText, Eye, User } from "lucide-react";
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from 'react-toastify';
 import { supabase } from "@/integrations/supabase/client";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -14,7 +14,6 @@ import { downloadOutlineAsPDF, downloadOutlineAsDocx } from "@/utils/outlineDown
 
 const OutlineView = () => {
   const { id } = useParams();
-  const { toast } = useToast();
   const [outline, setOutline] = useState(null);
   const [userRating, setUserRating] = useState(0);
   const [hoverRating, setHoverRating] = useState(0);
@@ -70,12 +69,7 @@ const OutlineView = () => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
-        toast({
-          title: "Authentication Required",
-          description: "Please sign in to rate outlines",
-          variant: "destructive",
-          duration: 3000,
-        });
+        toast.error("Please sign in to rate outlines");
         return;
       }
 
@@ -121,19 +115,10 @@ const OutlineView = () => {
         setOutline(prev => ({ ...prev, ...updatedOutline }));
       }
       
-      toast({
-        title: "Rating Submitted",
-        description: `You rated this outline ${rating} star${rating !== 1 ? 's' : ''}`,
-        duration: 3000,
-      });
+      toast.success(`You rated this outline ${rating} star${rating !== 1 ? 's' : ''}`);
     } catch (error) {
       console.error('Error submitting rating:', error);
-      toast({
-        title: "Error",
-        description: "Failed to submit rating. Please try again.",
-        variant: "destructive",
-        duration: 3000,
-      });
+      toast.error("Failed to submit rating. Please try again.");
     }
     setRatingLoading(false);
   };
@@ -145,19 +130,10 @@ const OutlineView = () => {
       } else {
         await downloadOutlineAsDocx(outline);
       }
-      toast({
-        title: 'Download started',
-        description: `Generating ${format}...`,
-        duration: 3000,
-      });
+      toast.success(`Generating ${format}...`);
     } catch (error) {
       console.error('Download failed', error);
-      toast({
-        title: 'Download failed',
-        description: 'Please try again.',
-        variant: 'destructive',
-        duration: 3000,
-      });
+      toast.error('Please try again.');
     }
   };
   const renderStars = (rating, interactive = false, size = "w-5 h-5") => {

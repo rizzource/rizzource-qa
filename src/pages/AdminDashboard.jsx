@@ -43,7 +43,7 @@ import {
   GraduationCap,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from 'react-toastify';
 import * as XLSX from "xlsx";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
@@ -70,7 +70,6 @@ export const AdminDashboard = () => {
   const [exportingTable, setExportingTable] = useState("");
   const [activeSection, setActiveSection] = useState(0); // 0=mentees,1=mentors,2=feedback
   const navigate = useNavigate();
-  const { toast } = useToast();
 
   const PAGE_SIZE = 10;
 
@@ -110,11 +109,7 @@ export const AdminDashboard = () => {
       });
     } catch (error) {
       console.error("Error fetching stats:", error);
-      toast({
-        title: "Error",
-        description: "Failed to fetch dashboard stats",
-        variant: "destructive",
-      });
+      toast.error("Failed to fetch dashboard stats");
     }
   };
 
@@ -128,11 +123,7 @@ export const AdminDashboard = () => {
       ]);
     } catch (error) {
       console.error("Error fetching data:", error);
-      toast({
-        title: "Error",
-        description: "Failed to fetch dashboard data",
-        variant: "destructive",
-      });
+      toast.error("Failed to fetch dashboard data");
     } finally {
       setLoading(false);
     }
@@ -163,11 +154,7 @@ export const AdminDashboard = () => {
     } catch (error) {
       console.error("Error fetching mentees:", error);
       setMenteesData(prev => ({ ...prev, loading: false }));
-      toast({
-        title: "Error",
-        description: "Failed to fetch mentees data",
-        variant: "destructive",
-      });
+      toast.error("Failed to fetch mentees data");
     }
   };
 
@@ -196,11 +183,7 @@ export const AdminDashboard = () => {
     } catch (error) {
       console.error("Error fetching mentors:", error);
       setMentorsData(prev => ({ ...prev, loading: false }));
-      toast({
-        title: "Error",
-        description: "Failed to fetch mentors data",
-        variant: "destructive",
-      });
+      toast.error("Failed to fetch mentors data");
     }
   };
 
@@ -238,10 +221,7 @@ export const AdminDashboard = () => {
 
   const exportToExcel = async (tableName, data, filename) => {
     if (!data || data.length === 0) {
-      toast({
-        title: "No Data",
-        description: `No records found in ${tableName} table`,
-      });
+      toast.info(`No records found in ${tableName} table`);
       return;
     }
     setExportingTable(tableName);
@@ -252,17 +232,10 @@ export const AdminDashboard = () => {
       const timestamp = new Date().toISOString().split("T")[0];
       XLSX.writeFile(workbook, `${filename}_${timestamp}.xlsx`);
       await supabase.rpc("export_data_to_json", { table_name: tableName });
-      toast({
-        title: "Export Successful",
-        description: `${data.length} records exported`,
-      });
+      toast.success(`${data.length} records exported`);
     } catch (error) {
       console.error("Export error:", error);
-      toast({
-        title: "Export Failed",
-        description: error.message || "Failed to export data",
-        variant: "destructive",
-      });
+      toast.error(error.message || "Failed to export data");
     } finally {
       setExportingTable("");
     }

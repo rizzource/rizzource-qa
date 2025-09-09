@@ -11,7 +11,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { ArrowLeft, Calendar as CalendarIcon, Clock, Users, GraduationCap } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from 'react-toastify';
 import { format } from "date-fns";
 
 const schedulingSchema = z.object({
@@ -65,7 +65,6 @@ const SchedulingForm = ({ onBack, initialUserType }) => {
   const [currentStep, setCurrentStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const { toast } = useToast();
 
   // Scroll to top when step changes
   useEffect(() => {
@@ -148,10 +147,7 @@ const SchedulingForm = ({ onBack, initialUserType }) => {
 
       console.log("Database insertion successful");
 
-      toast({
-        title: "Success!",
-        description: "Your scheduling preferences have been saved.",
-      });
+      toast.success("Your scheduling preferences have been saved.");
 
       console.log("Navigating to matchup page...");
       // Navigate to matchup page
@@ -171,11 +167,7 @@ const SchedulingForm = ({ onBack, initialUserType }) => {
         message: error.message,
         stack: error.stack
       });
-      toast({
-        title: "Error",
-        description: error.message || "Failed to save your preferences. Please try again.",
-        variant: "destructive",
-      });
+      toast.error(error.message || "Failed to save your preferences. Please try again.");
     } finally {
       console.log("Setting loading to false");
       setLoading(false);

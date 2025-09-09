@@ -10,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { ArrowLeft, Users } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from 'react-toastify';
 
 // Mentee schema
 const menteeSchema = z.object({
@@ -22,7 +22,6 @@ const menteeSchema = z.object({
 
 const SignupForm = ({ userType, onBack }) => {
   const navigate = useNavigate();
-  const { toast } = useToast();
 
   // Scroll to top when component mounts
   useEffect(() => {
@@ -47,11 +46,7 @@ const SignupForm = ({ userType, onBack }) => {
 
       if (error) {
         console.error("Supabase error:", error);
-        toast({
-          title: "Authentication Required",
-          description:
-            "Please contact an administrator to complete your registration. Your data has been saved temporarily.",
-        });
+        toast.warning("Please contact an administrator to complete your registration. Your data has been saved temporarily.");
       }
 
       sessionStorage.setItem("signupData", JSON.stringify({ ...data, userType: "mentee" }));
@@ -65,11 +60,7 @@ const SignupForm = ({ userType, onBack }) => {
       });
     } catch (error) {
       console.error("Submission error:", error);
-      toast({
-        title: "Error",
-        description: "An unexpected error occurred. Please try again.",
-        variant: "destructive",
-      });
+      toast.error("An unexpected error occurred. Please try again.");
     }
   };
 

@@ -7,7 +7,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useAuth } from './AuthProvider';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'react-toastify';
 
 const loginSchema = z.object({
   email: z.string().email('Please enter a valid email address'),
@@ -17,7 +17,6 @@ const loginSchema = z.object({
 export const LoginDialog = ({ isOpen, onClose }) => {
   const [isLoading, setIsLoading] = useState(false);
   const { signIn } = useAuth();
-  const { toast } = useToast();
 
   const form = useForm({
     resolver: zodResolver(loginSchema),
@@ -33,25 +32,14 @@ export const LoginDialog = ({ isOpen, onClose }) => {
       const { error } = await signIn(data.email, data.password);
       
       if (error) {
-        toast({
-          title: "Login Failed",
-          description: error.message,
-          variant: "destructive",
-        });
+        toast.error(error.message);
       } else {
-        toast({
-          title: "Success",
-          description: "Logged in successfully",
-        });
+        toast.success("Logged in successfully");
         onClose();
         form.reset();
       }
     } catch (error) {
-      toast({
-        title: "Error",
-        description: "An unexpected error occurred",
-        variant: "destructive",
-      });
+      toast.error("An unexpected error occurred");
     } finally {
       setIsLoading(false);
     }

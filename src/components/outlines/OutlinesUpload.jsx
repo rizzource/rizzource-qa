@@ -9,14 +9,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Upload, FileText, AlertCircle, CheckCircle, X } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useNavigate } from "react-router-dom";
-// import { useToast } from "@/hooks/use-toast";
+
 import { useAuth } from "@/components/AuthProvider";
 import { ToastContainer, toast } from "react-toastify";
 
 const OutlinesUpload = ({ onUploadSuccess }) => {
   const fileInputRef = useRef(null);
   const navigate = useNavigate();
-  // const { toast } = useToast();
+  
   const { user } = useAuth();
   const [mentorData, setMentorData] = useState(null);
   const [formData, setFormData] = useState({
@@ -239,7 +239,7 @@ const OutlinesUpload = ({ onUploadSuccess }) => {
 
   return (
     <div className="max-w-2xl mx-auto">
-      <ToastContainer />
+      
       <Card className="bg-card backdrop-blur-sm border-border">
         <CardHeader>
           <CardTitle className="text-2xl text-primary flex items-center gap-2">
