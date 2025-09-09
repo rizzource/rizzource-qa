@@ -22,7 +22,7 @@ const Toaster = ({ ...props }: ToasterProps) => {
             "group-[.toast]:bg-primary-foreground/20 group-[.toast]:text-primary-foreground hover:group-[.toast]:bg-primary-foreground/30",
         },
         style: {
-          zIndex: 9999,
+          zIndex: 2147483647,
         }
       }}
       {...props}
