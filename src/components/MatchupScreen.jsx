@@ -452,9 +452,9 @@ const MatchupScreen = ({
       if (userError || !user) return;
 
       const { data, error } = await supabase
-        .from("scheduling_responses") // 👈 your table
+        .from("outlines") // 👈 your table
         .select("mentor_options")
-        .eq("user_id", user.id) // 👈 adjust column name if different
+        // .eq("user_id", user.id) // 👈 adjust column name if different
         .single();
 
       if (!error && data) {
