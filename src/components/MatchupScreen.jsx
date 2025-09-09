@@ -87,7 +87,7 @@ const MatchupScreen = ({
   const endDate = useMemo(() => (startDate ? new Date(startDate.getTime() + durationMinutes * 60000) : null), [startDate, durationMinutes]);
   const { line1, line2 } = startDate ? formatDisplay(startDate) : { line1: meetupTime, line2: "" };
 
-  console.log(mentorOptions);
+  console.log('mentor options', mentorOptions);
   
   const [countdown, setCountdown] = useState("");
   useEffect(() => {
