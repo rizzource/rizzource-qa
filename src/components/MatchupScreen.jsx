@@ -104,7 +104,7 @@ const MatchupScreen = ({
 Time: ${line1}${line2 ? `, ${line2}` : ""}
 Activity: ${activity}
 Decided Dates: ${Array.isArray(selectedDates) && selectedDates.length > 0 ? selectedDates.join(", ") : "To be confirmed"}`;
-    try { await navigator.clipboard.writeText(text); } catch {}
+    try { await navigator.clipboard.writeText(text); toast.success("Text copied") } catch {}
   };
 
   const handleUploadOutline = () => {
