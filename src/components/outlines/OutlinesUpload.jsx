@@ -235,16 +235,9 @@ const OutlinesUpload = ({ onUploadSuccess }) => {
       if (mentorData) {
         await handleMentorFlow(outlineData);
       } else {
-        // For standalone outline upload, redirect to matchup screen
+        // For standalone outline upload, redirect to homepage
         setTimeout(() => {
-          navigate("/matchup", { 
-            state: { 
-              mentorName: "Your Mentor",
-              activity: "coffee",
-              meetupTime: "3pm, Tuesday 12th Sep, 2025",
-              location: "Campus Café"
-            }
-          });
+          navigate("/");
         }, 1500);
       }
     } catch (error) {

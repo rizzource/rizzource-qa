@@ -75,6 +75,9 @@ const MatchupScreen = ({
   docHref = "#",
   docLabel = "General document (expectations of mentors and mentees)",
 }) => {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const outlinePreference = location.state?.outlinePreference;
   const startDate = useMemo(() => parseMeetupTime(meetupTime), [meetupTime]);
   const endDate = useMemo(() => (startDate ? new Date(startDate.getTime() + durationMinutes * 60000) : null), [startDate, durationMinutes]);
   const { line1, line2 } = startDate ? formatDisplay(startDate) : { line1: meetupTime, line2: "" };
@@ -99,6 +102,14 @@ Time: ${line1}${line2 ? `, ${line2}` : ""}
 Activity: ${activity}
 Decided Dates: ${Array.isArray(selectedDates) && selectedDates.length > 0 ? selectedDates.join(", ") : "To be confirmed"}`;
     try { await navigator.clipboard.writeText(text); } catch {}
+  };
+
+  const handleUploadOutline = () => {
+    navigate("/outlines?tab=upload");
+  };
+
+  const handleRateOutline = () => {
+    navigate("/outlines?tab=browse");
   };
 
   return (
@@ -220,6 +231,36 @@ Decided Dates: ${Array.isArray(selectedDates) && selectedDates.length > 0 ? sele
                   </a>
                 )}
               </div>
+
+              {/* Outline preference buttons */}
+              {outlinePreference && (
+                <div className="mt-4 pt-4 border-t border-border">
+                  <h3 className="text-sm font-medium text-muted-foreground mb-3">
+                    Complete Your Mentor Registration:
+                  </h3>
+                  <div className="flex flex-wrap gap-3">
+                    {(outlinePreference === 'upload' || outlinePreference === 'both') && (
+                      <Button
+                        onClick={handleUploadOutline}
+                        className="flex-1 min-w-[140px]"
+                      >
+                        <Upload className="h-4 w-4 mr-2" />
+                        Upload outline
+                      </Button>
+                    )}
+                    {(outlinePreference === 'rate' || outlinePreference === 'both') && (
+                      <Button
+                        onClick={handleRateOutline}
+                        variant="outline"
+                        className="flex-1 min-w-[140px]"
+                      >
+                        <Star className="h-4 w-4 mr-2" />
+                        Rate outline
+                      </Button>
+                    )}
+                  </div>
+                </div>
+              )}
             </CardContent>
           </Card>
         </section>

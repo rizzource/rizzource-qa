@@ -21,11 +21,16 @@ const meetupSchema = z.object({
   meetupWhen: z.string().min(1, "Please select when you'd like to meet"),
 });
 
+const outlinePreferenceSchema = z.object({
+  outlinePreference: z.string().min(1, "Please select your outline preference"),
+});
+
 const MentorMultiStepForm = ({ onBack }) => {
   const [currentStep, setCurrentStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [emailData, setEmailData] = useState({ email: "" });
   const [meetupData, setMeetupData] = useState({ meetupHow: "", meetupWhen: "" });
+  const [outlinePreferenceData, setOutlinePreferenceData] = useState({ outlinePreference: "" });
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -42,6 +47,11 @@ const MentorMultiStepForm = ({ onBack }) => {
   const meetupForm = useForm({
     resolver: zodResolver(meetupSchema),
     defaultValues: { meetupHow: "", meetupWhen: "" },
+  });
+
+  const outlinePreferenceForm = useForm({
+    resolver: zodResolver(outlinePreferenceSchema),
+    defaultValues: { outlinePreference: "" },
   });
 
   const handleEmailSubmit = async (data) => {
@@ -63,15 +73,25 @@ const MentorMultiStepForm = ({ onBack }) => {
       if (mentorData) {
         if (mentorData.had_uploaded_outline) {
           // Mentor has completed everything, go to matchup
-          navigate("/matchup", { state: { mentorEmail: data.email } });
+          navigate("/matchup", { 
+            state: { 
+              mentorEmail: data.email,
+              outlinePreference: mentorData.outline_preference || 'upload'
+            } 
+          });
           return;
         } else {
-          // Mentor has form data but no outline, skip to step 3
+          // Mentor has form data but no outline, load data and continue
           setMeetupData({
             meetupHow: mentorData.meetup_how,
             meetupWhen: mentorData.meetup_when
           });
-          setCurrentStep(3);
+          if (mentorData.outline_preference) {
+            setOutlinePreferenceData({ outlinePreference: mentorData.outline_preference });
+            setCurrentStep(4); // Skip to final step if they already have preference
+          } else {
+            setCurrentStep(3); // Go to outline preference step
+          }
           return;
         }
       }
@@ -119,12 +139,50 @@ const MentorMultiStepForm = ({ onBack }) => {
     }
   };
 
+  const handleOutlinePreferenceSubmit = async (data) => {
+    setLoading(true);
+    try {
+      // Update mentor data with outline preference
+      const { error } = await supabase
+        .from('mentors')
+        .update({ outline_preference: data.outlinePreference })
+        .eq('email', emailData.email);
+
+      if (error) {
+        throw error;
+      }
+
+      setOutlinePreferenceData(data);
+      
+      // Navigate to matchup with preference info
+      navigate("/matchup", { 
+        state: { 
+          mentorEmail: emailData.email,
+          outlinePreference: data.outlinePreference,
+          mentorName: "Mentor",
+          activity: meetupData.meetupHow || "coffee",
+          meetupTime: meetupData.meetupWhen || "3pm, Tuesday 12th Sep, 2025"
+        } 
+      });
+    } catch (error) {
+      console.error("Error saving outline preference:", error);
+      toast({
+        title: "Error",
+        description: "Failed to save your preference. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleUploadOutline = () => {
     // Store mentor data in session storage for outline upload
     const mentorFormData = {
       email: emailData.email,
       meetupHow: meetupData.meetupHow,
       meetupWhen: meetupData.meetupWhen,
+      outlinePreference: outlinePreferenceData.outlinePreference
     };
     sessionStorage.setItem("mentorFormData", JSON.stringify(mentorFormData));
     navigate("/outlines?tab=upload");
@@ -137,6 +195,8 @@ const MentorMultiStepForm = ({ onBack }) => {
       case 2:
         return <Users className="h-8 w-8 text-accent" />;
       case 3:
+        return <Users className="h-8 w-8 text-accent" />;
+      case 4:
         return <Upload className="h-8 w-8 text-accent" />;
       default:
         return <GraduationCap className="h-8 w-8 text-accent" />;
@@ -150,6 +210,8 @@ const MentorMultiStepForm = ({ onBack }) => {
       case 2:
         return "Meetup Preferences";
       case 3:
+        return "Outline Preferences";
+      case 4:
         return "Upload Outline Required";
       default:
         return "Mentor Application";
@@ -163,6 +225,8 @@ const MentorMultiStepForm = ({ onBack }) => {
       case 2:
         return "Tell us how and when you'd prefer to meet with mentees.";
       case 3:
+        return "How would you like to contribute to the outlines community?";
+      case 4:
         return "Upload your outline and rate at least one outline to complete your mentor registration.";
       default:
         return "Enter your email address to get started.";
@@ -197,7 +261,7 @@ const MentorMultiStepForm = ({ onBack }) => {
               
               {/* Step indicator */}
               <div className="flex justify-center mt-4 space-x-2">
-                {[1, 2, 3].map((step) => (
+                {[1, 2, 3, 4].map((step) => (
                   <div
                     key={step}
                     className={`w-2 h-2 rounded-full ${
@@ -310,6 +374,51 @@ const MentorMultiStepForm = ({ onBack }) => {
               )}
 
               {currentStep === 3 && (
+                <Form {...outlinePreferenceForm}>
+                  <form onSubmit={outlinePreferenceForm.handleSubmit(handleOutlinePreferenceSubmit)} className="space-y-6">
+                    <FormField
+                      control={outlinePreferenceForm.control}
+                      name="outlinePreference"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-foreground">
+                            How would you like to contribute to the outlines community?
+                          </FormLabel>
+                          <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <FormControl>
+                              <SelectTrigger className="bg-card border-input text-foreground focus:border-accent focus:ring-2 focus:ring-accent">
+                                <SelectValue placeholder="Select your preference" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent className="bg-card border border-border rounded-md shadow-lg z-50">
+                              <SelectItem value="upload">Upload an outline</SelectItem>
+                              <SelectItem value="rate">Rate an outline</SelectItem>
+                              <SelectItem value="both">Do both</SelectItem>
+                            </SelectContent>
+                          </Select>
+                          <FormMessage className="text-accent" />
+                        </FormItem>
+                      )}
+                    />
+
+                    <div className="flex space-x-4">
+                      <Button 
+                        type="button" 
+                        variant="outline" 
+                        onClick={() => setCurrentStep(2)}
+                        className="flex-1"
+                      >
+                        Back
+                      </Button>
+                      <Button type="submit" disabled={loading} className="flex-1">
+                        {loading ? "Submitting..." : "Complete Registration"}
+                      </Button>
+                    </div>
+                  </form>
+                </Form>
+              )}
+
+              {currentStep === 4 && (
                 <div className="text-center space-y-6">
                   <p className="text-muted-foreground">
                     To become a mentor, you need to upload an outline and rate at least one outline. This helps us match you with mentees

@@ -100,6 +100,7 @@ export type Database = {
           id: string
           meetup_how: string
           meetup_when: string
+          outline_preference: string | null
         }
         Insert: {
           created_at?: string
@@ -108,6 +109,7 @@ export type Database = {
           id?: string
           meetup_how: string
           meetup_when: string
+          outline_preference?: string | null
         }
         Update: {
           created_at?: string
@@ -116,6 +118,7 @@ export type Database = {
           id?: string
           meetup_how?: string
           meetup_when?: string
+          outline_preference?: string | null
         }
         Relationships: []
       }

@@ -17,6 +17,8 @@ const OutlinesHub = () => {
     const tabParam = searchParams.get("tab");
     if (tabParam === "upload") {
       setActiveTab("upload");
+    } else if (tabParam === "browse") {
+      setActiveTab("browse");
     }
   }, [searchParams]);
   
