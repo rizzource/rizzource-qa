@@ -11,6 +11,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/components/AuthProvider";
+import { ToastContainer, toast } from "react-toastify";
 
 const OutlinesUpload = ({ onUploadSuccess }) => {
   const fileInputRef = useRef(null);
@@ -106,11 +107,7 @@ const OutlinesUpload = ({ onUploadSuccess }) => {
 
   const handleMentorFlow = async (outlineData) => {
     if (!mentorData) {
-      toast({
-        title: "Error",
-        description: "Mentor information not found. Please start over.",
-        variant: "destructive",
-      });
+      toast.error("Mentor information not found. Please start over.")
       navigate("/mentorship-selection");
       return;
     }
@@ -173,11 +170,7 @@ const OutlinesUpload = ({ onUploadSuccess }) => {
     
     // Check if user is authenticated
     if (!user) {
-      toast({
-        title: "Authentication Required",
-        description: "Please log in to upload outlines.",
-        variant: "destructive",
-      });
+      toast.error("Please log in to upload outlines.")
       setUploadStatus(null);
       return;
     }
@@ -260,6 +253,7 @@ const OutlinesUpload = ({ onUploadSuccess }) => {
 
   return (
     <div className="max-w-2xl mx-auto">
+      <ToastContainer />
       <Card className="bg-card backdrop-blur-sm border-border">
         <CardHeader>
           <CardTitle className="text-2xl text-primary flex items-center gap-2">
