@@ -296,7 +296,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
-import { supabase } from "@/lib/supabaseClient"; // make sure this path is correct
+import { supabase } from "@/integrations/supabase/client";
 
 /* ----------------------- helpers ----------------------- */
 const ordinal = (n) => {
