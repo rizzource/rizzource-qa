@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -28,6 +28,11 @@ const MentorMultiStepForm = ({ onBack }) => {
   const [meetupData, setMeetupData] = useState({ meetupHow: "", meetupWhen: "" });
   const navigate = useNavigate();
   const { toast } = useToast();
+
+  // Scroll to top when step changes
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [currentStep]);
 
   const emailForm = useForm({
     resolver: zodResolver(emailSchema),

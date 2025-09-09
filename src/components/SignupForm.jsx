@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -22,6 +23,11 @@ const menteeSchema = z.object({
 const SignupForm = ({ userType, onBack }) => {
   const navigate = useNavigate();
   const { toast } = useToast();
+
+  // Scroll to top when component mounts
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
 
   const form = useForm({
     resolver: zodResolver(menteeSchema),
