@@ -633,14 +633,14 @@ console.log("mentorOptions", mentorOptions)
               </div>
 
               {/* Outline preference buttons */}
-              {mentorOptions && mentorOptions !== "none" && (
+              {mentorOptions && mentorOptions?.length > 0 && (
                 <div className="mt-4 pt-4 border-t border-border">
                   <h3 className="text-sm font-medium text-muted-foreground mb-3">
                     Complete Your Mentor Registration:
                   </h3>
                   <div className="flex flex-wrap gap-3">
-                    {(mentorOptions === "Upload an outline" ||
-                      mentorOptions === "Do both") && (
+                    {(mentorOptions?.includes("Upload an outline") ||
+                      mentorOptions?.includes("Do both")) && (
                       <Button
                         onClick={handleUploadOutline}
                         className="flex-1 min-w-[140px]"
@@ -649,8 +649,8 @@ console.log("mentorOptions", mentorOptions)
                         Upload Outline
                       </Button>
                     )}
-                    {(mentorOptions === "Rate an outline" ||
-                      mentorOptions === "Do both") && (
+                    {(mentorOptions?.includes("Rate an outline") ||
+                      mentorOptions?.includes("Do both")) && (
                       <Button
                         onClick={handleRateOutline}
                         variant="outline"
