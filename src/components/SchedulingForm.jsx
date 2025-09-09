@@ -156,6 +156,7 @@ const SchedulingForm = ({ onBack, initialUserType }) => {
           mentorName: data.userType === "mentor" ? data.fullName : "Your Assigned Mentor",
           activity: data.activities[0] || "networking",
           meetupTime: `Between ${data.earliestTime} - ${data.latestTime}`,
+          mentorOptions: formattedData.mentor_options,
           selectedDates: data.dateType === "days" 
             ? data.selectedDays?.map(day => day.charAt(0).toUpperCase() + day.slice(1)) || []
             : data.selectedDates?.map(date => format(date, "yyyy-MM-dd")) || [],
