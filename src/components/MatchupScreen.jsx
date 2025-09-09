@@ -82,9 +82,7 @@ const MatchupScreen = ({
 }) => {
   const location = useLocation();
   const navigate = useNavigate();
-  const mentorOptions = location.state?.mentorOptions || [];
   console.log("location.state:", location.state);
-  console.log("mentorOptions from location.state:", mentorOptions);
   const startDate = useMemo(() => parseMeetupTime(meetupTime), [meetupTime]);
   const endDate = useMemo(() => (startDate ? new Date(startDate.getTime() + durationMinutes * 60000) : null), [startDate, durationMinutes]);
   const { line1, line2 } = startDate ? formatDisplay(startDate) : { line1: meetupTime, line2: "" };
