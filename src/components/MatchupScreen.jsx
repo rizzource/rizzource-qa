@@ -424,7 +424,7 @@ const MatchupScreen = ({
     outlinePreference 
   } = location.state || {};
   const navigate = useNavigate();
-
+console.log("mentorOptionssss", mentorOptions)
   const startDate = useMemo(
     () => parseMeetupTime(meetupTime),
     [meetupTime]
@@ -477,7 +477,7 @@ Decided Dates: ${
 
   const handleUploadOutline = () => navigate("/outlines?tab=upload");
   const handleRateOutline = () => navigate("/outlines?tab=browse");
-console.log("mentorOptions", mentorOptions)
+
   return (
     <>
       <ToastContainer />
