@@ -449,7 +449,7 @@ export const AdminDashboard = () => {
           <div className="hidden sm:block text-muted-foreground text-sm font-medium">
             {activeSection === 0 && 'Mentees'} 
             {activeSection === 1 && 'Mentors'} 
-            /* {activeSection === 2 && 'Feedback'} */
+            {/* {activeSection === 2 && 'Feedback'} */}
           </div>
           <Button
             type="button"
