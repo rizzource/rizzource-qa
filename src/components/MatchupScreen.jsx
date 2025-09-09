@@ -9,9 +9,12 @@ import {
   Download,
   ExternalLink,
   Sparkles,
+  Upload,
+  Star,
 } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { useLocation, useNavigate } from "react-router-dom";
 
 /* ----------------------- helpers ----------------------- */
 const ordinal = (n) => {
