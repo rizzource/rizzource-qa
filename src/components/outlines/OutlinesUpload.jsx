@@ -153,7 +153,7 @@ const OutlinesUpload = ({ onUploadSuccess }) => {
 
     } catch (error) {
       console.error("Error in mentor flow:", error);
-      toast.error("There was an error completing your registration. Please try again.""There was an error completing your registration. Please try again.");
+      toast.error("There was an error completing your registration. Please try again.");
     }
   };
 
