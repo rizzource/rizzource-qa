@@ -269,9 +269,10 @@ export const AdminDashboard = () => {
   };
 
   const handlePrev = () =>
-    setActiveSection((prev) => (prev > 0 ? prev - 1 : 2));
+    setActiveSection((prev) => (prev > 0 ? prev - 1 : 1));
+  
   const handleNext = () =>
-    setActiveSection((prev) => (prev < 2 ? prev + 1 : 0));
+    setActiveSection((prev) => (prev < 1 ? prev + 1 : 0));
 
   if (loading) {
     return (
@@ -449,7 +450,7 @@ export const AdminDashboard = () => {
           <div className="hidden sm:block text-muted-foreground text-sm font-medium">
             {activeSection === 0 && 'Mentees'} 
             {activeSection === 1 && 'Mentors'} 
-            {/* {activeSection === 2 && 'Feedback'} */}
+            /* {activeSection === 2 && 'Feedback'} */
           </div>
           <Button
             type="button"
