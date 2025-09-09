@@ -53,18 +53,18 @@ export const AdminDashboard = () => {
   const [stats, setStats] = useState({
     mentees: 0,
     mentors: 0,
-    feedback: 0,
+    // feedback: 0,
     exports: 0,
   });
   
   // Pagination state for each table
   const [menteesData, setMenteesData] = useState({ data: [], total: 0, loading: false });
   const [mentorsData, setMentorsData] = useState({ data: [], total: 0, loading: false });
-  const [feedbackData, setFeedbackData] = useState({ data: [], total: 0, loading: false });
+  // const [feedbackData, setFeedbackData] = useState({ data: [], total: 0, loading: false });
   
   const [menteesPage, setMenteesPage] = useState(1);
   const [mentorsPage, setMentorsPage] = useState(1);
-  const [feedbackPage, setFeedbackPage] = useState(1);
+  // const [feedbackPage, setFeedbackPage] = useState(1);
   
   const [loading, setLoading] = useState(true);
   const [exportingTable, setExportingTable] = useState("");
@@ -93,19 +93,19 @@ export const AdminDashboard = () => {
       const [
         menteesResponse,
         mentorsResponse,
-        feedbackResponse,
+        // feedbackResponse,
         exportsResponse,
       ] = await Promise.all([
         supabase.from("scheduling_responses").select("*", { count: "exact", head: true }).eq("user_type", "mentee"),
         supabase.from("scheduling_responses").select("*", { count: "exact", head: true }).eq("user_type", "mentor"),
-        supabase.from("feedback").select("*", { count: "exact", head: true }),
+        // supabase.from("feedback").select("*", { count: "exact", head: true }),
         supabase.from("data_exports").select("*", { count: "exact", head: true }),
       ]);
 
       setStats({
         mentees: menteesResponse.count || 0,
         mentors: mentorsResponse.count || 0,
-        feedback: feedbackResponse.count || 0,
+        // feedback: feedbackResponse.count || 0,
         exports: exportsResponse.count || 0,
       });
     } catch (error) {
@@ -124,7 +124,7 @@ export const AdminDashboard = () => {
       await Promise.all([
         fetchMentees(1),
         fetchMentors(1),
-        fetchFeedback(1),
+        // fetchFeedback(1),
       ]);
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -204,37 +204,37 @@ export const AdminDashboard = () => {
     }
   };
 
-  const fetchFeedback = async (page) => {
-    if (!isAdmin()) return;
-    setFeedbackData(prev => ({ ...prev, loading: true }));
-    try {
-      const from = (page - 1) * PAGE_SIZE;
-      const to = from + PAGE_SIZE - 1;
+  // const fetchFeedback = async (page) => {
+  //   if (!isAdmin()) return;
+  //   setFeedbackData(prev => ({ ...prev, loading: true }));
+  //   try {
+  //     const from = (page - 1) * PAGE_SIZE;
+  //     const to = from + PAGE_SIZE - 1;
       
-      const { data, count, error } = await supabase
-        .from("feedback")
-        .select("*", { count: "exact" })
-        .order("created_at", { ascending: false })
-        .range(from, to);
+  //     const { data, count, error } = await supabase
+  //       .from("feedback")
+  //       .select("*", { count: "exact" })
+  //       .order("created_at", { ascending: false })
+  //       .range(from, to);
       
-      if (error) throw error;
+  //     if (error) throw error;
       
-      setFeedbackData({
-        data: data || [],
-        total: count || 0,
-        loading: false,
-      });
-      setFeedbackPage(page);
-    } catch (error) {
-      console.error("Error fetching feedback:", error);
-      setFeedbackData(prev => ({ ...prev, loading: false }));
-      toast({
-        title: "Error",
-        description: "Failed to fetch feedback data",
-        variant: "destructive",
-      });
-    }
-  };
+  //     setFeedbackData({
+  //       data: data || [],
+  //       total: count || 0,
+  //       loading: false,
+  //     });
+  //     setFeedbackPage(page);
+  //   } catch (error) {
+  //     console.error("Error fetching feedback:", error);
+  //     setFeedbackData(prev => ({ ...prev, loading: false }));
+  //     toast({
+  //       title: "Error",
+  //       description: "Failed to fetch feedback data",
+  //       variant: "destructive",
+  //     });
+  //   }
+  // };
 
   const exportToExcel = async (tableName, data, filename) => {
     if (!data || data.length === 0) {
@@ -374,7 +374,7 @@ export const AdminDashboard = () => {
             </CardContent>
           </Card>
           
-          <Card className="bg-card/90 backdrop-blur-lg border border-border shadow-xl">
+          {/* <Card className="bg-card/90 backdrop-blur-lg border border-border shadow-xl">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">Feedback</CardTitle>
               <MessageSquare className="h-4 w-4 text-accent" />
@@ -385,7 +385,7 @@ export const AdminDashboard = () => {
                 User submissions
               </p>
             </CardContent>
-          </Card>
+          </Card> */}
           
           <Card className="bg-card/90 backdrop-blur-lg border border-border shadow-xl">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -422,7 +422,7 @@ export const AdminDashboard = () => {
             pageSize={PAGE_SIZE}
           />
         )}
-        {activeSection === 2 && (
+        /* {activeSection === 2 && (
           <FeedbackTable
             data={feedbackData}
             currentPage={feedbackPage}
@@ -431,7 +431,7 @@ export const AdminDashboard = () => {
             exportingTable={exportingTable}
             pageSize={PAGE_SIZE}
           />
-        )}
+        )} */
 
         {/* Pagination Controls */}
         <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mt-6">
@@ -712,108 +712,108 @@ const MentorsTable = ({ data, currentPage, onPageChange, exportToExcel, exportin
   );
 };
 
-const FeedbackTable = ({ data, currentPage, onPageChange, exportToExcel, exportingTable, pageSize }) => {
-  const totalPages = Math.ceil(data.total / pageSize);
+// const FeedbackTable = ({ data, currentPage, onPageChange, exportToExcel, exportingTable, pageSize }) => {
+//   const totalPages = Math.ceil(data.total / pageSize);
   
-  return (
-    <Card className="bg-card/90 backdrop-blur-lg border border-border shadow-xl">
-      <CardHeader>
-        <div className="flex flex-col sm:flex-row gap-4 sm:justify-between sm:items-center">
-          <div>
-            <CardTitle className="text-foreground">Feedback</CardTitle>
-            <CardDescription className="text-muted-foreground">
-              User feedback submissions ({data.total} total)
-            </CardDescription>
-          </div>
-          <Button
-            onClick={() => exportToExcel('feedback', data.data, 'feedback_export')}
-            disabled={exportingTable === 'feedback'}
-            className="w-full sm:w-auto"
-          >
-            <FileSpreadsheet className="h-4 w-4 mr-2" />
-            <span className="hidden sm:inline">{exportingTable === 'feedback' ? 'Exporting...' : 'Export to Excel'}</span>
-            <span className="sm:hidden">{exportingTable === 'feedback' ? 'Exporting...' : 'Export'}</span>
-          </Button>
-        </div>
-      </CardHeader>
-      <CardContent>
-        <div className="overflow-x-auto">
-          <div className="rounded-md border border-border w-max min-w-full bg-card/50 backdrop-blur-sm">
-            <Table>
-              <TableHeader>
-                <TableRow className="border-border bg-muted/50 backdrop-blur-sm">
-                  <TableHead className="text-foreground font-semibold min-w-[180px]">Email</TableHead>
-                  <TableHead className="text-foreground font-semibold min-w-[80px]">Rating</TableHead>
-                  <TableHead className="text-foreground font-semibold min-w-[200px]">Suggestions</TableHead>
-                  <TableHead className="text-foreground font-semibold min-w-[100px]">Created At</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {data.loading ? (
-                   <TableRow>
-                     <TableCell colSpan={4} className="text-center text-muted-foreground py-8">
-                       <Loader2 className="h-4 w-4 animate-spin mx-auto" />
-                       <span className="ml-2">Loading...</span>
-                     </TableCell>
-                   </TableRow>
-                 ) : data.data.length === 0 ? (
-                   <TableRow>
-                     <TableCell colSpan={4} className="text-center text-muted-foreground py-8">
-                       No feedback found
-                     </TableCell>
-                   </TableRow>
-                 ) : (
-                   data.data.map((item) => (
-                     <TableRow key={item.id} className="border-border hover:bg-muted/50 transition-colors duration-200">
-                       <TableCell className="text-muted-foreground text-sm">{item.user_email}</TableCell>
-                       <TableCell className="text-muted-foreground text-sm">{item.rating}/5</TableCell>
-                       <TableCell className="text-muted-foreground text-sm whitespace-normal break-words max-w-[180px]">{item.suggestions}</TableCell>
-                       <TableCell className="text-muted-foreground text-sm">
-                         {new Date(item.created_at).toLocaleDateString()}
-                       </TableCell>
-                     </TableRow>
-                   ))
-                )}
-              </TableBody>
-            </Table>
-          </div>
-        </div>
+//   return (
+//     <Card className="bg-card/90 backdrop-blur-lg border border-border shadow-xl">
+//       <CardHeader>
+//         <div className="flex flex-col sm:flex-row gap-4 sm:justify-between sm:items-center">
+//           <div>
+//             <CardTitle className="text-foreground">Feedback</CardTitle>
+//             <CardDescription className="text-muted-foreground">
+//               User feedback submissions ({data.total} total)
+//             </CardDescription>
+//           </div>
+//           <Button
+//             onClick={() => exportToExcel('feedback', data.data, 'feedback_export')}
+//             disabled={exportingTable === 'feedback'}
+//             className="w-full sm:w-auto"
+//           >
+//             <FileSpreadsheet className="h-4 w-4 mr-2" />
+//             <span className="hidden sm:inline">{exportingTable === 'feedback' ? 'Exporting...' : 'Export to Excel'}</span>
+//             <span className="sm:hidden">{exportingTable === 'feedback' ? 'Exporting...' : 'Export'}</span>
+//           </Button>
+//         </div>
+//       </CardHeader>
+//       <CardContent>
+//         <div className="overflow-x-auto">
+//           <div className="rounded-md border border-border w-max min-w-full bg-card/50 backdrop-blur-sm">
+//             <Table>
+//               <TableHeader>
+//                 <TableRow className="border-border bg-muted/50 backdrop-blur-sm">
+//                   <TableHead className="text-foreground font-semibold min-w-[180px]">Email</TableHead>
+//                   <TableHead className="text-foreground font-semibold min-w-[80px]">Rating</TableHead>
+//                   <TableHead className="text-foreground font-semibold min-w-[200px]">Suggestions</TableHead>
+//                   <TableHead className="text-foreground font-semibold min-w-[100px]">Created At</TableHead>
+//                 </TableRow>
+//               </TableHeader>
+//               <TableBody>
+//                 {data.loading ? (
+//                    <TableRow>
+//                      <TableCell colSpan={4} className="text-center text-muted-foreground py-8">
+//                        <Loader2 className="h-4 w-4 animate-spin mx-auto" />
+//                        <span className="ml-2">Loading...</span>
+//                      </TableCell>
+//                    </TableRow>
+//                  ) : data.data.length === 0 ? (
+//                    <TableRow>
+//                      <TableCell colSpan={4} className="text-center text-muted-foreground py-8">
+//                        No feedback found
+//                      </TableCell>
+//                    </TableRow>
+//                  ) : (
+//                    data.data.map((item) => (
+//                      <TableRow key={item.id} className="border-border hover:bg-muted/50 transition-colors duration-200">
+//                        <TableCell className="text-muted-foreground text-sm">{item.user_email}</TableCell>
+//                        <TableCell className="text-muted-foreground text-sm">{item.rating}/5</TableCell>
+//                        <TableCell className="text-muted-foreground text-sm whitespace-normal break-words max-w-[180px]">{item.suggestions}</TableCell>
+//                        <TableCell className="text-muted-foreground text-sm">
+//                          {new Date(item.created_at).toLocaleDateString()}
+//                        </TableCell>
+//                      </TableRow>
+//                    ))
+//                 )}
+//               </TableBody>
+//             </Table>
+//           </div>
+//         </div>
         
-        {/* Pagination Controls */}
-        {totalPages > 1 && (
-          <div className="flex justify-center mt-6">
-            <Pagination>
-              <PaginationContent>
-                <PaginationItem>
-                  <PaginationPrevious 
-                    onClick={() => currentPage > 1 && onPageChange(currentPage - 1)}
-                    className={currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
-                  />
-                </PaginationItem>
+//         {/* Pagination Controls */}
+//         {totalPages > 1 && (
+//           <div className="flex justify-center mt-6">
+//             <Pagination>
+//               <PaginationContent>
+//                 <PaginationItem>
+//                   <PaginationPrevious 
+//                     onClick={() => currentPage > 1 && onPageChange(currentPage - 1)}
+//                     className={currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
+//                   />
+//                 </PaginationItem>
                 
-                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                  <PaginationItem key={page}>
-                    <PaginationLink
-                      onClick={() => onPageChange(page)}
-                      isActive={currentPage === page}
-                      className="cursor-pointer"
-                    >
-                      {page}
-                    </PaginationLink>
-                  </PaginationItem>
-                ))}
+//                 {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+//                   <PaginationItem key={page}>
+//                     <PaginationLink
+//                       onClick={() => onPageChange(page)}
+//                       isActive={currentPage === page}
+//                       className="cursor-pointer"
+//                     >
+//                       {page}
+//                     </PaginationLink>
+//                   </PaginationItem>
+//                 ))}
                 
-                <PaginationItem>
-                  <PaginationNext 
-                    onClick={() => currentPage < totalPages && onPageChange(currentPage + 1)}
-                    className={currentPage === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"}
-                  />
-                </PaginationItem>
-              </PaginationContent>
-            </Pagination>
-          </div>
-        )}
-      </CardContent>
-    </Card>
-  );
-};
+//                 <PaginationItem>
+//                   <PaginationNext 
+//                     onClick={() => currentPage < totalPages && onPageChange(currentPage + 1)}
+//                     className={currentPage === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"}
+//                   />
+//                 </PaginationItem>
+//               </PaginationContent>
+//             </Pagination>
+//           </div>
+//         )}
+//       </CardContent>
+//     </Card>
+//   );
+// };
