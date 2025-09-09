@@ -410,16 +410,19 @@ const downloadICS = ({ title, description, start, end, location }) => {
 
 /* -------------------- component -------------------- */
 const MatchupScreen = ({
-  mentorName = "Sher Khan",
-  meetupTime = "3pm, Tuesday 12th Sep, 2025",
-  activity = "coffee",
-  selectedDates = ["Monday", "Wednesday"],
   durationMinutes = 60,
   docHref = "#",
   docLabel = "General document (expectations of mentors and mentees)",
 }) => {
  const location = useLocation();
-  const { mentorName, activity, meetupTime, selectedDates, mentorOptions } = location.state || {};
+  const { 
+    mentorName = "Sher Khan", 
+    activity = "coffee", 
+    meetupTime = "3pm, Tuesday 12th Sep, 2025", 
+    selectedDates = ["Monday", "Wednesday"], 
+    mentorOptions,
+    outlinePreference 
+  } = location.state || {};
   const navigate = useNavigate();
 
   const startDate = useMemo(
