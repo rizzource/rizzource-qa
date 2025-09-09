@@ -381,6 +381,7 @@ const MentorMultiStepForm = ({ onBack }) => {
                               <SelectItem value="upload">Upload an outline</SelectItem>
                               <SelectItem value="rate">Rate an outline</SelectItem>
                               <SelectItem value="both">Do both</SelectItem>
+                              <SelectItem value="none">I'll just sit back and nod wisely 😏</SelectItem>
                             </SelectContent>
                           </Select>
                           <FormMessage className="text-accent" />

@@ -238,7 +238,7 @@ Decided Dates: ${Array.isArray(selectedDates) && selectedDates.length > 0 ? sele
               </div>
 
               {/* Outline preference buttons */}
-              {outlinePreference && (
+              {outlinePreference && outlinePreference !== 'none' && (
                 <div className="mt-4 pt-4 border-t border-border">
                   <h3 className="text-sm font-medium text-muted-foreground mb-3">
                     Complete Your Mentor Registration:
@@ -250,7 +250,7 @@ Decided Dates: ${Array.isArray(selectedDates) && selectedDates.length > 0 ? sele
                         className="flex-1 min-w-[140px]"
                       >
                         <Upload className="h-4 w-4 mr-2" />
-                        Upload outline
+                        Upload Outline
                       </Button>
                     )}
                     {(outlinePreference === 'rate' || outlinePreference === 'both') && (
@@ -260,7 +260,7 @@ Decided Dates: ${Array.isArray(selectedDates) && selectedDates.length > 0 ? sele
                         className="flex-1 min-w-[140px]"
                       >
                         <Star className="h-4 w-4 mr-2" />
-                        Rate outline
+                        Rate Outline
                       </Button>
                     )}
                   </div>

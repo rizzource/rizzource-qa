@@ -16,6 +16,7 @@ const MatchupPage = () => {
           meetupTime={meetupTime || "3pm, Tuesday 12th Sep, 2025"}
           activity={activity || "coffee"}
           selectedDates={selectedDates || ["Monday", "Wednesday"]}
+          outlinePreference={outlinePreference}
         />
       </main>
       <Footer />
