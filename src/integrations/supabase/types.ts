@@ -14,6 +14,39 @@ export type Database = {
   }
   public: {
     Tables: {
+      availability_slots: {
+        Row: {
+          created_at: string
+          event_date: string
+          id: string
+          is_available: boolean
+          time_slot: string
+          updated_at: string
+          user_email: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          event_date: string
+          id?: string
+          is_available?: boolean
+          time_slot: string
+          updated_at?: string
+          user_email: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          event_date?: string
+          id?: string
+          is_available?: boolean
+          time_slot?: string
+          updated_at?: string
+          user_email?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       data_exports: {
         Row: {
           export_type: string
@@ -300,6 +333,15 @@ export type Database = {
       export_data_to_json: {
         Args: { table_name: string }
         Returns: Json
+      }
+      get_availability_heatmap: {
+        Args: { target_date: string }
+        Returns: {
+          availability_percentage: number
+          available_count: number
+          time_slot: string
+          total_participants: number
+        }[]
       }
       get_current_user_role: {
         Args: Record<PropertyKey, never>

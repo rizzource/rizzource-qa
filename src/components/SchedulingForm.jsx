@@ -155,16 +155,18 @@ const SchedulingForm = ({ onBack, initialUserType }) => {
 
       toast.success("Your scheduling preferences have been saved.");
 
-      // Navigate to matchup page (keep your original display values)
-      navigate("/matchup", {
+      // Navigate to availability scheduler instead of matchup page
+      navigate("/availability", {
         state: {
-          mentorName: data.userType === "mentor" ? data.fullName : "Your Assigned Mentor",
-          activity: data.activities[0] || "networking",
-          meetupTime: `Between ${data.earliestTime} - ${data.latestTime}`,
-          selectedDates:
-            data.dateType === "days"
-              ? (data.selectedDays ?? []).map((day) => day.charAt(0).toUpperCase() + day.slice(1))
-              : (data.selectedDates ?? []).map((date) => format(date, "yyyy-MM-dd")),
+          ...formattedData,
+          fullName: data.fullName,
+          dateType: data.dateType,
+          selectedDays: data.selectedDays,
+          selectedDates: data.selectedDates,
+          earliestTime: data.earliestTime,
+          latestTime: data.latestTime,
+          activities: data.activities,
+          userType: data.userType,
           mentorOptions: data.mentorOptions || []
         },
       });
