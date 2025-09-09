@@ -454,7 +454,7 @@ const MatchupScreen = ({
       const { data, error } = await supabase
         .from("scheduling_responses") // 👈 your table
         .select("mentor_options")
-        .eq("id", user.id) // 👈 adjust column name if different
+        .eq("email", user.email) // 👈 adjust column name if different
         .single();
 
       if (!error && data) {
