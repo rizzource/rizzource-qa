@@ -244,7 +244,7 @@ Decided Dates: ${Array.isArray(selectedDates) && selectedDates.length > 0 ? sele
                     Complete Your Mentor Registration:
                   </h3>
                   <div className="flex flex-wrap gap-3">
-                    {(outlinePreference === 'upload' || outlinePreference === 'both') && (
+                    {(outlinePreference === 'Upload an outline' || outlinePreference === 'Do both') && (
                       <Button
                         onClick={handleUploadOutline}
                         className="flex-1 min-w-[140px]"
@@ -253,7 +253,7 @@ Decided Dates: ${Array.isArray(selectedDates) && selectedDates.length > 0 ? sele
                         Upload Outline
                       </Button>
                     )}
-                    {(outlinePreference === 'rate' || outlinePreference === 'both') && (
+                    {(outlinePreference === 'Rate an outline' || outlinePreference === 'Do both') && (
                       <Button
                         onClick={handleRateOutline}
                         variant="outline"
