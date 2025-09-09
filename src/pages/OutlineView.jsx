@@ -9,6 +9,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { downloadOutlineAsPDF, downloadOutlineAsDocx } from "@/utils/outlineDownload";
 
 
 const OutlineView = () => {
@@ -137,15 +138,28 @@ const OutlineView = () => {
     setRatingLoading(false);
   };
 
-  const handleDownload = (format) => {
-    // Mock download functionality
-    toast({
-      title: "Download Started",
-      description: `Downloading outline as ${format}...`,
-      duration: 3000,
-    });
+  const handleDownload = async (format) => {
+    try {
+      if (format === 'PDF') {
+        await downloadOutlineAsPDF(outline);
+      } else {
+        await downloadOutlineAsDocx(outline);
+      }
+      toast({
+        title: 'Download started',
+        description: `Generating ${format}...`,
+        duration: 3000,
+      });
+    } catch (error) {
+      console.error('Download failed', error);
+      toast({
+        title: 'Download failed',
+        description: 'Please try again.',
+        variant: 'destructive',
+        duration: 3000,
+      });
+    }
   };
-
   const renderStars = (rating, interactive = false, size = "w-5 h-5") => {
     const stars = [];
     for (let i = 1; i <= 5; i++) {

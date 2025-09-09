@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Search, Filter, Star, Download, Eye, FileText, BookOpen, X } from "lucide-react";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { downloadOutlineBoth } from "@/utils/outlineDownload";
 
 const OutlinesBrowse = () => {
   const [filters, setFilters] = useState({
@@ -383,7 +384,7 @@ const OutlinesBrowse = () => {
                       Preview
                     </Button>
 
-                    <Button size="sm" className="px-3 py-2">
+                    <Button size="sm" className="px-3 py-2" onClick={() => downloadOutlineBoth(outline)}>
                       <Download className="w-4 h-4 mr-1" />
                       Download
                     </Button>
