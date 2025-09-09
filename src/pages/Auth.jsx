@@ -100,8 +100,8 @@ const Auth = () => {
           </div>
 
           {/* Right Side - Form Section */}
-          <div className="w-full lg:w-1/2 bg-white/95 backdrop-blur-sm flex items-center justify-center p-4 sm:p-6 min-h-[60vh] lg:min-h-screen">
-            <Card className="w-full max-w-md shadow-card bg-white/95 backdrop-blur-sm">
+          <div className="w-full lg:w-1/2 bg-background/95 backdrop-blur-sm flex items-center justify-center p-4 sm:p-6 min-h-[60vh] lg:min-h-screen">
+            <Card className="w-full max-w-md shadow-card bg-background/95 backdrop-blur-sm">
               <CardHeader className="text-center space-y-2">
                 <CardTitle className="text-2xl text-foreground">Welcome Back</CardTitle>
                 <CardDescription className="text-muted-foreground">
