@@ -1,11 +1,11 @@
 import { useState } from 'react'; 
 import { Button } from "@/components/ui/button"; 
 import { Scale, Shield, LogOut, User, ArrowLeft } from "lucide-react"; 
-import { useAuth } from './AuthProvider'; 
+import { useAuth } from './AuthProvider';
 import { Link, useLocation, useNavigate } from 'react-router-dom'; 
 
 const Header = () => { 
-  const { user, isAdmin, signOut } = useAuth(); 
+  const { user, userProfile, isAdmin, signOut } = useAuth(); 
   const navigate = useNavigate(); 
   const location = useLocation(); 
   // Get current path 
@@ -46,8 +46,10 @@ const Header = () => {
                 </Link> 
               </> 
             ) : null} 
-            {/* ✅ Resource Hub is always visible */} 
-            <Link to="/resources" className="font-bold text-primary hover:text-accent transition-colors" > Resource Hub </Link> 
+            {/* Resource Hub only visible for Mentors */}
+            {userProfile?.role === 'Mentor' && (
+              <Link to="/resources" className="font-bold text-primary hover:text-accent transition-colors" > Resource Hub </Link>
+            )}
             {user ? 
             ( 
               <> 

@@ -44,8 +44,9 @@ const ResourceHub = () => {
           </div>
 
           {/* Resource Cards */}
-          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            {/* APALSA Mentorship Program Card */}
+          <div className="grid md:grid-cols-1 gap-8 max-w-2xl mx-auto">
+            {/* APALSA Mentorship Program Card - Commented out for now */}
+            {/* 
             <Card 
               className="group hover:shadow-lg transition-all duration-300 border-2 border-transparent hover:border-accent/30 bg-card backdrop-blur-sm cursor-pointer"
               onClick={handleMentorshipClick}
@@ -77,6 +78,7 @@ const ResourceHub = () => {
                 </Button>
               </CardContent>
             </Card>
+            */}
 
             {/* Outlines Hub Card */}
             <Card 
