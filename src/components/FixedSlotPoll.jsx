@@ -15,7 +15,7 @@ const FixedSlotPoll = () => {
   const [slots, setSlots] = useState([]);
   const [loading, setLoading] = useState(true);
   
-  const { userChoice, selectBestTime, clearChoice } = useBestChoice(pollId);
+  const { userChoices, toggleSlotChoice, clearAllChoices } = useBestChoice(pollId);
   const { 
     topPicks, 
     groupSize, 
@@ -101,10 +101,10 @@ const FixedSlotPoll = () => {
             <Calendar className="h-8 w-8 text-accent" />
           </div>
           <h1 className="text-3xl font-bold text-foreground mb-2">
-            Best Time Selection
+            Multi-Select Time Preference
           </h1>
           <p className="text-muted-foreground max-w-2xl mx-auto mb-4">
-            Select your single best meeting time. See what others prefer and find the most popular slots.
+            Select multiple time slots that work for you. See popularity and find the best consensus times.
           </p>
         </div>
 
@@ -115,7 +115,7 @@ const FixedSlotPoll = () => {
             <div className="lg:sticky lg:top-8">
               <TopPicksPanel
                 topPicks={topPicks}
-                userChoice={userChoice}
+                userChoices={userChoices}
                 groupSize={groupSize}
                 slots={slots}
                 onScrollToSlot={scrollToSlot}
@@ -127,9 +127,9 @@ const FixedSlotPoll = () => {
           <div className="lg:col-span-3 order-1 lg:order-2">
             <BestTimeGrid
               slots={slots}
-              userChoice={userChoice}
-              onSelectSlot={selectBestTime}
-              onClearChoice={clearChoice}
+              userChoices={userChoices}
+              onToggleSlot={toggleSlotChoice}
+              onClearAllChoices={clearAllChoices}
               slotLookup={slotLookup}
               getIntensityColor={getIntensityColor}
             />

@@ -7,9 +7,9 @@ import { cn } from '@/lib/utils';
 
 const BestTimeGrid = ({ 
   slots, 
-  userChoice, 
-  onSelectSlot, 
-  onClearChoice,
+  userChoices, 
+  onToggleSlot, 
+  onClearAllChoices,
   slotLookup, 
   getIntensityColor 
 }) => {
@@ -29,12 +29,8 @@ const BestTimeGrid = ({
   });
 
   const handleCellClick = useCallback((slot) => {
-    if (userChoice === slot.slot_id) {
-      onClearChoice();
-    } else {
-      onSelectSlot(slot.slot_id);
-    }
-  }, [userChoice, onSelectSlot, onClearChoice]);
+    onToggleSlot(slot.slot_id);
+  }, [onToggleSlot]);
 
   const handleCellHover = useCallback((event, slot) => {
     const rect = event.currentTarget.getBoundingClientRect();
@@ -55,27 +51,27 @@ const BestTimeGrid = ({
       if (!gridRef.current) return;
       
       if (e.key === 'Escape') {
-        onClearChoice();
+        onClearAllChoices();
       }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [onClearChoice]);
+  }, [onClearAllChoices]);
 
   return (
     <div className="space-y-4">
-      {/* Clear Choice Button */}
-      {userChoice && (
+      {/* Clear Choices Button */}
+      {userChoices.length > 0 && (
         <div className="flex justify-center">
           <Button 
             variant="outline" 
             size="sm" 
-            onClick={onClearChoice}
+            onClick={onClearAllChoices}
             className="gap-2"
           >
             <X className="h-4 w-4" />
-            Clear My Choice
+            Clear All Choices ({userChoices.length})
           </Button>
         </div>
       )}
@@ -85,10 +81,10 @@ const BestTimeGrid = ({
         <CardHeader className="pb-3">
           <CardTitle className="flex items-center gap-2">
             <Users className="h-5 w-5" />
-            Best Time Selection Grid
+            Multi-Select Time Grid
           </CardTitle>
           <CardDescription>
-            Click a cell to select your best meeting time. Your choice is outlined and counts are shown.
+            Click cells to select/deselect your preferred times. You can choose multiple slots.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -98,7 +94,7 @@ const BestTimeGrid = ({
               ref={gridRef}
               className="overflow-auto scroll-smooth"
               style={{ 
-                maxHeight: '60vh',
+                maxHeight: '50vh',
                 scrollbarWidth: 'thin',
                 scrollbarColor: 'hsl(var(--muted-foreground)) hsl(var(--muted))'
               }}
@@ -107,18 +103,18 @@ const BestTimeGrid = ({
                 {/* Header Row (Dates) */}
                 <div className="sticky top-0 z-20 bg-background border-b flex">
                   {/* Top-left corner */}
-                  <div className="sticky left-0 z-30 bg-background border-r border-b w-16 h-10 flex items-center justify-center">
-                    <Clock className="h-4 w-4 text-muted-foreground" />
+                  <div className="sticky left-0 z-30 bg-background border-r border-b w-12 h-8 flex items-center justify-center">
+                    <Clock className="h-3 w-3 text-muted-foreground" />
                   </div>
                   
                   {/* Date headers */}
                   {dates.map(date => (
                     <div
                       key={date}
-                      className="w-20 h-10 flex flex-col items-center justify-center border-r text-xs font-medium bg-muted/50"
+                      className="w-16 h-8 flex flex-col items-center justify-center border-r text-xs font-medium bg-muted/50"
                     >
-                      <div>{format(parseISO(date), 'EEE')}</div>
-                      <div className="text-xs text-muted-foreground">{format(parseISO(date), 'MMM d')}</div>
+                      <div className="text-xs">{format(parseISO(date), 'EEE')}</div>
+                      <div className="text-xs text-muted-foreground">{format(parseISO(date), 'M/d')}</div>
                     </div>
                   ))}
                 </div>
@@ -127,7 +123,7 @@ const BestTimeGrid = ({
                 {times.map(time => (
                   <div key={time} className="flex">
                     {/* Time label (sticky left column) */}
-                    <div className="sticky left-0 z-10 bg-background border-r w-16 h-8 flex items-center justify-center text-xs font-medium bg-muted/30">
+                    <div className="sticky left-0 z-10 bg-background border-r w-12 h-6 flex items-center justify-center text-xs font-medium bg-muted/30">
                       {time}
                     </div>
                     
@@ -140,41 +136,41 @@ const BestTimeGrid = ({
                         return (
                           <div
                             key={`${date}-${time}`}
-                            className="w-20 h-8 border-r border-b bg-muted/10"
+                            className="w-16 h-6 border-r border-b bg-muted/10"
                           />
                         );
                       }
 
                       const tally = slotLookup[slot.slot_id];
-                      const isMyChoice = userChoice === slot.slot_id;
+                      const isSelected = userChoices.includes(slot.slot_id);
                       const choiceCount = tally?.choice_count || 0;
 
                       return (
                         <div
                           key={slot.slot_id}
                           className={cn(
-                            "w-20 h-8 border-r border-b cursor-pointer relative group transition-all duration-150",
+                            "w-16 h-6 border-r border-b cursor-pointer relative group transition-all duration-150",
                             "hover:scale-105 hover:z-10 hover:shadow-sm",
                             "active:scale-95",
                             "md:p-0 p-1", // Mobile tap target padding
                             getIntensityColor(slot.slot_id),
-                            isMyChoice && "ring-2 ring-primary ring-inset"
+                            isSelected && "ring-2 ring-primary ring-inset"
                           )}
                           onClick={() => handleCellClick(slot)}
                           onMouseEnter={(e) => handleCellHover(e, slot)}
                           onMouseLeave={handleCellLeave}
-                          style={{ minHeight: '44px' }} // Mobile tap target
+                          style={{ minHeight: '32px' }} // Mobile tap target
                         >
                           {/* Choice count pill */}
                           {choiceCount > 0 && (
-                            <div className="absolute top-0.5 right-0.5 bg-background/90 text-primary text-xs font-medium px-1 py-0.5 rounded min-w-[16px] text-center leading-none">
+                            <div className="absolute top-0 right-0 bg-background/90 text-primary text-xs font-medium px-1 rounded min-w-[12px] text-center leading-none">
                               {choiceCount}
                             </div>
                           )}
 
                           {/* My choice indicator */}
-                          {isMyChoice && (
-                            <div className="absolute bottom-0 left-0 w-full h-1 bg-primary" />
+                          {isSelected && (
+                            <div className="absolute bottom-0 left-0 w-full h-0.5 bg-primary" />
                           )}
                         </div>
                       );
@@ -202,9 +198,9 @@ const BestTimeGrid = ({
                     <span>Choices:</span>
                     <span>{slotLookup[hoveredSlot.slot_id]?.choice_count || 0}</span>
                   </div>
-                  {userChoice === hoveredSlot.slot_id && (
+                  {userChoices.includes(hoveredSlot.slot_id) && (
                     <div className="text-xs text-primary mt-2 font-medium">
-                      ✓ Your best time
+                      ✓ You selected this
                     </div>
                   )}
                 </div>
@@ -224,7 +220,7 @@ const BestTimeGrid = ({
             </div>
             <div className="flex items-center gap-2">
               <div className="w-4 h-4 ring-2 ring-primary border rounded" />
-              <span>Your choice</span>
+              <span>Your selections</span>
             </div>
           </div>
         </CardContent>

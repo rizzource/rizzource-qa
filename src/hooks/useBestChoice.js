@@ -5,60 +5,78 @@ import { toast } from 'react-toastify';
 
 export const useBestChoice = (pollId) => {
   const { user } = useAuth();
-  const [userChoice, setUserChoice] = useState(null);
+  const [userChoices, setUserChoices] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const fetchUserChoice = useCallback(async () => {
+  const fetchUserChoices = useCallback(async () => {
     if (!pollId || !user) return;
     
     try {
       setLoading(true);
       const { data, error } = await supabase
-        .from('meeting_choices')
-        .select('slot_id')
-        .eq('poll_id', pollId)
-        .eq('user_id', user.id)
-        .maybeSingle();
+        .rpc('get_user_choices', { 
+          poll_id_param: pollId, 
+          user_id_param: user.id 
+        });
 
       if (error) throw error;
-      setUserChoice(data?.slot_id || null);
+      setUserChoices(data?.map(item => item.slot_id) || []);
     } catch (error) {
-      console.error('Error fetching user choice:', error);
-      toast.error('Failed to fetch your choice');
+      console.error('Error fetching user choices:', error);
+      toast.error('Failed to fetch your choices');
     } finally {
       setLoading(false);
     }
   }, [pollId, user?.id]);
 
-  const selectBestTime = useCallback(async (slotId) => {
+  const toggleSlotChoice = useCallback(async (slotId) => {
     if (!user || !pollId) return;
 
+    const isCurrentlySelected = userChoices.includes(slotId);
+    
     // Optimistic update
-    setUserChoice(slotId);
+    setUserChoices(prev => 
+      isCurrentlySelected 
+        ? prev.filter(id => id !== slotId)
+        : [...prev, slotId]
+    );
 
     try {
-      const { error } = await supabase
-        .from('meeting_choices')
-        .upsert({
-          poll_id: pollId,
-          user_id: user.id,
-          slot_id: slotId
-        });
+      if (isCurrentlySelected) {
+        // Remove choice
+        const { error } = await supabase
+          .from('meeting_choices')
+          .delete()
+          .eq('poll_id', pollId)
+          .eq('user_id', user.id)
+          .eq('slot_id', slotId);
 
-      if (error) throw error;
+        if (error) throw error;
+      } else {
+        // Add choice
+        const { error } = await supabase
+          .from('meeting_choices')
+          .insert({
+            poll_id: pollId,
+            user_id: user.id,
+            slot_id: slotId
+          });
+
+        if (error) throw error;
+      }
     } catch (error) {
-      console.error('Error saving choice:', error);
-      toast.error('Failed to save your choice');
+      console.error('Error toggling choice:', error);
+      toast.error('Failed to update your choice');
       // Revert optimistic update
-      await fetchUserChoice();
+      await fetchUserChoices();
     }
-  }, [user, pollId, fetchUserChoice]);
+  }, [user, pollId, userChoices, fetchUserChoices]);
 
-  const clearChoice = useCallback(async () => {
+  const clearAllChoices = useCallback(async () => {
     if (!user || !pollId) return;
 
     // Optimistic update
-    setUserChoice(null);
+    setUserChoices([]);
 
     try {
       const { error } = await supabase
@@ -69,24 +87,24 @@ export const useBestChoice = (pollId) => {
 
       if (error) throw error;
     } catch (error) {
-      console.error('Error clearing choice:', error);
-      toast.error('Failed to clear your choice');
+      console.error('Error clearing choices:', error);
+      toast.error('Failed to clear your choices');
       // Revert optimistic update
-      await fetchUserChoice();
+      await fetchUserChoices();
     }
-  }, [user, pollId, fetchUserChoice]);
+  }, [user, pollId, fetchUserChoices]);
 
   useEffect(() => {
     if (user && pollId) {
-      fetchUserChoice();
+      fetchUserChoices();
     }
-  }, [user, pollId, fetchUserChoice]);
+  }, [user, pollId, fetchUserChoices]);
 
   return {
-    userChoice,
+    userChoices,
     loading,
-    selectBestTime,
-    clearChoice,
-    refetch: fetchUserChoice
+    toggleSlotChoice,
+    clearAllChoices,
+    refetch: fetchUserChoices
   };
 };

@@ -497,6 +497,12 @@ export type Database = {
           yes_count: number
         }[]
       }
+      get_user_choices: {
+        Args: { poll_id_param: string; user_id_param: string }
+        Returns: {
+          slot_id: string
+        }[]
+      }
       is_admin: {
         Args: Record<PropertyKey, never>
         Returns: boolean
