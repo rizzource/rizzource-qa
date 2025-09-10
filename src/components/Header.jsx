@@ -1,7 +1,7 @@
 import { useState } from 'react'; 
 import { Button } from "@/components/ui/button"; 
 import { Scale, Shield, LogOut, User, ArrowLeft } from "lucide-react"; 
-import { useAuth } from '@/components/AuthProvider';
+import { useAuth } from './AuthProvider';
 import { Link, useLocation, useNavigate } from 'react-router-dom'; 
 
 const Header = () => { 
@@ -47,14 +47,14 @@ const Header = () => {
               </> 
             ) : null} 
             {/* Resource Hub only visible for Mentors */}
-            {userProfile?.role === 'mentor' && (
+            {userProfile?.role === 'Mentor' && (
               <Link to="/resources" className="font-bold text-primary hover:text-accent transition-colors" > Resource Hub </Link>
             )}
             {user ? 
             ( 
               <> 
                 <span className="text-xs sm:text-sm text-muted-foreground"> 
-                  {isAdmin() ? 'Admin' : userProfile?.role === 'mentor' ? "Mentor" : "Mentee"} 
+                  {isAdmin() ? 'Admin' : 'User'} 
                 </span> 
                 {isAdmin() && 
                   ( 

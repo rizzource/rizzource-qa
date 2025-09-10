@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { useAuth } from '@/components/AuthProvider';
+import { useAuth } from './AuthProvider';
 import { toast } from 'react-toastify';
 
 const loginSchema = z.object({
