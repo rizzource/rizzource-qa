@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { findUserGroup } from '@/data/groups';
 
 const AuthContext = createContext(null);
 
@@ -14,6 +15,7 @@ export const useAuth = () => {
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [userProfile, setUserProfile] = useState(null);
+  const [userGroup, setUserGroup] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -23,6 +25,7 @@ export const AuthProvider = ({ children }) => {
       setUser(session?.user ?? null);
       if (session?.user) {
         await fetchUserProfile(session.user.id);
+        fetchUserGroup(session.user.email);
       }
       setLoading(false);
     };
@@ -35,8 +38,10 @@ export const AuthProvider = ({ children }) => {
         setUser(session?.user ?? null);
         if (session?.user) {
           await fetchUserProfile(session.user.id);
+          fetchUserGroup(session.user.email);
         } else {
           setUserProfile(null);
+          setUserGroup(null);
         }
         setLoading(false);
       }
@@ -58,6 +63,16 @@ export const AuthProvider = ({ children }) => {
     } catch (error) {
       console.error('Error fetching profile:', error);
     }
+  };
+
+  const fetchUserGroup = (email) => {
+    if (!email) {
+      setUserGroup(null);
+      return;
+    }
+    
+    const groupData = findUserGroup(email);
+    setUserGroup(groupData);
   };
 
   const signIn = async (email, password) => {
@@ -94,12 +109,14 @@ export const AuthProvider = ({ children }) => {
   const value = {
     user,
     userProfile,
+    userGroup,
     loading,
     signIn,
     signUp,
     signOut,
     isAdmin,
     fetchUserProfile,
+    fetchUserGroup,
   };
 
   return (
