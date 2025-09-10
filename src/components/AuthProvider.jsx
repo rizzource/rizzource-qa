@@ -4,6 +4,9 @@ import { createContext, useContext, useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { findUserGroup } from '@/data/groups';
 
+const DEBUG_AUTH = true;
+const log = (...args) => { if (DEBUG_AUTH) console.log('[AUTH]', ...args); };
+
 const AuthContext = createContext(null);
 
 export const useAuth = () => {
@@ -14,7 +17,6 @@ export const useAuth = () => {
   return context;
 };
 
-// Derive a human-readable name from profile or auth metadata
 const deriveName = (authUser, profile) => {
   return (
     profile?.name ??
@@ -28,21 +30,7 @@ const deriveName = (authUser, profile) => {
   );
 };
 
-// Centralized log: prints the entire auth user object + name + email + role
-const logUserSnapshot = (authUser, profile) => {
-  if (!authUser) return;
-  const name = deriveName(authUser, profile);
-  const email = authUser.email ?? null;
-  const role = profile?.role ?? null;
-
-  console.groupCollapsed('%cAUTH USER SNAPSHOT', 'color:#16a34a;font-weight:bold');
-  console.log('authUser (full object):', authUser);
-  console.log('email:', email);
-  console.log('name:', name);
-  console.log('role:', role);
-  console.log('profile row:', profile);
-  console.groupEnd();
-};
+const safeUser = (u) => (u ? { id: u.id, email: u.email } : null);
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
@@ -51,31 +39,50 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Get initial session
+    log('mounted AuthProvider');
+
     const getSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      setUser(session?.user ?? null);
-      if (session?.user) {
-        const profile = await fetchUserProfile(session.user.id);
-        fetchUserGroup(session.user.email);
-        // LOG RIGHT AFTER WE HAVE BOTH auth user and profile
-        logUserSnapshot(session.user, profile);
+      try {
+        log('init: calling supabase.auth.getSession()');
+        const { data: { session }, error } = await supabase.auth.getSession();
+        if (error) log('init: getSession error:', error);
+        log('init: session user:', safeUser(session?.user));
+        setUser(session?.user ?? null);
+
+        if (session?.user) {
+          const profile = await fetchUserProfile(session.user.id);
+          fetchUserGroup(session.user.email);
+
+          // SNAPSHOT LOG (full auth user object + name/email/role)
+          log('SNAPSHOT (init): authUser:', session.user);
+          log('SNAPSHOT (init): email:', session.user.email);
+          log('SNAPSHOT (init): name:', deriveName(session.user, profile));
+          log('SNAPSHOT (init): role:', profile?.role ?? null);
+        }
+      } catch (e) {
+        console.error('[AUTH] init error:', e);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     };
 
     getSession();
 
-    // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
+        log('onAuthStateChange event:', event, 'user:', safeUser(session?.user));
         setUser(session?.user ?? null);
+
         if (session?.user) {
           const profile = await fetchUserProfile(session.user.id);
           fetchUserGroup(session.user.email);
-          // LOG ON LOGIN (and any time we have a fresh session user)
+
           if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED' || event === 'USER_UPDATED') {
-            logUserSnapshot(session.user, profile);
+            // SNAPSHOT LOG (full auth user object + name/email/role)
+            log('SNAPSHOT (auth event): authUser:', session.user);
+            log('SNAPSHOT (auth event): email:', session.user.email);
+            log('SNAPSHOT (auth event): name:', deriveName(session.user, profile));
+            log('SNAPSHOT (auth event): role:', profile?.role ?? null);
           }
         } else {
           setUserProfile(null);
@@ -85,22 +92,31 @@ export const AuthProvider = ({ children }) => {
       }
     );
 
-    return () => subscription.unsubscribe();
+    return () => {
+      log('unmounting AuthProvider: unsubscribing auth listener');
+      subscription.unsubscribe();
+    };
   }, []);
 
   const fetchUserProfile = async (userId) => {
+    log('fetchUserProfile for userId:', userId);
     try {
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
         .eq('id', userId)
         .single();
-      
-      if (error) throw error;
+
+      if (error) {
+        console.error('[AUTH] profiles query error:', error);
+        setUserProfile(null);
+        return null;
+      }
+      log('fetchUserProfile result:', data);
       setUserProfile(data);
-      return data; // <— return profile so the logger can use it immediately
+      return data;
     } catch (error) {
-      console.error('Error fetching profile:', error);
+      console.error('[AUTH] Error fetching profile:', error);
       setUserProfile(null);
       return null;
     }
@@ -108,46 +124,73 @@ export const AuthProvider = ({ children }) => {
 
   const fetchUserGroup = (email) => {
     if (!email) {
+      log('fetchUserGroup: no email provided');
       setUserGroup(null);
       return;
     }
+    const raw = String(email);
+    const normalized = raw.trim().toLowerCase();
     try {
-      setUserGroup(findUserGroup(email));
+      const group = findUserGroup(normalized) || findUserGroup(raw) || null;
+      log('fetchUserGroup:', { raw, normalized, found: !!group, groupID: group?.groupID });
+      setUserGroup(group);
     } catch (err) {
-      console.error('Error finding user group:', err);
+      console.error('[AUTH] Error finding user group:', err);
       setUserGroup(null);
     }
   };
 
   const signIn = async (email, password) => {
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-    // Optional: immediate log on direct signIn success (in addition to onAuthStateChange)
+    log('signIn() attempt for:', email);
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error) {
+      console.error('[AUTH] signIn error:', error);
+      return { data: null, error };
+    }
+    log('signIn() success user:', safeUser(data?.user), 'session present:', !!data?.session);
+
+    // Snapshot immediately (in addition to onAuthStateChange)
     if (data?.user) {
       const profile = await fetchUserProfile(data.user.id);
       fetchUserGroup(data.user.email);
-      logUserSnapshot(data.user, profile);
+      log('SNAPSHOT (signIn return): authUser:', data.user);
+      log('SNAPSHOT (signIn return): email:', data.user.email);
+      log('SNAPSHOT (signIn return): name:', deriveName(data.user, profile));
+      log('SNAPSHOT (signIn return): role:', profile?.role ?? null);
     }
-    return { data, error };
-  };
+    return { data, error: null };
+    };
 
   const signUp = async (email, password, userData = {}) => {
+    log('signUp() attempt for:', email, 'with userData:', userData);
     const redirectUrl = `${window.location.origin}/`;
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
-      options: {
-        emailRedirectTo: redirectUrl,
-        data: userData
-      }
+      options: { emailRedirectTo: redirectUrl, data: userData }
     });
+    if (error) console.error('[AUTH] signUp error:', error);
+    else log('signUp() result:', data);
     return { data, error };
   };
 
   const signOut = async () => {
+    log('signOut() start');
+    setLoading(true);
     const { error } = await supabase.auth.signOut();
+    if (error) {
+      console.error('[AUTH] signOut error:', error);
+    } else {
+      log('signOut() success — clearing local state now');
+      // Clear local state immediately so the UI always reacts
+      setUser(null);
+      setUserProfile(null);
+      setUserGroup(null);
+    }
+    // Sanity check current session after sign out
+    const { data: after } = await supabase.auth.getSession();
+    log('post-signOut getSession user:', safeUser(after?.session?.user));
+    setLoading(false);
     return { error };
   };
 
