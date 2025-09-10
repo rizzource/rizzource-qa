@@ -86,7 +86,7 @@ const Auth = () => {
               <div className="w-full space-y-6 lg:space-y-12">
                 <div className="text-center space-y-4 lg:space-y-6">
                   <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 md:gap-6 mb-6 sm:mb-8 lg:mb-12">
-                    <div className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 lg:w-20 lg:h-20 bg-white/10 rounded-lg flex items-center justify-center flex-shrink-0 backdrop-blur-sm">
+                    <div className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 lg:w-20 lg:h-20 bg-secondary rounded-lg flex items-center justify-center flex-shrink-0 backdrop-blur-sm">
                       <Scale className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 lg:w-10 lg:h-10 text-primary-foreground" />
                     </div>
                     <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-5xl xl:text-6xl 2xl:text-7xl leading-tight text-primary font-bold break-words">
