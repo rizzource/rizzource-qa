@@ -11,7 +11,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useNavigate } from "react-router-dom";
 
 import { useAuth } from "@/components/AuthProvider";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 
 const OutlinesUpload = ({ onUploadSuccess }) => {
   const fileInputRef = useRef(null);
@@ -28,13 +28,13 @@ const OutlinesUpload = ({ onUploadSuccess }) => {
     notes: "",
     file: null
   });
-  const [uploadStatus, setUploadStatus] = useState(null); // null, 'uploading', 'success', 'error'
+  const [uploadStatus, setUploadStatus] = useState(null); 
   const [dragActive, setDragActive] = useState(false);
 
   useEffect(() => {
-    // Check for mentor data from session storage
     const storedData = sessionStorage.getItem("mentorFormData");
     if (storedData) {
+      console.log("Loaded mentor data from session storage:", storedData);
       setMentorData(JSON.parse(storedData));
     }
   }, []);
@@ -50,16 +50,22 @@ const OutlinesUpload = ({ onUploadSuccess }) => {
   };
 
   const handleFileUpload = (file) => {
-    // Validate file type
-    const allowedTypes = ['application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/msword'];
+    console.log("File selected:", file);
+
+    const allowedTypes = [
+      "application/pdf",
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "application/msword"
+    ];
     if (!allowedTypes.includes(file.type)) {
-      setUploadStatus('error');
+      console.error("Invalid file type:", file.type);
+      setUploadStatus("error");
       return;
     }
 
-    // Validate file size (10MB max)
     if (file.size > 10 * 1024 * 1024) {
-      setUploadStatus('error');
+      console.error("File too large:", file.size);
+      setUploadStatus("error");
       return;
     }
 
@@ -85,6 +91,7 @@ const OutlinesUpload = ({ onUploadSuccess }) => {
     setDragActive(false);
     
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      console.log("File dropped:", e.dataTransfer.files[0]);
       handleFileUpload(e.dataTransfer.files[0]);
     }
   };
@@ -96,16 +103,19 @@ const OutlinesUpload = ({ onUploadSuccess }) => {
   };
 
   const removeFile = () => {
+    console.log("Removing file:", formData.file?.name);
     setFormData(prev => ({
       ...prev,
       file: null
     }));
     if (fileInputRef.current) {
-      fileInputRef.current.value = '';
+      fileInputRef.current.value = "";
     }
   };
 
   const handleMentorFlow = async (outlineData) => {
+    console.log("Starting mentor flow with data:", outlineData);
+
     if (!mentorData) {
       toast.error("Mentor information not found. Please start over.");
       navigate("/mentorship-selection");
@@ -113,33 +123,28 @@ const OutlinesUpload = ({ onUploadSuccess }) => {
     }
 
     try {
-      // Update the existing mentor's upload status
       const { error: mentorError } = await supabase
-        .from('mentors')
+        .from("mentors")
         .update({ had_uploaded_outline: true })
-        .eq('email', mentorData.email);
+        .eq("email", mentorData.email);
 
       if (mentorError) {
+        console.error("Mentor update error:", mentorError);
         throw mentorError;
       }
 
-      // Update the outline with the mentor's email
       const { error: outlineError } = await supabase
-        .from('outlines')
+        .from("outlines")
         .update({ mentor_email: mentorData.email })
-        .eq('id', outlineData.id);
+        .eq("id", outlineData.id);
 
       if (outlineError) {
         console.error("Error updating outline with mentor email:", outlineError);
-        // Continue anyway as the main flow is complete
       }
 
-      // Clear session storage
       sessionStorage.removeItem("mentorFormData");
-
       toast.success("Your mentor application and outline have been submitted successfully.");
 
-      // Navigate to matchup screen
       setTimeout(() => {
         navigate("/matchup", { 
           state: { 
@@ -159,43 +164,54 @@ const OutlinesUpload = ({ onUploadSuccess }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setUploadStatus('uploading');
-    
-    // Check if user is authenticated
+    setUploadStatus("uploading");
+
+    console.log("Submitting outline with formData:", formData);
+    console.log("Current user:", user);
+
     if (!user) {
       toast.error("Please log in to upload outlines.");
       setUploadStatus(null);
       return;
     }
-    
+
     try {
-      // Upload file to Supabase storage with user-specific path
-      const fileExt = formData.file.name.split('.').pop();
+      const fileExt = formData.file.name.split(".").pop();
       const fileName = `${Date.now()}.${fileExt}`;
       const filePath = `outlines/${user.id}/${fileName}`;
-      
-      const { data: uploadData, error: uploadError } = await supabase.storage
-        .from('assets')
-        .upload(filePath, formData.file);
 
-      if (uploadError) {
-        throw uploadError;
+      console.log("File type:", formData.file, typeof formData.file);
+      console.log("Uploading file to storage path:", filePath);
+
+      try {
+        const { data: uploadData, error: uploadError } = await supabase.storage
+          .from("assets")
+          .upload(filePath, formData.file, { upsert: true });
+
+        if (uploadError) {
+          console.error("Storage upload error:", uploadError);
+          throw uploadError;
+        }
+
+        console.log("Storage upload success:", uploadData);
+      } catch (error) {
+        console.error("Unexpected error during storage upload:", error);
       }
 
-      // Get the public URL
       const { data: { publicUrl } } = supabase.storage
-        .from('assets')
+        .from("assets")
         .getPublicUrl(filePath);
 
-      // Save outline data to database with real user ID
+      console.log("Public URL obtained:", publicUrl);
+
       const { data: outlineData, error: dbError } = await supabase
-        .from('outlines')
+        .from("outlines")
         .insert([{
           title: formData.title,
           professor: formData.professor,
           topic: formData.topic,
           year: formData.year,
-          tags: formData.tags ? formData.tags.split(',').map(tag => tag.trim()) : null,
+          tags: formData.tags ? formData.tags.split(",").map(tag => tag.trim()) : null,
           notes: formData.notes || "Uploaded via mentor registration",
           file_name: formData.file.name,
           file_url: publicUrl,
@@ -207,30 +223,25 @@ const OutlinesUpload = ({ onUploadSuccess }) => {
         .single();
 
       if (dbError) {
+        console.error("Database insert error:", dbError);
         throw dbError;
       }
+      console.log("Database insert success:", outlineData);
 
-      setUploadStatus('success');
-      
+      setUploadStatus("success");
       toast.success("Your outline has been uploaded successfully.");
-      
-      // Handle mentor flow if mentor data exists
+
       if (mentorData) {
         await handleMentorFlow(outlineData);
       } else {
-        // For standalone outline upload, redirect to homepage
         setTimeout(() => {
           navigate("/");
         }, 1500);
       }
     } catch (error) {
-      console.error('Upload error:', error);
-      setUploadStatus('error');
-      
-      // Show specific error message from Supabase
-      const errorMessage = error.message || "An unexpected error occurred during upload.";
-      toast.error("Upload Failed");
-      
+      console.error("Upload error caught:", error);
+      setUploadStatus("error");
+      toast.error(`Upload Failed: ${error.message}`);
       setTimeout(() => setUploadStatus(null), 3000);
     }
   };
