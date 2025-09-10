@@ -11,7 +11,7 @@ const Header = () => {
   // Get current path 
   const handleSignOut = async () => { 
     await signOut(); 
-    navigate('/dashboard'); 
+    navigate('/'); 
   };
   console.log("UserProfileData", userProfile)
   return ( 
