@@ -48,14 +48,14 @@ const Header = () => {
               </> 
             ) : null} 
             {/* Resource Hub only visible for Mentors */}
-            {userProfile?.role === 'mentor' && (
+            { user?.user_metadata?.role === 'mentor' && (
               <Link to="/resources" className="font-bold text-primary hover:text-accent transition-colors" > Resource Hub </Link>
             )}
             {user ? 
             ( 
               <> 
                 <span className="text-xs sm:text-sm text-muted-foreground"> 
-                  {isAdmin() ? 'Admin' : userProfile?.role === 'mentor' ? "Mentor" : "Mentee"} 
+                  {isAdmin() ? 'Admin' :  user?.user_metadata?.role === 'mentor' ? "Mentor" : "Mentee"} 
                 </span> 
                 {isAdmin() && 
                   ( 
