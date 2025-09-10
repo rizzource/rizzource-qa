@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Loader2, Scale, Shield, BookOpen, Users } from 'lucide-react';
 import Footer from '@/components/Footer';
@@ -49,6 +50,13 @@ const Auth = () => {
     const email = formData.get('email');
     const password = formData.get('password');
     const confirmPassword = formData.get('confirmPassword');
+    const role = formData.get('role');
+
+    if (!role) {
+      setError('Please select a role');
+      setIsLoading(false);
+      return;
+    }
 
     if (password !== confirmPassword) {
       setError('Passwords do not match');
@@ -62,7 +70,7 @@ const Auth = () => {
       return;
     }
 
-    const { error } = await signUp(email, password);
+    const { error } = await signUp(email, password, { role });
     if (error) {
       if (error.message.includes('already registered')) {
         setError('An account with this email already exists. Please sign in instead.');
@@ -145,6 +153,20 @@ const Auth = () => {
                           Email Address
                         </Label>
                         <Input id="signup-email" name="email" type="email" placeholder="Enter your email" required className="input-focus-green" />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="role" className="text-foreground font-medium">
+                          Role *
+                        </Label>
+                        <Select name="role" required>
+                          <SelectTrigger className="bg-card border-input text-foreground focus:border-accent focus:ring-2 focus:ring-accent">
+                            <SelectValue placeholder="Select your role" />
+                          </SelectTrigger>
+                          <SelectContent className="bg-card border border-border rounded-md shadow-lg z-50">
+                            <SelectItem value="mentor">Mentor</SelectItem>
+                            <SelectItem value="mentee">Mentee</SelectItem>
+                          </SelectContent>
+                        </Select>
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor="signup-password" className="text-foreground font-medium">
