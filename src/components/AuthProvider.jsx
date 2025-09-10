@@ -99,12 +99,12 @@ export const AuthProvider = ({ children }) => {
   };
 
   const signOut = async () => {
-    const { error } = await supabase.auth.signOut();
+    const { error } = await supabase.auth.signOut({ scope: "global" });
     return { error };
   };
 
   const isAdmin = () => {
-    return userProfile?.role === 'admin';
+    return user?.user_metadata?.role === 'admin';
   };
 
   const value = {
