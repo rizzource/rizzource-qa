@@ -8,10 +8,16 @@ const Header = () => {
   const { user, userProfile, isAdmin, signOut } = useAuth(); 
   const navigate = useNavigate(); 
   const location = useLocation(); 
+  const { pathname } = useLocation();
   // Get current path 
   const handleSignOut = async () => { 
     await signOut(); 
-    navigate('/'); 
+  if (pathname === "/") {
+    // Already on dashboard, force reload
+    window.location.reload();
+  } else {
+    navigate(redirectTo);
+  }
   };
   console.log("UserProfileData", userProfile)
   return ( 
