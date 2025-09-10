@@ -149,7 +149,7 @@ const BestTimeGrid = ({
                         <div
                           key={slot.slot_id}
                           className={cn(
-                            "w-16 h-6 border-r border-b cursor-pointer relative group transition-all duration-150",
+                            "w-16 h-3 border-r border-b cursor-pointer relative group transition-all duration-150",
                             "hover:scale-105 hover:z-10 hover:shadow-sm",
                             "active:scale-95",
                             "md:p-0 p-1", // Mobile tap target padding
