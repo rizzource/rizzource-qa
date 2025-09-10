@@ -121,7 +121,7 @@ export const groups = [
 
 export const findUserGroup = (email) => {
   if (!email) return null;
-  
+  debugger;
   for (const group of groups) {
     const member = group.members.find(m => m.email.toLowerCase() === email.toLowerCase());
     if (member) {
