@@ -1,9 +1,10 @@
 import { Button } from "@/components/ui/button";
 import { Scale, BookOpen, Users } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Timeline from "./Timeline";
 
 const MinimalistHome = () => {
+  const navigate = useNavigate();
   return (
     <section className="relative min-h-screen bg-background overflow-hidden">
       {/* Floating background elements */}
@@ -38,6 +39,17 @@ const MinimalistHome = () => {
               <p className="text-lg sm:text-xl lg:text-2xl text-muted-foreground leading-relaxed max-w-4xl mx-auto break-words">
                 The ultimate resource platform for law students
               </p>
+            </div>
+
+            {/* View Matchups Button */}
+            <div className="flex justify-center mt-8">
+              <Button 
+                onClick={() => navigate('/matchup')}
+                size="lg"
+                className="px-8 py-3 text-lg font-semibold bg-secondary hover:bg-secondary/80 text-secondary-foreground border border-border transition-all duration-300 hover:shadow-lg"
+              >
+                View Matchups
+              </Button>
             </div>
           </div>
 
