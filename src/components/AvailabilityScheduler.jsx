@@ -25,15 +25,18 @@ const AvailabilityScheduler = () => {
     };
     getCurrentUser();
 
-    // Get scheduling data from location state or from database
-    const data = location.state;
-    if (data) {
-      setSchedulingData(data);
-      generateAvailabilityDates(data);
-    } else {
-      // Redirect back to scheduling if no data
-      navigate('/mentorship-selection');
-    }
+    // Get scheduling data from location state or use defaults
+    const data = location.state || {
+      userType: 'mentee',
+      dateType: 'days',
+      selectedDays: ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'],
+      earliestTime: '09:00',
+      latestTime: '17:00',
+      activities: ['general']
+    };
+    
+    setSchedulingData(data);
+    generateAvailabilityDates(data);
   }, [location.state, navigate]);
 
   const generateAvailabilityDates = (data) => {
