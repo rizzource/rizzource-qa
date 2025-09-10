@@ -1,10 +1,13 @@
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { Users } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Users, Calendar } from "lucide-react";
 import { useAuth } from "@/components/AuthProvider";
+import { useNavigate } from "react-router-dom";
 
 const MatchupScreen = () => {
   const { userGroup } = useAuth();
+  const navigate = useNavigate();
 
   if (!userGroup) {
     return (
@@ -96,6 +99,17 @@ const MatchupScreen = () => {
                 <p className="text-muted-foreground">No other group members found.</p>
               </div>
             )}
+
+            {/* Navigation Button */}
+            <div className="flex justify-center mt-6 pt-6 border-t border-border">
+              <Button 
+                onClick={() => navigate('/availability')}
+                className="flex items-center gap-2"
+              >
+                <Calendar className="h-4 w-4" />
+                Set Your Availability
+              </Button>
+            </div>
           </CardContent>
         </Card>
       </div>
