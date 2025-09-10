@@ -19,36 +19,52 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Get initial session
-    const getSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      setUser(session?.user ?? null);
-      if (session?.user) {
-        await fetchUserProfile(session.user.id);
-        fetchUserGroup(session.user.email);
-      }
-      setLoading(false);
-    };
+  let mounted = true;
 
-    getSession();
+  const getSession = async () => {
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
 
-    // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        setUser(session?.user ?? null);
-        if (session?.user) {
-          await fetchUserProfile(session.user.id);
-          fetchUserGroup(session.user.email);
-        } else {
-          setUserProfile(null);
-          setUserGroup(null);
-        }
-        setLoading(false);
-      }
-    );
+    if (!mounted) return;
 
-    return () => subscription.unsubscribe();
-  }, []);
+    if (session?.user) {
+      setUser(session.user);
+      await fetchUserProfile(session.user.id);
+      fetchUserGroup(session.user.email);
+    } else {
+      setUser(null);
+    }
+
+    setLoading(false); // only after session check finishes
+  };
+
+  getSession();
+
+  // Listen for auth changes
+  const {
+    data: { subscription },
+  } = supabase.auth.onAuthStateChange(async (event, session) => {
+    if (!mounted) return;
+
+    if (session?.user) {
+      setUser(session.user);
+      await fetchUserProfile(session.user.id);
+      fetchUserGroup(session.user.email);
+    } else {
+      setUser(null);
+      setUserProfile(null);
+      setUserGroup(null);
+    }
+    // don’t force setLoading(false) here – it’s already handled
+  });
+
+  return () => {
+    mounted = false;
+    subscription.unsubscribe();
+  };
+}, []);
+
 
   const fetchUserProfile = async (userId) => {
     try {
