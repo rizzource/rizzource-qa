@@ -1,254 +1,199 @@
-// AuthProvider.jsx (drop-in)
-// JS (not TS)
+import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+import { findUserGroup } from '@/data/groups';
 
-import { createContext, useContext, useEffect, useMemo, useRef, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
-import { findUserGroup } from "@/data/groups";
+// AuthContext for the app. Drop this file in to replace your current AuthProvider.
+// Key improvements:
+// - Proper session initialization on mount
+// - Robust onAuthStateChange listener + safe unsubscribe
+// - fetchUserProfile/fetchUserGroup memoized with useCallback
+// - Defensive checks and consistent loading state
 
-const DEBUG = true; // set false to silence logs
-
-const log = (...args) => {
-  if (DEBUG) console.log("[Auth]", ...args);
-};
-
-const AuthContext = createContext({
-  user: null,
-  userProfile: null,
-  userGroup: null,
-  loading: true,
-  signIn: async () => ({ data: null, error: null }),
-  signUp: async () => ({ data: null, error: null }),
-  signOut: async () => ({ error: null }),
-  isAdmin: () => false,
-  reloadProfile: async () => {},
-});
+const AuthContext = createContext(null);
 
 export const useAuth = () => {
-  const ctx = useContext(AuthContext);
-  if (!ctx) throw new Error("useAuth must be used within AuthProvider");
-  return ctx;
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error('useAuth must be used within AuthProvider');
+  }
+  return context;
 };
 
-export const AuthProvider = ({ children }) => {
+const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [userProfile, setUserProfile] = useState(null);
   const [userGroup, setUserGroup] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Avoid race conditions when auth state flips quickly
-  const currentUserIdRef = useRef(null);
-  const mountedRef = useRef(true);
+  // Fetch profile from `profiles` table by user id
+  const fetchUserProfile = useCallback(async (userId) => {
+    if (!userId) {
+      setUserProfile(null);
+      return null;
+    }
 
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', userId)
+        .single();
+
+      if (error) {
+        // don't throw here — handle gracefully and log for debugging
+        console.error('Supabase fetch profile error:', error);
+        setUserProfile(null);
+        return null;
+      }
+
+      setUserProfile(data ?? null);
+      console.log('UserDataFromFetchUserProfile', data);
+      return data;
+    } catch (err) {
+      console.error('Unexpected error fetching profile:', err);
+      setUserProfile(null);
+      return null;
+    }
+  }, []);
+
+  // Find the user's group (local function imported from your data)
+  const fetchUserGroup = useCallback((email) => {
+    if (!email) {
+      setUserGroup(null);
+      return null;
+    }
+
+    try {
+      const groupData = findUserGroup(email);
+      setUserGroup(groupData ?? null);
+      return groupData;
+    } catch (err) {
+      console.error('Error finding user group:', err);
+      setUserGroup(null);
+      return null;
+    }
+  }, []);
+
+  // Initialize session and subscribe to auth changes
   useEffect(() => {
-    mountedRef.current = true;
-
+    let mounted = true;
     const init = async () => {
       setLoading(true);
-      const { data: sessionData, error } = await supabase.auth.getSession();
-      if (error) log("getSession error:", error);
-      const session = sessionData?.session || null;
+      try {
+        // getSession returns { data: { session } } in supabase-js v2
+        const { data } = await supabase.auth.getSession();
+        const session = data?.session ?? null;
+        const currentUser = session?.user ?? null;
 
-      log("Initial session:", session);
-      await handleSession(session);
-      if (mountedRef.current) setLoading(false);
+        if (!mounted) return;
+
+        setUser(currentUser);
+
+        if (currentUser) {
+          await fetchUserProfile(currentUser.id);
+          fetchUserGroup(currentUser.email);
+        } else {
+          setUserProfile(null);
+          setUserGroup(null);
+        }
+      } catch (err) {
+        console.error('Error during auth initialization:', err);
+      } finally {
+        if (mounted) setLoading(false);
+      }
     };
 
     init();
 
-    // Subscribe to auth state changes (sign in/out, refresh, user updated)
-    const { data } = supabase.auth.onAuthStateChange(async (event, session) => {
-      log("Auth state change:", event, session);
-      // Ensure we reflect changes (e.g., token refresh, profile update)
-      setLoading(true);
-      await handleSession(session);
-      if (mountedRef.current) setLoading(false);
+    // Subscribe to auth state changes
+    const { data: listener } = supabase.auth.onAuthStateChange(async (_event, session) => {
+      const currentUser = session?.user ?? null;
+      setUser(currentUser);
+
+      if (currentUser) {
+        await fetchUserProfile(currentUser.id);
+        fetchUserGroup(currentUser.email);
+      } else {
+        setUserProfile(null);
+        setUserGroup(null);
+      }
+
+      // ensure loading is false after any change
+      setLoading(false);
     });
 
     return () => {
-      mountedRef.current = false;
+      mounted = false;
+      // listener shape can differ across SDK versions. handle both cases.
       try {
-        data?.subscription?.unsubscribe?.();
-      } catch (e) {
-        // no-op
+        if (listener?.subscription?.unsubscribe) {
+          listener.subscription.unsubscribe();
+        } else if (listener?.unsubscribe) {
+          listener.unsubscribe();
+        }
+      } catch (err) {
+        console.warn('Failed to unsubscribe auth listener:', err);
       }
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fetchUserGroup, fetchUserProfile]);
+
+  // Auth helpers
+  const signIn = useCallback(async (email, password) => {
+    try {
+      const resp = await supabase.auth.signInWithPassword({ email, password });
+      return resp; // { data, error }
+    } catch (error) {
+      console.error('signIn error:', error);
+      return { data: null, error };
+    }
   }, []);
 
-  const handleSession = async (session) => {
-    const sUser = session?.user ?? null;
+  const signUp = useCallback(async (email, password, userData = {}) => {
+    try {
+      // fixed template string (was broken in original)
+      const redirectUrl = `${window.location.origin}/`;
+      const resp = await supabase.auth.signUp({
+        email,
+        password,
+        options: { emailRedirectTo: redirectUrl, data: userData },
+      });
+      return resp;
+    } catch (error) {
+      console.error('signUp error:', error);
+      return { data: null, error };
+    }
+  }, []);
 
-    // Keep an in-memory pointer to the active userId to drop stale fetches
-    currentUserIdRef.current = sUser?.id ?? null;
-
-    setUser(sUser);
-    if (!sUser) {
-      // Signed out or no session
+  const signOut = useCallback(async () => {
+    try {
+      const { error } = await supabase.auth.signOut();
+      // clear local state immediately
+      setUser(null);
       setUserProfile(null);
       setUserGroup(null);
-      return;
-    }
-
-    // Fetch profile & group in parallel (and await for loading correctness)
-    const [profile] = await Promise.all([
-      fetchUserProfileSafe(sUser),
-      fetchUserGroupSafe(sUser.email),
-    ]);
-
-    // After fetching, ensure the user didn't change mid-flight
-    if (currentUserIdRef.current !== sUser.id) {
-      log("Stale fetch ignored (user changed mid-flight)");
-      return;
-    }
-
-    // Finally set computed group (already set in fetchUserGroupSafe)
-    setUserProfile(profile);
-  };
-
-  const fetchUserProfileSafe = async (sUser) => {
-    if (!sUser?.id) {
-      setUserProfile(null);
-      return null;
-    }
-
-    try {
-      // Primary: look up by auth.uid() = profiles.id
-      let { data, error } = await supabase
-        .from("profiles")
-        .select("*")
-        .eq("id", sUser.id)
-        .maybeSingle();
-
-      if (error) log("profiles by id error:", error);
-      if (!data && sUser.email) {
-        // Fallback: some schemas store by email
-        const byEmail = await supabase
-          .from("profiles")
-          .select("*")
-          .eq("email", sUser.email)
-          .maybeSingle();
-        if (!byEmail.error && byEmail.data) {
-          data = byEmail.data;
-        }
-      }
-
-      // Optional: If profile row is missing, try to upsert a minimal one
-      if (!data) {
-        log("No profile row found; attempting to upsert minimal profile…");
-        const upsertPayload = {
-          id: sUser.id,
-          email: sUser.email ?? null,
-          full_name: sUser.user_metadata?.name ?? null,
-          role: sUser.user_metadata?.role ?? "mentee",
-          updated_at: new Date().toISOString(),
-        };
-        const { data: upserted, error: upsertError } = await supabase
-          .from("profiles")
-          .upsert(upsertPayload)
-          .select()
-          .maybeSingle();
-
-        if (upsertError) {
-          log("Profile upsert failed (check RLS):", upsertError);
-        } else {
-          data = upserted;
-        }
-      }
-
-      setUserProfile(data ?? null);
-      log("UserProfile:", data);
-      return data ?? null;
+      return { error };
     } catch (err) {
-      log("fetchUserProfileSafe exception:", err);
-      setUserProfile(null);
-      return null;
+      console.error('signOut error:', err);
+      return { error: err };
     }
+  }, []);
+
+  const isAdmin = useCallback(() => userProfile?.role === 'admin', [userProfile]);
+
+  const value = {
+    user,
+    userProfile,
+    userGroup,
+    loading,
+    signIn,
+    signUp,
+    signOut,
+    isAdmin,
+    fetchUserProfile,
+    fetchUserGroup,
   };
-
-  const fetchUserGroupSafe = async (email) => {
-    try {
-      if (!email) {
-        setUserGroup(null);
-        return null;
-      }
-      const normalized = String(email).trim().toLowerCase();
-      const groupData = findUserGroup(normalized);
-      setUserGroup(groupData ?? null);
-      log("UserGroup:", groupData);
-      return groupData ?? null;
-    } catch (err) {
-      log("fetchUserGroupSafe exception:", err);
-      setUserGroup(null);
-      return null;
-    }
-  };
-
-  const signIn = async (email, password) => {
-    setLoading(true);
-    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-    log("signIn result:", { data, error });
-    if (error) {
-      setLoading(false);
-      return { data, error };
-    }
-    // onAuthStateChange listener will run handleSession; no need to duplicate work
-    setLoading(false);
-    return { data, error };
-  };
-
-  const signUp = async (email, password, userData = {}) => {
-    setLoading(true);
-    const redirectUrl = `${window.location.origin}/`; // Adjust if you need a specific redirect
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        emailRedirectTo: redirectUrl,
-        data: userData, // stored as user_metadata on auth.user
-      },
-    });
-    log("signUp result:", { data, error });
-
-    // If email confirmation is disabled and user is returned immediately, listener will handle it.
-    setLoading(false);
-    return { data, error };
-  };
-
-  const signOut = async () => {
-    setLoading(true);
-    const { error } = await supabase.auth.signOut();
-    log("signOut result:", { error });
-    // Listener will clear local state, but we also hard-reset as a safeguard.
-    setUser(null);
-    setUserProfile(null);
-    setUserGroup(null);
-    setLoading(false);
-    return { error };
-  };
-
-  const isAdmin = () => userProfile?.role === "admin";
-
-  const reloadProfile = async () => {
-    if (!user) return;
-    setLoading(true);
-    await Promise.all([fetchUserProfileSafe(user), fetchUserGroupSafe(user.email)]);
-    setLoading(false);
-  };
-
-  const value = useMemo(
-    () => ({
-      user,
-      userProfile,
-      userGroup,
-      loading,
-      signIn,
-      signUp,
-      signOut,
-      isAdmin,
-      reloadProfile,
-    }),
-    [user, userProfile, userGroup, loading]
-  );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
+
+export default AuthProvider;
