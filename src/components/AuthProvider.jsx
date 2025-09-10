@@ -99,8 +99,10 @@ export const AuthProvider = ({ children }) => {
   };
 
   const signOut = async () => {
-    const { error } = await supabase.auth.signOut({ scope: "global" });
-    return { error };
+ console.log("Signing out...");
+  const { error } = await supabase.auth.signOut();
+  console.log("Sign out complete", error);
+  return { error };
   };
 
   const isAdmin = () => {
