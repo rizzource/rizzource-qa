@@ -146,33 +146,36 @@ const BestTimeGrid = ({
                       const choiceCount = tally?.choice_count || 0;
 
                       return (
-                        <div
-                          key={slot.slot_id}
-                          className={cn(
-                            "w-16 h-3 border-r border-b cursor-pointer relative group transition-all duration-150",
-                            "hover:scale-105 hover:z-10 hover:shadow-sm",
-                            "active:scale-95",
-                            "md:p-0 p-1", // Mobile tap target padding
-                            getIntensityColor(slot.slot_id),
-                            isSelected && "ring-2 ring-primary ring-inset"
-                          )}
-                          onClick={() => handleCellClick(slot)}
-                          onMouseEnter={(e) => handleCellHover(e, slot)}
-                          onMouseLeave={handleCellLeave}
-                          style={{ minHeight: '32px' }} // Mobile tap target
-                        >
-                          {/* Choice count pill */}
-                          {choiceCount > 0 && (
-                            <div className="absolute top-0 right-0 bg-background/90 text-primary text-xs font-medium px-1 rounded min-w-[12px] text-center leading-none">
-                              {choiceCount}
-                            </div>
-                          )}
+                      <div
+  key={slot.slot_id}
+  className={cn(
+    // narrower, shorter cells
+    "w-14 sm:w-16 h-[14px] sm:h-[18px] md:h-[16px]",
+    "border-r border-b cursor-pointer relative group transition-transform duration-100",
+    // keep hover feedback without making cells jump in size
+    "hover:brightness-105 active:scale-95",
+    // remove padding so it doesn’t add vertical height
+    "p-0 leading-none",
+    getIntensityColor(slot.slot_id),
+    isSelected && "ring-1 ring-primary ring-inset"
+  )}
+  onClick={() => handleCellClick(slot)}
+  onMouseEnter={(e) => handleCellHover(e, slot)}
+  onMouseLeave={handleCellLeave}
+>
+  {/* Choice count pill (made smaller & tucked in) */}
+  {choiceCount > 0 && (
+    <div className="absolute -top-0.5 -right-0.5 bg-background/90 text-primary text-[10px] font-medium px-0.5 rounded">
+      {choiceCount}
+    </div>
+  )}
 
-                          {/* My choice indicator */}
-                          {isSelected && (
-                            <div className="absolute bottom-0 left-0 w-full h-0.5 bg-primary" />
-                          )}
-                        </div>
+  {/* My choice indicator */}
+  {isSelected && (
+    <div className="absolute bottom-0 left-0 w-full h-0.5 bg-primary" />
+  )}
+</div>
+
                       );
                     })}
                   </div>
