@@ -15,6 +15,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import ScrollToTop from "./components/ScrollToTop";
 import MatchupPage from "./pages/MatchupPage";
 import AvailabilityScheduler from "./components/AvailabilityScheduler";
+import FixedSlotPoll from "./components/FixedSlotPoll";
 
 
 
@@ -50,7 +51,7 @@ const App = () => (
           <Route path="/outlines" element={<OutlinesHub />} />
           
           <Route path="/outlines/:id" element={<OutlineView />} />
-          <Route path="/availability" element={<AvailabilityScheduler />} />
+          <Route path="/availability" element={<FixedSlotPoll />} />
           <Route path="/matchup" element={<MatchupPage />} />
           <Route path="/apalsa-mentorship" element={<Index mentorshipPage={true} />} />
           <Route path="/mentorship-selection" element={<Index mentorshipPage={true} initialState="selection" />} />

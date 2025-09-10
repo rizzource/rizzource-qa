@@ -98,6 +98,94 @@ export type Database = {
         }
         Relationships: []
       }
+      meeting_polls: {
+        Row: {
+          created_at: string
+          group_id: string
+          id: string
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          group_id: string
+          id?: string
+          title: string
+        }
+        Update: {
+          created_at?: string
+          group_id?: string
+          id?: string
+          title?: string
+        }
+        Relationships: []
+      }
+      meeting_slots: {
+        Row: {
+          created_at: string
+          date: string
+          end_time: string
+          id: string
+          poll_id: string
+          start_time: string
+        }
+        Insert: {
+          created_at?: string
+          date: string
+          end_time: string
+          id?: string
+          poll_id: string
+          start_time: string
+        }
+        Update: {
+          created_at?: string
+          date?: string
+          end_time?: string
+          id?: string
+          poll_id?: string
+          start_time?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "meeting_slots_poll_id_fkey"
+            columns: ["poll_id"]
+            isOneToOne: false
+            referencedRelation: "meeting_polls"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      meeting_votes: {
+        Row: {
+          choice: string
+          id: string
+          slot_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          choice: string
+          id?: string
+          slot_id: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          choice?: string
+          id?: string
+          slot_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "meeting_votes_slot_id_fkey"
+            columns: ["slot_id"]
+            isOneToOne: false
+            referencedRelation: "meeting_slots"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       mentees: {
         Row: {
           created_at: string
@@ -347,9 +435,26 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: string
       }
+      get_slot_rankings: {
+        Args: { poll_id_param: string }
+        Returns: {
+          date: string
+          end_time: string
+          maybe_count: number
+          no_count: number
+          score: number
+          slot_id: string
+          start_time: string
+          yes_count: number
+        }[]
+      }
       is_admin: {
         Args: Record<PropertyKey, never>
         Returns: boolean
+      }
+      seed_fixed_poll: {
+        Args: Record<PropertyKey, never>
+        Returns: string
       }
     }
     Enums: {
