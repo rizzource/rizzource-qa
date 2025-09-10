@@ -58,7 +58,7 @@ const FixedSlotPoll = () => {
       // Fetch slots
       const { data: slotsData, error: slotsError } = await supabase
         .from('meeting_slots')
-        .select('id as slot_id, date, start_time, end_time')
+        .select('slot_id:id, date, start_time, end_time')
         .eq('poll_id', currentPollId)
         .order('date', { ascending: true })
         .order('start_time', { ascending: true });
