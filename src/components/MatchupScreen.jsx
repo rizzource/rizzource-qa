@@ -41,14 +41,11 @@ const MatchupScreen = () => {
               <div className="h-8 w-8 rounded-md bg-muted flex items-center justify-center">
                 <Users className="h-4 w-4 text-foreground/70" />
               </div>
-              <span className="inline-flex items-center rounded-full bg-accent/10 text-accent px-2.5 py-1 text-xs font-medium">
-                Group {userGroup.group.groupID}
-              </span>
-            </div>
-
-            <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight text-foreground mb-6">
+              <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight text-foreground mb-6">
               Your Group Members
             </h1>
+            </div>
+
 
             <div className="space-y-6">
               {/* Mentors Section */}
