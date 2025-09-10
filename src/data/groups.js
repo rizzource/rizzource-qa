@@ -5,7 +5,8 @@ export const groups = [
       { role: "Mentee", name: "Moses Lim", email: "moses.lim@emory.edu", groupID: 1 },
       { role: "Mentee", name: "Daniel Choi", email: "daniel.choi2310@gmail.com", groupID: 1 },
       { role: "Mentor", name: "Sarah You", email: "syou35@emory.edu", groupID: 1 },
-      { role: "Mentor", name: "Yena Kang", email: "yena.kang@emory.edu", groupID: 1 }
+      { role: "Mentor", name: "Yena Kang", email: "yena.kang@emory.edu", groupID: 1 },
+      { role: "Mentor", name: "Fahad ur Rehman", email: "fahadurrehman@gmail.com", groupID: 1 }
     ]
   },
   {
