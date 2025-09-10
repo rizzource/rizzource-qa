@@ -70,7 +70,7 @@ export const AuthProvider = ({ children }) => {
         setUser(session.user);
         authService.saveUserMeta(session.user.user_metadata);
         fetchUserProfile(session.user.id);
-        fetchUserGroup(session.user.email);
+        fetchUserGroup(session.user?.user_metadata?.email);
       } else if (!storedMeta) {
         // Only clear if we didn't restore from localStorage
         setUser(null);
