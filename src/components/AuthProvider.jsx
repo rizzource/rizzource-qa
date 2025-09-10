@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { findUserGroup } from '@/data/groups';
+import { authService } from '@/utils/authService';
 
 const AuthContext = createContext(null);
 
@@ -21,38 +22,60 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     let mounted = true;
 
-    // 1) Listen for auth changes FIRST (no async in callback)
+    // 1) Immediately restore user from localStorage to avoid flicker
+    const storedMeta = authService.getUserMeta();
+    if (storedMeta) {
+      // Create a mock user object from stored metadata for immediate UI
+      setUser({ 
+        user_metadata: storedMeta,
+        email: storedMeta.email
+      });
+      setLoading(false);
+    }
+
+    // 2) Listen for auth changes 
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((event, session) => {
       if (!mounted) return;
 
-      setUser(session?.user ?? null);
-
       if (session?.user) {
-        // Defer Supabase calls to avoid deadlocks
+        setUser(session.user);
+        // Save metadata to localStorage for future restores
+        authService.saveUserMeta(session.user.user_metadata);
+        
+        // Defer profile/group fetching
         setTimeout(() => {
           if (!mounted || !session?.user) return;
           fetchUserProfile(session.user.id);
           fetchUserGroup(session.user.email);
         }, 0);
       } else {
+        // Clear everything on sign out
+        setUser(null);
         setUserProfile(null);
         setUserGroup(null);
+        authService.clearUserMeta();
       }
 
       setLoading(false);
     });
 
-    // 2) Then check for an existing session
+    // 3) Check for existing Supabase session to reconcile
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (!mounted) return;
 
-      setUser(session?.user ?? null);
-
       if (session?.user) {
+        // Override localStorage data with fresh session data
+        setUser(session.user);
+        authService.saveUserMeta(session.user.user_metadata);
         fetchUserProfile(session.user.id);
         fetchUserGroup(session.user.email);
+      } else if (!storedMeta) {
+        // Only clear if we didn't restore from localStorage
+        setUser(null);
+        setUserProfile(null);
+        setUserGroup(null);
       }
 
       setLoading(false);
@@ -114,10 +137,10 @@ export const AuthProvider = ({ children }) => {
   };
 
   const signOut = async () => {
- console.log("Signing out...");
-  const { error } = await supabase.auth.signOut();
-  console.log("Sign out complete", error);
-  return { error };
+    console.log("Signing out...");
+    const success = await authService.signOutAndClear(() => supabase.auth.signOut());
+    console.log("Sign out complete");
+    return { error: null };
   };
 
   const isAdmin = () => {
