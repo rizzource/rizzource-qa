@@ -5,7 +5,7 @@ import { useAuth } from "@/components/AuthProvider";
 
 const MatchupScreen = () => {
   const { userGroup } = useAuth();
-  
+
   if (!userGroup) {
     return (
       <div className="min-h-screen bg-background">
@@ -29,71 +29,73 @@ const MatchupScreen = () => {
   }
 
   const { groupMembers } = userGroup;
-  const mentors = groupMembers.filter(member => member.role === 'Mentor');
-  const mentees = groupMembers.filter(member => member.role === 'Mentee');
+  const mentors = groupMembers.filter((m) => m.role === "Mentor");
+  const mentees = groupMembers.filter((m) => m.role === "Mentee");
 
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-14 md:py-20 lg:py-28">
-        <Card className="mx-auto max-w-2xl rounded-xl border border-border bg-card shadow-sm">
+        {/* Widen a bit so two columns have breathing room */}
+        <Card className="mx-auto max-w-4xl rounded-xl border border-border bg-card shadow-sm">
           <CardContent className="p-7 sm:p-9">
-            <div className="flex items-center gap-2 mb-5">
-              <div className="h-8 w-8 rounded-md bg-muted flex items-center justify-center">
-                <Users className="h-4 w-4 text-foreground/70" />
+            {/* Header: icon + title perfectly aligned */}
+            <div className="flex items-center gap-3 mb-6">
+              <div className="h-9 w-9 rounded-md bg-muted flex items-center justify-center shrink-0">
+                <Users className="h-5 w-5 text-foreground/70" />
               </div>
-           <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight text-foreground mb-6">
-              Your Group Members
-            </h1>
+              <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight text-foreground leading-none">
+                Your Group Members
+              </h1>
             </div>
 
-            <div className="space-y-6">
-              {/* Mentors Section */}
-              {mentors.length > 0 && (
-                <div>
-                  <h2 className="text-lg font-semibold text-foreground mb-3">
-                    {mentors.length === 1 ? 'Mentor' : 'Mentors'}
-                  </h2>
-                  <div className="space-y-2">
-                    {mentors.map((mentor, index) => (
-                      <div
-                        key={index}
-                        className="rounded-lg border border-border bg-muted/30 p-4"
-                      >
-                        <div className="font-medium text-foreground">{mentor.name}</div>
-                        <div className="text-sm text-muted-foreground">{mentor.email}</div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
+            {/* Two-column layout on md+ screens */}
+            {(mentors.length > 0 || mentees.length > 0) ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Mentors */}
+                {mentors.length > 0 && (
+                  <section>
+                    <h2 className="text-lg font-semibold text-foreground mb-3">
+                      {mentors.length === 1 ? "Mentor" : "Mentors"}
+                    </h2>
+                    <ul className="space-y-2">
+                      {mentors.map((mentor, i) => (
+                        <li
+                          key={`mentor-${i}`}
+                          className="rounded-lg border border-border bg-muted/30 p-4"
+                        >
+                          <div className="font-medium text-foreground">{mentor.name}</div>
+                          <div className="text-sm text-muted-foreground">{mentor.email}</div>
+                        </li>
+                      ))}
+                    </ul>
+                  </section>
+                )}
 
-              {/* Mentees Section */}
-              {mentees.length > 0 && (
-                <div>
-                  <h2 className="text-lg font-semibold text-foreground mb-3">
-                    {mentees.length === 1 ? 'Mentee' : 'Mentees'}
-                  </h2>
-                  <div className="space-y-2">
-                    {mentees.map((mentee, index) => (
-                      <div
-                        key={index}
-                        className="rounded-lg border border-border bg-muted/30 p-4"
-                      >
-                        <div className="font-medium text-foreground">{mentee.name}</div>
-                        <div className="text-sm text-muted-foreground">{mentee.email}</div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* No members found */}
-              {mentors.length === 0 && mentees.length === 0 && (
-                <div className="text-center py-8">
-                  <p className="text-muted-foreground">No other group members found.</p>
-                </div>
-              )}
-            </div>
+                {/* Mentees */}
+                {mentees.length > 0 && (
+                  <section>
+                    <h2 className="text-lg font-semibold text-foreground mb-3">
+                      {mentees.length === 1 ? "Mentee" : "Mentees"}
+                    </h2>
+                    <ul className="space-y-2">
+                      {mentees.map((mentee, i) => (
+                        <li
+                          key={`mentee-${i}`}
+                          className="rounded-lg border border-border bg-muted/30 p-4"
+                        >
+                          <div className="font-medium text-foreground">{mentee.name}</div>
+                          <div className="text-sm text-muted-foreground">{mentee.email}</div>
+                        </li>
+                      ))}
+                    </ul>
+                  </section>
+                )}
+              </div>
+            ) : (
+              <div className="text-center py-8">
+                <p className="text-muted-foreground">No other group members found.</p>
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>
