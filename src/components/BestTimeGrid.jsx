@@ -152,34 +152,36 @@ const BestTimeGrid = ({
     "w-16 h-3 border-r border-b cursor-pointer relative group transition-all duration-150",
     "hover:scale-105 hover:z-10 hover:shadow-sm",
     "active:scale-95",
-    "md:p-0 p-1", // Mobile tap target padding
-    // 3-step intensity by vote count
-    choiceCount >= 3
-      ? "bg-primary/70"    // darkest (3+ votes)
-      : choiceCount === 2
-      ? "bg-primary/45"    // medium (2 votes)
-      : choiceCount === 1
-      ? "bg-primary/25"    // light (1 vote)
-      : "bg-muted",        // none (0 vote)
+    "md:p-0 p-1", // Mobile tap target
+    // rank colors inline: darkest = highest count, medium = 2nd-highest, light = rest (>0), 0 = muted
+    (() => {
+      const counts = Object.values(tallies ?? {}).map(v => v?.count ?? 0);
+      const uniqPos = Array.from(new Set(counts.filter(n => n > 0))).sort((a,b)=>b-a);
+      const darkest = uniqPos[0] ?? 0;
+      const medium  = uniqPos[1] ?? darkest;
+      return choiceCount === 0
+        ? "bg-muted"
+        : choiceCount === darkest
+        ? "bg-primary/70"
+        : choiceCount === medium
+        ? "bg-primary/45"
+        : "bg-primary/25";
+    })(),
     isSelected && "ring-2 ring-primary ring-inset"
   )}
   onClick={() => handleCellClick(slot)}
   onMouseEnter={(e) => handleCellHover(e, slot)}
   onMouseLeave={handleCellLeave}
-  style={{ minHeight: '32px' }} // keep or remove if you want shorter rows
+  style={{ minHeight: '32px' }}
 >
-  {/* Choice count pill */}
   {choiceCount > 0 && (
     <div className="absolute top-0 right-0 bg-background/90 text-primary text-xs font-medium px-1 rounded min-w-[12px] text-center leading-none">
       {choiceCount}
     </div>
   )}
-
-  {/* My choice indicator */}
-  {isSelected && (
-    <div className="absolute bottom-0 left-0 w-full h-0.5 bg-primary" />
-  )}
+  {isSelected && <div className="absolute bottom-0 left-0 w-full h-0.5 bg-primary" />}
 </div>
+
 
 
                       );
