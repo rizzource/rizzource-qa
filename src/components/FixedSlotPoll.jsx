@@ -4,27 +4,27 @@ import { Calendar } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/components/AuthProvider';
 import { toast } from 'react-toastify';
-import { usePollVotes } from '@/hooks/usePollVotes';
-import CompactGridPoll from './CompactGridPoll';
-import PollViewToggle from './PollViewToggle';
-import FixedSlotList from './FixedSlotList';
+import { useBestChoice } from '@/hooks/useBestChoice';
+import { useChoiceTallies } from '@/hooks/useChoiceTallies';
+import BestTimeGrid from './BestTimeGrid';
+import TopPicksPanel from './TopPicksPanel';
 
 const FixedSlotPoll = () => {
   const { user } = useAuth();
   const [pollId, setPollId] = useState(null);
-  const [view, setView] = useState('grid');
+  const [slots, setSlots] = useState([]);
+  const [loading, setLoading] = useState(true);
   
-  const {
-    slots,
-    userVotes,
-    loading,
-    cycleVote,
-    getConsensusColor,
-    getUserVoteBorder,
-    getTopPicks
-  } = usePollVotes(pollId);
+  const { userChoice, selectBestTime, clearChoice } = useBestChoice(pollId);
+  const { 
+    topPicks, 
+    groupSize, 
+    slotLookup, 
+    getIntensityColor,
+    loading: talliesLoading 
+  } = useChoiceTallies(pollId);
 
-  // Initialize poll and fetch data
+  // Initialize poll and fetch slots
   useEffect(() => {
     if (user) {
       initializePoll();
@@ -33,6 +33,8 @@ const FixedSlotPoll = () => {
 
   const initializePoll = async () => {
     try {
+      setLoading(true);
+      
       // Check if poll already exists
       const { data: existingPolls } = await supabase
         .from('meeting_polls')
@@ -52,14 +54,32 @@ const FixedSlotPoll = () => {
       }
 
       setPollId(currentPollId);
+      
+      // Fetch slots
+      const { data: slotsData, error: slotsError } = await supabase
+        .from('meeting_slots')
+        .select('id as slot_id, date, start_time, end_time')
+        .eq('poll_id', currentPollId)
+        .order('date', { ascending: true })
+        .order('start_time', { ascending: true });
+      
+      if (slotsError) throw slotsError;
+      setSlots(slotsData || []);
     } catch (error) {
       console.error('Error initializing poll:', error);
       toast.error('Failed to initialize poll');
+    } finally {
+      setLoading(false);
     }
   };
 
+  const scrollToSlot = (date, startTime) => {
+    // This would be implemented in BestTimeGrid if needed
+    console.log('Scroll to slot:', date, startTime);
+  };
 
-  if (loading) {
+
+  if (loading || talliesLoading) {
     return (
       <div className="min-h-screen bg-background">
         <div className="container mx-auto px-4 py-8">
@@ -81,33 +101,40 @@ const FixedSlotPoll = () => {
             <Calendar className="h-8 w-8 text-accent" />
           </div>
           <h1 className="text-3xl font-bold text-foreground mb-2">
-            September 11-21 Meeting Poll
+            Best Time Selection
           </h1>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-4">
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              Vote on your availability for each time slot. Votes are instant and you can change them anytime.
-            </p>
-            <PollViewToggle view={view} onViewChange={setView} />
-          </div>
+          <p className="text-muted-foreground max-w-2xl mx-auto mb-4">
+            Select your single best meeting time. See what others prefer and find the most popular slots.
+          </p>
         </div>
 
-        {/* Content based on view */}
-        {view === 'grid' ? (
-          <CompactGridPoll
-            slots={slots}
-            userVotes={userVotes}
-            onVote={cycleVote}
-            getConsensusColor={getConsensusColor}
-            getUserVoteBorder={getUserVoteBorder}
-            getTopPicks={getTopPicks}
-          />
-        ) : (
-          <FixedSlotList
-            slots={slots}
-            userVotes={userVotes}
-            onVote={cycleVote}
-          />
-        )}
+        {/* Main Content */}
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+          {/* Top Picks Panel - Desktop Sidebar */}
+          <div className="lg:col-span-1 order-2 lg:order-1">
+            <div className="lg:sticky lg:top-8">
+              <TopPicksPanel
+                topPicks={topPicks}
+                userChoice={userChoice}
+                groupSize={groupSize}
+                slots={slots}
+                onScrollToSlot={scrollToSlot}
+              />
+            </div>
+          </div>
+
+          {/* Grid - Main Content */}
+          <div className="lg:col-span-3 order-1 lg:order-2">
+            <BestTimeGrid
+              slots={slots}
+              userChoice={userChoice}
+              onSelectSlot={selectBestTime}
+              onClearChoice={clearChoice}
+              slotLookup={slotLookup}
+              getIntensityColor={getIntensityColor}
+            />
+          </div>
+        </div>
       </div>
     </div>
   );
