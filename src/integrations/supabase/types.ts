@@ -98,6 +98,45 @@ export type Database = {
         }
         Relationships: []
       }
+      meeting_choices: {
+        Row: {
+          created_at: string
+          id: string
+          poll_id: string
+          slot_id: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          poll_id: string
+          slot_id?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          poll_id?: string
+          slot_id?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "meeting_choices_poll_id_fkey"
+            columns: ["poll_id"]
+            isOneToOne: false
+            referencedRelation: "meeting_polls"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "meeting_choices_slot_id_fkey"
+            columns: ["slot_id"]
+            isOneToOne: false
+            referencedRelation: "meeting_slots"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       meeting_polls: {
         Row: {
           created_at: string
@@ -429,6 +468,16 @@ export type Database = {
           available_count: number
           time_slot: string
           total_participants: number
+        }[]
+      }
+      get_choice_tallies: {
+        Args: { poll_id_param: string }
+        Returns: {
+          choice_count: number
+          date: string
+          end_time: string
+          slot_id: string
+          start_time: string
         }[]
       }
       get_current_user_role: {
