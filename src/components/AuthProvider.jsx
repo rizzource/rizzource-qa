@@ -19,51 +19,50 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-  let mounted = true;
+    let mounted = true;
 
-  const getSession = async () => {
+    // 1) Listen for auth changes FIRST (no async in callback)
     const {
-      data: { session },
-    } = await supabase.auth.getSession();
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      if (!mounted) return;
 
-    if (!mounted) return;
+      setUser(session?.user ?? null);
 
-    if (session?.user) {
-      setUser(session.user);
-      await fetchUserProfile(session.user.id);
-      fetchUserGroup(session.user.email);
-    } else {
-      setUser(null);
-    }
+      if (session?.user) {
+        // Defer Supabase calls to avoid deadlocks
+        setTimeout(() => {
+          if (!mounted || !session?.user) return;
+          fetchUserProfile(session.user.id);
+          fetchUserGroup(session.user.email);
+        }, 0);
+      } else {
+        setUserProfile(null);
+        setUserGroup(null);
+      }
 
-    setLoading(false); // only after session check finishes
-  };
+      setLoading(false);
+    });
 
-  getSession();
+    // 2) Then check for an existing session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (!mounted) return;
 
-  // Listen for auth changes
-  const {
-    data: { subscription },
-  } = supabase.auth.onAuthStateChange(async (event, session) => {
-    if (!mounted) return;
+      setUser(session?.user ?? null);
 
-    if (session?.user) {
-      setUser(session.user);
-      await fetchUserProfile(session.user.id);
-      fetchUserGroup(session.user.email);
-    } else {
-      setUser(null);
-      setUserProfile(null);
-      setUserGroup(null);
-    }
-    // don’t force setLoading(false) here – it’s already handled
-  });
+      if (session?.user) {
+        fetchUserProfile(session.user.id);
+        fetchUserGroup(session.user.email);
+      }
 
-  return () => {
-    mounted = false;
-    subscription.unsubscribe();
-  };
-}, []);
+      setLoading(false);
+    });
+
+    return () => {
+      mounted = false;
+      subscription?.unsubscribe();
+    };
+  }, []);
 
 
   const fetchUserProfile = async (userId) => {
