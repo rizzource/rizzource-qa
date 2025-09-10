@@ -1,7 +1,7 @@
 import { useState } from 'react'; 
 import { Button } from "@/components/ui/button"; 
 import { Scale, Shield, LogOut, User, ArrowLeft } from "lucide-react"; 
-import { useAuth } from './AuthProvider';
+import { useAuth } from '@/components/AuthProvider';
 import { Link, useLocation, useNavigate } from 'react-router-dom'; 
 
 const Header = () => { 
