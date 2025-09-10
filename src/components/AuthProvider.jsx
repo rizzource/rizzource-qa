@@ -58,7 +58,7 @@ export const AuthProvider = ({ children }) => {
         .eq('id', userId)
         .single();
       
-      if (error) throw error;
+      // if (error) throw error;
       setUserProfile(data);
       console.log("UserDataFromFetchUserProfile", data)
     } catch (error) {
