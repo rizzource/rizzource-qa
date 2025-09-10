@@ -72,7 +72,7 @@ export const AuthProvider = ({ children }) => {
     }
     
     const groupData = findUserGroup(email);
-    setUserGroup(groupData);
+    setUserGroup(findUserGroup(email));
   };
 
   const signIn = async (email, password) => {
