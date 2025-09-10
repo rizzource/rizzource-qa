@@ -120,11 +120,20 @@ export const groups = [
 ];
 
 export const findUserGroup = (email) => {
-  if (!email) return null;
-  debugger;
+  console.log("➡️ findUserGroup called with:", email);
+
+  if (!email) {
+    console.log("❌ No email provided, returning null");
+    return null;
+  }
+
   for (const group of groups) {
+    console.log("🔍 Checking group:", group.groupID);
+
     const member = group.members.find(m => m.email.toLowerCase() === email.toLowerCase());
+
     if (member) {
+      console.log("✅ Match found:", member);
       return {
         group,
         user: member,
@@ -132,6 +141,7 @@ export const findUserGroup = (email) => {
       };
     }
   }
-  
+
+  console.log("⚠️ No match found, returning null");
   return null;
 };
