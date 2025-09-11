@@ -11,7 +11,8 @@ const BestTimeGrid = ({
   onToggleSlot, 
   onClearAllChoices,
   slotLookup, 
-  getIntensityColor 
+  getIntensityColor,
+  tallies 
 }) => {
   const gridRef = useRef(null);
   const [hoveredSlot, setHoveredSlot] = useState(null);
