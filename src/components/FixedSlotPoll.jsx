@@ -58,15 +58,22 @@ const FixedSlotPoll = () => {
 
       setPollId(currentPollId);
       
-      // Fetch slots
+      // Fetch slots with date filter to ensure we get Sept 11-21, 2025
       const { data: slotsData, error: slotsError } = await supabase
         .from('meeting_slots')
         .select('slot_id:id, date, start_time, end_time')
         .eq('poll_id', currentPollId)
+        .gte('date', '2025-09-11')
+        .lte('date', '2025-09-21')
         .order('date', { ascending: true })
         .order('start_time', { ascending: true });
       
       if (slotsError) throw slotsError;
+      
+      // Debug logging to verify correct dates
+      console.log('Fetched slots:', slotsData?.length, 'slots');
+      console.log('Date range:', slotsData?.[0]?.date, 'to', slotsData?.[slotsData.length - 1]?.date);
+      
       setSlots(slotsData || []);
     } catch (error) {
       console.error('Error initializing poll:', error);
@@ -131,6 +138,7 @@ const FixedSlotPoll = () => {
             {/* Grid - Main Content */}
             <div className="lg:col-span-3 order-1 lg:order-2">
               <BestTimeGrid
+                key={`grid-${pollId}-${slots.length}`}
                 slots={slots}
                 userChoices={userChoices}
                 onToggleSlot={toggleSlotChoice}
