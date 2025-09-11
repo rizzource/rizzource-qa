@@ -157,23 +157,6 @@ const OutlineView = () => {
     }
   };
 
-  // Open in new tab via Blob to avoid extension blocking
-  const openInNewTab = async () => {
-    try {
-      const res = await fetch(outline.file_url);
-      const blob = await res.blob();
-      const url = URL.createObjectURL(blob);
-      const newTab = window.open(url, '_blank', 'noopener');
-      if (!newTab) {
-        toast.error('Popup blocked. Please allow popups for this site.');
-      }
-      // Revoke after some time
-      setTimeout(() => URL.revokeObjectURL(url), 60_000);
-    } catch (e) {
-      console.error('Open in new tab failed, falling back to direct URL', e);
-      window.open(outline.file_url, '_blank', 'noopener');
-    }
-  };
 
   // PDF handlers
   const onDocumentLoadSuccess = ({ numPages }) => {
@@ -352,15 +335,6 @@ const OutlineView = () => {
                         <Eye className="w-5 h-5 mr-2" />
                         Open PDF Viewer
                       </Button>
-                      <div className="text-center text-sm text-muted-foreground">
-                        Or <button 
-                          type="button"
-                          onClick={openInNewTab}
-                          className="text-primary underline"
-                        >
-                          open PDF in new tab
-                        </button>
-                      </div>
                     </div>
                   </CardContent>
                 </Card>
@@ -452,12 +426,11 @@ const OutlineView = () => {
       {/* PDF Viewer Dialog */}
       {showPdfDialog && (
         <div 
-          className="fixed inset-0 bg-black/80 flex items-center justify-center p-4"
-          style={{ zIndex: 99999 }}
+          className="fixed inset-0 z-[10000] bg-background/80 backdrop-blur-sm flex items-center justify-center p-2 sm:p-4"
           onClick={() => setShowPdfDialog(false)}
         >
           <div 
-            className="bg-white rounded-lg shadow-xl w-[95vw] h-[85vh] max-w-7xl flex flex-col"
+            className="bg-card text-card-foreground border border-border rounded-lg shadow-xl w-[98vw] h-[92vh] max-w-[1600px] flex flex-col"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header */}
@@ -484,13 +457,7 @@ const OutlineView = () => {
                     <FileText className="w-12 h-12 text-destructive mx-auto mb-4" />
                     <p className="text-destructive font-medium mb-2">PDF Preview Error</p>
                     <p className="text-sm text-muted-foreground mb-4">{pdfError}</p>
-                    <button 
-                      type="button"
-                      onClick={openInNewTab}
-                      className="text-primary underline"
-                    >
-                      Open PDF in new tab instead
-                    </button>
+                    <p className="text-sm text-muted-foreground">Please use the Download button to access the file.</p>
                   </div>
                 </div>
               ) : (
@@ -520,13 +487,6 @@ const OutlineView = () => {
                       </Button>
                     </div>
                     
-                    <button 
-                      type="button"
-                      onClick={openInNewTab}
-                      className="text-primary underline text-sm"
-                    >
-                      Open in new tab
-                    </button>
                   </div>
                   
                   <div className="flex-1 border border-border rounded-lg overflow-auto bg-white flex items-center justify-center">
@@ -544,7 +504,7 @@ const OutlineView = () => {
                         pageNumber={pageNumber}
                         renderTextLayer={true}
                         renderAnnotationLayer={true}
-                        width={Math.min(1000, window.innerWidth * 0.8)}
+                        width={Math.min(1400, window.innerWidth * 0.9)}
                       />
                     </Document>
                   </div>

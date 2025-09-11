@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Search, Filter, Star, Download, Eye, FileText, BookOpen, X } from "lucide-react";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { downloadOutlineBoth } from "@/utils/outlineDownload";
+
 
 const OutlinesBrowse = () => {
   const [filters, setFilters] = useState({
@@ -133,6 +133,25 @@ const OutlinesBrowse = () => {
       rating: "all",
       sort: "newest",
     });
+  };
+
+  const handleDownload = async (outline) => {
+    try {
+      if (!outline?.file_url) return;
+      const response = await fetch(outline.file_url);
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.style.display = 'none';
+      a.href = url;
+      a.download = outline.file_name || `${outline.title || 'outline'}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    } catch (e) {
+      console.error('Download failed', e);
+    }
   };
 
   const renderStars = (rating, count) => {
@@ -384,7 +403,7 @@ const OutlinesBrowse = () => {
                       Preview
                     </Button>*/}
 
-                    <Button size="sm" className="px-3 py-2" onClick={() => downloadOutlineBoth(outline)}>
+                    <Button size="sm" className="px-3 py-2" onClick={() => handleDownload(outline)}>
                       <Download className="w-4 h-4 mr-1" />
                       Download
                     </Button>
