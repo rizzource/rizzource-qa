@@ -70,8 +70,8 @@ const Auth = () => {
         setError('Passwords do not match');
         return;
       }
-      if (password.length < 6) {
-        setError('Password must be at least 6 characters long');
+      if (password.length < 4) {
+        setError('Password must be at least 4 characters long');
         return;
       }
 
@@ -192,7 +192,7 @@ const Auth = () => {
                         Password
                       </Label>
                       <Input id="signup-password" name="password" type="password" autoComplete="new-password"
-                        placeholder="Create a password (min. 6 characters)" required className="input-focus-green" />
+                        placeholder="Create a password (min. 4 characters)" required className="input-focus-green" />
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="confirm-password" className="text-foreground font-medium">
