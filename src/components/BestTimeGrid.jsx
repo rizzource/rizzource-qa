@@ -19,8 +19,21 @@ const BestTimeGrid = ({
   const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
 
   // Generate unique dates and times from slots
-  const dates = [...new Set(slots.map(slot => slot.date))].sort();
-  const times = [...new Set(slots.map(slot => slot.start_time))].sort();
+  const dateKeys = [...new Set(slots.map(slot => slot.date))].sort();
+  // Map original date -> display date forced to 2025 for correct weekday labels
+  const date2025Map = Object.fromEntries(
+    dateKeys.map((d) => {
+      const base = parseISO(d);
+      const display = new Date(2025, base.getMonth(), base.getDate());
+      const iso = display.toISOString().slice(0, 10);
+      return [d, iso];
+    })
+  );
+
+  // Ensure times include up to 21:00
+  const timesSet = new Set(slots.map(slot => slot.start_time));
+  timesSet.add('21:00');
+  const times = Array.from(timesSet).sort();
   
   // Create a lookup for quick slot access
   const slotByDateTime = {};
@@ -109,13 +122,13 @@ const BestTimeGrid = ({
                   </div>
                   
                   {/* Date headers */}
-                  {dates.map(date => (
+                  {dateKeys.map(date => (
                     <div
                       key={date}
                       className="w-16 h-8 flex flex-col items-center justify-center border-r text-xs font-medium bg-muted/50"
                     >
-                      <div className="text-xs">{format(parseISO(date), 'EEE')}</div>
-                      <div className="text-xs text-muted-foreground">{format(parseISO(date), 'M/d')}</div>
+                      <div className="text-xs">{format(parseISO(date2025Map[date]), 'EEE')}</div>
+                      <div className="text-xs text-muted-foreground">{format(parseISO(date2025Map[date]), 'M/d')}</div>
                     </div>
                   ))}
                 </div>
@@ -129,7 +142,7 @@ const BestTimeGrid = ({
                     </div>
                     
                     {/* Cells for this time across all dates */}
-                    {dates.map(date => {
+                    {dateKeys.map(date => {
                       const slotKey = `${date}-${time}`;
                       const slot = slotByDateTime[slotKey];
                       
@@ -203,7 +216,7 @@ const BestTimeGrid = ({
                 }}
               >
                 <div className="font-medium mb-1">
-                  {format(parseISO(hoveredSlot.date), 'MMM d')} at {hoveredSlot.start_time}
+                  {format(parseISO(date2025Map[hoveredSlot.date] || hoveredSlot.date), 'MMM d')} at {hoveredSlot.start_time}
                 </div>
                 <div className="text-sm space-y-1">
                   <div className="flex justify-between">
