@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { findUserGroup } from '@/data/groups';
+import { findUserGroup, findUserGroupByEmail } from '@/data/groups';
 import { authService } from '@/utils/authService';
 
 const AuthContext = createContext(null);
@@ -17,6 +17,8 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [userProfile, setUserProfile] = useState(null);
   const [userGroup, setUserGroup] = useState(null);
+  const [groupId, setGroupId] = useState(null);
+  const [groupMembers, setGroupMembers] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -107,11 +109,19 @@ export const AuthProvider = ({ children }) => {
   const fetchUserGroup = (email) => {
     if (!email) {
       setUserGroup(null);
+      setGroupId(null);
+      setGroupMembers([]);
       return;
     }
     
     const groupData = findUserGroup(email);
     setUserGroup(groupData);
+    
+    // Also derive group info using the new helper
+    const emailFromMeta = email;
+    const { groupId: derivedGroupId, members: derivedMembers } = findUserGroupByEmail(emailFromMeta);
+    setGroupId(derivedGroupId);
+    setGroupMembers(derivedMembers);
   };
 
   const signIn = async (email, password) => {
@@ -151,6 +161,8 @@ export const AuthProvider = ({ children }) => {
     user,
     userProfile,
     userGroup,
+    groupId,
+    groupMembers,
     loading,
     signIn,
     signUp,

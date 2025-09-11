@@ -101,6 +101,7 @@ export type Database = {
       meeting_choices: {
         Row: {
           created_at: string
+          group_id: number | null
           id: string
           poll_id: string
           slot_id: string | null
@@ -108,6 +109,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          group_id?: number | null
           id?: string
           poll_id: string
           slot_id?: string | null
@@ -115,6 +117,7 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          group_id?: number | null
           id?: string
           poll_id?: string
           slot_id?: string | null
