@@ -169,10 +169,10 @@ export const groups = [
     ]
   },
    {
-    groupID: 16,
+    groupID: 17,
     members: [
-      { role: "Mentee", name: "Daniel Choi", email: "saad@gmail.com", groupID: 16 },
-      { role: "Mentor", name: "Sarah You", email: "salaar@gmail.com", groupID: 16 },
+      { role: "Mentee", name: "Daniel Choi", email: "saad@gmail.com", groupID: 17 },
+      { role: "Mentor", name: "Sarah You", email: "salaar@gmail.com", groupID: 17 },
     ]
   },
 ];
