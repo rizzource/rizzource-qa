@@ -482,6 +482,10 @@ export type Database = {
         Args: { user_email: string }
         Returns: string[]
       }
+      get_group_user_count: {
+        Args: { poll_id_param: string }
+        Returns: number
+      }
       get_slot_rankings: {
         Args: { poll_id_param: string }
         Returns: {
@@ -500,6 +504,10 @@ export type Database = {
         Returns: {
           slot_id: string
         }[]
+      }
+      get_user_email: {
+        Args: { _user_id: string }
+        Returns: string
       }
       is_admin: {
         Args: Record<PropertyKey, never>
