@@ -116,7 +116,7 @@ const FixedSlotPoll = () => {
               <Calendar className="h-8 w-8 text-accent" />
             </div>
             <h1 className="text-3xl font-bold text-foreground mb-2">
-              Multi-Select Time Preference
+              Time Preference
             </h1>
             <p className="text-muted-foreground max-w-2xl mx-auto mb-4">
               Select multiple time slots that work for you. See popularity and find the best consensus times.
