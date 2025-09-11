@@ -70,8 +70,8 @@ const Auth = () => {
         setError('Passwords do not match');
         return;
       }
-      if (password.length < 4) {
-        setError('Password must be at least 4 characters long');
+      if (password.length < 6) {
+        setError('Password must be at least 6 characters long');
         return;
       }
 
