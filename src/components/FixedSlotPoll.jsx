@@ -122,7 +122,7 @@ const FixedSlotPoll = () => {
           </div>
   
           {/* Top Picks - Horizontal Display */}
-          <div className="mb-6">
+          {/* <div className="mb-6">
             <TopPicksPanel
               topPicks={topPicks.slice(0, 3)}
               userChoices={userChoices}
@@ -131,7 +131,7 @@ const FixedSlotPoll = () => {
               onScrollToSlot={scrollToSlot}
               horizontal={true}
             />
-          </div>
+          </div> */}
 
           {/* Grid - Main Content */}
           <div className="w-full">
