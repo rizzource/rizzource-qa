@@ -9,7 +9,7 @@ export const useBestChoice = (pollId) => {
   const [loading, setLoading] = useState(true);
 
   const fetchUserChoices = useCallback(async () => {
-    if (!pollId || !user?.id) return;
+    if (!pollId || !user) return;
     
     try {
       setLoading(true);
@@ -30,7 +30,7 @@ export const useBestChoice = (pollId) => {
   }, [pollId, user?.id]);
 
   const toggleSlotChoice = useCallback(async (slotId) => {
-    if (!user?.id || !pollId) return;
+    if (!user || !pollId) return;
 
     const isCurrentlySelected = userChoices.includes(slotId);
     
@@ -53,13 +53,14 @@ export const useBestChoice = (pollId) => {
 
         if (error) throw error;
       } else {
-        // Add choice (ignore duplicates to prevent constraint errors)
+        // Add choice
         const { error } = await supabase
           .from('meeting_choices')
-          .upsert(
-            { poll_id: pollId, user_id: user.id, slot_id: slotId },
-            { onConflict: 'poll_id,user_id,slot_id', ignoreDuplicates: true }
-          );
+          .insert({
+            poll_id: pollId,
+            user_id: user.id,
+            slot_id: slotId
+          });
 
         if (error) throw error;
       }
@@ -72,7 +73,7 @@ export const useBestChoice = (pollId) => {
   }, [user, pollId, userChoices, fetchUserChoices]);
 
   const clearAllChoices = useCallback(async () => {
-    if (!user?.id || !pollId) return;
+    if (!user || !pollId) return;
 
     // Optimistic update
     setUserChoices([]);
