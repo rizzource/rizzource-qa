@@ -53,7 +53,7 @@ const MinimalistHome = () => {
                   className="relative px-10 py-4 text-lg font-semibold rounded-xl
                              bg-secondary text-secondary-foreground border border-transparent
                              shadow-sm transition-all duration-300 ease-out
-                             hover:bg-secondary-foreground hover:text-secondary hover:border-green-500
+                             hover:bg-secondary-foreground hover:text-secondary hover:border-secondary
                              hover:shadow-lg hover:-translate-y-0.5
                              active:translate-y-0"
                 >
