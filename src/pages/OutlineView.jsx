@@ -157,6 +157,24 @@ const OutlineView = () => {
     }
   };
 
+  // Open in new tab via Blob to avoid extension blocking
+  const openInNewTab = async () => {
+    try {
+      const res = await fetch(outline.file_url);
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const newTab = window.open(url, '_blank', 'noopener');
+      if (!newTab) {
+        toast.error('Popup blocked. Please allow popups for this site.');
+      }
+      // Revoke after some time
+      setTimeout(() => URL.revokeObjectURL(url), 60_000);
+    } catch (e) {
+      console.error('Open in new tab failed, falling back to direct URL', e);
+      window.open(outline.file_url, '_blank', 'noopener');
+    }
+  };
+
   // PDF handlers
   const onDocumentLoadSuccess = ({ numPages }) => {
     setNumPages(numPages);
@@ -332,14 +350,13 @@ const OutlineView = () => {
                         Open PDF Viewer
                       </Button>
                       <div className="text-center text-sm text-muted-foreground">
-                        Or <a 
-                          href={outline.file_url} 
-                          target="_blank" 
-                          rel="noopener noreferrer"
+                        Or <button 
+                          type="button"
+                          onClick={openInNewTab}
                           className="text-primary underline"
                         >
                           open PDF in new tab
-                        </a>
+                        </button>
                       </div>
                     </div>
                   </CardContent>
@@ -456,14 +473,13 @@ const OutlineView = () => {
                   <FileText className="w-12 h-12 text-destructive mx-auto mb-4" />
                   <p className="text-destructive font-medium mb-2">PDF Preview Error</p>
                   <p className="text-sm text-muted-foreground mb-4">{pdfError}</p>
-                  <a 
-                    href={outline?.file_url} 
-                    target="_blank" 
-                    rel="noopener noreferrer"
+                  <button 
+                    type="button"
+                    onClick={openInNewTab}
                     className="text-primary underline"
                   >
                     Open PDF in new tab instead
-                  </a>
+                  </button>
                 </div>
               </div>
             ) : (
@@ -493,14 +509,13 @@ const OutlineView = () => {
                     </Button>
                   </div>
                   
-                  <a 
-                    href={outline?.file_url} 
-                    target="_blank" 
-                    rel="noopener noreferrer"
+                  <button 
+                    type="button"
+                    onClick={openInNewTab}
                     className="text-primary underline text-sm"
                   >
                     Open in new tab
-                  </a>
+                  </button>
                 </div>
                 
                 <div className="flex-1 border border-border rounded-lg overflow-auto bg-white flex items-center justify-center">
