@@ -342,8 +342,11 @@ const OutlineView = () => {
                   <CardContent>
                     <div className="space-y-4">
                       <Button 
-                        onClick={() => setShowPdfDialog(true)}
-                        className="w-full"
+                        onClick={() => {
+                          console.log('Opening PDF dialog...');
+                          setShowPdfDialog(true);
+                        }}
+                        className="w-auto px-6"
                         size="lg"
                       >
                         <Eye className="w-5 h-5 mr-2" />
@@ -447,14 +450,22 @@ const OutlineView = () => {
       </section>
 
       {/* PDF Viewer Dialog */}
-      <Dialog open={showPdfDialog} onOpenChange={setShowPdfDialog}>
-        <DialogContent className="max-w-7xl max-h-[90vh] w-[95vw] h-[85vh] p-0">
-          <DialogHeader className="p-6 pb-2">
-            <DialogTitle className="text-lg text-primary flex items-center justify-between">
-              <div className="flex items-center gap-2">
+      {showPdfDialog && (
+        <div 
+          className="fixed inset-0 bg-black/80 flex items-center justify-center p-4"
+          style={{ zIndex: 99999 }}
+          onClick={() => setShowPdfDialog(false)}
+        >
+          <div 
+            className="bg-white rounded-lg shadow-xl w-[95vw] h-[85vh] max-w-7xl flex flex-col"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header */}
+            <div className="flex items-center justify-between p-6 border-b">
+              <h2 className="text-lg font-semibold text-primary flex items-center gap-2">
                 <Eye className="w-5 h-5" />
                 PDF Viewer - {outline?.title}
-              </div>
+              </h2>
               <Button
                 variant="ghost"
                 size="sm"
@@ -463,85 +474,86 @@ const OutlineView = () => {
               >
                 <X className="w-4 h-4" />
               </Button>
-            </DialogTitle>
-          </DialogHeader>
-          
-          <div className="flex-1 px-6 pb-6">
-            {pdfError ? (
-              <div className="bg-destructive/10 border border-destructive/30 rounded-lg p-6 text-center h-full flex items-center justify-center">
-                <div>
-                  <FileText className="w-12 h-12 text-destructive mx-auto mb-4" />
-                  <p className="text-destructive font-medium mb-2">PDF Preview Error</p>
-                  <p className="text-sm text-muted-foreground mb-4">{pdfError}</p>
-                  <button 
-                    type="button"
-                    onClick={openInNewTab}
-                    className="text-primary underline"
-                  >
-                    Open PDF in new tab instead
-                  </button>
+            </div>
+            
+            {/* Content */}
+            <div className="flex-1 p-6 overflow-hidden">
+              {pdfError ? (
+                <div className="bg-destructive/10 border border-destructive/30 rounded-lg p-6 text-center h-full flex items-center justify-center">
+                  <div>
+                    <FileText className="w-12 h-12 text-destructive mx-auto mb-4" />
+                    <p className="text-destructive font-medium mb-2">PDF Preview Error</p>
+                    <p className="text-sm text-muted-foreground mb-4">{pdfError}</p>
+                    <button 
+                      type="button"
+                      onClick={openInNewTab}
+                      className="text-primary underline"
+                    >
+                      Open PDF in new tab instead
+                    </button>
+                  </div>
                 </div>
-              </div>
-            ) : (
-              <div className="h-full flex flex-col">
-                <div className="flex items-center justify-between mb-4 bg-muted/30 p-3 rounded-lg">
-                  <div className="flex items-center gap-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={previousPage}
-                      disabled={pageNumber <= 1}
-                      className="border-primary text-primary hover:bg-primary/10"
+              ) : (
+                <div className="h-full flex flex-col">
+                  <div className="flex items-center justify-between mb-4 bg-muted/30 p-3 rounded-lg">
+                    <div className="flex items-center gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={previousPage}
+                        disabled={pageNumber <= 1}
+                        className="border-primary text-primary hover:bg-primary/10"
+                      >
+                        Previous
+                      </Button>
+                      <span className="text-sm text-muted-foreground font-medium">
+                        Page {pageNumber} of {numPages || '--'}
+                      </span>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={nextPage}
+                        disabled={numPages ? pageNumber >= numPages : false}
+                        className="border-primary text-primary hover:bg-primary/10"
+                      >
+                        Next
+                      </Button>
+                    </div>
+                    
+                    <button 
+                      type="button"
+                      onClick={openInNewTab}
+                      className="text-primary underline text-sm"
                     >
-                      Previous
-                    </Button>
-                    <span className="text-sm text-muted-foreground font-medium">
-                      Page {pageNumber} of {numPages || '--'}
-                    </span>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={nextPage}
-                      disabled={numPages ? pageNumber >= numPages : false}
-                      className="border-primary text-primary hover:bg-primary/10"
-                    >
-                      Next
-                    </Button>
+                      Open in new tab
+                    </button>
                   </div>
                   
-                  <button 
-                    type="button"
-                    onClick={openInNewTab}
-                    className="text-primary underline text-sm"
-                  >
-                    Open in new tab
-                  </button>
+                  <div className="flex-1 border border-border rounded-lg overflow-auto bg-white flex items-center justify-center">
+                    <Document
+                      file={outline?.file_url}
+                      onLoadSuccess={onDocumentLoadSuccess}
+                      onLoadError={onDocumentLoadError}
+                      loading={
+                        <div className="flex justify-center p-8">
+                          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-accent"></div>
+                        </div>
+                      }
+                    >
+                      <Page
+                        pageNumber={pageNumber}
+                        renderTextLayer={true}
+                        renderAnnotationLayer={true}
+                        width={Math.min(1000, window.innerWidth * 0.8)}
+                      />
+                    </Document>
+                  </div>
                 </div>
-                
-                <div className="flex-1 border border-border rounded-lg overflow-auto bg-white flex items-center justify-center">
-                  <Document
-                    file={outline?.file_url}
-                    onLoadSuccess={onDocumentLoadSuccess}
-                    onLoadError={onDocumentLoadError}
-                    loading={
-                      <div className="flex justify-center p-8">
-                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-accent"></div>
-                      </div>
-                    }
-                  >
-                    <Page
-                      pageNumber={pageNumber}
-                      renderTextLayer={true}
-                      renderAnnotationLayer={true}
-                      width={Math.min(1000, window.innerWidth * 0.8)}
-                    />
-                  </Document>
-                </div>
-              </div>
-            )}
+              )}
+            </div>
           </div>
-        </DialogContent>
-      </Dialog>
+        </div>
+      )}
 
       <Footer />
     </>
