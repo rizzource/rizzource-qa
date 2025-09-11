@@ -242,7 +242,7 @@ const OutlinesUpload = ({ onUploadSuccess }) => {
     }
   };
 
-  const isFormValid = formData.title && formData.professor && formData.topic && formData.year && formData.notes && formData.file;
+  const isFormValid = formData.title && formData.professor && formData.topic && formData.year && formData.file;
 
   return (
     <div className="max-w-2xl mx-auto">
