@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Calendar } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Calendar, X } from 'lucide-react';
+import { format, parseISO } from 'date-fns';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/components/AuthProvider';
 import { toast } from 'react-toastify';
@@ -120,31 +122,82 @@ const FixedSlotPoll = () => {
               Select multiple time slots that work for you. See popularity and find the best consensus times.
             </p>
           </div>
-  
-          {/* Top Picks - Horizontal Display */}
-          {/* <div className="mb-6">
-            <TopPicksPanel
-              topPicks={topPicks.slice(0, 3)}
-              userChoices={userChoices}
-              groupSize={groupSize}
-              slots={slots}
-              onScrollToSlot={scrollToSlot}
-              horizontal={true}
-            />
-          </div> */}
 
-          {/* Grid - Main Content */}
-          <div className="w-full">
-            <BestTimeGrid
-              key={`grid-${pollId}-${slots.length}`}
-              slots={slots}
-              userChoices={userChoices}
-              onToggleSlot={toggleSlotChoice}
-              onClearAllChoices={clearAllChoices}
-              slotLookup={slotLookup}
-              getIntensityColor={getIntensityColor}
-              tallies={tallies}
-            />
+          {/* Three-column layout */}
+          <div className="grid gap-4 lg:grid-cols-3">
+            {/* Your Selections - Left sidebar */}
+            <div className="lg:col-span-1 order-2 lg:order-1">
+              <Card>
+                <CardHeader className="py-2">
+                  <CardTitle className="flex items-center gap-2 text-xl">
+                    <Calendar className="h-5 w-5" />
+                    Your Selections ({userChoices.length})
+                  </CardTitle>
+                  <CardDescription className="text-xs">Click again to deselect.</CardDescription>
+                </CardHeader>
+                <CardContent className="pt-2">
+                  {userChoices.length === 0 ? (
+                    <div className="text-sm text-muted-foreground">No selections yet.</div>
+                  ) : (
+                    <>
+                      <div className="flex flex-wrap gap-1.5">
+                        {userChoices
+                          .map((id) => slots.find(s => s.slot_id === id))
+                          .filter(Boolean)
+                          .filter(s => s.start_time !== '09:00')
+                          .map((s) => (
+                            <button
+                              key={s.slot_id}
+                              onClick={() => toggleSlotChoice(s.slot_id)}
+                              className="inline-flex items-center gap-1.5 rounded-md border px-2.5 py-1 text-[12px] bg-background hover:bg-muted transition"
+                              title="Click to remove"
+                            >
+                              {format(parseISO(s.date), 'MMM d')} at {s.start_time}
+                              <X className="h-3.5 w-3.5 opacity-70" />
+                            </button>
+                          ))}
+                      </div>
+                      <div className="mt-2">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={clearAllChoices}
+                          className="h-7 px-2 text-red-600 hover:text-red-700"
+                        >
+                          Clear all
+                        </Button>
+                      </div>
+                    </>
+                  )}
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Main Grid - Center */}
+            <div className="lg:col-span-1 order-1 lg:order-2">
+              <BestTimeGrid
+                key={`grid-${pollId}-${slots.length}`}
+                slots={slots.filter(slot => slot.start_time !== '09:00')}
+                userChoices={userChoices}
+                onToggleSlot={toggleSlotChoice}
+                onClearAllChoices={clearAllChoices}
+                slotLookup={slotLookup}
+                getIntensityColor={getIntensityColor}
+                tallies={tallies}
+              />
+            </div>
+
+            {/* Top Picks - Right sidebar */}
+            <div className="lg:col-span-1 order-3">
+              <TopPicksPanel
+                topPicks={topPicks.slice(0, 3)}
+                userChoices={userChoices}
+                groupSize={groupSize}
+                slots={slots.filter(slot => slot.start_time !== '09:00')}
+                onScrollToSlot={scrollToSlot}
+                horizontal={false}
+              />
+            </div>
           </div>
         </div>
       </div>
