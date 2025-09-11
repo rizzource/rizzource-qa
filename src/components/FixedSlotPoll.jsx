@@ -123,14 +123,14 @@ const FixedSlotPoll = () => {
             </p>
           </div>
 
-          {/* Three-column layout - more compact */}
-          <div className="grid gap-3 lg:grid-cols-12">
+          {/* Three-column layout */}
+          <div className="grid gap-4 lg:grid-cols-3">
             {/* Your Selections - Left sidebar */}
-            <div className="lg:col-span-2 order-2 lg:order-1">
+            <div className="lg:col-span-1 order-2 lg:order-1">
               <Card>
                 <CardHeader className="py-2">
-                  <CardTitle className="flex items-center gap-2 text-lg">
-                    <Calendar className="h-4 w-4" />
+                  <CardTitle className="flex items-center gap-2 text-xl">
+                    <Calendar className="h-5 w-5" />
                     Your Selections ({userChoices.length})
                   </CardTitle>
                   <CardDescription className="text-xs">Click again to deselect.</CardDescription>
@@ -149,11 +149,11 @@ const FixedSlotPoll = () => {
                             <button
                               key={s.slot_id}
                               onClick={() => toggleSlotChoice(s.slot_id)}
-                              className="inline-flex items-center gap-1 rounded-md border px-2 py-0.5 text-[11px] bg-background hover:bg-muted transition"
+                              className="inline-flex items-center gap-1.5 rounded-md border px-2.5 py-1 text-[12px] bg-background hover:bg-muted transition"
                               title="Click to remove"
                             >
                               {format(parseISO(s.date), 'MMM d')} at {s.start_time}
-                              <X className="h-3 w-3 opacity-70" />
+                              <X className="h-3.5 w-3.5 opacity-70" />
                             </button>
                           ))}
                       </div>
@@ -162,7 +162,7 @@ const FixedSlotPoll = () => {
                           variant="ghost"
                           size="sm"
                           onClick={clearAllChoices}
-                          className="h-6 px-2 text-xs text-red-600 hover:text-red-700"
+                          className="h-7 px-2 text-red-600 hover:text-red-700"
                         >
                           Clear all
                         </Button>
@@ -174,7 +174,7 @@ const FixedSlotPoll = () => {
             </div>
 
             {/* Main Grid - Center */}
-            <div className="lg:col-span-7 order-1 lg:order-2">
+            <div className="lg:col-span-1 order-1 lg:order-2">
               <BestTimeGrid
                 key={`grid-${pollId}-${slots.length}`}
                 slots={slots.filter(slot => slot.start_time !== '09:00')}
@@ -188,7 +188,7 @@ const FixedSlotPoll = () => {
             </div>
 
             {/* Top Picks - Right sidebar */}
-            <div className="lg:col-span-3 order-3">
+            <div className="lg:col-span-1 order-3">
               <TopPicksPanel
                 topPicks={topPicks.slice(0, 3)}
                 userChoices={userChoices}
