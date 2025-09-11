@@ -11,7 +11,7 @@ import { toast } from 'react-toastify';
 
 const loginSchema = z.object({
   email: z.string().email('Please enter a valid email address'),
-  password: z.string().min(6, 'Password must be at least 6 characters'),
+  password: z.string().min(4, 'Password must be at least 4 characters'),
 });
 
 export const LoginDialog = ({ isOpen, onClose }) => {

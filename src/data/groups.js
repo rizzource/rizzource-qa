@@ -1,3 +1,14 @@
+// Function to find a user's group based on their email
+export const findUserGroup = (email) => {
+  if (!email) return null;
+  
+  return groups.find(group => 
+    group.members.some(member => 
+      member.email.toLowerCase() === email.toLowerCase()
+    )
+  );
+};
+
 export const groups = [
 {
   groupID: 1,
