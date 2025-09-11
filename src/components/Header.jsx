@@ -16,7 +16,7 @@ const Header = () => {
     // Already on dashboard, force reload
     window.location.reload();
   } else {
-    navigate(redirectTo);
+    navigate("/");
   }
   };
   console.log("UserProfileData", userProfile)
