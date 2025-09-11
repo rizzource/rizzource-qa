@@ -1,10 +1,13 @@
 import { Button } from "@/components/ui/button";
 import { Scale, BookOpen, Users } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "./AuthProvider";  
 import Timeline from "./Timeline";
 
 const MinimalistHome = () => {
   const navigate = useNavigate();
+  const { user } = useAuth(); 
+
   return (
     <section className="relative min-h-screen bg-background overflow-hidden">
       {/* Floating background elements */}
@@ -41,16 +44,18 @@ const MinimalistHome = () => {
               </p>
             </div>
 
-            {/* View Matchups Button */}
-            <div className="flex justify-center mt-8">
-              <Button 
-                onClick={() => navigate('/matchup')}
-                size="lg"
-                className="px-8 py-3 text-lg font-semibold bg-secondary hover:bg-secondary/80 text-secondary-foreground border border-border transition-all duration-300 hover:shadow-lg"
-              >
-                View Matchups
-              </Button>
-            </div>
+            {/* View Matchups Button - only show when logged in */}
+            {user && (
+              <div className="flex justify-center mt-8">
+                <Button 
+                  onClick={() => navigate('/matchup')}
+                  size="lg"
+                  className="px-8 py-3 text-lg font-semibold bg-secondary hover:bg-secondary/80 text-secondary-foreground border border-border transition-all duration-300 hover:shadow-lg"
+                >
+                  View Matchups
+                </Button>
+              </div>
+            )}
           </div>
 
           {/* Timeline Component */}
