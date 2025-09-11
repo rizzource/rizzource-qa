@@ -88,10 +88,11 @@ const BestTimeGrid = ({
   }, [onClearAllChoices]);
 
   // ================= LAYOUT =================
-  // Just the grid component without sidebar
+  // Compact layout so the grid + sidebar fit in a single row on desktop.
   return (
-    <div className="w-full">
-      <main className="w-full">
+    <div className="grid gap-4 lg:grid-cols-12">
+      {/* MAIN: Grid first on mobile; left on desktop */}
+      <main className="col-span-12 lg:col-span-7 xl:col-span-8">
         <Card>
           {/* ultra-compact header (remove extra blocks above the grid) */}
           <CardHeader className="py-2">
@@ -247,6 +248,91 @@ const BestTimeGrid = ({
           </CardContent>
         </Card>
       </main>
+
+      {/* SIDEBAR: right on desktop; stacks under grid on mobile */}
+      <aside className="col-span-12 lg:col-span-5 xl:col-span-4 space-y-4">
+        {/* Your Selections (compact) */}
+        <Card>
+          <CardHeader className="py-2">
+            <CardTitle className="flex items-center gap-2 text-xl">
+              <Calendar className="h-5 w-5" />
+              Your Selections ({selectedSlots.length})
+            </CardTitle>
+            <CardDescription className="text-xs">Click again to deselect.</CardDescription>
+          </CardHeader>
+          <CardContent className="pt-2">
+            {selectedSlots.length === 0 ? (
+              <div className="text-sm text-muted-foreground">No selections yet.</div>
+            ) : (
+              <>
+                <div className="flex flex-wrap gap-1.5">
+                  {selectedSlots.map((s) => (
+                    <button
+                      key={s.slot_id}
+                      onClick={() => onToggleSlot(s.slot_id)}
+                      className="inline-flex items-center gap-1.5 rounded-md border px-2.5 py-1 text-[12px] bg-background hover:bg-muted transition"
+                      title="Click to remove"
+                    >
+                      {format(parseISO(s.date), 'MMM d')} at {s.start_time}
+                      <X className="h-3.5 w-3.5 opacity-70" />
+                    </button>
+                  ))}
+                </div>
+                <div className="mt-2">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={onClearAllChoices}
+                    className="h-7 px-2 text-red-600 hover:text-red-700"
+                  >
+                    Clear all
+                  </Button>
+                </div>
+              </>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Top Picks (compact) */}
+        <Card>
+          <CardHeader className="py-2">
+            <CardTitle className="flex items-center gap-2 text-xl">
+              <Trophy className="h-5 w-5" />
+              Top Picks ({topPicks.length})
+            </CardTitle>
+            <CardDescription className="text-xs">Most popular time slots.</CardDescription>
+          </CardHeader>
+          <CardContent className="pt-2">
+            {topPicks.length === 0 ? (
+              <div className="text-sm text-muted-foreground">No votes yet.</div>
+            ) : (
+              <div className="grid gap-2.5">
+                {topPicks.map(({ rank, count, slot }) => (
+                  <div
+                    key={slot.slot_id}
+                    className="flex items-center justify-between rounded-md border px-3 py-2 bg-muted/30"
+                  >
+                    <div className="flex items-center gap-2.5">
+                      <div className="h-6 w-6 rounded-full border flex items-center justify-center text-xs font-semibold">
+                        {rank}
+                      </div>
+                      <div className="text-sm leading-tight">
+                        <div className="font-medium">
+                          {format(parseISO(slot.date), 'MMM d')} at {slot.start_time}
+                        </div>
+                        <div className="text-[11px] text-muted-foreground">Rank #{rank}</div>
+                      </div>
+                    </div>
+                    <div className="text-[11px] font-semibold px-2 py-1 rounded bg-background border">
+                      {count}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </aside>
     </div>
   );
 };
