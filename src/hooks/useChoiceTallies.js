@@ -75,6 +75,26 @@ export const useChoiceTallies = (pollId) => {
     return () => clearTimeout(timeoutId);
   }, [pollId, fetchTallies]);
 
+  // Realtime updates to keep tallies and top picks fresh
+  useEffect(() => {
+    if (!pollId) return;
+
+    const channel = supabase
+      .channel(`mc-tallies-${pollId}`)
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'meeting_choices', filter: `poll_id=eq.${pollId}` },
+        () => {
+          fetchTallies();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      try { supabase.removeChannel(channel); } catch (_) {}
+    };
+  }, [pollId, fetchTallies]);
+
   return {
     tallies,
     topPicks,
