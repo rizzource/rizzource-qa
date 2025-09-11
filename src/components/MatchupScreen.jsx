@@ -31,9 +31,9 @@ const MatchupScreen = () => {
     );
   }
 
-  const { groupMembers } = userGroup;
-  const mentors = groupMembers.filter((m) => m.role === "Mentor");
-  const mentees = groupMembers.filter((m) => m.role === "Mentee");
+  const { members } = userGroup;
+  const mentors = members.filter((m) => m.role === "Mentor");
+  const mentees = members.filter((m) => m.role === "Mentee");
 
   return (
     <div className="min-h-screen bg-background">
