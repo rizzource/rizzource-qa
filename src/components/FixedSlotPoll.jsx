@@ -96,51 +96,55 @@ const FixedSlotPoll = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-4 py-8">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <div className="mx-auto mb-4 p-3 bg-accent/20 rounded-full w-fit">
-            <Calendar className="h-8 w-8 text-accent" />
+    <>
+      <Header />
+      <div className="min-h-screen bg-background">
+        <div className="container mx-auto px-4 py-8">
+          {/* Header */}
+          <div className="text-center mb-8">
+            <div className="mx-auto mb-4 p-3 bg-accent/20 rounded-full w-fit">
+              <Calendar className="h-8 w-8 text-accent" />
+            </div>
+            <h1 className="text-3xl font-bold text-foreground mb-2">
+              Multi-Select Time Preference
+            </h1>
+            <p className="text-muted-foreground max-w-2xl mx-auto mb-4">
+              Select multiple time slots that work for you. See popularity and find the best consensus times.
+            </p>
           </div>
-          <h1 className="text-3xl font-bold text-foreground mb-2">
-            Multi-Select Time Preference
-          </h1>
-          <p className="text-muted-foreground max-w-2xl mx-auto mb-4">
-            Select multiple time slots that work for you. See popularity and find the best consensus times.
-          </p>
-        </div>
-
-        {/* Main Content */}
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-          {/* Top Picks Panel - Desktop Sidebar */}
-          <div className="lg:col-span-1 order-2 lg:order-1">
-            <div className="lg:sticky lg:top-8">
-              <TopPicksPanel
-                topPicks={topPicks}
-                userChoices={userChoices}
-                groupSize={groupSize}
+  
+          {/* Main Content */}
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+            {/* Top Picks Panel - Desktop Sidebar */}
+            <div className="lg:col-span-1 order-2 lg:order-1">
+              <div className="lg:sticky lg:top-8">
+                <TopPicksPanel
+                  topPicks={topPicks}
+                  userChoices={userChoices}
+                  groupSize={groupSize}
+                  slots={slots}
+                  onScrollToSlot={scrollToSlot}
+                />
+              </div>
+            </div>
+  
+            {/* Grid - Main Content */}
+            <div className="lg:col-span-3 order-1 lg:order-2">
+              <BestTimeGrid
                 slots={slots}
-                onScrollToSlot={scrollToSlot}
+                userChoices={userChoices}
+                onToggleSlot={toggleSlotChoice}
+                onClearAllChoices={clearAllChoices}
+                slotLookup={slotLookup}
+                getIntensityColor={getIntensityColor}
+                tallies={tallies}
               />
             </div>
           </div>
-
-          {/* Grid - Main Content */}
-          <div className="lg:col-span-3 order-1 lg:order-2">
-            <BestTimeGrid
-              slots={slots}
-              userChoices={userChoices}
-              onToggleSlot={toggleSlotChoice}
-              onClearAllChoices={clearAllChoices}
-              slotLookup={slotLookup}
-              getIntensityColor={getIntensityColor}
-              tallies={tallies}
-            />
-          </div>
         </div>
       </div>
-    </div>
+      <Footer />
+    </>
   );
 };
 
