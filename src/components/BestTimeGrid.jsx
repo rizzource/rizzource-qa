@@ -158,38 +158,37 @@ const BestTimeGrid = ({
                         const choiceCount = tally?.choice_count || 0;
 
                         return (
-                          <div
-                            key={slot.slot_id}
-                            className={cn(
-                              'w-14 h-5 border-r border-b cursor-pointer relative transition-all duration-150',
-                              'hover:scale-[1.03] hover:z-10',
-                              (() => {
-                                const c = Number(choiceCount) || 0;
-                                if (c === 0) return 'bg-muted/20';
-                                const allCounts = tallies
-                                  .map((t) => Number(t.choice_count) || 0)
-                                  .filter((n) => n > 0);
-                                const unique = [...new Set(allCounts)].sort((a, b) => b - a);
-                                if (unique.length === 0) return 'bg-muted/20';
-                                if (unique.length === 1) return 'bg-emerald-600';
-                                const [highest, secondHighest] = unique;
-                                if (c === highest) return 'bg-emerald-600';
-                                if (c === secondHighest) return 'bg-emerald-400';
-                                return 'bg-emerald-200';
-                              })(),
-                              isSelected && 'ring-2 ring-primary ring-inset'
-                            )}
-                            onClick={() => handleCellClick(slot)}
-                            onMouseEnter={(e) => handleCellHover(e, slot)}
-                            onMouseLeave={handleCellLeave}
-                          >
-                            {Number(choiceCount) > 0 && (
-                              <div className="absolute top-0 right-0 bg-background/90 text-primary text-[10px] font-medium px-1 rounded min-w-[12px] text-center leading-none">
-                                {choiceCount}
-                              </div>
-                            )}
-                            {isSelected && <div className="absolute bottom-0 left-0 w-full h-0.5 bg-primary" />}
-                          </div>
+                       <div
+  key={slot.slot_id}
+  className={cn(
+    'w-14 h-[18px] border-r border-b cursor-pointer relative transition-all duration-150',
+    'hover:scale-[1.03] hover:z-10',
+    (() => {
+      const c = Number(choiceCount) || 0;
+      if (c === 0) return 'bg-muted/20';
+      const allCounts = tallies.map(t => Number(t.choice_count) || 0).filter(n => n > 0);
+      const unique = [...new Set(allCounts)].sort((a, b) => b - a);
+      if (unique.length === 0) return 'bg-muted/20';
+      if (unique.length === 1) return 'bg-green-600';
+      const [highest, secondHighest] = unique;
+      if (c === highest) return 'bg-green-600';
+      if (c === secondHighest) return 'bg-green-400';
+      return 'bg-green-200';
+    })(),
+    isSelected && 'ring-2 ring-primary ring-inset'
+  )}
+  onClick={() => handleCellClick(slot)}
+  onMouseEnter={(e) => handleCellHover(e, slot)}
+  onMouseLeave={handleCellLeave}
+>
+  {Number(choiceCount) > 0 && (
+    <div className="absolute top-0 right-0 bg-background/90 text-primary text-[10px] font-medium px-1 rounded min-w-[12px] text-center leading-none">
+      {choiceCount}
+    </div>
+  )}
+  {isSelected && <div className="absolute bottom-0 left-0 w-full h-0.5 bg-primary" />}
+</div>
+
                         );
                       })}
                     </div>
