@@ -12,7 +12,8 @@ const TopPicksPanel = ({
   userChoices, 
   groupSize, 
   slots,
-  onScrollToSlot 
+  onScrollToSlot,
+  horizontal = false 
 }) => {
   const [isOpen, setIsOpen] = useState(true); // Default to open for desktop
   
@@ -28,6 +29,93 @@ const TopPicksPanel = ({
   const getPercentage = (count) => {
     return groupSize > 0 ? Math.round((count / groupSize) * 100) : 0;
   };
+
+  // Horizontal layout for desktop
+  if (horizontal) {
+    return (
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* Your Selections */}
+        {userChoiceSlots.length > 0 && (
+          <Card className="border-primary/20">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-sm flex items-center gap-2">
+                <Calendar className="h-4 w-4 text-primary" />
+                Your Selections ({userChoiceSlots.length})
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="pt-0">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-1 lg:grid-cols-2 gap-2">
+                {userChoiceSlots.slice(0, 4).map((slot, index) => (
+                  <div key={slot.slot_id} className="text-center p-2 bg-primary/5 rounded border border-primary/20">
+                    <div className="font-medium text-xs">
+                      {format(parseISO(slot.date), 'MMM d')} at {slot.start_time}
+                    </div>
+                  </div>
+                ))}
+              </div>
+              {userChoiceSlots.length > 4 && (
+                <div className="text-center text-xs text-muted-foreground mt-2">
+                  +{userChoiceSlots.length - 4} more selections
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Top Picks */}
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="flex items-center gap-2 text-sm">
+              <Trophy className="h-4 w-4 text-accent" />
+              Top Picks ({Math.min(topPicks.length, 3)})
+            </CardTitle>
+            <CardDescription>
+              Most popular time slots
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="pt-0">
+            {topPicks.length > 0 ? (
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                {topPicks.slice(0, 3).map((slot, index) => (
+                  <div
+                    key={slot.slot_id}
+                    className="flex flex-col items-center gap-1 p-2 rounded-lg border hover:bg-muted/50 cursor-pointer transition-colors"
+                    onClick={() => handleSlotClick(slot)}
+                  >
+                    <div className="flex items-center gap-1">
+                      <div className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center text-xs font-medium">
+                        {index + 1}
+                      </div>
+                      {index === 0 && <Trophy className="h-3 w-3 text-accent" />}
+                    </div>
+                    <div className="text-xs text-center">
+                      {format(parseISO(slot.date), 'MMM d')} at {slot.start_time}
+                    </div>
+                    <Badge variant="secondary" className="text-xs">
+                      {getPercentage(slot.choice_count)}%
+                    </Badge>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center text-muted-foreground py-4">
+                <Trophy className="h-6 w-6 mx-auto mb-2 opacity-50" />
+                <p className="text-xs">No choices made yet</p>
+              </div>
+            )}
+            {/* Group Stats */}
+            {groupSize > 0 && (
+              <div className="mt-3 pt-2 border-t text-center">
+                <div className="text-xs text-muted-foreground">
+                  {groupSize} {groupSize === 1 ? 'person has' : 'people have'} made choices
+                </div>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-4">

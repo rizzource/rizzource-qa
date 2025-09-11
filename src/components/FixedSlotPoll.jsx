@@ -8,7 +8,7 @@ import { useBestChoice } from '@/hooks/useBestChoice';
 import { useChoiceTallies } from '@/hooks/useChoiceTallies';
 import BestTimeGrid from './BestTimeGrid';
 import TopPicksPanel from './TopPicksPanel';
-import UserSelections from './UserSelections';
+
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
@@ -121,45 +121,30 @@ const FixedSlotPoll = () => {
             </p>
           </div>
   
-          {/* Main Content */}
-          <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
-            {/* User Selections Panel */}
-            <div className="lg:col-span-1 order-1">
-              <div className="lg:sticky lg:top-8">
-                <UserSelections
-                  userChoices={userChoices}
-                  slots={slots}
-                  onClearAllChoices={clearAllChoices}
-                />
-              </div>
-            </div>
+          {/* Top Picks - Horizontal Display */}
+          <div className="mb-6">
+            <TopPicksPanel
+              topPicks={topPicks.slice(0, 3)}
+              userChoices={userChoices}
+              groupSize={groupSize}
+              slots={slots}
+              onScrollToSlot={scrollToSlot}
+              horizontal={true}
+            />
+          </div>
 
-            {/* Top Picks Panel */}
-            <div className="lg:col-span-1 order-2">
-              <div className="lg:sticky lg:top-8">
-                <TopPicksPanel
-                  topPicks={topPicks}
-                  userChoices={userChoices}
-                  groupSize={groupSize}
-                  slots={slots}
-                  onScrollToSlot={scrollToSlot}
-                />
-              </div>
-            </div>
-  
-            {/* Grid - Main Content */}
-            <div className="lg:col-span-3 order-3">
-              <BestTimeGrid
-                key={`grid-${pollId}-${slots.length}`}
-                slots={slots}
-                userChoices={userChoices}
-                onToggleSlot={toggleSlotChoice}
-                onClearAllChoices={clearAllChoices}
-                slotLookup={slotLookup}
-                getIntensityColor={getIntensityColor}
-                tallies={tallies}
-              />
-            </div>
+          {/* Grid - Main Content */}
+          <div className="w-full">
+            <BestTimeGrid
+              key={`grid-${pollId}-${slots.length}`}
+              slots={slots}
+              userChoices={userChoices}
+              onToggleSlot={toggleSlotChoice}
+              onClearAllChoices={clearAllChoices}
+              slotLookup={slotLookup}
+              getIntensityColor={getIntensityColor}
+              tallies={tallies}
+            />
           </div>
         </div>
       </div>
