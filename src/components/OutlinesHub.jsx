@@ -49,7 +49,7 @@ const OutlinesHub = () => {
               Outlines Hub
             </h1>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Access comprehensive study outlines and course materials for law school success
+              Coming soon... 
             </p>
           </div>
 
