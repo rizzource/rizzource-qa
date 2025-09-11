@@ -30,7 +30,7 @@ const BestTimeGrid = ({
   );
 
   const times = useMemo(
-    () => [...new Set(slots.map((s) => s.start_time))].sort(),
+    () => [...new Set(slots.map((s) => s.start_time))].filter(time => time !== '09:00').sort(),
     [slots]
   );
 
@@ -224,15 +224,15 @@ const BestTimeGrid = ({
             {/* Compact Legend */}
             <div className="mt-3 flex flex-wrap items-center gap-3 text-[11px] text-muted-foreground">
               <div className="flex items-center gap-1.5">
-                <div className="w-3.5 h-3.5 bg-emerald-600 border rounded" />
+                <div className="w-3.5 h-3.5 bg-green-600 border rounded" />
                 <span>Most Votes</span>
               </div>
               <div className="flex items-center gap-1.5">
-                <div className="w-3.5 h-3.5 bg-emerald-400 border rounded" />
+                <div className="w-3.5 h-3.5 bg-green-400 border rounded" />
                 <span>Second Most</span>
               </div>
               <div className="flex items-center gap-1.5">
-                <div className="w-3.5 h-3.5 bg-emerald-200 border rounded" />
+                <div className="w-3.5 h-3.5 bg-green-200 border rounded" />
                 <span>Fewest</span>
               </div>
               <div className="flex items-center gap-1.5">
