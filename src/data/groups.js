@@ -9,16 +9,6 @@ export const findUserGroup = (email) => {
   );
 };
 
-// Export this helper as requested
-export const findUserGroupByEmail = (email) => {
-  if (!email) return { groupId: null, members: [] };
-  const e = String(email).toLowerCase();
-  const g = groups.find(g =>
-    g.members.some(m => String(m.email).toLowerCase() === e)
-  );
-  return { groupId: g?.groupID ?? null, members: g?.members ?? [] };
-};
-
 export const groups = [
 {
   groupID: 1,
@@ -171,7 +161,7 @@ export const groups = [
    {
     groupID: 16,
     members: [
-      { role: "Mentee", name: "Daniel Choi", email: "iqraaa@gmail.com", groupID: 16 },
+      { role: "Mentee", name: "Daniel Choi", email: "iqraa@gmail.com", groupID: 16 },
       { role: "Mentor", name: "Sarah You", email: "uneebb@gmail.com", groupID: 16 },
     ]
   },

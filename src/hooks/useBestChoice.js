@@ -4,21 +4,20 @@ import { useAuth } from '@/components/AuthProvider';
 import { toast } from 'react-toastify';
 
 export const useBestChoice = (pollId) => {
-  const { user, groupId } = useAuth();
+  const { user } = useAuth();
   const [userChoices, setUserChoices] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const fetchUserChoices = useCallback(async () => {
-    if (!pollId || !user || !groupId) return;
+    if (!pollId || !user) return;
     
     try {
       setLoading(true);
       const { data, error } = await supabase
-        .from('meeting_choices')
-        .select('slot_id')
-        .eq('poll_id', pollId)
-        .eq('user_id', user.id)
-        .eq('group_id', groupId);
+        .rpc('get_user_choices', { 
+          poll_id_param: pollId, 
+          user_id_param: user.id 
+        });
 
       if (error) throw error;
       setUserChoices(data?.map(item => item.slot_id) || []);
@@ -28,10 +27,10 @@ export const useBestChoice = (pollId) => {
     } finally {
       setLoading(false);
     }
-  }, [pollId, user?.id, groupId]);
+  }, [pollId, user?.id]);
 
   const toggleSlotChoice = useCallback(async (slotId) => {
-    if (!user || !pollId || !groupId) return;
+    if (!user || !pollId) return;
 
     const isCurrentlySelected = userChoices.includes(slotId);
     
@@ -50,7 +49,6 @@ export const useBestChoice = (pollId) => {
           .delete()
           .eq('poll_id', pollId)
           .eq('user_id', user.id)
-          .eq('group_id', groupId)
           .eq('slot_id', slotId);
 
         if (error) throw error;
@@ -61,8 +59,7 @@ export const useBestChoice = (pollId) => {
           .insert({
             poll_id: pollId,
             user_id: user.id,
-            slot_id: slotId,
-            group_id: groupId
+            slot_id: slotId
           });
 
         if (error) throw error;
@@ -73,10 +70,10 @@ export const useBestChoice = (pollId) => {
       // Revert optimistic update
       await fetchUserChoices();
     }
-  }, [user, pollId, groupId, userChoices, fetchUserChoices]);
+  }, [user, pollId, userChoices, fetchUserChoices]);
 
   const clearAllChoices = useCallback(async () => {
-    if (!user || !pollId || !groupId) return;
+    if (!user || !pollId) return;
 
     // Optimistic update
     setUserChoices([]);
@@ -86,8 +83,7 @@ export const useBestChoice = (pollId) => {
         .from('meeting_choices')
         .delete()
         .eq('poll_id', pollId)
-        .eq('user_id', user.id)
-        .eq('group_id', groupId);
+        .eq('user_id', user.id);
 
       if (error) throw error;
     } catch (error) {
@@ -96,44 +92,13 @@ export const useBestChoice = (pollId) => {
       // Revert optimistic update
       await fetchUserChoices();
     }
-  }, [user, pollId, groupId, fetchUserChoices]);
-
-  // Realtime subscription for group changes
-  useEffect(() => {
-    if (!pollId || !groupId || !user) return;
-
-    const channel = supabase
-      .channel('meeting_choices_changes')
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'meeting_choices',
-          filter: `poll_id=eq.${pollId}`
-        },
-        (payload) => {
-          const row = payload.new || payload.old;
-          if (row && row.poll_id === pollId && row.group_id === groupId) {
-            // Refresh my choices if it's my row
-            if (row.user_id === user.id) {
-              fetchUserChoices();
-            }
-          }
-        }
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [pollId, groupId, user?.id, fetchUserChoices]);
+  }, [user, pollId, fetchUserChoices]);
 
   useEffect(() => {
-    if (user && pollId && groupId) {
+    if (user && pollId) {
       fetchUserChoices();
     }
-  }, [user, pollId, groupId, fetchUserChoices]);
+  }, [user, pollId, fetchUserChoices]);
 
   return {
     userChoices,
