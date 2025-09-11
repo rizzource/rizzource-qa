@@ -172,7 +172,7 @@ const TopPicksPanel = ({
 
                       {/* Percentage */}
                       <div className="flex-shrink-0 flex items-center gap-2">
-                        <Badge variant="secondary" className="text-xs">
+                        <Badge variant="secondary" className="text-xs text-accent">
                           {getPercentage(slot.choice_count)}%
                         </Badge>
                         {index === 0 && (
