@@ -158,4 +158,11 @@ export const groups = [
       { role: "Mentor", name: "Fahad ur Rehman", email: "fahadurrehman@gmail.com", groupID: 15 }
     ]
   },
+   {
+    groupID: 16,
+    members: [
+      { role: "Mentee", name: "Daniel Choi", email: "iqraa@gmail.com", groupID: 16 },
+      { role: "Mentor", name: "Sarah You", email: "uneebb@gmail.com", groupID: 16 },
+    ]
+  },
 ];
