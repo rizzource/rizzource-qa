@@ -4,7 +4,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { ArrowLeft, Star, Download, FileText, Eye, User } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { ArrowLeft, Star, Download, FileText, Eye, User, X } from "lucide-react";
 import { toast } from 'react-toastify';
 import { supabase } from "@/integrations/supabase/client";
 import Header from "@/components/Header";
@@ -28,6 +29,7 @@ const OutlineView = () => {
   const [numPages, setNumPages] = useState(null);
   const [pageNumber, setPageNumber] = useState(1);
   const [pdfError, setPdfError] = useState(null);
+  const [showPdfDialog, setShowPdfDialog] = useState(false);
   const navigate = useNavigate();
 
   // Remove the mockOutline constant since we're now fetching from Supabase
@@ -134,14 +136,21 @@ const OutlineView = () => {
     setRatingLoading(false);
   };
 
-  const handleDownload = async (format) => {
+  const handleDownload = async () => {
     try {
-      if (format === 'PDF') {
-        await downloadOutlineAsPDF(outline);
-      } else {
-        await downloadOutlineAsDocx(outline);
-      }
-      toast.success(`Generating ${format}...`);
+      // Direct download using the original file URL
+      const response = await fetch(outline.file_url);
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.style.display = 'none';
+      a.href = url;
+      a.download = outline.file_name || `${outline.title}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+      toast.success('Download started!');
     } catch (error) {
       console.error('Download failed', error);
       toast.error('Please try again.');
@@ -303,7 +312,7 @@ const OutlineView = () => {
                 </CardContent>
               </Card>
 
-              {/* PDF Viewer - Using iframe for better compatibility */}
+              {/* PDF Viewer - Button to open dialog */}
               {outline.file_url && outline.file_type === 'application/pdf' && (
                 <Card className="bg-card backdrop-blur-sm border-border">
                   <CardHeader>
@@ -314,60 +323,24 @@ const OutlineView = () => {
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-4">
-                      {pdfError ? (
-                        <div className="bg-destructive/10 border border-destructive/30 rounded-lg p-6 text-center">
-                          <FileText className="w-12 h-12 text-destructive mx-auto mb-4" />
-                          <p className="text-destructive font-medium mb-2">PDF Preview Error</p>
-                          <p className="text-sm text-muted-foreground">{pdfError}</p>
-                        </div>
-                      ) : (
-                        <>
-                          <div className="flex items-center justify-between mb-4">
-                            <div className="flex items-center gap-2">
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={previousPage}
-                                disabled={pageNumber <= 1}
-                                className="border-primary text-primary hover:bg-primary/10"
-                              >
-                                Previous
-                              </Button>
-                              <span className="text-sm text-muted-foreground">
-                                Page {pageNumber} of {numPages || '--'}
-                              </span>
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={nextPage}
-                                disabled={numPages ? pageNumber >= numPages : false}
-                                className="border-primary text-primary hover:bg-primary/10"
-                              >
-                                Next
-                              </Button>
-                            </div>
-                          </div>
-                          <div className="border border-border rounded-lg overflow-hidden bg-white">
-                            <Document
-                              file={outline.file_url}
-                              onLoadSuccess={onDocumentLoadSuccess}
-                              onLoadError={onDocumentLoadError}
-                              loading={
-                                <div className="flex justify-center p-8">
-                                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-accent"></div>
-                                </div>
-                              }
-                            >
-                              <Page
-                                pageNumber={pageNumber}
-                                renderTextLayer={true}
-                                renderAnnotationLayer={true}
-                                width={Math.min(800, window.innerWidth - 100)}
-                              />
-                            </Document>
-                          </div>
-                        </>
-                      )}
+                      <Button 
+                        onClick={() => setShowPdfDialog(true)}
+                        className="w-full"
+                        size="lg"
+                      >
+                        <Eye className="w-5 h-5 mr-2" />
+                        Open PDF Viewer
+                      </Button>
+                      <div className="text-center text-sm text-muted-foreground">
+                        Or <a 
+                          href={outline.file_url} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="text-primary underline"
+                        >
+                          open PDF in new tab
+                        </a>
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
@@ -439,22 +412,14 @@ const OutlineView = () => {
 
                   <Separator />
 
-                  {/* Download Buttons */}
+                  {/* Download Button */}
                   <div className="space-y-2">
                     <Button 
                       className="w-full"
-                      onClick={() => handleDownload('PDF')}
+                      onClick={handleDownload}
                     >
                       <Download className="w-4 h-4 mr-2" />
-                      Download as PDF
-                    </Button>
-                    <Button 
-                      variant="outline"
-                      className="w-full border-primary text-primary hover:bg-primary/10"
-                      onClick={() => handleDownload('DOCX')}
-                    >
-                      <Download className="w-4 h-4 mr-2" />
-                      Download as DOCX
+                      Download
                     </Button>
                   </div>
                 </CardContent>
@@ -463,6 +428,106 @@ const OutlineView = () => {
           </div>
         </div>
       </section>
+
+      {/* PDF Viewer Dialog */}
+      <Dialog open={showPdfDialog} onOpenChange={setShowPdfDialog}>
+        <DialogContent className="max-w-7xl max-h-[90vh] w-[95vw] h-[85vh] p-0">
+          <DialogHeader className="p-6 pb-2">
+            <DialogTitle className="text-lg text-primary flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Eye className="w-5 h-5" />
+                PDF Viewer - {outline?.title}
+              </div>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setShowPdfDialog(false)}
+                className="h-8 w-8 p-0"
+              >
+                <X className="w-4 h-4" />
+              </Button>
+            </DialogTitle>
+          </DialogHeader>
+          
+          <div className="flex-1 px-6 pb-6">
+            {pdfError ? (
+              <div className="bg-destructive/10 border border-destructive/30 rounded-lg p-6 text-center h-full flex items-center justify-center">
+                <div>
+                  <FileText className="w-12 h-12 text-destructive mx-auto mb-4" />
+                  <p className="text-destructive font-medium mb-2">PDF Preview Error</p>
+                  <p className="text-sm text-muted-foreground mb-4">{pdfError}</p>
+                  <a 
+                    href={outline?.file_url} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="text-primary underline"
+                  >
+                    Open PDF in new tab instead
+                  </a>
+                </div>
+              </div>
+            ) : (
+              <div className="h-full flex flex-col">
+                <div className="flex items-center justify-between mb-4 bg-muted/30 p-3 rounded-lg">
+                  <div className="flex items-center gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={previousPage}
+                      disabled={pageNumber <= 1}
+                      className="border-primary text-primary hover:bg-primary/10"
+                    >
+                      Previous
+                    </Button>
+                    <span className="text-sm text-muted-foreground font-medium">
+                      Page {pageNumber} of {numPages || '--'}
+                    </span>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={nextPage}
+                      disabled={numPages ? pageNumber >= numPages : false}
+                      className="border-primary text-primary hover:bg-primary/10"
+                    >
+                      Next
+                    </Button>
+                  </div>
+                  
+                  <a 
+                    href={outline?.file_url} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="text-primary underline text-sm"
+                  >
+                    Open in new tab
+                  </a>
+                </div>
+                
+                <div className="flex-1 border border-border rounded-lg overflow-auto bg-white flex items-center justify-center">
+                  <Document
+                    file={outline?.file_url}
+                    onLoadSuccess={onDocumentLoadSuccess}
+                    onLoadError={onDocumentLoadError}
+                    loading={
+                      <div className="flex justify-center p-8">
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-accent"></div>
+                      </div>
+                    }
+                  >
+                    <Page
+                      pageNumber={pageNumber}
+                      renderTextLayer={true}
+                      renderAnnotationLayer={true}
+                      width={Math.min(1000, window.innerWidth * 0.8)}
+                    />
+                  </Document>
+                </div>
+              </div>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
+
       <Footer />
     </>
   );
