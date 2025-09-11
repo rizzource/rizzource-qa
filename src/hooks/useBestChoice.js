@@ -9,7 +9,7 @@ export const useBestChoice = (pollId) => {
   const [loading, setLoading] = useState(true);
 
   const fetchUserChoices = useCallback(async () => {
-    if (!pollId || !user || !groupId) return;
+    if (!pollId || !user?.id || groupId === null) return;
     
     try {
       setLoading(true);
@@ -31,7 +31,7 @@ export const useBestChoice = (pollId) => {
   }, [pollId, user?.id, groupId]);
 
   const toggleSlotChoice = useCallback(async (slotId) => {
-    if (!user || !pollId || !groupId) return;
+    if (!user?.id || !pollId || groupId === null) return;
 
     const isCurrentlySelected = userChoices.includes(slotId);
     
@@ -55,14 +55,16 @@ export const useBestChoice = (pollId) => {
 
         if (error) throw error;
       } else {
-        // Add choice
+        // Add choice with upsert to handle duplicates
         const { error } = await supabase
           .from('meeting_choices')
-          .insert({
+          .upsert({
             poll_id: pollId,
             user_id: user.id,
             slot_id: slotId,
             group_id: groupId
+          }, {
+            onConflict: 'poll_id,user_id,slot_id,group_id'
           });
 
         if (error) throw error;
@@ -73,10 +75,10 @@ export const useBestChoice = (pollId) => {
       // Revert optimistic update
       await fetchUserChoices();
     }
-  }, [user, pollId, groupId, userChoices, fetchUserChoices]);
+  }, [user?.id, pollId, groupId, userChoices, fetchUserChoices]);
 
   const clearAllChoices = useCallback(async () => {
-    if (!user || !pollId || !groupId) return;
+    if (!user?.id || !pollId || groupId === null) return;
 
     // Optimistic update
     setUserChoices([]);
@@ -96,13 +98,40 @@ export const useBestChoice = (pollId) => {
       // Revert optimistic update
       await fetchUserChoices();
     }
-  }, [user, pollId, groupId, fetchUserChoices]);
+  }, [user?.id, pollId, groupId, fetchUserChoices]);
 
   useEffect(() => {
-    if (user && pollId && groupId) {
+    if (user?.id && pollId && groupId !== null) {
       fetchUserChoices();
     }
-  }, [user, pollId, groupId, fetchUserChoices]);
+  }, [user?.id, pollId, groupId, fetchUserChoices]);
+
+  // Set up realtime subscription for group changes
+  useEffect(() => {
+    if (!pollId || groupId === null) return;
+
+    const channel = supabase
+      .channel('meeting_choices_changes')
+      .on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: 'meeting_choices',
+        filter: `poll_id=eq.${pollId}`
+      }, (payload) => {
+        const row = payload.new || payload.old;
+        if (row?.group_id === groupId) {
+          // Refresh user choices if it's the current user's action
+          if (row?.user_id === user?.id) {
+            fetchUserChoices();
+          }
+        }
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [pollId, groupId, user?.id, fetchUserChoices]);
 
   return {
     userChoices,

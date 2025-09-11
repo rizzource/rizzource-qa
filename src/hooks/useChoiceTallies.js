@@ -4,41 +4,51 @@ import { useAuth } from '@/components/AuthProvider';
 import { toast } from 'react-toastify';
 
 export const useChoiceTallies = (pollId) => {
-  const { user, groupId } = useAuth();
+  const { groupId } = useAuth();
   const [tallies, setTallies] = useState([]);
   const [loading, setLoading] = useState(true);
   const [groupSize, setGroupSize] = useState(1);
 
   const fetchTallies = useCallback(async () => {
-    if (!pollId || !groupId) return;
+    if (!pollId || groupId === null) return;
     
     try {
       setLoading(true);
       
-      // Get choice tallies for the group
-      const { data: groupData, error: groupError } = await supabase
+      // Get all choices for this poll and group
+      const { data: choicesData, error: choicesError } = await supabase
         .from('meeting_choices')
         .select('slot_id, user_id')
         .eq('poll_id', pollId)
         .eq('group_id', groupId);
+      
+      if (choicesError) throw choicesError;
 
-      if (groupError) throw groupError;
-      
-      // Aggregate tallies in JS
+      // Get all slots for this poll to ensure we have complete data
+      const { data: slotsData, error: slotsError } = await supabase
+        .from('meeting_slots')
+        .select('id, date, start_time, end_time')
+        .eq('poll_id', pollId);
+
+      if (slotsError) throw slotsError;
+
+      // Calculate tallies by grouping choices by slot_id
       const slotCounts = {};
-      const uniqueUsers = new Set();
-      
-      groupData.forEach(choice => {
-        uniqueUsers.add(choice.user_id);
+      choicesData.forEach(choice => {
         slotCounts[choice.slot_id] = (slotCounts[choice.slot_id] || 0) + 1;
       });
-      
-      // Convert to tallies format
-      const talliesData = Object.entries(slotCounts).map(([slot_id, choice_count]) => ({
-        slot_id,
-        choice_count
-      })).sort((a, b) => b.choice_count - a.choice_count);
-      
+
+      // Create tallies array with slot information
+      const talliesData = slotsData.map(slot => ({
+        slot_id: slot.id,
+        date: slot.date,
+        start_time: slot.start_time,
+        end_time: slot.end_time,
+        choice_count: slotCounts[slot.id] || 0
+      }));
+
+      // Get unique users in this group who made choices
+      const uniqueUsers = new Set(choicesData.map(choice => choice.user_id));
       setGroupSize(Math.max(uniqueUsers.size, 1));
       setTallies(talliesData);
     } catch (error) {
@@ -78,41 +88,38 @@ export const useChoiceTallies = (pollId) => {
     };
   }, [tallies, groupSize]);
 
-  // Debounced refresh and real-time updates
+  // Debounced refresh
   useEffect(() => {
-    if (!pollId || !groupId) return;
+    if (!pollId || groupId === null) return;
     
     const timeoutId = setTimeout(fetchTallies, 150);
     return () => clearTimeout(timeoutId);
   }, [pollId, groupId, fetchTallies]);
 
-  // Real-time subscription for group changes
+  // Set up realtime subscription for group tally changes
   useEffect(() => {
-    if (!pollId || !groupId || !user) return;
+    if (!pollId || groupId === null) return;
 
     const channel = supabase
-      .channel('meeting_choices_changes')
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'meeting_choices',
-        },
-        (payload) => {
-          const row = payload.new || payload.old;
-          if (row.poll_id === pollId && row.group_id === groupId) {
-            // Refresh tallies for any group change
-            fetchTallies();
-          }
+      .channel('meeting_choices_tallies')
+      .on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: 'meeting_choices',
+        filter: `poll_id=eq.${pollId}`
+      }, (payload) => {
+        const row = payload.new || payload.old;
+        if (row?.group_id === groupId) {
+          // Refresh tallies when changes occur in the same group
+          fetchTallies();
         }
-      )
+      })
       .subscribe();
 
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [pollId, groupId, user, fetchTallies]);
+  }, [pollId, groupId, fetchTallies]);
 
   return {
     tallies,

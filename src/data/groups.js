@@ -9,7 +9,7 @@ export const findUserGroup = (email) => {
   );
 };
 
-// Helper function to find user group by email with groupId and members
+// Helper function to get groupId and members by email
 export const findUserGroupByEmail = (email) => {
   if (!email) return { groupId: null, members: [] };
   const e = String(email).toLowerCase();

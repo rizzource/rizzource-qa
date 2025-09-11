@@ -50,8 +50,7 @@ export const AuthProvider = ({ children }) => {
         setTimeout(() => {
           if (!mounted || !session?.user) return;
           fetchUserProfile(session.user.id);
-          const emailFromMeta = session.user?.user_metadata?.email || session.user?.email || null;
-          fetchUserGroup(emailFromMeta);
+          fetchUserGroup(session.user?.user_metadata?.email || session.user.email);
         }, 0);
       } else {
         // Clear everything on sign out
@@ -75,8 +74,7 @@ export const AuthProvider = ({ children }) => {
         setUser(session.user);
         authService.saveUserMeta(session.user.user_metadata);
         fetchUserProfile(session.user.id);
-        const emailFromMeta = session.user?.user_metadata?.email || session.user?.email || null;
-        fetchUserGroup(emailFromMeta);
+        fetchUserGroup(session.user?.user_metadata?.email || session.user.email);
       } else if (!storedMeta) {
         // Only clear if we didn't restore from localStorage
         setUser(null);
@@ -121,9 +119,10 @@ export const AuthProvider = ({ children }) => {
     }
     
     const groupData = findUserGroup(email);
-    const { groupId: userGroupId, members } = findUserGroupByEmail(email);
+    const { groupId: gId, members } = findUserGroupByEmail(email);
+    
     setUserGroup(groupData);
-    setGroupId(userGroupId);
+    setGroupId(gId);
     setGroupMembers(members);
   };
 
