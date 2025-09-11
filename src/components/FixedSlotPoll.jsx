@@ -17,6 +17,7 @@ const FixedSlotPoll = () => {
   
   const { userChoices, toggleSlotChoice, clearAllChoices } = useBestChoice(pollId);
   const { 
+    tallies,
     topPicks, 
     groupSize, 
     slotLookup, 
@@ -132,6 +133,7 @@ const FixedSlotPoll = () => {
               onClearAllChoices={clearAllChoices}
               slotLookup={slotLookup}
               getIntensityColor={getIntensityColor}
+              tallies={tallies}
             />
           </div>
         </div>
