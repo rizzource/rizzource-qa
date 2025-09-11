@@ -135,24 +135,60 @@ const OutlinesBrowse = () => {
     });
   };
 
-  const handleDownload = async (outline) => {
+const handleDownload = async (outline) => {
+  try {
+    const url = outline?.file_url;
+    if (!url) return;
+
+    const resp = await fetch(url);
+    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+
+    const blob = await resp.blob();
+    const contentType = blob.type || resp.headers.get("Content-Type") || "";
+    const cd = resp.headers.get("Content-Disposition") || "";
+
+    // 1) Try filename from data / headers / URL
+    const nameFromData = outline.file_name;
+    const nameFromCD = /filename\*?=(?:UTF-8''|")?([^\";]+)/i.exec(cd)?.[1];
+    let nameFromURL = "";
     try {
-      if (!outline?.file_url) return;
-      const response = await fetch(outline.file_url);
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.style.display = 'none';
-      a.href = url;
-      a.download = outline.file_name || `${outline.title || 'outline'}.pdf`;
-      document.body.appendChild(a);
-      a.click();
-      window.URL.revokeObjectURL(url);
-      document.body.removeChild(a);
-    } catch (e) {
-      console.error('Download failed', e);
+      nameFromURL = decodeURIComponent(new URL(url).pathname.split("/").pop() || "");
+    } catch {}
+
+    let filename = nameFromData || nameFromCD || nameFromURL || "";
+
+    // 2) If no extension, infer from content type; else keep as-is
+    const hasExt = /\.[a-z0-9]{2,5}$/i.test(filename);
+    if (!hasExt) {
+      const base = (outline.title || "outline").replace(/[^\w.-]+/g, "_");
+      const extMap = {
+        "application/pdf": "pdf",
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document": "docx",
+        "application/msword": "doc",
+      };
+      let ext = extMap[contentType] || "";
+      if (!ext) {
+        if (contentType.includes("pdf")) ext = "pdf";
+        else if (contentType.includes("word")) ext = "docx";
+      }
+      filename = ext ? `${base}.${ext}` : base;
     }
-  };
+
+    // 3) Download
+    const objectUrl = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.style.display = "none";
+    a.href = objectUrl;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    window.URL.revokeObjectURL(objectUrl);
+  } catch (e) {
+    console.error("Download failed", e);
+  }
+};
+
 
   const renderStars = (rating, count) => {
     const r = Number(rating || 0);
