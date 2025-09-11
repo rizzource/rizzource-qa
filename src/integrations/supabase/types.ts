@@ -327,11 +327,9 @@ export type Database = {
           file_url: string | null
           id: string
           mentor_email: string | null
-          notes: string | null
           professor: string
           rating_avg: number | null
           rating_count: number | null
-          tags: string[] | null
           title: string
           topic: string
           updated_at: string
@@ -347,11 +345,9 @@ export type Database = {
           file_url?: string | null
           id?: string
           mentor_email?: string | null
-          notes?: string | null
           professor: string
           rating_avg?: number | null
           rating_count?: number | null
-          tags?: string[] | null
           title: string
           topic: string
           updated_at?: string
@@ -367,11 +363,9 @@ export type Database = {
           file_url?: string | null
           id?: string
           mentor_email?: string | null
-          notes?: string | null
           professor?: string
           rating_avg?: number | null
           rating_count?: number | null
-          tags?: string[] | null
           title?: string
           topic?: string
           updated_at?: string
@@ -483,6 +477,10 @@ export type Database = {
       get_current_user_role: {
         Args: Record<PropertyKey, never>
         Returns: string
+      }
+      get_group_member_emails: {
+        Args: { user_email: string }
+        Returns: string[]
       }
       get_slot_rankings: {
         Args: { poll_id_param: string }
