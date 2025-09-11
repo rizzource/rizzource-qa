@@ -2,10 +2,10 @@ export const groups = [
   {
     groupID: 14,
     members: [
-      { role: "Mentee", name: "Daniel Choi", email: "iqra@gmail.com", groupID: 1 },
-      { role: "Mentor", name: "Sarah You", email: "uneeb@gmail.com", groupID: 1 },
-      { role: "Mentor", name: "Yena Kang", email: "fahad@gmail.com", groupID: 1 },
-      { role: "Mentor", name: "Fahad ur Rehman", email: "fahadurrehman@gmail.com", groupID: 1 }
+      { role: "Mentee", name: "Daniel Choi", email: "iqra@gmail.com", groupID: 14 },
+      { role: "Mentor", name: "Sarah You", email: "uneeb@gmail.com", groupID: 14 },
+      { role: "Mentee", name: "Yena Kang", email: "fahad@gmail.com", groupID: 14 },
+      { role: "Mentor", name: "Fahad ur Rehman", email: "fahadurrehman@gmail.com", groupID: 14 }
     ]
   },
   {
