@@ -147,14 +147,14 @@ const BestTimeGrid = ({
                       const choiceCount = tally?.choice_count || 0;
 
                       return (
-                <div
+                    <div
   key={slot.slot_id}
   className={cn(
-    // compact, fixed height; no transforms (prevents mobile misalignment on scroll)
-    "w-14 sm:w-16 h-[14px] sm:h-[16px] border-r border-b cursor-pointer relative group",
-    "p-0 leading-none select-none",
-    "transition-[filter,background-color] duration-75 hover:brightness-105 active:brightness-95",
-    // rank colors inline (darkest = highest count; medium = 2nd-highest; light = rest; 0 = muted)
+    "w-16 h-3 border-r border-b cursor-pointer relative group transition-all duration-150",
+    "hover:scale-105 hover:z-10 hover:shadow-sm",
+    "active:scale-95",
+    "md:p-0 p-1", // Mobile tap target
+    // rank colors inline: darkest = highest count, medium = 2nd-highest, light = rest (>0), 0 = muted
     (() => {
       const counts = Object.values(tallies ?? {}).map(v => v?.count ?? 0);
       const uniqPos = Array.from(new Set(counts.filter(n => n > 0))).sort((a,b)=>b-a);
@@ -168,23 +168,20 @@ const BestTimeGrid = ({
         ? "bg-primary/45"
         : "bg-primary/25";
     })(),
-    isSelected && "ring-1 ring-primary ring-inset"
+    isSelected && "ring-2 ring-primary ring-inset"
   )}
-  style={{ WebkitTapHighlightColor: 'transparent', touchAction: 'manipulation' }}
   onClick={() => handleCellClick(slot)}
   onMouseEnter={(e) => handleCellHover(e, slot)}
   onMouseLeave={handleCellLeave}
+  style={{ minHeight: '32px' }}
 >
-  {/* Count pill (non-interactive so scrolling doesn’t glitch) */}
   {choiceCount > 0 && (
-    <div className="pointer-events-none absolute top-0.5 right-0.5 bg-background/90 text-primary text-[10px] font-medium px-0.5 rounded">
+    <div className="absolute top-0 right-0 bg-background/90 text-primary text-xs font-medium px-1 rounded min-w-[12px] text-center leading-none">
       {choiceCount}
     </div>
   )}
-  {/* My selection underline */}
   {isSelected && <div className="absolute bottom-0 left-0 w-full h-0.5 bg-primary" />}
 </div>
-
 
 
 
