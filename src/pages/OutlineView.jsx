@@ -302,7 +302,7 @@ const OutlineView = () => {
               </Card>
 
               {/* Notes */}
-              <Card className="bg-card backdrop-blur-sm border-border">
+              {/* <Card className="bg-card backdrop-blur-sm border-border">
                 <CardContent className="p-6">
                   <h3 className="text-lg font-semibold text-primary mb-4">Description & Notes</h3>
                   <div className="prose prose-sm max-w-none text-muted-foreground">
@@ -311,7 +311,7 @@ const OutlineView = () => {
                     </div>
                   </div>
                 </CardContent>
-              </Card>
+              </Card> */}
 
               {/* PDF Viewer - Button to open dialog */}
               {outline.file_url && outline.file_type === 'application/pdf' && (
