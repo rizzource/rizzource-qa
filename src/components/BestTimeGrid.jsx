@@ -97,7 +97,7 @@ const BestTimeGrid = ({
           <CardHeader className="py-2">
             <CardTitle className="flex items-center gap-2 text-xl">
               <Users className="h-5 w-5" />
-              Multi-Select Time Grid
+              Time Grid (Select Multiple Slots)
             </CardTitle>
             <CardDescription className="text-xs">
               Click to select/deselect. Choose multiple slots.
