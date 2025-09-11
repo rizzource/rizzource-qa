@@ -10,12 +10,6 @@ import { supabase } from "@/integrations/supabase/client";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { downloadOutlineAsPDF, downloadOutlineAsDocx } from "@/utils/outlineDownload";
-import { Document, Page, pdfjs } from 'react-pdf';
-import 'react-pdf/dist/Page/AnnotationLayer.css';
-import 'react-pdf/dist/Page/TextLayer.css';
-
-// Set up PDF.js worker
-pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`;
 
 
 const OutlineView = () => {
@@ -25,9 +19,6 @@ const OutlineView = () => {
   const [hoverRating, setHoverRating] = useState(0);
   const [loading, setLoading] = useState(true);
   const [ratingLoading, setRatingLoading] = useState(false);
-  const [numPages, setNumPages] = useState(null);
-  const [pageNumber, setPageNumber] = useState(1);
-  const [pdfError, setPdfError] = useState(null);
   const navigate = useNavigate();
 
   // Remove the mockOutline constant since we're now fetching from Supabase
@@ -47,6 +38,8 @@ const OutlineView = () => {
         if (error) throw error;
         
         if (data) {
+          console.log('Outline loaded:', data);
+          console.log('PDF file URL:', data.file_url);
           setOutline(data);
           // Check if user has already rated this outline
           const user = await supabase.auth.getUser();
@@ -144,28 +137,6 @@ const OutlineView = () => {
       console.error('Download failed', error);
       toast.error('Please try again.');
     }
-  };
-
-  const onDocumentLoadSuccess = ({ numPages }) => {
-    setNumPages(numPages);
-    setPdfError(null);
-  };
-
-  const onDocumentLoadError = (error) => {
-    console.error('PDF load error:', error);
-    setPdfError('Failed to load PDF. The file may be corrupted or not accessible.');
-  };
-
-  const changePage = (offset) => {
-    setPageNumber(prevPageNumber => prevPageNumber + offset);
-  };
-
-  const previousPage = () => {
-    changePage(-1);
-  };
-
-  const nextPage = () => {
-    changePage(1);
   };
   const renderStars = (rating, interactive = false, size = "w-5 h-5") => {
     const stars = [];
@@ -310,7 +281,7 @@ const OutlineView = () => {
                 </CardContent>
               </Card>
 
-              {/* PDF Viewer */}
+              {/* PDF Viewer - Using iframe for better compatibility */}
               {outline.file_url && outline.file_type === 'application/pdf' && (
                 <Card className="bg-card backdrop-blur-sm border-border">
                   <CardHeader>
@@ -321,60 +292,25 @@ const OutlineView = () => {
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-4">
-                      {pdfError ? (
-                        <div className="bg-destructive/10 border border-destructive/30 rounded-lg p-6 text-center">
-                          <FileText className="w-12 h-12 text-destructive mx-auto mb-4" />
-                          <p className="text-destructive font-medium mb-2">PDF Preview Error</p>
-                          <p className="text-sm text-muted-foreground">{pdfError}</p>
-                        </div>
-                      ) : (
-                        <>
-                          <div className="flex items-center justify-between mb-4">
-                            <div className="flex items-center gap-2">
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={previousPage}
-                                disabled={pageNumber <= 1}
-                                className="border-primary text-primary hover:bg-primary/10"
-                              >
-                                Previous
-                              </Button>
-                              <span className="text-sm text-muted-foreground">
-                                Page {pageNumber} of {numPages || '--'}
-                              </span>
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={nextPage}
-                                disabled={pageNumber >= numPages}
-                                className="border-primary text-primary hover:bg-primary/10"
-                              >
-                                Next
-                              </Button>
-                            </div>
-                          </div>
-                          <div className="border border-border rounded-lg overflow-hidden bg-white">
-                            <Document
-                              file={outline.file_url}
-                              onLoadSuccess={onDocumentLoadSuccess}
-                              onLoadError={onDocumentLoadError}
-                              loading={
-                                <div className="flex justify-center p-8">
-                                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-accent"></div>
-                                </div>
-                              }
-                            >
-                              <Page
-                                pageNumber={pageNumber}
-                                renderTextLayer={true}
-                                renderAnnotationLayer={true}
-                                width={Math.min(800, window.innerWidth - 100)}
-                              />
-                            </Document>
-                          </div>
-                        </>
-                      )}
+                      <div className="border border-border rounded-lg overflow-hidden bg-white" style={{ height: '600px' }}>
+                        <iframe
+                          src={`${outline.file_url}#toolbar=1&navpanes=1&scrollbar=1`}
+                          width="100%"
+                          height="100%"
+                          style={{ border: 'none' }}
+                          title="PDF Viewer"
+                        />
+                      </div>
+                      <div className="text-center text-sm text-muted-foreground">
+                        If the PDF doesn't load above, <a 
+                          href={outline.file_url} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="text-primary underline"
+                        >
+                          click here to open it directly
+                        </a>
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
