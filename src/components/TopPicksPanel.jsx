@@ -120,32 +120,6 @@ const TopPicksPanel = ({
   return (
     <div className="space-y-4">
       {/* Your Choices Display */}
-      {userChoiceSlots.length > 0 && (
-        <Card className="border-primary/20">
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm flex items-center gap-2">
-              <Calendar className="h-4 w-4 text-primary" />
-              Your Selections ({userChoiceSlots.length})
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="pt-0">
-            <div className="space-y-2">
-              {userChoiceSlots.slice(0, 3).map(slot => (
-                <div key={slot.slot_id} className="text-center p-2 bg-primary/5 rounded border border-primary/20">
-                  <div className="font-medium text-sm">
-                    {format(parseISO(slot.date), 'MMM d')} at {slot.start_time}
-                  </div>
-                </div>
-              ))}
-              {userChoiceSlots.length > 3 && (
-                <div className="text-center text-xs text-muted-foreground">
-                  +{userChoiceSlots.length - 3} more selections
-                </div>
-              )}
-            </div>
-          </CardContent>
-        </Card>
-      )}
 
       {/* Top Picks - Mobile Collapsible, Desktop Always Open */}
       <Card>
