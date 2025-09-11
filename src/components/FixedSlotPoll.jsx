@@ -101,7 +101,7 @@ const FixedSlotPoll = () => {
       <div className="min-h-screen bg-background">
         <div className="container mx-auto px-4 py-8">
           {/* Header */}
-          <div className="text-center mb-8">
+          <div className="text-center mb-8 mt-8">
             <div className="mx-auto mb-4 p-3 bg-accent/20 rounded-full w-fit">
               <Calendar className="h-8 w-8 text-accent" />
             </div>
