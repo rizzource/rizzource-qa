@@ -24,8 +24,6 @@ const OutlinesUpload = ({ onUploadSuccess }) => {
     professor: "",
     topic: "",
     year: "",
-    tags: "",
-    notes: "",
     file: null
   });
   const [uploadStatus, setUploadStatus] = useState(null); 
@@ -211,8 +209,6 @@ const OutlinesUpload = ({ onUploadSuccess }) => {
           professor: formData.professor,
           topic: formData.topic,
           year: formData.year,
-          tags: formData.tags ? formData.tags.split(",").map(tag => tag.trim()) : null,
-          notes: formData.notes || "Uploaded via mentor registration",
           file_name: formData.file.name,
           file_url: publicUrl,
           file_size: formData.file.size,
@@ -337,7 +333,7 @@ const OutlinesUpload = ({ onUploadSuccess }) => {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-4"> */}
                 <div className="space-y-2">
                   <Label htmlFor="year" className="text-primary">Year Level *</Label>
                   <Select value={formData.year} onValueChange={(value) => handleInputChange('year', value)}>
@@ -354,7 +350,7 @@ const OutlinesUpload = ({ onUploadSuccess }) => {
                   </Select>
                 </div>
 
-                <div className="space-y-2">
+                {/* <div className="space-y-2">
                   <Label htmlFor="tags" className="text-primary">Tags (Optional)</Label>
                     <Input
                       id="tags"
@@ -364,9 +360,9 @@ const OutlinesUpload = ({ onUploadSuccess }) => {
                       className="bg-card border-border focus:border-accent focus:ring-2 focus:ring-accent"
                     />
                 </div>
-              </div>
+              </div> */}
 
-              <div className="space-y-2">
+              {/* <div className="space-y-2">
                 <Label htmlFor="notes" className="text-primary">Notes *</Label>
                 <Textarea
                   id="notes"
@@ -379,7 +375,7 @@ const OutlinesUpload = ({ onUploadSuccess }) => {
                 <div className="text-sm text-muted-foreground text-right">
                   {formData.notes.length}/1000 characters
                 </div>
-              </div>
+              </div> */}
             </div>
 
             {/* File Upload */}
