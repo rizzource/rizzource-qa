@@ -330,7 +330,7 @@ const OutlineView = () => {
                             console.log('Opening PDF dialog...');
                             setShowPdfDialog(true);
                           }}
-                          className="px-6"
+                          className="px-8 py-16"
                           size="lg"
                         >
                           <Eye className="w-5 h-5 mr-2" />
@@ -340,7 +340,7 @@ const OutlineView = () => {
                           onClick={() => window.open(outline.file_url, '_blank')}
                           variant="outline"
                           size="lg"
-                          className="px-6"
+                          className="px-8 py-16"
                         >
                           <FileText className="w-5 h-5 mr-2" />
                           Open in New Tab
