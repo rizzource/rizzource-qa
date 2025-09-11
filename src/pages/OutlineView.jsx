@@ -10,6 +10,12 @@ import { supabase } from "@/integrations/supabase/client";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { downloadOutlineAsPDF, downloadOutlineAsDocx } from "@/utils/outlineDownload";
+import { Document, Page, pdfjs } from 'react-pdf';
+import 'react-pdf/dist/Page/AnnotationLayer.css';
+import 'react-pdf/dist/Page/TextLayer.css';
+
+// Set up PDF.js worker
+pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`;
 
 
 const OutlineView = () => {
@@ -19,6 +25,9 @@ const OutlineView = () => {
   const [hoverRating, setHoverRating] = useState(0);
   const [loading, setLoading] = useState(true);
   const [ratingLoading, setRatingLoading] = useState(false);
+  const [numPages, setNumPages] = useState(null);
+  const [pageNumber, setPageNumber] = useState(1);
+  const [pdfError, setPdfError] = useState(null);
   const navigate = useNavigate();
 
   // Remove the mockOutline constant since we're now fetching from Supabase
@@ -136,6 +145,28 @@ const OutlineView = () => {
       toast.error('Please try again.');
     }
   };
+
+  const onDocumentLoadSuccess = ({ numPages }) => {
+    setNumPages(numPages);
+    setPdfError(null);
+  };
+
+  const onDocumentLoadError = (error) => {
+    console.error('PDF load error:', error);
+    setPdfError('Failed to load PDF. The file may be corrupted or not accessible.');
+  };
+
+  const changePage = (offset) => {
+    setPageNumber(prevPageNumber => prevPageNumber + offset);
+  };
+
+  const previousPage = () => {
+    changePage(-1);
+  };
+
+  const nextPage = () => {
+    changePage(1);
+  };
   const renderStars = (rating, interactive = false, size = "w-5 h-5") => {
     const stars = [];
     for (let i = 1; i <= 5; i++) {
@@ -251,17 +282,17 @@ const OutlineView = () => {
                       <p className="text-sm text-muted-foreground mb-9">
                         {outline.rating_avg.toFixed(1)} ({outline.rating_count} reviews)
                       </p>
-                      <div className="flex flex-wrap gap-2 justify-end">
-                        {outline.tags.map((tag) => (
-                          <Badge
-                            key={tag}
-                            variant="secondary"
-                            className="bg-muted/50 text-foreground hover:bg-muted px-2 py-1"
-                          >
-                            {tag}
-                          </Badge>
-                        ))}
-                      </div>
+                       <div className="flex flex-wrap gap-2 justify-end">
+                         {(outline.tags || []).map((tag) => (
+                           <Badge
+                             key={tag}
+                             variant="secondary"
+                             className="bg-muted/50 text-foreground hover:bg-muted px-2 py-1"
+                           >
+                             {tag}
+                           </Badge>
+                         ))}
+                       </div>
                     </div>
                   </div>
                 </CardHeader>
@@ -279,26 +310,98 @@ const OutlineView = () => {
                 </CardContent>
               </Card>
 
-              {/* File Preview */}
-              {/* <Card className="bg-card backdrop-blur-sm border-border">
-                <CardHeader>
-                  <CardTitle className="text-lg text-primary flex items-center gap-2">
-                    <Eye className="w-5 h-5" />
-                    File Preview
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="bg-gray-50 border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
-                    <FileText className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                    <p className="text-gray-600 mb-2">
-                      {outline.file_type} File • {outline.file_size} MB
-                    </p>
-                    <p className="text-sm text-gray-500">
-                      Preview functionality will be implemented with PDF.js for PDFs and document viewers for DOCX files
-                    </p>
-                  </div>
-                </CardContent>
-              </Card> */}
+              {/* PDF Viewer */}
+              {outline.file_url && outline.file_type === 'application/pdf' && (
+                <Card className="bg-card backdrop-blur-sm border-border">
+                  <CardHeader>
+                    <CardTitle className="text-lg text-primary flex items-center gap-2">
+                      <Eye className="w-5 h-5" />
+                      PDF Viewer
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      {pdfError ? (
+                        <div className="bg-destructive/10 border border-destructive/30 rounded-lg p-6 text-center">
+                          <FileText className="w-12 h-12 text-destructive mx-auto mb-4" />
+                          <p className="text-destructive font-medium mb-2">PDF Preview Error</p>
+                          <p className="text-sm text-muted-foreground">{pdfError}</p>
+                        </div>
+                      ) : (
+                        <>
+                          <div className="flex items-center justify-between mb-4">
+                            <div className="flex items-center gap-2">
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={previousPage}
+                                disabled={pageNumber <= 1}
+                                className="border-primary text-primary hover:bg-primary/10"
+                              >
+                                Previous
+                              </Button>
+                              <span className="text-sm text-muted-foreground">
+                                Page {pageNumber} of {numPages || '--'}
+                              </span>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={nextPage}
+                                disabled={pageNumber >= numPages}
+                                className="border-primary text-primary hover:bg-primary/10"
+                              >
+                                Next
+                              </Button>
+                            </div>
+                          </div>
+                          <div className="border border-border rounded-lg overflow-hidden bg-white">
+                            <Document
+                              file={outline.file_url}
+                              onLoadSuccess={onDocumentLoadSuccess}
+                              onLoadError={onDocumentLoadError}
+                              loading={
+                                <div className="flex justify-center p-8">
+                                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-accent"></div>
+                                </div>
+                              }
+                            >
+                              <Page
+                                pageNumber={pageNumber}
+                                renderTextLayer={true}
+                                renderAnnotationLayer={true}
+                                width={Math.min(800, window.innerWidth - 100)}
+                              />
+                            </Document>
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+
+              {/* Non-PDF File Notice */}
+              {outline.file_url && outline.file_type !== 'application/pdf' && (
+                <Card className="bg-card backdrop-blur-sm border-border">
+                  <CardHeader>
+                    <CardTitle className="text-lg text-primary flex items-center gap-2">
+                      <FileText className="w-5 h-5" />
+                      File Available
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="bg-accent/10 border border-accent/30 rounded-lg p-6 text-center">
+                      <FileText className="w-12 h-12 text-accent mx-auto mb-4" />
+                      <p className="text-primary font-medium mb-2">
+                        {outline.file_type?.includes('word') ? 'Word Document' : 'Document'} Available
+                      </p>
+                      <p className="text-sm text-muted-foreground mb-4">
+                        Use the download buttons to view this document
+                      </p>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
             </div>
 
             {/* Sidebar */}

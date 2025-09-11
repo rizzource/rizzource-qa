@@ -373,8 +373,8 @@ const OutlinesBrowse = () => {
                       </Button>
                     </Link>
 
-                    {/* Preview opens custom modal */}
-                    <Button
+                    {/* Preview opens custom modal - COMMENTED OUT FOR NOW */}
+                    {/*<Button
                       size="sm"
                       variant="outline"
                       className="px-3 py-2 border-accent text-accent hover:bg-accent/10"
@@ -382,7 +382,7 @@ const OutlinesBrowse = () => {
                     >
                       <BookOpen className="w-4 h-4 mr-1" />
                       Preview
-                    </Button>
+                    </Button>*/}
 
                     <Button size="sm" className="px-3 py-2" onClick={() => downloadOutlineBoth(outline)}>
                       <Download className="w-4 h-4 mr-1" />

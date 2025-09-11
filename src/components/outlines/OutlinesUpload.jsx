@@ -37,7 +37,7 @@ const OutlinesUpload = ({ onUploadSuccess }) => {
     }
   }, []);
 
-  const topics = ["Constitutional Law", "Contracts", "Criminal Law", "Torts", "Civil Procedure", "Property Law", "Administrative Law", "Evidence", "Tax Law", "Corporate Law", "Employment Law", "Environmental Law"];
+  const topics = ["Constitutional Law", "Contracts", "Criminal Law", "Torts", "Civil Procedure", "Property Law", "Administrative Law", "Evidence", "Tax Law", "Corporate Law", "Employment Law", "Environmental Law", "Leg Reg"];
   const years = ["1L", "2L", "3L"];
 
   const handleInputChange = (field, value) => {
