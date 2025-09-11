@@ -19,14 +19,8 @@ const BestTimeGrid = ({
   const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
 
   // Generate unique dates and times from slots
-  const dates = [...new Set(
-  slots.map(slot => {
-    const d = new Date(slot.date);
-    return `2025-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
-  })
-)].sort();
+  const dates = [...new Set(slots.map(slot => slot.date))].sort();
   const times = [...new Set(slots.map(slot => slot.start_time))].sort();
-  
   
   // Create a lookup for quick slot access
   const slotByDateTime = {};
