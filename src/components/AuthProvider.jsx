@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { findUserGroup } from '@/data/groups';
+import { findUserGroup, findUserGroupByEmail } from '@/data/groups';
 import { authService } from '@/utils/authService';
 
 const AuthContext = createContext(null);
@@ -17,6 +17,8 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [userProfile, setUserProfile] = useState(null);
   const [userGroup, setUserGroup] = useState(null);
+  const [groupId, setGroupId] = useState(null);
+  const [groupMembers, setGroupMembers] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -48,13 +50,16 @@ export const AuthProvider = ({ children }) => {
         setTimeout(() => {
           if (!mounted || !session?.user) return;
           fetchUserProfile(session.user.id);
-          fetchUserGroup(session.user.email);
+          const emailFromMeta = session.user?.user_metadata?.email || session.user?.email || null;
+          fetchUserGroup(emailFromMeta);
         }, 0);
       } else {
         // Clear everything on sign out
         setUser(null);
         setUserProfile(null);
         setUserGroup(null);
+        setGroupId(null);
+        setGroupMembers([]);
         authService.clearUserMeta();
       }
 
@@ -70,12 +75,15 @@ export const AuthProvider = ({ children }) => {
         setUser(session.user);
         authService.saveUserMeta(session.user.user_metadata);
         fetchUserProfile(session.user.id);
-        fetchUserGroup(session.user?.user_metadata?.email);
+        const emailFromMeta = session.user?.user_metadata?.email || session.user?.email || null;
+        fetchUserGroup(emailFromMeta);
       } else if (!storedMeta) {
         // Only clear if we didn't restore from localStorage
         setUser(null);
         setUserProfile(null);
         setUserGroup(null);
+        setGroupId(null);
+        setGroupMembers([]);
       }
 
       setLoading(false);
@@ -107,11 +115,16 @@ export const AuthProvider = ({ children }) => {
   const fetchUserGroup = (email) => {
     if (!email) {
       setUserGroup(null);
+      setGroupId(null);
+      setGroupMembers([]);
       return;
     }
     
     const groupData = findUserGroup(email);
+    const { groupId: userGroupId, members } = findUserGroupByEmail(email);
     setUserGroup(groupData);
+    setGroupId(userGroupId);
+    setGroupMembers(members);
   };
 
   const signIn = async (email, password) => {
@@ -151,6 +164,8 @@ export const AuthProvider = ({ children }) => {
     user,
     userProfile,
     userGroup,
+    groupId,
+    groupMembers,
     loading,
     signIn,
     signUp,
