@@ -8,6 +8,7 @@ import { useBestChoice } from '@/hooks/useBestChoice';
 import { useChoiceTallies } from '@/hooks/useChoiceTallies';
 import BestTimeGrid from './BestTimeGrid';
 import TopPicksPanel from './TopPicksPanel';
+import UserSelections from './UserSelections';
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
@@ -121,9 +122,20 @@ const FixedSlotPoll = () => {
           </div>
   
           {/* Main Content */}
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-            {/* Top Picks Panel - Desktop Sidebar */}
-            <div className="lg:col-span-1 order-2 lg:order-1">
+          <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+            {/* User Selections Panel */}
+            <div className="lg:col-span-1 order-1">
+              <div className="lg:sticky lg:top-8">
+                <UserSelections
+                  userChoices={userChoices}
+                  slots={slots}
+                  onClearAllChoices={clearAllChoices}
+                />
+              </div>
+            </div>
+
+            {/* Top Picks Panel */}
+            <div className="lg:col-span-1 order-2">
               <div className="lg:sticky lg:top-8">
                 <TopPicksPanel
                   topPicks={topPicks}
@@ -136,7 +148,7 @@ const FixedSlotPoll = () => {
             </div>
   
             {/* Grid - Main Content */}
-            <div className="lg:col-span-3 order-1 lg:order-2">
+            <div className="lg:col-span-3 order-3">
               <BestTimeGrid
                 key={`grid-${pollId}-${slots.length}`}
                 slots={slots}

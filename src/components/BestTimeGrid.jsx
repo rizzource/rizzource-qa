@@ -64,21 +64,6 @@ const BestTimeGrid = ({
 
   return (
     <div className="space-y-4">
-      {/* Clear Choices Button */}
-      {userChoices.length > 0 && (
-        <div className="flex justify-center">
-          <Button 
-            variant="outline" 
-            size="sm" 
-            onClick={onClearAllChoices}
-            className="gap-2"
-          >
-            <X className="h-4 w-4" />
-            Clear All Choices ({userChoices.length})
-          </Button>
-        </div>
-      )}
-
       {/* Grid */}
       <Card>
         <CardHeader className="pb-3">
@@ -152,29 +137,33 @@ const BestTimeGrid = ({
                   <div
   key={slot.slot_id}
   className={cn(
-    "w-16 h-3 border-r border-b cursor-pointer relative group transition-all duration-150",
+    "w-16 h-6 border-r border-b cursor-pointer relative group transition-all duration-150",
     "hover:scale-105 hover:z-10 hover:shadow-sm",
     "active:scale-95",
-    "md:p-0 p-1",
-    // rank colors inline (darkest = highest count; medium = 2nd-highest; light = rest; 0 = muted)
     (() => {
-      const c = Number(choiceCount) || 0; // <-- make sure it's numeric
-      const counts = Object.values(tallies ?? {}).map(v => Number(v?.count ?? 0));
-      const uniqPos = Array.from(new Set(counts.filter(n => n > 0))).sort((a,b)=>b-a);
-
-      if (c === 0) return "bg-muted";
-      if (uniqPos.length <= 1) return "bg-primary/70"; // only one level >0 → treat as darkest
-
-      const darkest = uniqPos[0];
-      const medium  = uniqPos[1];
-      return c === darkest ? "bg-primary/70" : c === medium ? "bg-primary/45" : "bg-primary/25";
+      const c = Number(choiceCount) || 0;
+      if (c === 0) return "bg-muted/20"; // No votes - neutral color
+      
+      // Get all unique vote counts greater than 0, sorted descending
+      const allCounts = tallies.map(t => Number(t.choice_count) || 0).filter(n => n > 0);
+      const uniqueCounts = [...new Set(allCounts)].sort((a, b) => b - a);
+      
+      if (uniqueCounts.length === 0) return "bg-muted/20";
+      if (uniqueCounts.length === 1) return "bg-emerald-600"; // Only one vote level
+      
+      const highest = uniqueCounts[0];
+      const secondHighest = uniqueCounts[1];
+      
+      // Gradient: darkest for highest, medium for second highest, lightest for rest
+      if (c === highest) return "bg-emerald-600"; // Darkest green
+      if (c === secondHighest) return "bg-emerald-400"; // Medium green  
+      return "bg-emerald-200"; // Lightest green
     })(),
     isSelected && "ring-2 ring-primary ring-inset"
   )}
   onClick={() => handleCellClick(slot)}
   onMouseEnter={(e) => handleCellHover(e, slot)}
   onMouseLeave={handleCellLeave}
-  style={{ minHeight: '32px' }}
 >
   {Number(choiceCount) > 0 && (
     <div className="absolute top-0 right-0 bg-background/90 text-primary text-xs font-medium px-1 rounded min-w-[12px] text-center leading-none">
@@ -225,16 +214,24 @@ const BestTimeGrid = ({
           {/* Legend */}
           <div className="mt-4 flex flex-wrap items-center gap-4 text-xs text-muted-foreground">
             <div className="flex items-center gap-2">
-              <div className="w-4 h-4 bg-primary/60 border rounded" />
-              <span>High Interest (60%+)</span>
+              <div className="w-4 h-4 bg-emerald-600 border rounded" />
+              <span>Most Votes</span>
             </div>
             <div className="flex items-center gap-2">
-              <div className="w-4 h-4 bg-primary/20 border rounded" />
-              <span>Some Interest</span>
+              <div className="w-4 h-4 bg-emerald-400 border rounded" />
+              <span>Second Most Votes</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-4 h-4 bg-emerald-200 border rounded" />
+              <span>Fewest Votes</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-4 h-4 bg-muted/20 border rounded" />
+              <span>No Votes</span>
             </div>
             <div className="flex items-center gap-2">
               <div className="w-4 h-4 ring-2 ring-primary border rounded" />
-              <span>Your selections</span>
+              <span>Your Selections</span>
             </div>
           </div>
         </CardContent>
