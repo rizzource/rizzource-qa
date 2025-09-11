@@ -10,17 +10,16 @@ export const useChoiceTallies = (pollId) => {
   const [groupSize, setGroupSize] = useState(1);
 
   const fetchTallies = useCallback(async () => {
-    if (!pollId || groupId === null) return;
+    if (!pollId) return;
     
     try {
       setLoading(true);
       
-      // Get all choices for this poll and group
+      // Get all choices for this poll - RLS will filter by group automatically
       const { data: choicesData, error: choicesError } = await supabase
         .from('meeting_choices')
         .select('slot_id, user_id')
-        .eq('poll_id', pollId)
-        .eq('group_id', groupId);
+        .eq('poll_id', pollId);
       
       if (choicesError) throw choicesError;
 
@@ -57,7 +56,7 @@ export const useChoiceTallies = (pollId) => {
     } finally {
       setLoading(false);
     }
-  }, [pollId, groupId]);
+  }, [pollId]);
 
   // Memoized calculations
   const { topPicks, slotLookup, getIntensityColor } = useMemo(() => {
@@ -90,15 +89,15 @@ export const useChoiceTallies = (pollId) => {
 
   // Debounced refresh
   useEffect(() => {
-    if (!pollId || groupId === null) return;
+    if (!pollId) return;
     
     const timeoutId = setTimeout(fetchTallies, 150);
     return () => clearTimeout(timeoutId);
-  }, [pollId, groupId, fetchTallies]);
+  }, [pollId, fetchTallies]);
 
   // Set up realtime subscription for group tally changes
   useEffect(() => {
-    if (!pollId || groupId === null) return;
+    if (!pollId) return;
 
     const channel = supabase
       .channel('meeting_choices_tallies')
@@ -108,18 +107,15 @@ export const useChoiceTallies = (pollId) => {
         table: 'meeting_choices',
         filter: `poll_id=eq.${pollId}`
       }, (payload) => {
-        const row = payload.new || payload.old;
-        if (row?.group_id === groupId) {
-          // Refresh tallies when changes occur in the same group
-          fetchTallies();
-        }
+        // Refresh tallies when any changes occur - RLS will filter appropriately
+        fetchTallies();
       })
       .subscribe();
 
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [pollId, groupId, fetchTallies]);
+  }, [pollId, fetchTallies]);
 
   return {
     tallies,
