@@ -8,6 +8,8 @@ import { useBestChoice } from '@/hooks/useBestChoice';
 import { useChoiceTallies } from '@/hooks/useChoiceTallies';
 import BestTimeGrid from './BestTimeGrid';
 import TopPicksPanel from './TopPicksPanel';
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 
 const FixedSlotPoll = () => {
   const { user } = useAuth();
