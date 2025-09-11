@@ -47,12 +47,17 @@ const MinimalistHome = () => {
             {/* View Matchups Button - only show when logged in */}
             {user && (
               <div className="flex justify-center mt-8">
-                <Button 
+                <Button
                   onClick={() => navigate('/matchup')}
                   size="lg"
-                  className="px-8 py-3 text-lg font-semibold bg-secondary hover:bg-secondary/80 text-secondary-foreground border border-border transition-all duration-300 hover:shadow-lg"
+                  className="relative overflow-hidden group px-10 py-4 text-lg font-bold rounded-2xl
+                             bg-gradient-to-r from-accent to-secondary text-white shadow-md 
+                             transition-all duration-300 ease-out
+                             hover:shadow-xl hover:scale-105"
                 >
-                  View Matchups
+                  <span className="relative z-10">View Matchups</span>
+                  {/* Animated hover overlay */}
+                  <span className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl"></span>
                 </Button>
               </div>
             )}
