@@ -108,15 +108,23 @@ const BestTimeGrid = ({
                   </div>
                   
                   {/* Date headers */}
-                  {dates.map(date => (
-                    <div
-                      key={date}
-                      className="w-16 h-8 flex flex-col items-center justify-center border-r text-xs font-medium bg-muted/50"
-                    >
-                      <div className="text-xs">{format(parseISO(date), 'EEE')}</div>
-                      <div className="text-xs text-muted-foreground">{format(parseISO(date), 'M/d')}</div>
-                    </div>
-                  ))}
+                {dates.map((date) => {
+  // keep month/day from the source, force year=2025
+  const base = typeof date === 'string' ? date : format(date, 'yyyy-MM-dd');
+  const mmdd = base.replace(/^\d{4}-/, ''); // -> "MM-dd"
+  const d2025 = parseISO(`2025-${mmdd}T12:00:00`);
+
+  return (
+    <div
+      key={`2025-${mmdd}`}
+      className="w-16 h-8 flex flex-col items-center justify-center border-r text-xs font-medium bg-muted/50"
+    >
+      <div className="text-xs">{format(d2025, 'EEE')}</div>
+      <div className="text-xs text-muted-foreground">{format(d2025, 'M/d')}</div>
+    </div>
+  );
+})}
+
                 </div>
 
                 {/* Grid Rows */}
