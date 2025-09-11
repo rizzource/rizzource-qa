@@ -324,17 +324,28 @@ const OutlineView = () => {
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-4">
-                      <Button 
-                        onClick={() => {
-                          console.log('Opening PDF dialog...');
-                          setShowPdfDialog(true);
-                        }}
-                        className="w-auto px-6"
-                        size="lg"
-                      >
-                        <Eye className="w-5 h-5 mr-2" />
-                        Open PDF Viewer
-                      </Button>
+                      <div className="flex gap-3">
+                        <Button 
+                          onClick={() => {
+                            console.log('Opening PDF dialog...');
+                            setShowPdfDialog(true);
+                          }}
+                          className="px-6"
+                          size="lg"
+                        >
+                          <Eye className="w-5 h-5 mr-2" />
+                          Open PDF Viewer
+                        </Button>
+                        <Button 
+                          onClick={() => window.open(outline.file_url, '_blank')}
+                          variant="outline"
+                          size="lg"
+                          className="px-6"
+                        >
+                          <FileText className="w-5 h-5 mr-2" />
+                          Open in New Tab
+                        </Button>
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
@@ -439,14 +450,25 @@ const OutlineView = () => {
                 <Eye className="w-5 h-5" />
                 PDF Viewer - {outline?.title}
               </h2>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setShowPdfDialog(false)}
-                className="h-8 w-8 p-0"
-              >
-                <X className="w-4 h-4" />
-              </Button>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => window.open(outline?.file_url, '_blank')}
+                  className="h-8 px-3"
+                >
+                  <FileText className="w-4 h-4 mr-1" />
+                  Open in New Tab
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setShowPdfDialog(false)}
+                  className="h-8 w-8 p-0"
+                >
+                  <X className="w-4 h-4" />
+                </Button>
+              </div>
             </div>
             
             {/* Content */}
