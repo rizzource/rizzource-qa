@@ -14,7 +14,7 @@ const TopPicksPanel = ({
   slots,
   onScrollToSlot 
 }) => {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(true); // Default to open for desktop
   
   // Find user's choice details
   const userChoiceSlots = userChoices.map(choiceId => 
@@ -83,8 +83,8 @@ const TopPicksPanel = ({
             </CardDescription>
           </CardHeader>
           
-          <CollapsibleContent className="md:!block">
-            <CardContent className="pt-0">
+          <CollapsibleContent forceMount>
+            <CardContent className={cn("pt-0", !isOpen && "hidden md:block")}>
               {topPicks.length > 0 ? (
                 <div className="space-y-2">
                   {topPicks.map((slot, index) => (
