@@ -108,33 +108,15 @@ const BestTimeGrid = ({
                   </div>
                   
                   {/* Date headers */}
-                {dates.map((date) => {
-  let m, d;
-  if (typeof date === "string") {
-    const parts = date.split("-");
-    m = parseInt(parts[1], 10) - 1;
-    d = parseInt(parts[2], 10);
-  } else {
-    const dt = new Date(date);
-    m = dt.getMonth();
-    d = dt.getDate();
-  }
-  const dt2025 = new Date(2025, m, d, 12, 0, 0);
-  const wk = dt2025.toLocaleDateString(undefined, { weekday: "short" });
-  const md = dt2025.toLocaleDateString(undefined, { month: "numeric", day: "numeric" });
-
-  return (
-    <div
-      key={`2025-${m + 1}-${d}`}
-      className="w-16 h-8 flex flex-col items-center justify-center border-r text-xs font-medium bg-muted/50"
-    >
-      <div className="text-xs">{wk}</div>
-      <div className="text-xs text-muted-foreground">{md}</div>
-    </div>
-  );
-})}
-
-
+                  {dates.map(date => (
+                    <div
+                      key={date}
+                      className="w-16 h-8 flex flex-col items-center justify-center border-r text-xs font-medium bg-muted/50"
+                    >
+                      <div className="text-xs">{format(parseISO(date), 'EEE')}</div>
+                      <div className="text-xs text-muted-foreground">{format(parseISO(date), 'M/d')}</div>
+                    </div>
+                  ))}
                 </div>
 
                 {/* Grid Rows */}
