@@ -51,9 +51,10 @@ const MinimalistHome = () => {
                   onClick={() => navigate('/matchup')}
                   size="lg"
                   className="relative px-10 py-4 text-lg font-semibold rounded-xl
-                             bg-secondary text-secondary-foreground border border-border
+                             bg-secondary text-secondary-foreground border border-transparent
                              shadow-sm transition-all duration-300 ease-out
-                             hover:bg-secondary/90 hover:shadow-lg hover:-translate-y-0.5
+                             hover:bg-secondary-foreground hover:text-secondary hover:border-green-500
+                             hover:shadow-lg hover:-translate-y-0.5
                              active:translate-y-0"
                 >
                   View Matchups
