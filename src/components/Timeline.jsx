@@ -62,31 +62,6 @@ const mockEvents = [
     time: '—'
   },
   {
-    id: 6,
-    title: 'Spring classes resume',
-    date: 'Early January 2026',
-    month: 'Jan',
-    monthIndex: 0,
-    year: 2026,
-    description: 'New term begins. Also use early January for résumé updates, interview practice, and career planning.',
-    location: 'Campus-wide',
-    time: '—'
-  },
-
-  // --- Emory Career Center Spring Interview Programs (2025) ---
-  // (Registration openings aligned to Oct 1, 2024 to match Jan–May 2025 interview dates.)
-  {
-    id: 7,
-    title: 'Spring Interview Programs – Registration opens',
-    date: 'Oct 1, 2024',
-    month: 'Oct',
-    monthIndex: 9,
-    year: 2024,
-    description: 'Registration opens for 1L Mock Interview, February, March, April Interview Programs, and Meet the Employer.',
-    location: 'Emory Career Center',
-    time: 'Opens'
-  },
-  {
     id: 8,
     title: '1L Mock Interview Program – Registration closes',
     date: 'Jan 3, 2025',
@@ -265,17 +240,6 @@ const mockEvents = [
     time: '—'
   },
   {
-    id: 24,
-    title: 'Small firms – hiring often after grades',
-    date: 'Jan–Mar 2026',
-    month: 'Jan',
-    monthIndex: 0,
-    year: 2026,
-    description: 'Many small firms move after first-semester grades post.',
-    location: 'Various',
-    time: '—'
-  },
-  {
     id: 25,
     title: 'OCI timing trend check',
     date: 'May–June (trend)',
@@ -285,41 +249,6 @@ const mockEvents = [
     description: 'Some schools moved OCI to May–June; Emory still uses fall OCI. Monitor for changes.',
     location: 'Career Services',
     time: '—'
-  },
-
-  // --- Big Law & Diversity Fellowships (2024) ---
-  {
-    id: 26,
-    title: 'Fish & Richardson 1L Fellowship – window',
-    date: 'Nov 1 – Dec 27, 2024',
-    month: 'Nov',
-    monthIndex: 10,
-    year: 2024,
-    description: 'Application period for 1L Diversity Fellowship.',
-    location: 'External',
-    time: '—'
-  },
-  {
-    id: 27,
-    title: 'Gibbs Law Group 1L Fellowship – opens',
-    date: 'Nov 15, 2024',
-    month: 'Nov',
-    monthIndex: 10,
-    year: 2024,
-    description: 'Applications open.',
-    location: 'External',
-    time: 'Opens'
-  },
-  {
-    id: 28,
-    title: 'Gibbs Law Group 1L Fellowship – deadline',
-    date: 'Dec 31, 2024',
-    month: 'Dec',
-    monthIndex: 11,
-    year: 2024,
-    description: 'Final day to apply.',
-    location: 'External',
-    time: 'Deadline'
   },
 
   // --- Public Interest Fellowships ---
@@ -346,17 +275,6 @@ const mockEvents = [
     time: 'Deadline'
   },
   {
-    id: 31,
-    title: 'PILI Summer Internship – 1L apps open',
-    date: 'Nov 15, 2024',
-    month: 'Nov',
-    monthIndex: 10,
-    year: 2024,
-    description: '1L application opening.',
-    location: 'External',
-    time: 'Opens'
-  },
-  {
     id: 32,
     title: 'EPIC Grants (Emory) – deadline',
     date: 'Mar 31, 2025 (5 p.m.)',
@@ -381,17 +299,6 @@ const mockEvents = [
     time: '—'
   },
   {
-    id: 34,
-    title: 'State AG (example: Alabama) – window',
-    date: 'Dec 1, 2024 – Jan 31, 2025',
-    month: 'Dec',
-    monthIndex: 11,
-    year: 2024,
-    description: 'Example timeline for state AG offices.',
-    location: 'External',
-    time: '—'
-  },
-  {
     id: 35,
     title: 'HNBA/VIA Avanza Internships – window',
     date: 'Jun 30 – Jul 18, 2025',
@@ -404,17 +311,6 @@ const mockEvents = [
   },
 
   // --- In-House ---
-  {
-    id: 36,
-    title: 'Cisco LEAP – deadline',
-    date: 'Nov 15, 2024',
-    month: 'Nov',
-    monthIndex: 10,
-    year: 2024,
-    description: 'Deadline for Cisco LEAP program.',
-    location: 'External',
-    time: 'Deadline'
-  },
   {
     id: 37,
     title: 'AbbVie Summer Associate – start date',
@@ -447,28 +343,6 @@ const mockEvents = [
     monthIndex: 11,
     year: 2025,
     description: 'Apply starting Dec 1 to big law, government, public interest; submit fellowships with Dec deadlines; begin judicial externship apps.',
-    location: '—',
-    time: '—'
-  },
-  {
-    id: 40,
-    title: 'Action Plan: Jan–Mar 2026',
-    date: 'Jan–Mar 2026',
-    month: 'Jan',
-    monthIndex: 0,
-    year: 2026,
-    description: 'Do Mock Interview Program; attend Feb & Mar Interview Programs; submit Burns/EPIC/Peggy Browning; send transcripts where needed.',
-    location: '—',
-    time: '—'
-  },
-  {
-    id: 41,
-    title: 'Action Plan: Apr–Jul 2026',
-    date: 'Apr–Jul 2026',
-    month: 'Apr',
-    monthIndex: 3,
-    year: 2026,
-    description: 'Attend April Program & May Meet the Employer; secure EPIC funding; apply to HNBA/VIA Avanza (June–July).',
     location: '—',
     time: '—'
   },
@@ -647,101 +521,72 @@ const getEventsForMonth = (month) => {
   );
 
   const ExpandedTimeline = () => (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="fixed inset-0 bg-background z-50 overflow-y-auto"
-    >
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex justify-between items-center mb-8">
-          <h2 className="text-3xl font-bold text-primary">
-            Academic Year {currentYear === 'All' ? '2024-2026' : currentYear} Timeline
-          </h2>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setIsExpanded(false)}
-            className="text-muted-foreground hover:text-foreground"
-          >
-            <X className="h-6 w-6" />
-          </Button>
-        </div>
-
-        {/* Year Carousel Controls in Expanded View */}
-        <div className="flex items-center justify-center mb-8">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={handlePrevYear}
-            className="text-muted-foreground hover:text-foreground"
-          >
-            <ChevronLeft className="h-5 w-5" />
-          </Button>
-          
-          <motion.div
-            key={`expanded-${currentYear}`}
-            initial={{ opacity: 0, x: direction * 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.3 }}
-            className="mx-8 min-w-[80px] text-center"
-          >
-            <div className="text-lg font-semibold text-primary">{currentYear}</div>
-          </motion.div>
-          
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={handleNextYear}
-            className="text-muted-foreground hover:text-foreground"
-          >
-            <ChevronRight className="h-5 w-5" />
-          </Button>
-        </div>
-
-        <motion.div 
-          key={`expanded-events-${currentYear}`}
-          initial={{ opacity: 0, x: direction * 30 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.4 }}
-          className="grid gap-6 md:grid-cols-2 lg:grid-cols-3"
+  <motion.div
+    initial={{ opacity: 0 }}
+    animate={{ opacity: 1 }}
+    exit={{ opacity: 0 }}
+    className="fixed inset-0 bg-background z-50 overflow-y-auto"
+  >
+    <div className="container mx-auto px-4 py-8">
+      <div className="flex justify-between items-center mb-8">
+        <h2 className="text-3xl font-bold text-primary">
+          Academic Year 2025/2026 Timeline
+        </h2>
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => setIsExpanded(false)}
+          className="text-muted-foreground hover:text-foreground"
         >
-          {filteredEvents.map((event, eventIndex) => (
-            <motion.div
-              key={event.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: eventIndex * 0.05 }}
-              whileHover={{ scale: 1.02 }}
-              className="bg-card border border-border rounded-lg p-6 shadow-sm hover:shadow-md transition-all cursor-pointer"
-              onClick={() => setSelectedEvent(event)}
-            >
-              <div className="flex items-start justify-between mb-3">
-                <h3 className="font-semibold text-foreground">{event.title}</h3>
-                <span className="text-xs bg-accent/10 text-accent px-2 py-1 rounded-full font-medium">
-                  {event.month}
-                </span>
-              </div>
-              <div className="space-y-2 text-sm text-muted-foreground">
-                <div className="flex items-center gap-2">
-                  <Calendar className="h-4 w-4" />
-                  {event.date}
-                </div>
-                <div className="flex items-center gap-2">
-                  <Clock className="h-4 w-4" />
-                  {event.time}
-                </div>
-                <div className="flex items-center gap-2">
-                  <MapPin className="h-4 w-4" />
-                  {event.location}
-                </div>
-              </div>
-            </motion.div>
-          ))}
-        </motion.div>
+          <X className="h-6 w-6" />
+        </Button>
       </div>
-    </motion.div>
-  );
+
+      {/* Just showing current year events, no carousel */}
+      <motion.div 
+        key={`expanded-events-${currentYear}`}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+        className="grid gap-6 md:grid-cols-2 lg:grid-cols-3"
+      >
+        {filteredEvents.map((event, eventIndex) => (
+          <motion.div
+            key={event.id}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: eventIndex * 0.05 }}
+            whileHover={{ scale: 1.02 }}
+            className="bg-card border border-border rounded-lg p-6 shadow-sm hover:shadow-md transition-all cursor-pointer"
+            onClick={() => setSelectedEvent(event)}
+          >
+            <div className="flex items-start justify-between mb-3">
+              <h3 className="font-semibold text-foreground">{event.title}</h3>
+              <span className="text-xs bg-accent/10 text-accent px-2 py-1 rounded-full font-medium">
+                {event.month}
+              </span>
+            </div>
+            <div className="space-y-2 text-sm text-muted-foreground">
+              <div className="flex items-center gap-2">
+                <Calendar className="h-4 w-4" />
+                {event.date}
+              </div>
+              <div className="flex items-center gap-2">
+                <Clock className="h-4 w-4" />
+                {event.time}
+              </div>
+              <div className="flex items-center gap-2">
+                <MapPin className="h-4 w-4" />
+                {event.location}
+              </div>
+            </div>
+          </motion.div>
+        ))}
+      </motion.div>
+    </div>
+  </motion.div>
+);
+
 
  const EventModal = () => {
   // Nothing to render? Return null (prevents creating the portal at all)
