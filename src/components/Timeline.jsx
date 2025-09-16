@@ -574,72 +574,80 @@ const getEventsForMonth = (month) => {
     );
   };
 
-  const ExpandedTimeline = () => (
-  <motion.div
-    initial={{ opacity: 0 }}
-    animate={{ opacity: 1 }}
-    exit={{ opacity: 0 }}
-    className="fixed inset-0 bg-background z-50 overflow-y-auto"
-  >
-    <div className="container mx-auto px-4 py-8">
-      <div className="flex justify-between items-center mb-8">
-        <h2 className="text-3xl font-bold text-primary">
-          Academic Year 2025/2026 Timeline
-        </h2>
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => setIsExpanded(false)}
-          className="text-muted-foreground hover:text-foreground"
-        >
-          <X className="h-6 w-6" />
-        </Button>
-      </div>
+    const ExpandedTimeline = () => {
+    // Sort events by year, then by monthIndex
+    const sortedEvents = [...filteredEvents].sort((a, b) => {
+      if (a.year !== b.year) return a.year - b.year;
+      return a.monthIndex - b.monthIndex;
+    });
 
-      {/* Just showing current year events, no carousel */}
-      <motion.div 
-        key={`expanded-events-${currentYear}`}
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4 }}
-        className="grid gap-6 md:grid-cols-2 lg:grid-cols-3"
+    return (
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="fixed inset-0 bg-background z-50 overflow-y-auto"
       >
-        {filteredEvents.map((event, eventIndex) => (
-          <motion.div
-            key={event.id}
+        <div className="container mx-auto px-4 py-8">
+          <div className="flex justify-between items-center mb-8">
+            <h2 className="text-3xl font-bold text-primary">
+              Academic Year 2025/2026 Timeline
+            </h2>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setIsExpanded(false)}
+              className="text-muted-foreground hover:text-foreground"
+            >
+              <X className="h-6 w-6" />
+            </Button>
+          </div>
+
+          {/* Sorted Events */}
+          <motion.div 
+            key={`expanded-events-${currentYear}`}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: eventIndex * 0.05 }}
-            whileHover={{ scale: 1.02 }}
-            className="bg-card border border-border rounded-lg p-6 shadow-sm hover:shadow-md transition-all cursor-pointer"
-            onClick={() => setSelectedEvent(event)}
+            transition={{ duration: 0.4 }}
+            className="grid gap-6 md:grid-cols-2 lg:grid-cols-3"
           >
-            <div className="flex items-start justify-between mb-3">
-              <h3 className="font-semibold text-foreground">{event.title}</h3>
-              <span className="text-xs bg-accent/10 text-accent px-2 py-1 rounded-full font-medium">
-                {event.month}
-              </span>
-            </div>
-            <div className="space-y-2 text-sm text-muted-foreground">
-              <div className="flex items-center gap-2">
-                <Calendar className="h-4 w-4" />
-                {event.date}
-              </div>
-              <div className="flex items-center gap-2">
-                <Clock className="h-4 w-4" />
-                {event.time}
-              </div>
-              <div className="flex items-center gap-2">
-                <MapPin className="h-4 w-4" />
-                {event.location}
-              </div>
-            </div>
+            {sortedEvents.map((event, eventIndex) => (
+              <motion.div
+                key={event.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: eventIndex * 0.05 }}
+                whileHover={{ scale: 1.02 }}
+                className="bg-card border border-border rounded-lg p-6 shadow-sm hover:shadow-md transition-all cursor-pointer"
+                onClick={() => setSelectedEvent(event)}
+              >
+                <div className="flex items-start justify-between mb-3">
+                  <h3 className="font-semibold text-foreground">{event.title}</h3>
+                  <span className="text-xs bg-accent/10 text-accent px-2 py-1 rounded-full font-medium">
+                    {event.month}
+                  </span>
+                </div>
+                <div className="space-y-2 text-sm text-muted-foreground">
+                  <div className="flex items-center gap-2">
+                    <Calendar className="h-4 w-4" />
+                    {event.date}
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Clock className="h-4 w-4" />
+                    {event.time}
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <MapPin className="h-4 w-4" />
+                    {event.location}
+                  </div>
+                </div>
+              </motion.div>
+            ))}
           </motion.div>
-        ))}
+        </div>
       </motion.div>
-    </div>
-  </motion.div>
-);
+    );
+  };
 
 
  const EventModal = () => {
