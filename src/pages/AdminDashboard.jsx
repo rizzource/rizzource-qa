@@ -363,6 +363,12 @@ export const AdminDashboard = () => {
     }
   };
 
+  const handlePrev = () =>
+    setActiveSection((prev) => (prev > 0 ? prev - 1 : 2));
+  
+  const handleNext = () =>
+    setActiveSection((prev) => (prev < 2 ? prev + 1 : 0));
+
   if (loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
