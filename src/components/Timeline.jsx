@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Calendar, MapPin, Clock, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { createPortal } from 'react-dom';
+import { supabase } from '@/integrations/supabase/client';
 
 const mockEvents = [
   // --- Academic Timeline (Fall 2025) ---
@@ -366,14 +367,54 @@ const Timeline = () => {
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [currentYear, setCurrentYear] = useState(2025); // Default to 2025
   const [direction, setDirection] = useState(0); // For animation direction
+  const [events, setEvents] = useState(mockEvents);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchEvents();
+  }, []);
+
+  const fetchEvents = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('events')
+        .select('*')
+        .order('year', { ascending: true })
+        .order('month_index', { ascending: true });
+
+      if (error) {
+        console.error('Error fetching events:', error);
+        setEvents(mockEvents); // Fallback to mock events
+      } else {
+        // Combine database events with mock events
+        const combinedEvents = [...mockEvents, ...data.map(event => ({
+          id: event.id,
+          title: event.title,
+          date: event.date,
+          month: event.month,
+          monthIndex: event.month_index,
+          year: event.year,
+          description: event.description || '',
+          location: event.location || '',
+          time: event.time || ''
+        }))];
+        setEvents(combinedEvents);
+      }
+    } catch (error) {
+      console.error('Error fetching events:', error);
+      setEvents(mockEvents); // Fallback to mock events
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const yearOptions = ['All', 2024, 2025, 2026];
 
   const getFilteredEvents = () => {
     if (currentYear === 'All') {
-      return mockEvents;
+      return events;
     }
-    return mockEvents.filter(event => event.year === currentYear);
+    return events.filter(event => event.year === currentYear);
   };
 
   const filteredEvents = getFilteredEvents();
@@ -420,13 +461,25 @@ const Timeline = () => {
     </motion.div>
   );
 const getEventsForMonth = (month) => {
-    return mockEvents.filter(event => event.month === month);
+    return events.filter(event => event.month === month);
   };
    const [hoveredMonth, setHoveredMonth] = useState(null);
   const [eventType, setEventType] = useState('Academic Events');
-  const CompactTimeline = () => (
-  <div className="min-h-screen bg-background p-8">
-      <div className="max-w-6xl mx-auto">
+  const CompactTimeline = () => {
+    if (loading) {
+      return (
+        <div className="min-h-screen bg-background p-8 flex items-center justify-center">
+          <div className="text-center">
+            <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+            <p className="text-muted-foreground">Loading events...</p>
+          </div>
+        </div>
+      );
+    }
+
+    return (
+      <div className="min-h-screen bg-background p-8">
+        <div className="max-w-6xl mx-auto">
 
         {/* Event Type Toggle */}
       <div className="flex items-center mb-8 space-x-4">
@@ -518,7 +571,8 @@ const getEventsForMonth = (month) => {
         </div>
       </div>
     </div>
-  );
+    );
+  };
 
   const ExpandedTimeline = () => (
   <motion.div

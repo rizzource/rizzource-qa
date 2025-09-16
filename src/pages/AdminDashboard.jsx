@@ -24,6 +24,16 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
 import {
   Users,
@@ -41,6 +51,8 @@ import {
   Gavel,
   FileText,
   GraduationCap,
+  Calendar,
+  Plus,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from 'react-toastify';
@@ -53,7 +65,7 @@ export const AdminDashboard = () => {
   const [stats, setStats] = useState({
     mentees: 0,
     mentors: 0,
-    // feedback: 0,
+    events: 0,
     exports: 0,
   });
   
@@ -68,8 +80,37 @@ export const AdminDashboard = () => {
   
   const [loading, setLoading] = useState(true);
   const [exportingTable, setExportingTable] = useState("");
-  const [activeSection, setActiveSection] = useState(0); // 0=mentees,1=mentors,2=feedback
+  const [activeSection, setActiveSection] = useState(0); // 0=mentees,1=mentors,2=events
+  const [eventsData, setEventsData] = useState({ data: [], total: 0, loading: false });
+  const [eventsPage, setEventsPage] = useState(1);
+  const [showEventForm, setShowEventForm] = useState(false);
   const navigate = useNavigate();
+
+  // Event form state
+  const [eventForm, setEventForm] = useState({
+    title: '',
+    date: '',
+    month: '',
+    year: new Date().getFullYear(),
+    description: '',
+    location: '',
+    time: ''
+  });
+
+  const months = [
+    { value: 'Jan', index: 0 },
+    { value: 'Feb', index: 1 },
+    { value: 'Mar', index: 2 },
+    { value: 'Apr', index: 3 },
+    { value: 'May', index: 4 },
+    { value: 'Jun', index: 5 },
+    { value: 'Jul', index: 6 },
+    { value: 'Aug', index: 7 },
+    { value: 'Sep', index: 8 },
+    { value: 'Oct', index: 9 },
+    { value: 'Nov', index: 10 },
+    { value: 'Dec', index: 11 }
+  ];
 
   const PAGE_SIZE = 10;
 
@@ -101,10 +142,12 @@ export const AdminDashboard = () => {
         supabase.from("data_exports").select("*", { count: "exact", head: true }),
       ]);
 
+      const eventsResponse = await supabase.from("events").select("*", { count: "exact", head: true });
+      
       setStats({
         mentees: menteesResponse.count || 0,
         mentors: mentorsResponse.count || 0,
-        // feedback: feedbackResponse.count || 0,
+        events: eventsResponse.count || 0,
         exports: exportsResponse.count || 0,
       });
     } catch (error) {
@@ -119,7 +162,7 @@ export const AdminDashboard = () => {
       await Promise.all([
         fetchMentees(1),
         fetchMentors(1),
-        // fetchFeedback(1),
+        fetchEvents(1),
       ]);
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -242,10 +285,10 @@ export const AdminDashboard = () => {
   };
 
   const handlePrev = () =>
-    setActiveSection((prev) => (prev > 0 ? prev - 1 : 1));
+    setActiveSection((prev) => (prev > 0 ? prev - 1 : 2));
   
   const handleNext = () =>
-    setActiveSection((prev) => (prev < 1 ? prev + 1 : 0));
+    setActiveSection((prev) => (prev < 2 ? prev + 1 : 0));
 
   if (loading) {
     return (
@@ -363,6 +406,19 @@ export const AdminDashboard = () => {
           
           <Card className="bg-card/90 backdrop-blur-lg border border-border shadow-xl">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">Events</CardTitle>
+              <Calendar className="h-4 w-4 text-accent" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-foreground">{stats.events}</div>
+              <p className="text-xs text-muted-foreground mt-1">
+                Timeline events created
+              </p>
+            </CardContent>
+          </Card>
+          
+          <Card className="bg-card/90 backdrop-blur-lg border border-border shadow-xl">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">Data Exports</CardTitle>
               <Activity className="h-4 w-4 text-accent" />
             </CardHeader>
@@ -396,6 +452,22 @@ export const AdminDashboard = () => {
             pageSize={PAGE_SIZE}
           />
         )}
+        {activeSection === 2 && (
+          <EventsTable
+            data={eventsData}
+            currentPage={eventsPage}
+            onPageChange={fetchEvents}
+            exportToExcel={exportToExcel}
+            exportingTable={exportingTable}
+            pageSize={PAGE_SIZE}
+            showEventForm={showEventForm}
+            setShowEventForm={setShowEventForm}
+            eventForm={eventForm}
+            setEventForm={setEventForm}
+            handleEventSubmit={handleEventSubmit}
+            months={months}
+          />
+        )}
         {/* Feedback section commented out - not currently implemented
         {activeSection === 2 && (
           <FeedbackTable
@@ -423,7 +495,7 @@ export const AdminDashboard = () => {
           <div className="hidden sm:block text-muted-foreground text-sm font-medium">
             {activeSection === 0 && 'Mentees'} 
             {activeSection === 1 && 'Mentors'} 
-            {/* {activeSection === 2 && 'Feedback'} */}
+            {activeSection === 2 && 'Events'}
           </div>
           <Button
             type="button"
@@ -441,6 +513,240 @@ export const AdminDashboard = () => {
   );
 };
 
+const EventsTable = ({ 
+  data, 
+  currentPage, 
+  onPageChange, 
+  exportToExcel, 
+  exportingTable, 
+  pageSize,
+  showEventForm,
+  setShowEventForm,
+  eventForm,
+  setEventForm,
+  handleEventSubmit,
+  months
+}) => {
+  const totalPages = Math.ceil(data.total / pageSize);
+
+  return (
+    <Card className="bg-card/90 backdrop-blur-lg border border-border shadow-xl">
+      <CardHeader>
+        <div className="flex flex-col sm:flex-row gap-4 sm:justify-between sm:items-center">
+          <div>
+            <CardTitle className="text-foreground">Timeline Events</CardTitle>
+            <CardDescription className="text-muted-foreground">
+              All timeline events ({data.total} total)
+            </CardDescription>
+          </div>
+          <div className="flex gap-2">
+            <Button
+              onClick={() => setShowEventForm(!showEventForm)}
+              className="w-full sm:w-auto"
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              Add Event
+            </Button>
+            <Button
+              onClick={() => exportToExcel('events', data.data, 'events_export')}
+              disabled={exportingTable === 'events'}
+              variant="outline"
+              className="w-full sm:w-auto"
+            >
+              <FileSpreadsheet className="h-4 w-4 mr-2" />
+              <span className="hidden sm:inline">{exportingTable === 'events' ? 'Exporting...' : 'Export to Excel'}</span>
+              <span className="sm:hidden">{exportingTable === 'events' ? 'Exporting...' : 'Export'}</span>
+            </Button>
+          </div>
+        </div>
+      </CardHeader>
+      <CardContent>
+        {showEventForm && (
+          <Card className="mb-6 border border-border">
+            <CardHeader>
+              <CardTitle className="text-lg">Create New Event</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handleEventSubmit} className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="title">Title *</Label>
+                    <Input
+                      id="title"
+                      value={eventForm.title}
+                      onChange={(e) => setEventForm({...eventForm, title: e.target.value})}
+                      required
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="date">Date *</Label>
+                    <Input
+                      id="date"
+                      value={eventForm.date}
+                      onChange={(e) => setEventForm({...eventForm, date: e.target.value})}
+                      placeholder="e.g., Late October 2025, Dec 1, 2025"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="month">Month *</Label>
+                    <Select 
+                      value={eventForm.month} 
+                      onValueChange={(value) => setEventForm({...eventForm, month: value})}
+                      required
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select month" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {months.map((month) => (
+                          <SelectItem key={month.value} value={month.value}>
+                            {month.value}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label htmlFor="year">Year *</Label>
+                    <Input
+                      id="year"
+                      type="number"
+                      value={eventForm.year}
+                      onChange={(e) => setEventForm({...eventForm, year: e.target.value})}
+                      min="2025"
+                      max="2030"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="location">Location</Label>
+                    <Input
+                      id="location"
+                      value={eventForm.location}
+                      onChange={(e) => setEventForm({...eventForm, location: e.target.value})}
+                      placeholder="e.g., On-campus, Self-paced"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="time">Time</Label>
+                    <Input
+                      id="time"
+                      value={eventForm.time}
+                      onChange={(e) => setEventForm({...eventForm, time: e.target.value})}
+                      placeholder="e.g., 9:00 AM, —"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <Label htmlFor="description">Description</Label>
+                  <Textarea
+                    id="description"
+                    value={eventForm.description}
+                    onChange={(e) => setEventForm({...eventForm, description: e.target.value})}
+                    rows={3}
+                    placeholder="Event description..."
+                  />
+                </div>
+                <div className="flex gap-2">
+                  <Button type="submit">Create Event</Button>
+                  <Button type="button" variant="outline" onClick={() => setShowEventForm(false)}>
+                    Cancel
+                  </Button>
+                </div>
+              </form>
+            </CardContent>
+          </Card>
+        )}
+
+        <div className="overflow-x-auto">
+          <div className="rounded-md border border-border w-max min-w-full bg-card/50 backdrop-blur-sm">
+            <Table>
+              <TableHeader>
+                <TableRow className="border-border bg-muted/50 backdrop-blur-sm">
+                  <TableHead className="text-foreground font-semibold min-w-[200px]">Title</TableHead>
+                  <TableHead className="text-foreground font-semibold min-w-[120px]">Date</TableHead>
+                  <TableHead className="text-foreground font-semibold min-w-[80px]">Month</TableHead>
+                  <TableHead className="text-foreground font-semibold min-w-[80px]">Year</TableHead>
+                  <TableHead className="text-foreground font-semibold min-w-[120px]">Location</TableHead>
+                  <TableHead className="text-foreground font-semibold min-w-[80px]">Time</TableHead>
+                  <TableHead className="text-foreground font-semibold min-w-[200px]">Description</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {data.loading ? (
+                  <TableRow>
+                    <TableCell colSpan={7} className="text-center py-8">
+                      <div className="flex items-center justify-center">
+                        <Loader2 className="w-6 h-6 animate-spin mr-2" />
+                        Loading events...
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ) : data.data?.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
+                      No events found. Create your first event above.
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  data.data?.map((event) => (
+                    <TableRow key={event.id} className="border-border hover:bg-muted/20">
+                      <TableCell className="font-medium text-foreground">{event.title}</TableCell>
+                      <TableCell className="text-foreground">{event.date}</TableCell>
+                      <TableCell className="text-foreground">{event.month}</TableCell>
+                      <TableCell className="text-foreground">{event.year}</TableCell>
+                      <TableCell className="text-foreground">{event.location || '—'}</TableCell>
+                      <TableCell className="text-foreground">{event.time || '—'}</TableCell>
+                      <TableCell className="text-foreground max-w-[200px] truncate">
+                        {event.description || '—'}
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </div>
+        </div>
+
+        {totalPages > 1 && (
+          <Pagination className="mt-4">
+            <PaginationContent>
+              <PaginationItem>
+                <PaginationPrevious 
+                  onClick={() => currentPage > 1 && onPageChange(currentPage - 1)}
+                  className={currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                />
+              </PaginationItem>
+              
+              {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                const pageNum = i + 1;
+                return (
+                  <PaginationItem key={pageNum}>
+                    <PaginationLink
+                      onClick={() => onPageChange(pageNum)}
+                      isActive={currentPage === pageNum}
+                      className="cursor-pointer"
+                    >
+                      {pageNum}
+                    </PaginationLink>
+                  </PaginationItem>
+                );
+              })}
+              
+              <PaginationItem>
+                <PaginationNext 
+                  onClick={() => currentPage < totalPages && onPageChange(currentPage + 1)}
+                  className={currentPage === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
+        )}
+      </CardContent>
+    </Card>
+  );
+};
 
 const MenteesTable = ({ data, currentPage, onPageChange, exportToExcel, exportingTable, pageSize }) => {
   const totalPages = Math.ceil(data.total / pageSize);
