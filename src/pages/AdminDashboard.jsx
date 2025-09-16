@@ -133,16 +133,14 @@ export const AdminDashboard = () => {
       const [
         menteesResponse,
         mentorsResponse,
-        // feedbackResponse,
         exportsResponse,
+        eventsResponse,
       ] = await Promise.all([
-        supabase.from("scheduling_responses").select("*", { count: "exact", head: true }).eq("user_type", "mentee"),
-        supabase.from("scheduling_responses").select("*", { count: "exact", head: true }).eq("user_type", "mentor"),
-        // supabase.from("feedback").select("*", { count: "exact", head: true }),
+        supabase.from("profiles").select("*", { count: "exact", head: true }).eq("role", "mentee"),
+        supabase.from("profiles").select("*", { count: "exact", head: true }).eq("role", "mentor"),
         supabase.from("data_exports").select("*", { count: "exact", head: true }),
+        supabase.from("events").select("*", { count: "exact", head: true }),
       ]);
-
-      const eventsResponse = await supabase.from("events").select("*", { count: "exact", head: true });
       
       setStats({
         mentees: menteesResponse.count || 0,
@@ -180,9 +178,9 @@ export const AdminDashboard = () => {
       const to = from + PAGE_SIZE - 1;
       
       const { data, count, error } = await supabase
-        .from("scheduling_responses")
+        .from("profiles")
         .select("*", { count: "exact" })
-        .eq("user_type", "mentee")
+        .eq("role", "mentee")
         .order("created_at", { ascending: false })
         .range(from, to);
       
@@ -209,9 +207,9 @@ export const AdminDashboard = () => {
       const to = from + PAGE_SIZE - 1;
       
       const { data, count, error } = await supabase
-        .from("scheduling_responses")
+        .from("profiles")
         .select("*", { count: "exact" })
-        .eq("user_type", "mentor")
+        .eq("role", "mentor")
         .order("created_at", { ascending: false })
         .range(from, to);
       
@@ -284,11 +282,86 @@ export const AdminDashboard = () => {
     }
   };
 
-  const handlePrev = () =>
-    setActiveSection((prev) => (prev > 0 ? prev - 1 : 2));
-  
-  const handleNext = () =>
-    setActiveSection((prev) => (prev < 2 ? prev + 1 : 0));
+  const fetchEvents = async (page) => {
+    if (!isAdmin()) return;
+    setEventsData(prev => ({ ...prev, loading: true }));
+    try {
+      const from = (page - 1) * PAGE_SIZE;
+      const to = from + PAGE_SIZE - 1;
+      
+      const { data, count, error } = await supabase
+        .from("events")
+        .select("*", { count: "exact" })
+        .order("created_at", { ascending: false })
+        .range(from, to);
+      
+      if (error) throw error;
+      
+      setEventsData({
+        data: data || [],
+        total: count || 0,
+        loading: false,
+      });
+      setEventsPage(page);
+    } catch (error) {
+      console.error("Error fetching events:", error);
+      setEventsData(prev => ({ ...prev, loading: false }));
+      toast.error("Failed to fetch events data");
+    }
+  };
+
+  const handleEventSubmit = async (e) => {
+    e.preventDefault();
+    if (!isAdmin()) return;
+
+    try {
+      // Find the monthIndex based on the selected month
+      const selectedMonth = months.find(m => m.value === eventForm.month);
+      const monthIndex = selectedMonth ? selectedMonth.index : 0;
+
+      const eventData = {
+        title: eventForm.title,
+        date: eventForm.date,
+        month: eventForm.month,
+        month_index: monthIndex,
+        year: parseInt(eventForm.year),
+        description: eventForm.description,
+        location: eventForm.location,
+        time: eventForm.time,
+        created_by: user.id
+      };
+
+      const { data, error } = await supabase
+        .from("events")
+        .insert([eventData])
+        .select();
+
+      if (error) throw error;
+
+      toast.success("Event created successfully!");
+      
+      // Reset form
+      setEventForm({
+        title: '',
+        date: '',
+        month: '',
+        year: new Date().getFullYear(),
+        description: '',
+        location: '',
+        time: ''
+      });
+      
+      setShowEventForm(false);
+      
+      // Refresh events data and stats
+      await fetchEvents(1);
+      await fetchStats();
+      
+    } catch (error) {
+      console.error("Error creating event:", error);
+      toast.error("Failed to create event: " + error.message);
+    }
+  };
 
   if (loading) {
     return (
@@ -758,17 +831,17 @@ const MenteesTable = ({ data, currentPage, onPageChange, exportToExcel, exportin
           <div>
             <CardTitle className="text-foreground">Mentees</CardTitle>
             <CardDescription className="text-muted-foreground">
-              All registered mentee applications ({data.total} total)
+              All registered mentees ({data.total} total)
             </CardDescription>
           </div>
           <Button
-            onClick={() => exportToExcel('scheduling_responses_mentees', data.data, 'mentees_export')}
-            disabled={exportingTable === 'scheduling_responses_mentees'}
+            onClick={() => exportToExcel('profiles_mentees', data.data, 'mentees_export')}
+            disabled={exportingTable === 'profiles_mentees'}
             className="w-full sm:w-auto"
           >
             <FileSpreadsheet className="h-4 w-4 mr-2" />
-            <span className="hidden sm:inline">{exportingTable === 'scheduling_responses_mentees' ? 'Exporting...' : 'Export to Excel'}</span>
-            <span className="sm:hidden">{exportingTable === 'scheduling_responses_mentees' ? 'Exporting...' : 'Export'}</span>
+            <span className="hidden sm:inline">{exportingTable === 'profiles_mentees' ? 'Exporting...' : 'Export to Excel'}</span>
+            <span className="sm:hidden">{exportingTable === 'profiles_mentees' ? 'Exporting...' : 'Export'}</span>
           </Button>
         </div>
       </CardHeader>
@@ -778,26 +851,23 @@ const MenteesTable = ({ data, currentPage, onPageChange, exportToExcel, exportin
             <Table>
               <TableHeader>
                 <TableRow className="border-border bg-muted/50 backdrop-blur-sm">
-                  <TableHead className="text-foreground font-semibold min-w-[120px]">Name</TableHead>
                   <TableHead className="text-foreground font-semibold min-w-[180px]">Email</TableHead>
-                  <TableHead className="text-foreground font-semibold min-w-[120px]">Date Type</TableHead> 
-                  <TableHead className="text-foreground font-semibold min-w-[150px]">Time Preference</TableHead> 
-                  <TableHead className="text-foreground font-semibold min-w-[150px]">Activities</TableHead> 
-                  <TableHead className="text-foreground font-semibold min-w-[120px]">Availability</TableHead>
-                  <TableHead className="text-foreground font-semibold min-w-[100px]">Created At</TableHead>
+                  <TableHead className="text-foreground font-semibold min-w-[100px]">Role</TableHead>
+                  <TableHead className="text-foreground font-semibold min-w-[120px]">Created At</TableHead>
+                  <TableHead className="text-foreground font-semibold min-w-[120px]">Updated At</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                  {data.loading ? (
                    <TableRow>
-                     <TableCell colSpan={7} className="text-center text-muted-foreground py-8">
+                     <TableCell colSpan={4} className="text-center text-muted-foreground py-8">
                        <Loader2 className="h-4 w-4 animate-spin mx-auto" />
                        <span className="ml-2">Loading...</span>
                      </TableCell>
                    </TableRow>
                  ) : data.data.length === 0 ? (
                    <TableRow>
-                     <TableCell colSpan={7} className="text-center text-muted-foreground py-8">
+                     <TableCell colSpan={4} className="text-center text-muted-foreground py-8">
                        No mentees found
                      </TableCell>
                    </TableRow>
@@ -805,22 +875,14 @@ const MenteesTable = ({ data, currentPage, onPageChange, exportToExcel, exportin
                    data.data.map((mentee) => (
                      <TableRow key={mentee.id} className="border-border hover:bg-muted/50 transition-colors duration-200">
                        <TableCell className="text-foreground font-medium">
-                         {mentee.full_name}
+                         {mentee.email}
                        </TableCell>
-                       <TableCell className="text-muted-foreground text-sm">{mentee.email}</TableCell>
-                       <TableCell className="text-muted-foreground text-sm">{mentee.date_type}</TableCell>
-                       <TableCell className="text-muted-foreground text-sm">{mentee.earliest_time} - {mentee.latest_time}</TableCell>
-                       <TableCell className="text-muted-foreground text-sm whitespace-normal break-words max-w-[180px]">
-                         {mentee.activities?.join(', ') || 'None'}
-                       </TableCell>
-                       <TableCell className="text-muted-foreground text-sm whitespace-normal break-words max-w-[180px]">
-                         {mentee.date_type === 'days' 
-                           ? mentee.selected_days?.join(', ') || 'None'
-                           : mentee.selected_dates?.map(date => new Date(date).toLocaleDateString()).join(', ') || 'None'
-                         }
-                       </TableCell>
+                       <TableCell className="text-muted-foreground text-sm capitalize">{mentee.role}</TableCell>
                        <TableCell className="text-muted-foreground text-sm">
                          {new Date(mentee.created_at).toLocaleDateString()}
+                       </TableCell>
+                       <TableCell className="text-muted-foreground text-sm">
+                         {new Date(mentee.updated_at).toLocaleDateString()}
                        </TableCell>
                      </TableRow>
                    ))
@@ -879,17 +941,17 @@ const MentorsTable = ({ data, currentPage, onPageChange, exportToExcel, exportin
           <div>
             <CardTitle className="text-foreground">Mentors</CardTitle>
             <CardDescription className="text-muted-foreground">
-              All registered mentor applications ({data.total} total)
+              All registered mentors ({data.total} total)
             </CardDescription>
           </div>
           <Button
-            onClick={() => exportToExcel('scheduling_responses_mentors', data.data, 'mentors_export')}
-            disabled={exportingTable === 'scheduling_responses_mentors'}
+            onClick={() => exportToExcel('profiles_mentors', data.data, 'mentors_export')}
+            disabled={exportingTable === 'profiles_mentors'}
             className="w-full sm:w-auto"
           >
             <FileSpreadsheet className="h-4 w-4 mr-2" />
-            <span className="hidden sm:inline">{exportingTable === 'scheduling_responses_mentors' ? 'Exporting...' : 'Export to Excel'}</span>
-            <span className="sm:hidden">{exportingTable === 'scheduling_responses_mentors' ? 'Exporting...' : 'Export'}</span>
+            <span className="hidden sm:inline">{exportingTable === 'profiles_mentors' ? 'Exporting...' : 'Export to Excel'}</span>
+            <span className="sm:hidden">{exportingTable === 'profiles_mentors' ? 'Exporting...' : 'Export'}</span>
           </Button>
         </div>
       </CardHeader>
@@ -899,27 +961,23 @@ const MentorsTable = ({ data, currentPage, onPageChange, exportToExcel, exportin
             <Table>
               <TableHeader>
                 <TableRow className="border-border bg-muted/50 backdrop-blur-sm">
-                  <TableHead className="text-foreground font-semibold min-w-[120px]">Name</TableHead>
                   <TableHead className="text-foreground font-semibold min-w-[180px]">Email</TableHead>
-                  <TableHead className="text-foreground font-semibold min-w-[120px]">Date Type</TableHead> 
-                  <TableHead className="text-foreground font-semibold min-w-[150px]">Time Preference</TableHead> 
-                  <TableHead className="text-foreground font-semibold min-w-[150px]">Activities</TableHead> 
-                  <TableHead className="text-foreground font-semibold min-w-[150px]">Mentor Options</TableHead>
-                  <TableHead className="text-foreground font-semibold min-w-[120px]">Availability</TableHead>
-                  <TableHead className="text-foreground font-semibold min-w-[100px]">Created At</TableHead>
+                  <TableHead className="text-foreground font-semibold min-w-[100px]">Role</TableHead>
+                  <TableHead className="text-foreground font-semibold min-w-[120px]">Created At</TableHead>
+                  <TableHead className="text-foreground font-semibold min-w-[120px]">Updated At</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                  {data.loading ? (
                    <TableRow>
-                     <TableCell colSpan={8} className="text-center text-muted-foreground py-8">
+                     <TableCell colSpan={4} className="text-center text-muted-foreground py-8">
                        <Loader2 className="h-4 w-4 animate-spin mx-auto" />
                        <span className="ml-2">Loading...</span>
                      </TableCell>
                    </TableRow>
                  ) : data.data.length === 0 ? (
                    <TableRow>
-                     <TableCell colSpan={8} className="text-center text-muted-foreground py-8">
+                     <TableCell colSpan={4} className="text-center text-muted-foreground py-8">
                        No mentors found
                      </TableCell>
                    </TableRow>
@@ -927,25 +985,14 @@ const MentorsTable = ({ data, currentPage, onPageChange, exportToExcel, exportin
                    data.data.map((mentor) => (
                      <TableRow key={mentor.id} className="border-border hover:bg-muted/50 transition-colors duration-200">
                        <TableCell className="text-foreground font-medium">
-                         {mentor.full_name}
+                         {mentor.email}
                        </TableCell>
-                       <TableCell className="text-muted-foreground text-sm">{mentor.email}</TableCell>
-                       <TableCell className="text-muted-foreground text-sm">{mentor.date_type}</TableCell>
-                       <TableCell className="text-muted-foreground text-sm">{mentor.earliest_time} - {mentor.latest_time}</TableCell>
-                       <TableCell className="text-muted-foreground text-sm whitespace-normal break-words max-w-[180px]">
-                         {mentor.activities?.join(', ') || 'None'}
-                       </TableCell>
-                       <TableCell className="text-muted-foreground text-sm whitespace-normal break-words max-w-[180px]">
-                         {mentor.mentor_options?.join(', ') || 'None'}
-                       </TableCell>
-                       <TableCell className="text-muted-foreground text-sm whitespace-normal break-words max-w-[180px]">
-                         {mentor.date_type === 'days' 
-                           ? mentor.selected_days?.join(', ') || 'None'
-                           : mentor.selected_dates?.map(date => new Date(date).toLocaleDateString()).join(', ') || 'None'
-                         }
-                       </TableCell>
+                       <TableCell className="text-muted-foreground text-sm capitalize">{mentor.role}</TableCell>
                        <TableCell className="text-muted-foreground text-sm">
                          {new Date(mentor.created_at).toLocaleDateString()}
+                       </TableCell>
+                       <TableCell className="text-muted-foreground text-sm">
+                         {new Date(mentor.updated_at).toLocaleDateString()}
                        </TableCell>
                      </TableRow>
                    ))
