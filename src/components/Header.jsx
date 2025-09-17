@@ -25,7 +25,7 @@ const Header = () => {
       <div className="container mx-auto mobile-optimized"> 
         <div className="flex items-center justify-between h-14 sm:h-16"> 
           {/* Logo */} 
-          <a href="/" className="flex items-center space-x-2 sm:space-x-3 touch-friendly flex-1 sm:flex-initial"> 
+          <Link to="/" className="flex items-center space-x-2 sm:space-x-3 touch-friendly flex-1 sm:flex-initial"> 
             <div className="w-8 h-8 sm:w-10 sm:h-10 bg-secondary rounded-lg flex items-center justify-center flex-shrink-0"> 
               <Scale className="w-5 h-5 sm:w-6 sm:h-6 text-primary-foreground" /> 
             </div> 
@@ -36,7 +36,7 @@ const Header = () => {
               </h1> 
               <p className="text-xs hidden sm:block text-muted-foreground">Law School and Beyond</p> 
             </div> 
-          </a> 
+          </Link> 
           {/* Right-hand controls */} 
           <div className="flex items-center gap-2 sm:gap-4"> 
             {location.pathname === "/auth" ? ( 
@@ -58,8 +58,7 @@ const Header = () => {
             { userProfile?.role === 'mentor' && (
               <Link to="/resources" className="font-bold text-primary hover:text-accent transition-colors" > Resource Hub </Link>
             )}
-            {user ? 
-            ( 
+            {user ? (
               <> 
                 <span className="text-xs sm:text-sm text-muted-foreground"> 
                   {isAdmin() ? 'Admin' :  userProfile?.role === 'mentor' ? "Mentor" : "Mentee"} 
@@ -83,13 +82,7 @@ const Header = () => {
                   <span className="hidden sm:inline">Sign Out</span> 
                 </Link> 
               </> 
-            ) : ( 
-              {/* <Link to="/auth" className="inline-flex items-center px-3 py-1.5 text-sm font-medium rounded-md border border-border text-foreground hover:text-primary hover:border-primary transition-colors" > 
-                <User className="h-4 w-4 mr-1" /> 
-                <span className="hidden sm:inline">Sign In</span> 
-              </Link> */}
-            )
-            } 
+            ) : null}
           </div> 
         </div> 
       </div> 
