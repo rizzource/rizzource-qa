@@ -44,6 +44,12 @@ const MinimalistHome = () => {
               </p>
             </div>
 
+            <div style={{marginTop: -15}}>
+              <p className="text-lg sm:text-xl lg:text-2xl text-muted-foreground leading-relaxed max-w-4xl mx-auto break-words">
+                Coming Soon...
+              </p>
+            </div>
+
             {/* View Matchups Button - only show when logged in */}
             {user && (
               <div className="flex justify-center mt-8">
