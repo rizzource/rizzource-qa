@@ -38,7 +38,7 @@ const Header = () => {
             </div> 
           </a> 
           {/* Right-hand controls */} 
-          <div className="flex items-center gap-2 sm:gap-4"> 
+          {/* <div className="flex items-center gap-2 sm:gap-4"> 
             {location.pathname === "/auth" ? ( 
               // Show Back to Home Button on Auth Page 
               <Link to="/" className="inline-flex items-center px-3 py-1.5 text-sm font-medium rounded-md border border-border text-foreground hover:text-primary hover:border-primary transition-colors" > 
@@ -54,7 +54,7 @@ const Header = () => {
                 </Link> 
               </> 
             ) : null} 
-            {/* Resource Hub only visible for Mentors */}
+            
             { userProfile?.role === 'mentor' && (
               <Link to="/resources" className="font-bold text-primary hover:text-accent transition-colors" > Resource Hub </Link>
             )}
@@ -90,7 +90,7 @@ const Header = () => {
               </Link> 
             )
             } 
-          </div> 
+          </div> */}
         </div> 
       </div> 
     </header> 
