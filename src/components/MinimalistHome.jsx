@@ -42,9 +42,6 @@ const MinimalistHome = () => {
               <p className="text-lg sm:text-xl lg:text-2xl text-muted-foreground leading-relaxed max-w-4xl mx-auto break-words">
                 Resources and tools for tomorrow’s legal minds
               </p>
-            </div>
-
-            <div style={{marginTop: -15}}>
               <p className="text-lg sm:text-xl lg:text-2xl text-muted-foreground leading-relaxed max-w-4xl mx-auto break-words">
                 Coming Soon...
               </p>
