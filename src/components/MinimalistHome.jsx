@@ -64,7 +64,7 @@ const MinimalistHome = () => {
           </div>
 
           {/* Timeline Component */}
-          <Timeline />
+          {user && <Timeline />}
         </div>
       </div>
     </section>

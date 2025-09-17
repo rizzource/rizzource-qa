@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Calendar, MapPin, Clock, ChevronLeft, ChevronRight } from 'lucide-react';
+import { X, Calendar, MapPin, Clock, ChevronLeft, ChevronRight, Pencil, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { createPortal } from 'react-dom';
+import { supabase } from '@/integrations/supabase/client';
 
 const mockEvents = [
   // --- Academic Timeline (Fall 2025) ---
@@ -366,14 +367,61 @@ const Timeline = () => {
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [currentYear, setCurrentYear] = useState(2025); // Default to 2025
   const [direction, setDirection] = useState(0); // For animation direction
+  const [events, setEvents] = useState(mockEvents);
+  const [loading, setLoading] = useState(true);
+  const [isEditing, setIsEditing] = useState(false);
+  const [year, setYear] = useState("2025/2026");
+
+  useEffect(() => {
+    fetchEvents();
+  }, []);
+
+  const handleSave = () => {
+    setIsEditing(false);
+    console.log("Saved year:", year);
+  };
+
+  const fetchEvents = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('events')
+        .select('*')
+        .order('year', { ascending: true })
+        .order('month_index', { ascending: true });
+
+      if (error) {
+        console.error('Error fetching events:', error);
+        setEvents(mockEvents); // Fallback to mock events
+      } else {
+        // Combine database events with mock events
+        const combinedEvents = [...mockEvents, ...data.map(event => ({
+          id: event.id,
+          title: event.title,
+          date: event.date,
+          month: event.month,
+          monthIndex: event.month_index,
+          year: event.year,
+          description: event.description || '',
+          location: event.location || '',
+          time: event.time || ''
+        }))];
+        setEvents(combinedEvents);
+      }
+    } catch (error) {
+      console.error('Error fetching events:', error);
+      setEvents(mockEvents); // Fallback to mock events
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const yearOptions = ['All', 2024, 2025, 2026];
 
   const getFilteredEvents = () => {
     if (currentYear === 'All') {
-      return mockEvents;
+      return events;
     }
-    return mockEvents.filter(event => event.year === currentYear);
+    return events.filter(event => event.year === currentYear);
   };
 
   const filteredEvents = getFilteredEvents();
@@ -420,13 +468,25 @@ const Timeline = () => {
     </motion.div>
   );
 const getEventsForMonth = (month) => {
-    return mockEvents.filter(event => event.month === month);
+    return events.filter(event => event.month === month);
   };
    const [hoveredMonth, setHoveredMonth] = useState(null);
   const [eventType, setEventType] = useState('Academic Events');
-  const CompactTimeline = () => (
-  <div className="min-h-screen bg-background p-8">
-      <div className="max-w-6xl mx-auto">
+  const CompactTimeline = () => {
+    if (loading) {
+      return (
+        <div className="min-h-screen bg-background p-8 flex items-center justify-center">
+          <div className="text-center">
+            <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+            <p className="text-muted-foreground">Loading events...</p>
+          </div>
+        </div>
+      );
+    }
+
+    return (
+      <div className="min-h-screen bg-background p-8">
+        <div className="max-w-6xl mx-auto">
 
         {/* Event Type Toggle */}
       <div className="flex items-center mb-8 space-x-4">
@@ -448,7 +508,37 @@ const getEventsForMonth = (month) => {
 </div>
 
         {/* Timeline Header */}
-        <h2 className="text-2xl font-semibold text-center mb-8">Timeline - 1L (2025/2026)</h2>
+        <div className="flex items-center justify-center gap-2 mb-8">
+          {isEditing ? (
+            <>
+              <input
+                type="text"
+                value={year}
+                onChange={(e) => setYear(e.target.value)}
+                className="text-2xl font-semibold text-center border-b border-accent focus:outline-none focus:ring-0 bg-transparent"
+                autoFocus
+              />
+              <button
+                onClick={handleSave}
+                className="p-1 rounded-full hover:bg-accent/10"
+              >
+                <Check className="w-5 h-5 text-accent" />
+              </button>
+            </>
+          ) : (
+            <>
+              <h2 className="text-2xl font-semibold text-center">
+                Timeline - 1L ({year})
+              </h2>
+              <button
+                onClick={() => setIsEditing(true)}
+                className="p-1 rounded-full hover:bg-accent/10"
+              >
+                <Pencil className="w-5 h-5 text-accent" />
+              </button>
+            </>
+          )}
+        </div>
 
         {/* Timeline */}
         <div className="relative">
@@ -518,74 +608,83 @@ const getEventsForMonth = (month) => {
         </div>
       </div>
     </div>
-  );
+    );
+  };
 
-  const ExpandedTimeline = () => (
-  <motion.div
-    initial={{ opacity: 0 }}
-    animate={{ opacity: 1 }}
-    exit={{ opacity: 0 }}
-    className="fixed inset-0 bg-background z-50 overflow-y-auto"
-  >
-    <div className="container mx-auto px-4 py-8">
-      <div className="flex justify-between items-center mb-8">
-        <h2 className="text-3xl font-bold text-primary">
-          Academic Year 2025/2026 Timeline
-        </h2>
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => setIsExpanded(false)}
-          className="text-muted-foreground hover:text-foreground"
-        >
-          <X className="h-6 w-6" />
-        </Button>
-      </div>
+    const ExpandedTimeline = () => {
+    // Sort events by year, then by monthIndex
+    const sortedEvents = [...filteredEvents].sort((a, b) => {
+      if (a.year !== b.year) return a.year - b.year;
+      return a.monthIndex - b.monthIndex;
+    });
 
-      {/* Just showing current year events, no carousel */}
-      <motion.div 
-        key={`expanded-events-${currentYear}`}
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4 }}
-        className="grid gap-6 md:grid-cols-2 lg:grid-cols-3"
+    return (
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="fixed inset-0 bg-background z-50 overflow-y-auto"
       >
-        {filteredEvents.map((event, eventIndex) => (
-          <motion.div
-            key={event.id}
+        <div className="container mx-auto px-4 py-8">
+          <div className="flex justify-between items-center mb-8">
+            <h2 className="text-3xl font-bold text-primary">
+              Academic Year 2025/2026 Timeline
+            </h2>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setIsExpanded(false)}
+              className="text-muted-foreground hover:text-foreground"
+            >
+              <X className="h-6 w-6" />
+            </Button>
+          </div>
+
+          {/* Sorted Events */}
+          <motion.div 
+            key={`expanded-events-${currentYear}`}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: eventIndex * 0.05 }}
-            whileHover={{ scale: 1.02 }}
-            className="bg-card border border-border rounded-lg p-6 shadow-sm hover:shadow-md transition-all cursor-pointer"
-            onClick={() => setSelectedEvent(event)}
+            transition={{ duration: 0.4 }}
+            className="grid gap-6 md:grid-cols-2 lg:grid-cols-3"
           >
-            <div className="flex items-start justify-between mb-3">
-              <h3 className="font-semibold text-foreground">{event.title}</h3>
-              <span className="text-xs bg-accent/10 text-accent px-2 py-1 rounded-full font-medium">
-                {event.month}
-              </span>
-            </div>
-            <div className="space-y-2 text-sm text-muted-foreground">
-              <div className="flex items-center gap-2">
-                <Calendar className="h-4 w-4" />
-                {event.date}
-              </div>
-              <div className="flex items-center gap-2">
-                <Clock className="h-4 w-4" />
-                {event.time}
-              </div>
-              <div className="flex items-center gap-2">
-                <MapPin className="h-4 w-4" />
-                {event.location}
-              </div>
-            </div>
+            {sortedEvents.map((event, eventIndex) => (
+              <motion.div
+                key={event.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: eventIndex * 0.05 }}
+                whileHover={{ scale: 1.02 }}
+                className="bg-card border border-border rounded-lg p-6 shadow-sm hover:shadow-md transition-all cursor-pointer"
+                onClick={() => setSelectedEvent(event)}
+              >
+                <div className="flex items-start justify-between mb-3">
+                  <h3 className="font-semibold text-foreground">{event.title}</h3>
+                  <span className="text-xs bg-accent/10 text-accent px-2 py-1 rounded-full font-medium">
+                    {event.month}
+                  </span>
+                </div>
+                <div className="space-y-2 text-sm text-muted-foreground">
+                  <div className="flex items-center gap-2">
+                    <Calendar className="h-4 w-4" />
+                    {event.date}
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Clock className="h-4 w-4" />
+                    {event.time}
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <MapPin className="h-4 w-4" />
+                    {event.location}
+                  </div>
+                </div>
+              </motion.div>
+            ))}
           </motion.div>
-        ))}
+        </div>
       </motion.div>
-    </div>
-  </motion.div>
-);
+    );
+  };
 
 
  const EventModal = () => {

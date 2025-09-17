@@ -156,7 +156,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const isAdmin = () => {
-    return user?.user_metadata?.role === 'admin';
+    return userProfile?.role === 'admin' || user?.user_metadata?.role === 'admin';
   };
 
   const value = {

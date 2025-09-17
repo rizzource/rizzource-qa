@@ -14,14 +14,20 @@ const ProtectedRoute = ({ children, requireAdmin = false }) => {
         return;
       }
       
-      if (requireAdmin && !isAdmin()) {
-        navigate('/');
-        return;
+      if (requireAdmin) {
+        if (!userProfile) {
+          // Wait until profile loads before deciding admin access
+          return;
+        }
+        if (!isAdmin()) {
+          navigate('/');
+          return;
+        }
       }
     }
   }, [user, userProfile, loading, requireAdmin, isAdmin, navigate]);
 
-  if (loading) {
+  if (loading || (requireAdmin && !userProfile)) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin" />
@@ -33,7 +39,7 @@ const ProtectedRoute = ({ children, requireAdmin = false }) => {
     return null;
   }
 
-  if (requireAdmin && !isAdmin()) {
+  if (requireAdmin && (!userProfile || !isAdmin())) {
     return null;
   }
 
