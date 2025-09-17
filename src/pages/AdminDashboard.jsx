@@ -878,20 +878,20 @@ const MenteesTable = ({ data, currentPage, onPageChange, exportToExcel, exportin
                      </TableCell>
                    </TableRow>
                  ) : (
-                   data.data.map((mentee) => (
-                     <TableRow key={mentee.id} className="border-border hover:bg-muted/50 transition-colors duration-200">
-                       <TableCell className="text-foreground font-medium">
-                         {mentee.email}
-                       </TableCell>
-                       <TableCell className="text-muted-foreground text-sm capitalize">{mentee.role}</TableCell>
-                       <TableCell className="text-muted-foreground text-sm">
-                         {new Date(mentee.created_at).toLocaleDateString()}
-                       </TableCell>
-                       <TableCell className="text-muted-foreground text-sm">
-                         {new Date(mentee.updated_at).toLocaleDateString()}
-                       </TableCell>
-                     </TableRow>
-                   ))
+                    data.data.map((mentee) => (
+                      <TableRow key={mentee.id} className="border-border hover:bg-muted/50 transition-colors duration-200">
+                        <TableCell className="text-foreground font-medium">
+                          {mentee.email || 'No email'}
+                        </TableCell>
+                        <TableCell className="text-muted-foreground text-sm capitalize">{mentee.role || 'No role'}</TableCell>
+                        <TableCell className="text-muted-foreground text-sm">
+                          {mentee.created_at ? new Date(mentee.created_at).toLocaleDateString() : 'N/A'}
+                        </TableCell>
+                        <TableCell className="text-muted-foreground text-sm">
+                          {mentee.updated_at ? new Date(mentee.updated_at).toLocaleDateString() : 'N/A'}
+                        </TableCell>
+                      </TableRow>
+                    ))
                 )}
               </TableBody>
             </Table>
@@ -988,20 +988,20 @@ const MentorsTable = ({ data, currentPage, onPageChange, exportToExcel, exportin
                      </TableCell>
                    </TableRow>
                  ) : (
-                   data.data.map((mentor) => (
-                     <TableRow key={mentor.id} className="border-border hover:bg-muted/50 transition-colors duration-200">
-                       <TableCell className="text-foreground font-medium">
-                         {mentor.email}
-                       </TableCell>
-                       <TableCell className="text-muted-foreground text-sm capitalize">{mentor.role}</TableCell>
-                       <TableCell className="text-muted-foreground text-sm">
-                         {new Date(mentor.created_at).toLocaleDateString()}
-                       </TableCell>
-                       <TableCell className="text-muted-foreground text-sm">
-                         {new Date(mentor.updated_at).toLocaleDateString()}
-                       </TableCell>
-                     </TableRow>
-                   ))
+                    data.data.map((mentor) => (
+                      <TableRow key={mentor.id} className="border-border hover:bg-muted/50 transition-colors duration-200">
+                        <TableCell className="text-foreground font-medium">
+                          {mentor.email || 'No email'}
+                        </TableCell>
+                        <TableCell className="text-muted-foreground text-sm capitalize">{mentor.role || 'No role'}</TableCell>
+                        <TableCell className="text-muted-foreground text-sm">
+                          {mentor.created_at ? new Date(mentor.created_at).toLocaleDateString() : 'N/A'}
+                        </TableCell>
+                        <TableCell className="text-muted-foreground text-sm">
+                          {mentor.updated_at ? new Date(mentor.updated_at).toLocaleDateString() : 'N/A'}
+                        </TableCell>
+                      </TableRow>
+                    ))
                 )}
               </TableBody>
             </Table>
