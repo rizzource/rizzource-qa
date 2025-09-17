@@ -84,10 +84,10 @@ const Header = () => {
                 </Link> 
               </> 
             ) : ( 
-              <Link to="/auth" className="inline-flex items-center px-3 py-1.5 text-sm font-medium rounded-md border border-border text-foreground hover:text-primary hover:border-primary transition-colors" > 
+              {/* <Link to="/auth" className="inline-flex items-center px-3 py-1.5 text-sm font-medium rounded-md border border-border text-foreground hover:text-primary hover:border-primary transition-colors" > 
                 <User className="h-4 w-4 mr-1" /> 
                 <span className="hidden sm:inline">Sign In</span> 
-              </Link> 
+              </Link> */}
             )
             } 
           </div> 
