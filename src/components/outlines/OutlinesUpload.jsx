@@ -51,10 +51,13 @@ const OutlinesUpload = ({ onUploadSuccess }) => {
     console.log("File selected:", file);
 
     const allowedTypes = [
-      "application/pdf",
-      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-      "application/msword"
+      "application/pdf", // PDF
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document", // DOCX
+      "application/msword", // DOC
+      "audio/mpeg", // MP3
+      "audio/mp4" // M4A
     ];
+
     if (!allowedTypes.includes(file.type)) {
       console.error("Invalid file type:", file.type);
       setUploadStatus("error");
