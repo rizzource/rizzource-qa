@@ -37,7 +37,7 @@ const OutlinesUpload = ({ onUploadSuccess }) => {
     }
   }, []);
 
-  const topics = ["Constitutional Law", "Contracts", "Criminal Law", "Torts", "Civil Procedure", "Property Law", "Administrative Law", "Evidence", "Tax Law", "Corporate Law", "Employment Law", "Environmental Law", "Leg Reg"];
+  const topics = ["Constitutional Law", "Contracts", "Criminal Law", "Torts", "Civil Procedure", "Property Law", "Administrative Law", "Evidence", "Tax Law", "Corporate Law", "Employment Law", "Environmental Law", "Leg Reg", "Family Law I & II", "Law and Economy", "Business Associations"];
   const years = ["1L", "2L", "3L"];
 
   const handleInputChange = (field, value) => {
@@ -52,16 +52,14 @@ const OutlinesUpload = ({ onUploadSuccess }) => {
 
     const allowedTypes = [
       "application/pdf",
-      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-      "application/msword"
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document", // .docx
+      "application/msword", // .doc
+      "audio/mpeg", // .mp3
+      "audio/mp3",  // .mp3 (some browsers)
+      "audio/x-m4a", // .m4a
+      "audio/mp4"    // .m4a (alternative)
     ];
-    if (!allowedTypes.includes(file.type)) {
-      console.error("Invalid file type:", file.type);
-      setUploadStatus("error");
-      return;
-    }
-
-    if (file.size > 10 * 1024 * 1024) {
+    if (file.size > 100 * 1024 * 1024) { // <-- updated to 100MB
       console.error("File too large:", file.size);
       setUploadStatus("error");
       return;
@@ -263,7 +261,7 @@ const OutlinesUpload = ({ onUploadSuccess }) => {
             <AlertCircle className="h-4 w-4 text-accent" />
             <AlertDescription className="text-primary">
               <strong>Upload Guidelines:</strong> Please ensure your outline is your original work or properly attributed. 
-              Accepted formats: PDF, DOCX. Maximum file size: 10MB.
+              Accepted formats: PDF, DOCX, DOC, MP3, M4A. Maximum file size: 100MB.
             </AlertDescription>
           </Alert>
 
@@ -281,7 +279,7 @@ const OutlinesUpload = ({ onUploadSuccess }) => {
             <Alert className="border-destructive/30 bg-destructive/10">
               <AlertCircle className="h-4 w-4 text-destructive" />
               <AlertDescription className="text-primary">
-                <strong>Upload Error:</strong> Please check that your file is a PDF or DOCX under 10MB.
+                <strong>Upload Error:</strong> Please check that your file is a PDF, DOC, DOCX, MP3, or M4A under 100MB.
               </AlertDescription>
             </Alert>
           )}
@@ -401,7 +399,7 @@ const OutlinesUpload = ({ onUploadSuccess }) => {
                     ref={fileInputRef}
                     type="file"
                     id="file"
-                    accept=".pdf,.docx"
+                    accept=".pdf,.docx,.doc,.mp3,.m4a"
                     onChange={handleFileInputChange}
                     className="hidden"
                     required
@@ -450,7 +448,7 @@ const OutlinesUpload = ({ onUploadSuccess }) => {
                           <p className="text-primary font-medium">
                             {dragActive ? 'Drop your file here' : 'Drag & drop your outline or click to browse'}
                           </p>
-                          <p className="text-sm text-muted-foreground">PDF or DOCX files up to 10MB</p>
+                          <p className="text-sm text-muted-foreground">PDF, DOCX, DOC, MP3, or M4A files up to 100MB</p>
                         </div>
                       </div>
                     </label>
