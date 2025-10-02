@@ -69,20 +69,23 @@ export const AdminDashboard = () => {
     mentors: 0,
     events: 0,
     exports: 0,
+    outlines: 0, // <-- add outlines stat
   });
-  
+
   // Pagination state for each table
   const [menteesData, setMenteesData] = useState({ data: [], total: 0, loading: false });
   const [mentorsData, setMentorsData] = useState({ data: [], total: 0, loading: false });
+  const [outlinesData, setOutlinesData] = useState({ data: [], total: 0, loading: false }); // <-- outlines state
   // const [feedbackData, setFeedbackData] = useState({ data: [], total: 0, loading: false });
   
   const [menteesPage, setMenteesPage] = useState(1);
   const [mentorsPage, setMentorsPage] = useState(1);
+  const [outlinesPage, setOutlinesPage] = useState(1); // <-- outlines page
   // const [feedbackPage, setFeedbackPage] = useState(1);
   
   const [loading, setLoading] = useState(true);
   const [exportingTable, setExportingTable] = useState("");
-  const [activeSection, setActiveSection] = useState(0); // 0=mentees,1=mentors,2=events
+  const [activeSection, setActiveSection] = useState(0); // 0=mentees,1=mentors,2=events,3=outlines
   const [eventsData, setEventsData] = useState({ data: [], total: 0, loading: false });
   const [eventsPage, setEventsPage] = useState(1);
   const [showEventForm, setShowEventForm] = useState(false);
@@ -98,12 +101,12 @@ export const AdminDashboard = () => {
 
   // Update handlePrev and handleNext to scroll to top
   const handlePrev = () => {
-    setActiveSection((prev) => (prev > 0 ? prev - 1 : 2));
+    setActiveSection((prev) => (prev > 0 ? prev - 1 : 3));
     scrollToTop();
   };
 
   const handleNext = () => {
-    setActiveSection((prev) => (prev < 2 ? prev + 1 : 0));
+    setActiveSection((prev) => (prev < 3 ? prev + 1 : 0));
     scrollToTop();
   };
 
@@ -156,11 +159,13 @@ export const AdminDashboard = () => {
         mentorsResponse,
         exportsResponse,
         eventsResponse,
+        outlinesResponse,
       ] = await Promise.all([
         supabase.from("profiles").select("*", { count: "exact", head: true }).eq("role", "mentee"),
         supabase.from("profiles").select("*", { count: "exact", head: true }).eq("role", "mentor"),
         supabase.from("data_exports").select("*", { count: "exact", head: true }),
         supabase.from("events").select("*", { count: "exact", head: true }),
+        supabase.from("outlines").select("*", { count: "exact", head: true }), // outlines
       ]);
       
       setStats({
@@ -168,6 +173,7 @@ export const AdminDashboard = () => {
         mentors: mentorsResponse.count || 0,
         events: eventsResponse.count || 0,
         exports: exportsResponse.count || 0,
+        outlines: outlinesResponse.count || 0, // outlines
       });
     } catch (error) {
       console.error("Error fetching stats:", error);
@@ -175,13 +181,44 @@ export const AdminDashboard = () => {
     }
   };
 
+  // --- Add fetchOutlines function ---
+  const fetchOutlines = async (page) => {
+    if (!isAdmin()) return;
+    setOutlinesData(prev => ({ ...prev, loading: true }));
+    try {
+      const from = (page - 1) * PAGE_SIZE;
+      const to = from + PAGE_SIZE - 1;
+      // Use .select("*", { count: "exact" }) for both data and count
+      const { data, count, error } = await supabase
+        .from("outlines")
+        .select("*", { count: "exact" })
+        .order("created_at", { ascending: false })
+        .range(from, to);
+
+      if (error) throw error;
+
+      setOutlinesData({
+        data: data || [],
+        total: count || 0,
+        loading: false,
+      });
+      setOutlinesPage(page);
+    } catch (error) {
+      console.error("Error fetching outlines:", error);
+      setOutlinesData(prev => ({ ...prev, loading: false }));
+      toast.error("Failed to fetch outlines data");
+    }
+  };
+
   const fetchAllData = async () => {
     if (!isAdmin()) return;
+    setLoading(true); // Ensure loading is set to true at the start
     try {
       await Promise.all([
         fetchMentees(1),
         fetchMentors(1),
         fetchEvents(1),
+        fetchOutlines(1), // outlines
       ]);
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -465,7 +502,7 @@ export const AdminDashboard = () => {
       </div>
       <div className="relative z-10 container mx-auto px-4 pb-8 space-y-6 lg:space-y-8 flex-1">
         {/* Stats Section */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 lg:gap-6">
           <div onClick={() => handleCardClick(0)} className="cursor-pointer">
             <Card className="hover:shadow-2xl transition-all bg-card/90 backdrop-blur-lg border border-border shadow-xl">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -496,19 +533,6 @@ export const AdminDashboard = () => {
             </Card>
           </div>
           
-          {/* <Card className="bg-card/90 backdrop-blur-lg border border-border shadow-xl">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Feedback</CardTitle>
-              <MessageSquare className="h-4 w-4 text-accent" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-foreground">{stats.feedback}</div>
-              <p className="text-xs text-muted-foreground mt-1">
-                User submissions
-              </p>
-            </CardContent>
-          </Card> */}
-          
           <div onClick={() => handleCardClick(2)} className="cursor-pointer">
             <Card className="hover:shadow-2xl transition-all bg-card/90 backdrop-blur-lg border border-border shadow-xl">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -519,6 +543,21 @@ export const AdminDashboard = () => {
                 <div className="text-2xl font-bold text-foreground">{stats.events}</div>
                 <p className="text-xs text-muted-foreground mt-1">
                   Timeline events created
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+
+          <div onClick={() => handleCardClick(3)} className="cursor-pointer">
+            <Card className="hover:shadow-2xl transition-all bg-card/90 backdrop-blur-lg border border-border shadow-xl">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium text-muted-foreground">Outlines</CardTitle>
+                <FileText className="h-4 w-4 text-accent" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold text-foreground">{stats.outlines}</div>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Uploaded outlines
                 </p>
               </CardContent>
             </Card>
@@ -586,6 +625,19 @@ export const AdminDashboard = () => {
             months={months}
           />
         )}
+        {activeSection === 3 && (
+          <OutlinesTable
+            data={outlinesData}
+            currentPage={outlinesPage}
+            onPageChange={(page) => {
+              fetchOutlines(page);
+              scrollToTop();
+            }}
+            exportToExcel={exportToExcel}
+            exportingTable={exportingTable}
+            pageSize={PAGE_SIZE}
+          />
+        )}
         {/* Feedback section commented out - not currently implemented
         {activeSection === 2 && (
           <FeedbackTable
@@ -614,6 +666,7 @@ export const AdminDashboard = () => {
             {activeSection === 0 && 'Mentees'} 
             {activeSection === 1 && 'Mentors'} 
             {activeSection === 2 && 'Events'}
+            {activeSection === 3 && 'Outlines'}
           </div>
           <Button
             type="button"
@@ -629,6 +682,398 @@ export const AdminDashboard = () => {
       <ScrollToTop />
       <Footer />
     </div>
+  );
+};
+
+// --- Outlines Table Component ---
+const OutlinesTable = ({
+  data,
+  currentPage,
+  onPageChange,
+  exportToExcel,
+  exportingTable,
+  pageSize,
+}) => {
+  const totalPages = Math.ceil(data.total / pageSize);
+  const [editOutlineId, setEditOutlineId] = useState(null);
+  const [editForm, setEditForm] = useState(null);
+  const [deletingId, setDeletingId] = useState(null);
+
+  const [search, setSearch] = useState("");
+  const [searchResults, setSearchResults] = useState(null);
+  const [searchLoading, setSearchLoading] = useState(false);
+
+  // 🔍 Server-side search
+  useEffect(() => {
+    const fetchSearchResults = async () => {
+      if (!search) {
+        setSearchResults(null);
+        return;
+      }
+
+      setSearchLoading(true);
+      const { data: results, error } = await supabase
+        .from("outlines")
+        .select("*")
+        .or(
+          `title.ilike.%${search}%,topic.ilike.%${search}%,professor.ilike.%${search}%`
+        )
+        .order("created_at", { ascending: false });
+
+      if (error) {
+        toast.error("Failed to fetch search results: " + error.message);
+      } else {
+        setSearchResults(results);
+      }
+      setSearchLoading(false);
+    };
+
+    const delayDebounce = setTimeout(fetchSearchResults, 400); // debounce
+    return () => clearTimeout(delayDebounce);
+  }, [search]);
+
+  // ✏️ Edit handler
+  const handleEditClick = (outline) => {
+    setEditOutlineId(outline.id);
+    setEditForm({ ...outline });
+  };
+
+  const handleEditSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const { error } = await supabase
+        .from("outlines")
+        .update({
+          title: editForm.title,
+          topic: editForm.topic,
+          year: editForm.year,
+          professor: editForm.professor,
+        })
+        .eq("id", editOutlineId);
+
+      if (error) throw error;
+      toast.success("Outline updated!");
+      setEditOutlineId(null);
+      setEditForm(null);
+
+      if (search) {
+        // refresh search results
+        setSearch(search + ""); // trigger useEffect
+      } else {
+        await onPageChange(currentPage);
+      }
+    } catch (error) {
+      toast.error("Failed to update outline: " + error.message);
+    }
+  };
+
+  // 🗑️ Delete handler
+  const showDeleteConfirm = (outlineId) => {
+    toast(
+      ({ closeToast }) => (
+        <div className="flex flex-col gap-3">
+          <span className="font-semibold text-destructive">
+            Are you sure you want to delete this outline?
+          </span>
+          <div className="flex gap-2">
+            <Button
+              size="sm"
+              variant="destructive"
+              className="transition-all duration-150 shadow hover:scale-105 focus:ring-2 focus:ring-destructive"
+              onClick={async () => {
+                closeToast();
+                setDeletingId(outlineId);
+                try {
+                  const { error } = await supabase
+                    .from("outlines")
+                    .delete()
+                    .eq("id", outlineId);
+                  if (error) throw error;
+                  toast.success("Outline deleted successfully!");
+                  if (search) {
+                    setSearch(search + ""); // refresh search results
+                  } else {
+                    await onPageChange(currentPage);
+                  }
+                } catch (error) {
+                  toast.error("Failed to delete outline: " + error.message);
+                } finally {
+                  setDeletingId(null);
+                }
+              }}
+            >
+              Yes
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              className="transition-all duration-150 hover:bg-muted/30"
+              onClick={closeToast}
+            >
+              Cancel
+            </Button>
+          </div>
+        </div>
+      ),
+      {
+        autoClose: false,
+        closeOnClick: false,
+        draggable: false,
+        position: "top-center",
+        className: "bg-card border border-border shadow-lg",
+      }
+    );
+  };
+
+  // pick correct dataset (search results OR paginated data)
+  const outlinesToRender = search ? searchResults : data.data;
+
+  return (
+    <Card className="bg-card/90 backdrop-blur-lg border border-border shadow-xl">
+      <CardHeader>
+        <div className="flex flex-col sm:flex-row gap-4 sm:justify-between sm:items-center">
+          <div>
+            <CardTitle className="text-foreground">Outlines</CardTitle>
+            <CardDescription className="text-muted-foreground">
+              All uploaded outlines ({data.total} total)
+            </CardDescription>
+          </div>
+          <div className="flex flex-col sm:flex-row gap-2 sm:items-center">
+            <Input
+              type="text"
+              placeholder="Search by title, topic, professor"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full sm:w-64"
+            />
+            <Button
+              onClick={() =>
+                exportToExcel("outlines", outlinesToRender, "outlines_export")
+              }
+              disabled={exportingTable === "outlines"}
+              className="w-full sm:w-auto"
+            >
+              <FileSpreadsheet className="h-4 w-4 mr-2" />
+              <span className="hidden sm:inline">
+                {exportingTable === "outlines"
+                  ? "Exporting..."
+                  : "Export to Excel"}
+              </span>
+              <span className="sm:hidden">
+                {exportingTable === "outlines" ? "Exporting..." : "Export"}
+              </span>
+            </Button>
+          </div>
+        </div>
+      </CardHeader>
+      <CardContent>
+        {/* Edit Form */}
+        {editOutlineId && editForm && (
+          <Card className="mb-6 border border-border">
+            <CardHeader>
+              <CardTitle className="text-lg">Edit Outline</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handleEditSubmit} className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="edit-outline-title">Title *</Label>
+                    <Input
+                      id="edit-outline-title"
+                      value={editForm.title}
+                      onChange={(e) =>
+                        setEditForm({ ...editForm, title: e.target.value })
+                      }
+                      required
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="edit-outline-topic">Topic *</Label>
+                    <Input
+                      id="edit-outline-topic"
+                      value={editForm.topic}
+                      onChange={(e) =>
+                        setEditForm({ ...editForm, topic: e.target.value })
+                      }
+                      required
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="edit-outline-year">Year *</Label>
+                    <Input
+                      id="edit-outline-year"
+                      value={editForm.year}
+                      onChange={(e) =>
+                        setEditForm({ ...editForm, year: e.target.value })
+                      }
+                      required
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="edit-outline-professor">Professor *</Label>
+                    <Input
+                      id="edit-outline-professor"
+                      value={editForm.professor}
+                      onChange={(e) =>
+                        setEditForm({ ...editForm, professor: e.target.value })
+                      }
+                      required
+                    />
+                  </div>
+                </div>
+                <div className="flex gap-2">
+                  <Button type="submit">Save Changes</Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => {
+                      setEditOutlineId(null);
+                      setEditForm(null);
+                    }}
+                  >
+                    Cancel
+                  </Button>
+                </div>
+              </form>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Table */}
+        <div className="overflow-x-auto">
+          <div className="rounded-md border border-border w-max min-w-full bg-card/50 backdrop-blur-sm">
+            <Table>
+              <TableHeader>
+                <TableRow className="border-border bg-muted/50 backdrop-blur-sm">
+                  <TableHead className="min-w-[180px]">Title</TableHead>
+                  <TableHead className="min-w-[120px]">Topic</TableHead>
+                  <TableHead className="min-w-[120px]">Year</TableHead>
+                  <TableHead className="min-w-[120px]">Professor</TableHead>
+                  <TableHead className="min-w-[120px]">Created At</TableHead>
+                  <TableHead className="min-w-[120px]">File</TableHead>
+                  <TableHead className="min-w-[120px]">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {data.loading || searchLoading ? (
+                  <TableRow>
+                    <TableCell colSpan={7} className="text-center py-8">
+                      <Loader2 className="h-4 w-4 animate-spin mx-auto" />
+                      <span className="ml-2">Loading...</span>
+                    </TableCell>
+                  </TableRow>
+                ) : outlinesToRender?.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={7} className="text-center py-8">
+                      No outlines found
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  outlinesToRender?.map((outline) => (
+                    <TableRow
+                      key={outline.id}
+                      className="border-border hover:bg-muted/50 transition-colors"
+                    >
+                      <TableCell>{outline.title}</TableCell>
+                      <TableCell>{outline.topic}</TableCell>
+                      <TableCell>{outline.year}</TableCell>
+                      <TableCell>{outline.professor}</TableCell>
+                      <TableCell>
+                        {outline.created_at
+                          ? new Date(outline.created_at).toLocaleDateString()
+                          : "—"}
+                      </TableCell>
+                      <TableCell>
+                        {outline.file_url ? (
+                          <a
+                            href={outline.file_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-accent underline"
+                          >
+                            Download
+                          </a>
+                        ) : (
+                          "—"
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="mr-2"
+                          onClick={() => handleEditClick(outline)}
+                        >
+                          Edit
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="destructive"
+                          disabled={deletingId === outline.id}
+                          onClick={() => showDeleteConfirm(outline.id)}
+                        >
+                          {deletingId === outline.id
+                            ? "Deleting..."
+                            : "Delete"}
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </div>
+        </div>
+
+        {/* Pagination (disabled if searching) */}
+        {totalPages > 1 && !search && (
+          <div className="flex justify-center mt-6">
+            <Pagination>
+              <PaginationContent>
+                <PaginationItem>
+                  <PaginationPrevious
+                    onClick={() =>
+                      currentPage > 1 && onPageChange(currentPage - 1)
+                    }
+                    className={
+                      currentPage === 1
+                        ? "pointer-events-none opacity-50"
+                        : "cursor-pointer"
+                    }
+                  />
+                </PaginationItem>
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                  (page) => (
+                    <PaginationItem key={page}>
+                      <PaginationLink
+                        onClick={() => onPageChange(page)}
+                        isActive={currentPage === page}
+                        className="cursor-pointer"
+                      >
+                        {page}
+                      </PaginationLink>
+                    </PaginationItem>
+                  )
+                )}
+                <PaginationItem>
+                  <PaginationNext
+                    onClick={() =>
+                      currentPage < totalPages &&
+                      onPageChange(currentPage + 1)
+                    }
+                    className={
+                      currentPage === totalPages
+                        ? "pointer-events-none opacity-50"
+                        : "cursor-pointer"
+                    }
+                  />
+                </PaginationItem>
+              </PaginationContent>
+            </Pagination>
+          </div>
+        )}
+      </CardContent>
+    </Card>
   );
 };
 
@@ -1007,7 +1452,7 @@ const EventsTable = ({
                         <Button
                           size="sm"
                           variant="outline"
-                          className="mr-2"
+                          className="mr-2 transition-all duration-150 hover:bg-accent/20 hover:text-accent-foreground hover:border-accent"
                           onClick={() => handleEditClick(event)}
                         >
                           Edit
@@ -1016,6 +1461,7 @@ const EventsTable = ({
                           size="sm"
                           variant="destructive"
                           disabled={deletingId === event.id}
+                          className="transition-all duration-150 hover:bg-red-600 hover:text-white"
                           onClick={() => showDeleteConfirm(event.id)}
                         >
                           {deletingId === event.id ? "Deleting..." : "Delete"}
