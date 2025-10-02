@@ -104,7 +104,7 @@ export const AuthProvider = ({ children }) => {
       
       // if (error) throw error;
       setUserProfile(data);
-      console.log("UserDataFromFetchUserProfile", data)
+      // console.log("UserDataFromFetchUserProfile", data)
     } catch (error) {
       console.error('Error fetching profile:', error);
     }

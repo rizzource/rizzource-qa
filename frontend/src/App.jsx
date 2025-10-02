@@ -16,7 +16,7 @@ import ScrollToTop from "./components/ScrollToTop";
 import MatchupPage from "./pages/MatchupPage";
 import AvailabilityScheduler from "./components/AvailabilityScheduler";
 import FixedSlotPoll from "./components/FixedSlotPoll";
-
+import Chatbot from "./components/Chatbot";
 
 
 const queryClient = new QueryClient();
@@ -44,12 +44,12 @@ const App = () => (
       />
       <BrowserRouter>
         <ScrollToTop />
+        <Chatbot />
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/auth" element={<Auth />} />
           <Route path="/resources" element={<ResourceHub />} />
           <Route path="/outlines" element={<OutlinesHub />} />
-          
           <Route path="/outlines/:id" element={<OutlineView />} />
           <Route path="/availability" element={<FixedSlotPoll />} />
           <Route path="/matchup" element={<MatchupPage />} />
