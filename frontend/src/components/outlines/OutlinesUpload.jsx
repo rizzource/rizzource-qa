@@ -333,20 +333,26 @@ const OutlinesUpload = ({ onUploadSuccess }) => {
 
               {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-4"> */}
                 <div className="space-y-2">
-                  <Label htmlFor="year" className="text-primary">Year Level *</Label>
-                  <Select value={formData.year} onValueChange={(value) => handleInputChange('year', value)}>
-                    <SelectTrigger className="bg-card border-border">
-                      <SelectValue placeholder="Select Year" />
-                    </SelectTrigger>
-                    <SelectContent className="bg-card border border-border shadow-lg z-50">
-                      {years.map((year) => (
-                        <SelectItem key={year} value={year}>
-                          {year}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <Label htmlFor="year" className="text-primary">
+                    Year *
+                  </Label>
+                  <input
+                    id="year"
+                    type="text"
+                    value={formData.year}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      // Allow only digits and max 4 characters
+                      if (/^\d{0,4}$/.test(value)) {
+                        handleInputChange("year", value);
+                      }
+                    }}
+                    placeholder="Enter year (e.g. 2025)"
+                    className="bg-card border border-border rounded-md px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-primary"
+                    maxLength={4} // ensures only 4 characters
+                  />
                 </div>
+
 
                 {/* <div className="space-y-2">
                   <Label htmlFor="tags" className="text-primary">Tags (Optional)</Label>

@@ -694,43 +694,53 @@ const OutlinesTable = ({
   exportingTable,
   pageSize,
 }) => {
-  const totalPages = Math.ceil(data.total / pageSize);
   const [editOutlineId, setEditOutlineId] = useState(null);
   const [editForm, setEditForm] = useState(null);
   const [deletingId, setDeletingId] = useState(null);
 
+  // 🔍 Search state
   const [search, setSearch] = useState("");
   const [searchResults, setSearchResults] = useState(null);
   const [searchLoading, setSearchLoading] = useState(false);
 
-  // 🔍 Server-side search
+  // 📄 Pagination state for search
+  const [searchPage, setSearchPage] = useState(1);
+  const searchPageSize = 10;
+
+  // 🔍 Server-side search with pagination
   useEffect(() => {
     const fetchSearchResults = async () => {
       if (!search) {
         setSearchResults(null);
+        setSearchPage(1);
         return;
       }
 
       setSearchLoading(true);
-      const { data: results, error } = await supabase
+
+      const from = (searchPage - 1) * searchPageSize;
+      const to = from + searchPageSize - 1;
+
+      const { data: results, error, count } = await supabase
         .from("outlines")
-        .select("*")
+        .select("*", { count: "exact" })
         .or(
           `title.ilike.%${search}%,topic.ilike.%${search}%,professor.ilike.%${search}%`
         )
-        .order("created_at", { ascending: false });
+        .order("created_at", { ascending: false })
+        .range(from, to);
 
       if (error) {
         toast.error("Failed to fetch search results: " + error.message);
       } else {
-        setSearchResults(results);
+        setSearchResults({ rows: results, total: count });
       }
       setSearchLoading(false);
     };
 
     const delayDebounce = setTimeout(fetchSearchResults, 400); // debounce
     return () => clearTimeout(delayDebounce);
-  }, [search]);
+  }, [search, searchPage]);
 
   // ✏️ Edit handler
   const handleEditClick = (outline) => {
@@ -738,10 +748,11 @@ const OutlinesTable = ({
     setEditForm({ ...outline });
   };
 
+  // ✅ Update outline in Supabase
   const handleEditSubmit = async (e) => {
     e.preventDefault();
     try {
-      const { error } = await supabase
+      const { data: updateResult, error } = await supabase
         .from("outlines")
         .update({
           title: editForm.title,
@@ -749,16 +760,19 @@ const OutlinesTable = ({
           year: editForm.year,
           professor: editForm.professor,
         })
-        .eq("id", editOutlineId);
+        .eq("id", editOutlineId)
+        .select();
 
       if (error) throw error;
       toast.success("Outline updated!");
+
+      // reset edit state
       setEditOutlineId(null);
       setEditForm(null);
 
+      // refresh data
       if (search) {
-        // refresh search results
-        setSearch(search + ""); // trigger useEffect
+        setSearch(search + ""); // re-trigger search useEffect
       } else {
         await onPageChange(currentPage);
       }
@@ -779,7 +793,6 @@ const OutlinesTable = ({
             <Button
               size="sm"
               variant="destructive"
-              className="transition-all duration-150 shadow hover:scale-105 focus:ring-2 focus:ring-destructive"
               onClick={async () => {
                 closeToast();
                 setDeletingId(outlineId);
@@ -804,12 +817,7 @@ const OutlinesTable = ({
             >
               Yes
             </Button>
-            <Button
-              size="sm"
-              variant="outline"
-              className="transition-all duration-150 hover:bg-muted/30"
-              onClick={closeToast}
-            >
+            <Button size="sm" variant="outline" onClick={closeToast}>
               Cancel
             </Button>
           </div>
@@ -820,13 +828,14 @@ const OutlinesTable = ({
         closeOnClick: false,
         draggable: false,
         position: "top-center",
-        className: "bg-card border border-border shadow-lg",
       }
     );
   };
 
-  // pick correct dataset (search results OR paginated data)
-  const outlinesToRender = search ? searchResults : data.data;
+  // 📌 Decide which dataset to render
+  const outlinesToRender = search ? searchResults?.rows : data.data;
+  const totalOutlines = search ? searchResults?.total : data.total;
+  const totalPages = Math.ceil(totalOutlines / pageSize);
 
   return (
     <Card className="bg-card/90 backdrop-blur-lg border border-border shadow-xl">
@@ -835,7 +844,7 @@ const OutlinesTable = ({
           <div>
             <CardTitle className="text-foreground">Outlines</CardTitle>
             <CardDescription className="text-muted-foreground">
-              All uploaded outlines ({data.total} total)
+              All uploaded outlines ({totalOutlines} total)
             </CardDescription>
           </div>
           <div className="flex flex-col sm:flex-row gap-2 sm:items-center">
@@ -843,7 +852,10 @@ const OutlinesTable = ({
               type="text"
               placeholder="Search by title, topic, professor"
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              onChange={(e) => {
+                setSearch(e.target.value);
+                setSearchPage(1); // reset to first page on new search
+              }}
               className="w-full sm:w-64"
             />
             <Button
@@ -854,18 +866,14 @@ const OutlinesTable = ({
               className="w-full sm:w-auto"
             >
               <FileSpreadsheet className="h-4 w-4 mr-2" />
-              <span className="hidden sm:inline">
-                {exportingTable === "outlines"
-                  ? "Exporting..."
-                  : "Export to Excel"}
-              </span>
-              <span className="sm:hidden">
-                {exportingTable === "outlines" ? "Exporting..." : "Export"}
-              </span>
+              {exportingTable === "outlines"
+                ? "Exporting..."
+                : "Export to Excel"}
             </Button>
           </div>
         </div>
       </CardHeader>
+
       <CardContent>
         {/* Edit Form */}
         {editOutlineId && editForm && (
@@ -944,14 +952,14 @@ const OutlinesTable = ({
           <div className="rounded-md border border-border w-max min-w-full bg-card/50 backdrop-blur-sm">
             <Table>
               <TableHeader>
-                <TableRow className="border-border bg-muted/50 backdrop-blur-sm">
-                  <TableHead className="min-w-[180px]">Title</TableHead>
-                  <TableHead className="min-w-[120px]">Topic</TableHead>
-                  <TableHead className="min-w-[120px]">Year</TableHead>
-                  <TableHead className="min-w-[120px]">Professor</TableHead>
-                  <TableHead className="min-w-[120px]">Created At</TableHead>
-                  <TableHead className="min-w-[120px]">File</TableHead>
-                  <TableHead className="min-w-[120px]">Actions</TableHead>
+                <TableRow>
+                  <TableHead>Title</TableHead>
+                  <TableHead>Topic</TableHead>
+                  <TableHead>Year</TableHead>
+                  <TableHead>Professor</TableHead>
+                  <TableHead>Created At</TableHead>
+                  <TableHead>File</TableHead>
+                  <TableHead>Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -970,10 +978,7 @@ const OutlinesTable = ({
                   </TableRow>
                 ) : (
                   outlinesToRender?.map((outline) => (
-                    <TableRow
-                      key={outline.id}
-                      className="border-border hover:bg-muted/50 transition-colors"
-                    >
+                    <TableRow key={outline.id}>
                       <TableCell>{outline.title}</TableCell>
                       <TableCell>{outline.topic}</TableCell>
                       <TableCell>{outline.year}</TableCell>
@@ -1025,29 +1030,36 @@ const OutlinesTable = ({
           </div>
         </div>
 
-        {/* Pagination (disabled if searching) */}
-        {totalPages > 1 && !search && (
+        {/* Pagination */}
+        {totalPages > 1 && (
           <div className="flex justify-center mt-6">
             <Pagination>
               <PaginationContent>
                 <PaginationItem>
                   <PaginationPrevious
                     onClick={() =>
-                      currentPage > 1 && onPageChange(currentPage - 1)
+                      (search
+                        ? searchPage > 1 && setSearchPage(searchPage - 1)
+                        : currentPage > 1 && onPageChange(currentPage - 1))
                     }
                     className={
-                      currentPage === 1
+                      (search ? searchPage : currentPage) === 1
                         ? "pointer-events-none opacity-50"
                         : "cursor-pointer"
                     }
                   />
                 </PaginationItem>
+
                 {Array.from({ length: totalPages }, (_, i) => i + 1).map(
                   (page) => (
                     <PaginationItem key={page}>
                       <PaginationLink
-                        onClick={() => onPageChange(page)}
-                        isActive={currentPage === page}
+                        onClick={() =>
+                          search ? setSearchPage(page) : onPageChange(page)
+                        }
+                        isActive={
+                          (search ? searchPage : currentPage) === page
+                        }
                         className="cursor-pointer"
                       >
                         {page}
@@ -1055,14 +1067,18 @@ const OutlinesTable = ({
                     </PaginationItem>
                   )
                 )}
+
                 <PaginationItem>
                   <PaginationNext
                     onClick={() =>
-                      currentPage < totalPages &&
-                      onPageChange(currentPage + 1)
+                      (search
+                        ? searchPage < totalPages &&
+                          setSearchPage(searchPage + 1)
+                        : currentPage < totalPages &&
+                          onPageChange(currentPage + 1))
                     }
                     className={
-                      currentPage === totalPages
+                      (search ? searchPage : currentPage) === totalPages
                         ? "pointer-events-none opacity-50"
                         : "cursor-pointer"
                     }
