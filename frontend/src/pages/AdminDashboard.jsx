@@ -9,6 +9,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Table,
   TableBody,
@@ -118,7 +119,8 @@ export const AdminDashboard = () => {
     year: new Date().getFullYear(),
     description: '',
     location: '',
-    time: ''
+    time: '',
+    priority: false, 
   });
 
   const months = [
@@ -386,6 +388,7 @@ export const AdminDashboard = () => {
         description: eventForm.description,
         location: eventForm.location,
         time: eventForm.time,
+        priority: eventForm.priority,
         created_by: user.id
       };
 
@@ -786,30 +789,22 @@ const OutlinesTable = ({
     toast(
       ({ closeToast }) => (
         <div className="flex flex-col gap-3">
-          <span className="font-semibold text-destructive">
-            Are you sure you want to delete this outline?
-          </span>
+          <span className="font-semibold text-destructive">Are you sure you want to delete this outline?</span>
           <div className="flex gap-2">
             <Button
               size="sm"
               variant="destructive"
+              className="transition-all duration-150 shadow hover:scale-105 focus:ring-2 focus:ring-destructive"
               onClick={async () => {
                 closeToast();
                 setDeletingId(outlineId);
                 try {
-                  const { error } = await supabase
-                    .from("outlines")
-                    .delete()
-                    .eq("id", outlineId);
+                  const { error } = await supabase.from("events").delete().eq("id", outlineId);
                   if (error) throw error;
-                  toast.success("Outline deleted successfully!");
-                  if (search) {
-                    setSearch(search + ""); // refresh search results
-                  } else {
-                    await onPageChange(currentPage);
-                  }
+                  toast.success("Event deleted successfully!");
+                  await onPageChange(currentPage);
                 } catch (error) {
-                  toast.error("Failed to delete outline: " + error.message);
+                  toast.error("Failed to delete event: " + error.message);
                 } finally {
                   setDeletingId(null);
                 }
@@ -817,7 +812,12 @@ const OutlinesTable = ({
             >
               Yes
             </Button>
-            <Button size="sm" variant="outline" onClick={closeToast}>
+            <Button
+              size="sm"
+              variant="outline"
+              className="transition-all duration-150 hover:bg-muted/30"
+              onClick={closeToast}
+            >
               Cancel
             </Button>
           </div>
@@ -828,6 +828,7 @@ const OutlinesTable = ({
         closeOnClick: false,
         draggable: false,
         position: "top-center",
+        className: "bg-card border border-border shadow-lg",
       }
     );
   };
@@ -1015,11 +1016,10 @@ const OutlinesTable = ({
                           size="sm"
                           variant="destructive"
                           disabled={deletingId === outline.id}
+                          className="transition-all duration-150 hover:bg-red-600 hover:text-white"
                           onClick={() => showDeleteConfirm(outline.id)}
                         >
-                          {deletingId === outline.id
-                            ? "Deleting..."
-                            : "Delete"}
+                          {deletingId === outline.id ? "Deleting..." : "Delete"}
                         </Button>
                       </TableCell>
                     </TableRow>
@@ -1304,6 +1304,16 @@ const EventsTable = ({
                       placeholder="e.g., 9:00 AM, —"
                     />
                   </div>
+                  <div className="flex items-center gap-2 mt-2">
+                    <Checkbox
+                      id="priority"
+                      checked={!!eventForm.priority}
+                      onCheckedChange={(checked) =>
+                        setEventForm((prev) => ({ ...prev, priority: checked }))
+                      }
+                    />
+                    <Label htmlFor="priority">Mark as Priority</Label>
+                  </div>
                 </div>
                 <div>
                   <Label htmlFor="description">Description</Label>
@@ -1433,6 +1443,7 @@ const EventsTable = ({
                   <TableHead className="text-foreground font-semibold min-w-[120px]">Location</TableHead>
                   <TableHead className="text-foreground font-semibold min-w-[80px]">Time</TableHead>
                   <TableHead className="text-foreground font-semibold min-w-[200px]">Description</TableHead>
+                  <TableHead className="text-foreground font-semibold min-w-[100px] text-center">Priority</TableHead>
                   <TableHead className="text-foreground font-semibold min-w-[120px]">Actions</TableHead>
                 </TableRow>
               </TableHeader>
@@ -1463,6 +1474,17 @@ const EventsTable = ({
                       <TableCell className="text-foreground">{event.time || '—'}</TableCell>
                       <TableCell className="text-foreground max-w-[200px] truncate">
                         {event.description || '—'}
+                      </TableCell>
+                      <TableCell className="text-center">
+                        {event.priority ? (
+                          <span className="inline-block px-2 py-1 text-xs font-semibold bg-green-100 text-green-800 rounded-full">
+                            Yes
+                          </span>
+                        ) : (
+                          <span className="inline-block px-2 py-1 text-xs font-semibold bg-gray-200 text-gray-800 rounded-full">
+                            No
+                          </span>
+                        )}
                       </TableCell>
                       <TableCell>
                         <Button
