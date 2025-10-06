@@ -124,18 +124,18 @@ export const AdminDashboard = () => {
   });
 
   const months = [
-    { value: 'Jan', index: 0 },
-    { value: 'Feb', index: 1 },
-    { value: 'Mar', index: 2 },
-    { value: 'Apr', index: 3 },
+    { value: 'January', index: 0 },
+    { value: 'February', index: 1 },
+    { value: 'March', index: 2 },
+    { value: 'April', index: 3 },
     { value: 'May', index: 4 },
-    { value: 'Jun', index: 5 },
-    { value: 'Jul', index: 6 },
-    { value: 'Aug', index: 7 },
-    { value: 'Sep', index: 8 },
-    { value: 'Oct', index: 9 },
-    { value: 'Nov', index: 10 },
-    { value: 'Dec', index: 11 }
+    { value: 'June', index: 5 },
+    { value: 'July', index: 6 },
+    { value: 'August', index: 7 },
+    { value: 'September', index: 8 },
+    { value: 'October', index: 9 },
+    { value: 'November', index: 10 },
+    { value: 'December', index: 11 }
   ];
 
   const PAGE_SIZE = 10;
@@ -1133,6 +1133,7 @@ const EventsTable = ({
           description: editForm.description,
           location: editForm.location,
           time: editForm.time,
+          priority: editForm.priority || false,
         })
         .eq("id", editEventId);
 
@@ -1409,6 +1410,16 @@ const EventsTable = ({
                       value={editForm.time}
                       onChange={(e) => setEditForm({...editForm, time: e.target.value})}
                     />
+                  </div>
+                  <div className="flex items-center gap-2 mt-2">
+                    <Checkbox
+                      id="edit-priority"
+                      checked={!!editForm.priority}
+                      onCheckedChange={(checked) =>
+                        setEditForm((prev) => ({ ...prev, priority: checked }))
+                      }
+                    />
+                    <Label htmlFor="edit-priority">Mark as Priority</Label>
                   </div>
                 </div>
                 <div>
