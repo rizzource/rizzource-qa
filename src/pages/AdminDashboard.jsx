@@ -419,6 +419,7 @@ export const AdminDashboard = () => {
       const { error: memberError } = await supabase.from("company_members").insert({
         company_id: companyData.id,
         user_id: companyForm.owner_id,
+        name: companyForm.owner_name,
         role: "owner",
       });
 
@@ -432,6 +433,8 @@ export const AdminDashboard = () => {
         description: "",
         website: "",
         owner_id: "",
+        owner_email: "",
+        owner_password: "",
       });
 
       setShowCompanyForm(false);
@@ -1224,24 +1227,35 @@ const CompaniesTable = ({
                       placeholder="https://example.com"
                     />
                   </div>
-                  <div className="md:col-span-2">
+                  <div>
                     <Label htmlFor="owner_id">Company Owner *</Label>
-                    <Select
+                    <Input
+                      id="owner_id"
                       value={companyForm.owner_id}
-                      onValueChange={(value) => setCompanyForm({ ...companyForm, owner_id: value })}
+                      onChange={(e) => setCompanyForm({ ...companyForm, owner_id: e.target.value })}
+                      placeholder="https://example.com"
                       required
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select owner" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {users.map((user) => (
-                          <SelectItem key={user.id} value={user.id}>
-                            {user.email}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="owner_email">Owner Email *</Label>
+                    <Input
+                      id="owner_email"
+                      value={companyForm.owner_email}
+                      onChange={(e) => setCompanyForm({ ...companyForm, owner_email: e.target.value })}
+                      placeholder="https://example.com"
+                      required
+                    />
+                  </div>
+                  <div className="md:col-span-2">
+                    <Label htmlFor="owner_password">Password *</Label>
+                    <Input
+                      id="owner_password"
+                      value={companyForm.owner_password}
+                      onChange={(e) => setCompanyForm({ ...companyForm, owner_password: e.target.value })}
+                      placeholder="https://example.com"
+                      required
+                    />
                   </div>
                 </div>
                 <div>
