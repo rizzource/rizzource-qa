@@ -55,6 +55,7 @@ export type Database = {
           logo_url: string | null
           name: string
           owner_email: string | null
+          owner_id: string
           owner_name: string | null
           updated_at: string
           website: string | null
@@ -66,6 +67,7 @@ export type Database = {
           logo_url?: string | null
           name: string
           owner_email?: string | null
+          owner_id: string
           owner_name?: string | null
           updated_at?: string
           website?: string | null
@@ -77,6 +79,7 @@ export type Database = {
           logo_url?: string | null
           name?: string
           owner_email?: string | null
+          owner_id?: string
           owner_name?: string | null
           updated_at?: string
           website?: string | null
@@ -772,6 +775,10 @@ export type Database = {
         Returns: boolean
       }
       is_company_member: {
+        Args: { _company_id: string; _user_id: string }
+        Returns: boolean
+      }
+      is_company_owner: {
         Args: { _company_id: string; _user_id: string }
         Returns: boolean
       }
