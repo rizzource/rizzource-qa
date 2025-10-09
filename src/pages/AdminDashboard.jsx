@@ -89,7 +89,8 @@ export const AdminDashboard = () => {
     name: "",
     description: "",
     website: "",
-    owner_id: "",
+    owner_name: "",
+    owner_email: "",
   });
 
   const months = [
@@ -393,53 +394,26 @@ export const AdminDashboard = () => {
 
     try {
       // Validate required fields
-      if (!companyForm.name || !companyForm.owner_id) {
+      if (!companyForm.name || !companyForm.owner_name) {
         toast.error("Please fill in all required fields");
         return;
       }
 
-      // Ensure owner_id is a valid UUID (avoid 'invalid input syntax for type uuid')
-      const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-      if (!uuidRegex.test(companyForm.owner_id)) {
-        toast.error("Please select a valid owner from the list");
-        return;
-      }
-
-      // Get owner's email
-      const { data: ownerProfile, error: ownerError } = await supabase
-        .from("profiles")
-        .select("email")
-        .eq("id", companyForm.owner_id)
-        .single();
-
-      if (ownerError) throw ownerError;
-
-      // Create company
+      // Create company with owner information
       const { data: companyData, error: companyError } = await supabase
         .from("companies")
         .insert({
           name: companyForm.name,
           description: companyForm.description || null,
           website: companyForm.website || null,
-          owner_id: companyForm.owner_id,
-          owner_email: ownerProfile?.email || null,
+          owner_name: companyForm.owner_name,
+          owner_email: companyForm.owner_email || null,
+          owner_id: companyForm.owner_name, // Store owner name as owner_id (it's a text field)
         })
         .select()
         .single();
 
       if (companyError) throw companyError;
-
-      // Add owner to user_roles if not already there
-      await supabase.from("user_roles").insert({ user_id: companyForm.owner_id, role: "owner" }).select();
-
-      // Add owner to company_members
-      const { error: memberError } = await supabase.from("company_members").insert({
-        company_id: companyData.id,
-        user_id: companyForm.owner_id,
-        role: "owner",
-      });
-
-      if (memberError) throw memberError;
 
       toast.success("Company created successfully!");
 
@@ -448,7 +422,8 @@ export const AdminDashboard = () => {
         name: "",
         description: "",
         website: "",
-        owner_id: "",
+        owner_name: "",
+        owner_email: "",
       });
 
       setShowCompanyForm(false);
@@ -1242,41 +1217,23 @@ const CompaniesTable = ({
                     />
                   </div>
                   <div>
-                    <Label htmlFor="owner_id">Company Owner *</Label>
-                    <Select
-                      value={companyForm.owner_id}
-                      onValueChange={(val) => setCompanyForm({ ...companyForm, owner_id: val })}
-                    >
-                      <SelectTrigger id="owner_id">
-                        <SelectValue placeholder="Select owner by email" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {users?.map((u) => (
-                          <SelectItem key={u.id} value={u.id}>
-                            {u.email}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div>
-                    <Label htmlFor="owner_email">Owner Email *</Label>
+                    <Label htmlFor="owner_name">Owner Name *</Label>
                     <Input
-                      id="owner_email"
-                      value={companyForm.owner_email}
-                      onChange={(e) => setCompanyForm({ ...companyForm, owner_email: e.target.value })}
-                      placeholder="https://example.com"
+                      id="owner_name"
+                      value={companyForm.owner_name}
+                      onChange={(e) => setCompanyForm({ ...companyForm, owner_name: e.target.value })}
+                      placeholder="John Doe"
                       required
                     />
                   </div>
-                  <div className="md:col-span-2">
-                    <Label htmlFor="owner_password">Password *</Label>
+                  <div>
+                    <Label htmlFor="owner_email">Owner Email</Label>
                     <Input
-                      id="owner_password"
-                      value={companyForm.owner_password}
-                      onChange={(e) => setCompanyForm({ ...companyForm, owner_password: e.target.value })}
-                      placeholder="https://example.com"
-                      required
+                      id="owner_email"
+                      type="email"
+                      value={companyForm.owner_email}
+                      onChange={(e) => setCompanyForm({ ...companyForm, owner_email: e.target.value })}
+                      placeholder="owner@example.com"
                     />
                   </div>
                 </div>
