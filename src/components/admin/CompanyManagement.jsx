@@ -81,11 +81,15 @@ const CompanyManagement = () => {
           website: data.website,
           owner_name: data.owner_name,
           owner_email: data.owner_email,
+          owner_id: authData.user.id,
         })
         .select()
         .single();
 
-      if (companyError) throw companyError;
+      if (companyError) {
+        console.error('Company creation error:', companyError);
+        throw companyError;
+      }
 
       // Add owner to user_roles
       const { error: roleError } = await supabase
@@ -93,6 +97,7 @@ const CompanyManagement = () => {
         .insert({ user_id: authData.user.id, role: 'owner' });
 
       if (roleError && !roleError.message.includes('duplicate')) {
+        console.error('Role assignment error:', roleError);
         throw roleError;
       }
 
@@ -105,7 +110,10 @@ const CompanyManagement = () => {
           role: 'owner',
         });
 
-      if (memberError) throw memberError;
+      if (memberError) {
+        console.error('Company member creation error:', memberError);
+        throw memberError;
+      }
 
       toast.success('Company and owner account created successfully!');
       form.reset();
@@ -261,7 +269,7 @@ const CompanyManagement = () => {
                         <p className="text-sm text-muted-foreground mt-1">{company.description}</p>
                       )}
                       <div className="flex items-center gap-4 mt-2 text-sm text-muted-foreground">
-                        <span>Owner: {company.owner_name || company.owner_email || 'N/A'}</span>
+                        <span>Owner Email: {company.owner_email || 'N/A'}</span>
                         {company.website && (
                           <a href={company.website} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
                             Visit Website
