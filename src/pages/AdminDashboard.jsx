@@ -407,10 +407,10 @@ export const AdminDashboard = () => {
         options: {
           emailRedirectTo: `${window.location.origin}/`,
           data: {
-            role: 'owner',
+            role: "owner",
             name: companyForm.owner_name,
-          }
-        }
+          },
+        },
       });
 
       if (authError) throw authError;
@@ -434,9 +434,9 @@ export const AdminDashboard = () => {
       if (companyError) throw companyError;
 
       // Add owner to user_roles
-      await supabase.from("user_roles").insert({ 
-        user_id: ownerId, 
-        role: "owner" 
+      await supabase.from("user_roles").insert({
+        user_id: ownerId,
+        role: "owner",
       });
 
       // Add owner to company_members
@@ -1337,7 +1337,9 @@ const CompaniesTable = ({
                   data.data?.map((company) => (
                     <TableRow key={company.id} className="border-border hover:bg-muted/20">
                       <TableCell className="font-medium text-foreground">{company.name}</TableCell>
-                      <TableCell className="text-foreground">{company.owner_name || company.owner_email || "N/A"}</TableCell>
+                      <TableCell className="text-foreground">
+                        {company.owner_name || company.owner_email || "N/A"}
+                      </TableCell>
                       <TableCell className="text-foreground">
                         {company.website ? (
                           <a
