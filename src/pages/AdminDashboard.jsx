@@ -49,6 +49,7 @@ export const AdminDashboard = () => {
     mentees: 0,
     mentors: 0,
     events: 0,
+    companies: 0,
     exports: 0,
   });
 
