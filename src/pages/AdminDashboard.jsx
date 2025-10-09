@@ -400,48 +400,20 @@ export const AdminDashboard = () => {
         return;
       }
 
-      // Step 1: Create the owner's account
-      const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
-        email: companyForm.owner_email,
-        password: companyForm.owner_password,
-        options: {
-          emailRedirectTo: `${window.location.origin}/`,
-        }
-      });
-
-      if (signUpError) throw signUpError;
-
-      if (!signUpData.user) {
-        throw new Error("Failed to create user account");
-      }
-
-      const userId = signUpData.user.id;
-
-      // Step 2: Create the company
-      const { data: companyData, error: companyError } = await supabase
-        .from("companies")
-        .insert({
+      // Call edge function to create company with owner
+      const { data, error } = await supabase.functions.invoke("create-company-with-owner", {
+        body: {
           name: companyForm.name,
           description: companyForm.description || null,
           website: companyForm.website || null,
           owner_name: companyForm.owner_name,
           owner_email: companyForm.owner_email,
-        })
-        .select()
-        .single();
+          owner_password: companyForm.owner_password,
+        },
+      });
 
-      if (companyError) throw companyError;
-
-      // Step 3: Add the owner to company_members table
-      const { error: memberError } = await supabase
-        .from("company_members")
-        .insert({
-          company_id: companyData.id,
-          user_id: userId,
-          role: "owner",
-        });
-
-      if (memberError) throw memberError;
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
 
       toast.success("Company and owner account created successfully!");
 
