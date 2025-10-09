@@ -1311,7 +1311,7 @@ const CompaniesTable = ({
                   data.data?.map((company) => (
                     <TableRow key={company.id} className="border-border hover:bg-muted/20">
                       <TableCell className="font-medium text-foreground">{company.name}</TableCell>
-                      <TableCell className="text-foreground">{company.owner?.email || "N/A"}</TableCell>
+                      <TableCell className="text-foreground">{company.owner_name?.email || "N/A"}</TableCell>
                       <TableCell className="text-foreground">
                         {company.website ? (
                           <a
