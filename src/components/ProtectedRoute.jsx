@@ -3,8 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
 import { Loader2 } from 'lucide-react';
 
-const ProtectedRoute = ({ children, requireAdmin = false }) => {
-  const { user, userProfile, loading, isAdmin } = useAuth();
+const ProtectedRoute = ({ children, requireSuperAdmin = false, requireRole = null }) => {
+  const { user, userRoles, loading, isSuperAdmin, hasRole } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -14,20 +14,31 @@ const ProtectedRoute = ({ children, requireAdmin = false }) => {
         return;
       }
       
-      if (requireAdmin) {
-        if (!userProfile) {
-          // Wait until profile loads before deciding admin access
+      if (requireSuperAdmin) {
+        if (userRoles.length === 0) {
+          // Wait until roles load
           return;
         }
-        if (!isAdmin()) {
+        if (!isSuperAdmin()) {
+          navigate('/');
+          return;
+        }
+      }
+
+      if (requireRole) {
+        if (userRoles.length === 0) {
+          // Wait until roles load
+          return;
+        }
+        if (!hasRole(requireRole)) {
           navigate('/');
           return;
         }
       }
     }
-  }, [user, userProfile, loading, requireAdmin, isAdmin, navigate]);
+  }, [user, userRoles, loading, requireSuperAdmin, requireRole, isSuperAdmin, hasRole, navigate]);
 
-  if (loading || (requireAdmin && !userProfile)) {
+  if (loading || (requireSuperAdmin && userRoles.length === 0) || (requireRole && userRoles.length === 0)) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin" />
@@ -39,7 +50,11 @@ const ProtectedRoute = ({ children, requireAdmin = false }) => {
     return null;
   }
 
-  if (requireAdmin && (!userProfile || !isAdmin())) {
+  if (requireSuperAdmin && !isSuperAdmin()) {
+    return null;
+  }
+
+  if (requireRole && !hasRole(requireRole)) {
     return null;
   }
 

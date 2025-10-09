@@ -53,15 +53,17 @@ import {
   GraduationCap,
   Calendar,
   Plus,
+  Building2,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from 'react-toastify';
 import * as XLSX from "xlsx";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
+import CompanyManagement from "@/components/admin/CompanyManagement";
 
 export const AdminDashboard = () => {
-  const { user, userProfile, isAdmin } = useAuth();
+  const { user, userProfile, isSuperAdmin } = useAuth();
   const [stats, setStats] = useState({
     mentees: 0,
     mentors: 0,
@@ -119,16 +121,16 @@ export const AdminDashboard = () => {
       navigate("/");
       return;
     }
-    if (userProfile && !isAdmin()) {
+    if (userProfile && !isSuperAdmin()) {
       navigate("/");
       return;
     }
     fetchStats();
     fetchAllData();
-  }, [user, userProfile, navigate, isAdmin]);
+  }, [user, userProfile, navigate, isSuperAdmin]);
 
   const fetchStats = async () => {
-    if (!isAdmin()) return;
+    if (!isSuperAdmin()) return;
     try {
       const [
         menteesResponse,
@@ -155,7 +157,7 @@ export const AdminDashboard = () => {
   };
 
   const fetchAllData = async () => {
-    if (!isAdmin()) return;
+    if (!isSuperAdmin()) return;
     try {
       await Promise.all([
         fetchMentees(1),
@@ -171,7 +173,7 @@ export const AdminDashboard = () => {
   };
 
   const fetchMentees = async (page) => {
-    if (!isAdmin()) return;
+    if (!isSuperAdmin()) return;
     setMenteesData(prev => ({ ...prev, loading: true }));
     try {
       const from = (page - 1) * PAGE_SIZE;
@@ -200,7 +202,7 @@ export const AdminDashboard = () => {
   };
 
   const fetchMentors = async (page) => {
-    if (!isAdmin()) return;
+    if (!isSuperAdmin()) return;
     setMentorsData(prev => ({ ...prev, loading: true }));
     try {
       const from = (page - 1) * PAGE_SIZE;
@@ -283,7 +285,7 @@ export const AdminDashboard = () => {
   };
 
   const fetchEvents = async (page) => {
-    if (!isAdmin()) return;
+    if (!isSuperAdmin()) return;
     setEventsData(prev => ({ ...prev, loading: true }));
     try {
       const from = (page - 1) * PAGE_SIZE;
@@ -312,7 +314,7 @@ export const AdminDashboard = () => {
 
   const handleEventSubmit = async (e) => {
     e.preventDefault();
-    if (!isAdmin()) return;
+    if (!isSuperAdmin()) return;
 
     try {
       // Find the monthIndex based on the selected month
@@ -382,7 +384,7 @@ export const AdminDashboard = () => {
     );
   }
 
-  if (!user || !isAdmin()) {
+  if (!user || !isSuperAdmin()) {
     return (
       <div className="min-h-screen bg-hero-gradient flex items-center justify-center p-4">
         <Card className="w-full max-w-md shadow-card bg-white/95 backdrop-blur-sm">
@@ -547,6 +549,7 @@ export const AdminDashboard = () => {
             months={months}
           />
         )}
+        {activeSection === 3 && <CompanyManagement />}
         {/* Feedback section commented out - not currently implemented
         {activeSection === 2 && (
           <FeedbackTable
@@ -575,6 +578,7 @@ export const AdminDashboard = () => {
             {activeSection === 0 && 'Mentees'} 
             {activeSection === 1 && 'Mentors'} 
             {activeSection === 2 && 'Events'}
+            {activeSection === 3 && 'Companies'}
           </div>
           <Button
             type="button"

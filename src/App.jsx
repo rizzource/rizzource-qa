@@ -16,6 +16,9 @@ import ScrollToTop from "./components/ScrollToTop";
 import MatchupPage from "./pages/MatchupPage";
 import AvailabilityScheduler from "./components/AvailabilityScheduler";
 import FixedSlotPoll from "./components/FixedSlotPoll";
+import JobPortal from "./pages/JobPortal";
+import JobDetails from "./pages/JobDetails";
+import CompanyDashboard from "./pages/CompanyDashboard";
 
 
 
@@ -56,8 +59,15 @@ const App = () => (
           <Route path="/apalsa-mentorship" element={<Index mentorshipPage={true} />} />
           <Route path="/mentorship-selection" element={<Index mentorshipPage={true} initialState="selection" />} />
           <Route path="/thank-you" element={<ThankYou />} />
+          <Route path="/jobs" element={<JobPortal />} />
+          <Route path="/jobs/:id" element={<JobDetails />} />
+          <Route path="/company-dashboard" element={
+            <ProtectedRoute>
+              <CompanyDashboard />
+            </ProtectedRoute>
+          } />
           <Route path="/admin" element={
-            <ProtectedRoute requireAdmin={true}>
+            <ProtectedRoute requireSuperAdmin={true}>
               <AdminDashboard />
             </ProtectedRoute>
           } />

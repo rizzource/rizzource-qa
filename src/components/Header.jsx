@@ -5,7 +5,7 @@ import { useAuth } from "./AuthProvider";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 
 const Header = () => {
-  const { user, userProfile, isAdmin, signOut } = useAuth();
+  const { user, userProfile, userRoles, isSuperAdmin, signOut } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const { pathname } = useLocation();
@@ -63,16 +63,23 @@ const Header = () => {
 
             {userProfile?.role === "mentor" && (
               <Link to="/resources" className="font-bold text-primary hover:text-accent transition-colors">
-                {" "}
-                Resource Hub{" "}
+                Resource Hub
               </Link>
             )}
+            {(userRoles.includes('owner') || userRoles.includes('hr') || userRoles.includes('admin')) && (
+              <Link to="/company-dashboard" className="font-bold text-primary hover:text-accent transition-colors">
+                Company
+              </Link>
+            )}
+            <Link to="/jobs" className="font-bold text-primary hover:text-accent transition-colors">
+              Jobs
+            </Link>
             {user ? (
               <>
                 <span className="text-xs sm:text-sm text-muted-foreground">
-                  {isAdmin() ? "Admin" : userProfile?.role === "mentor" ? "Mentor" : "Mentee"}
+                  {isSuperAdmin() ? "Super Admin" : userProfile?.role === "mentor" ? "Mentor" : "Mentee"}
                 </span>
-                {isAdmin() && (
+                {isSuperAdmin() && (
                   <Link
                     to="/admin"
                     className="inline-flex items-center px-2 sm:px-3 py-1.5 text-xs sm:text-sm font-medium rounded-md border border-border text-foreground hover:text-primary hover:border-primary transition-colors"
