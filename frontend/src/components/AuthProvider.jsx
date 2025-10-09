@@ -16,6 +16,7 @@ export const useAuth = () => {
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [userProfile, setUserProfile] = useState(null);
+  const [userRoles, setUserRoles] = useState([]);
   const [userGroup, setUserGroup] = useState(null);
   const [groupId, setGroupId] = useState(null);
   const [groupMembers, setGroupMembers] = useState([]);
@@ -46,16 +47,18 @@ export const AuthProvider = ({ children }) => {
         // Save metadata to localStorage for future restores
         authService.saveUserMeta(session.user.user_metadata);
         
-        // Defer profile/group fetching
+        // Defer profile/group/roles fetching
         setTimeout(() => {
           if (!mounted || !session?.user) return;
           fetchUserProfile(session.user.id);
+          fetchUserRoles(session.user.id);
           fetchUserGroup(session.user?.user_metadata?.email || session.user.email);
         }, 0);
       } else {
         // Clear everything on sign out
         setUser(null);
         setUserProfile(null);
+        setUserRoles([]);
         setUserGroup(null);
         setGroupId(null);
         setGroupMembers([]);
@@ -74,11 +77,13 @@ export const AuthProvider = ({ children }) => {
         setUser(session.user);
         authService.saveUserMeta(session.user.user_metadata);
         fetchUserProfile(session.user.id);
+        fetchUserRoles(session.user.id);
         fetchUserGroup(session.user?.user_metadata?.email || session.user.email);
       } else if (!storedMeta) {
         // Only clear if we didn't restore from localStorage
         setUser(null);
         setUserProfile(null);
+        setUserRoles([]);
         setUserGroup(null);
         setGroupId(null);
         setGroupMembers([]);
@@ -102,11 +107,24 @@ export const AuthProvider = ({ children }) => {
         .eq('id', userId)
         .single();
       
-      // if (error) throw error;
       setUserProfile(data);
-      // console.log("UserDataFromFetchUserProfile", data)
     } catch (error) {
       console.error('Error fetching profile:', error);
+    }
+  };
+
+  const fetchUserRoles = async (userId) => {
+    try {
+      const { data, error } = await supabase
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', userId);
+      
+      if (error) throw error;
+      setUserRoles(data?.map(r => r.role) || []);
+    } catch (error) {
+      console.error('Error fetching user roles:', error);
+      setUserRoles([]);
     }
   };
 
@@ -155,13 +173,18 @@ export const AuthProvider = ({ children }) => {
     return { error: null };
   };
 
-  const isAdmin = () => {
-    return userProfile?.role === 'admin' || user?.user_metadata?.role === 'admin';
+  const isSuperAdmin = () => {
+    return userRoles.includes('superadmin');
+  };
+
+  const hasRole = (role) => {
+    return userRoles.includes(role);
   };
 
   const value = {
     user,
     userProfile,
+    userRoles,
     userGroup,
     groupId,
     groupMembers,
@@ -169,8 +192,10 @@ export const AuthProvider = ({ children }) => {
     signIn,
     signUp,
     signOut,
-    isAdmin,
+    isSuperAdmin,
+    hasRole,
     fetchUserProfile,
+    fetchUserRoles,
     fetchUserGroup,
   };
 

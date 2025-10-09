@@ -64,32 +64,37 @@ import Header from "@/components/Header";
 import ScrollToTop from "@/components/ScrollToTop";
 
 export const AdminDashboard = () => {
-  const { user, userProfile, isAdmin } = useAuth();
+  const { user, userProfile, isSuperAdmin } = useAuth();
   const [stats, setStats] = useState({
     mentees: 0,
     mentors: 0,
     events: 0,
     exports: 0,
-    outlines: 0, // <-- add outlines stat
+    outlines: 0,
+    companies: 0,
   });
 
   // Pagination state for each table
   const [menteesData, setMenteesData] = useState({ data: [], total: 0, loading: false });
   const [mentorsData, setMentorsData] = useState({ data: [], total: 0, loading: false });
-  const [outlinesData, setOutlinesData] = useState({ data: [], total: 0, loading: false }); // <-- outlines state
+  const [outlinesData, setOutlinesData] = useState({ data: [], total: 0, loading: false });
+  const [companiesData, setCompaniesData] = useState({ data: [], total: 0, loading: false }); 
   // const [feedbackData, setFeedbackData] = useState({ data: [], total: 0, loading: false });
   
   const [menteesPage, setMenteesPage] = useState(1);
   const [mentorsPage, setMentorsPage] = useState(1);
-  const [outlinesPage, setOutlinesPage] = useState(1); // <-- outlines page
+  const [outlinesPage, setOutlinesPage] = useState(1);
+  const [companiesPage, setCompaniesPage] = useState(1);
   // const [feedbackPage, setFeedbackPage] = useState(1);
   
   const [loading, setLoading] = useState(true);
   const [exportingTable, setExportingTable] = useState("");
-  const [activeSection, setActiveSection] = useState(0); // 0=mentees,1=mentors,2=events,3=outlines
+  const [activeSection, setActiveSection] = useState(0); // 0=mentees,1=mentors,2=events,3=outlines,4=companies
   const [eventsData, setEventsData] = useState({ data: [], total: 0, loading: false });
   const [eventsPage, setEventsPage] = useState(1);
   const [showEventForm, setShowEventForm] = useState(false);
+  const [showCompanyForm, setShowCompanyForm] = useState(false);
+  const [users, setUsers] = useState([]);
   const navigate = useNavigate();
   const topRef = useRef(null);
 
@@ -102,12 +107,12 @@ export const AdminDashboard = () => {
 
   // Update handlePrev and handleNext to scroll to top
   const handlePrev = () => {
-    setActiveSection((prev) => (prev > 0 ? prev - 1 : 3));
+    setActiveSection((prev) => (prev > 0 ? prev - 1 : 4));
     scrollToTop();
   };
 
   const handleNext = () => {
-    setActiveSection((prev) => (prev < 3 ? prev + 1 : 0));
+    setActiveSection((prev) => (prev < 4 ? prev + 1 : 0));
     scrollToTop();
   };
 
@@ -121,6 +126,15 @@ export const AdminDashboard = () => {
     location: '',
     time: '',
     priority: false, 
+  });
+
+  const [companyForm, setCompanyForm] = useState({
+    name: "",
+    description: "",
+    website: "",
+    owner_name: "",
+    owner_email: "",
+    owner_password: "",
   });
 
   const months = [
@@ -145,16 +159,16 @@ export const AdminDashboard = () => {
       navigate("/");
       return;
     }
-    if (userProfile && !isAdmin()) {
+    if (userProfile && !isSuperAdmin()) {
       navigate("/");
       return;
     }
     fetchStats();
     fetchAllData();
-  }, [user, userProfile, navigate, isAdmin]);
+  }, [user, userProfile, navigate, isSuperAdmin]);
 
   const fetchStats = async () => {
-    if (!isAdmin()) return;
+    if (!isSuperAdmin()) return;
     try {
       const [
         menteesResponse,
@@ -162,12 +176,14 @@ export const AdminDashboard = () => {
         exportsResponse,
         eventsResponse,
         outlinesResponse,
+        companiesResponse
       ] = await Promise.all([
         supabase.from("profiles").select("*", { count: "exact", head: true }).eq("role", "mentee"),
         supabase.from("profiles").select("*", { count: "exact", head: true }).eq("role", "mentor"),
         supabase.from("data_exports").select("*", { count: "exact", head: true }),
         supabase.from("events").select("*", { count: "exact", head: true }),
-        supabase.from("outlines").select("*", { count: "exact", head: true }), // outlines
+        supabase.from("outlines").select("*", { count: "exact", head: true }),
+        supabase.from("companies").select("*", { count: "exact", head: true })
       ]);
       
       setStats({
@@ -175,7 +191,8 @@ export const AdminDashboard = () => {
         mentors: mentorsResponse.count || 0,
         events: eventsResponse.count || 0,
         exports: exportsResponse.count || 0,
-        outlines: outlinesResponse.count || 0, // outlines
+        outlines: outlinesResponse.count || 0,
+        companies: companiesResponse.count || 0,
       });
     } catch (error) {
       console.error("Error fetching stats:", error);
@@ -185,7 +202,7 @@ export const AdminDashboard = () => {
 
   // --- Add fetchOutlines function ---
   const fetchOutlines = async (page) => {
-    if (!isAdmin()) return;
+    if (!isSuperAdmin()) return;
     setOutlinesData(prev => ({ ...prev, loading: true }));
     try {
       const from = (page - 1) * PAGE_SIZE;
@@ -213,14 +230,15 @@ export const AdminDashboard = () => {
   };
 
   const fetchAllData = async () => {
-    if (!isAdmin()) return;
+    if (!isSuperAdmin()) return;
     setLoading(true); // Ensure loading is set to true at the start
     try {
       await Promise.all([
         fetchMentees(1),
         fetchMentors(1),
         fetchEvents(1),
-        fetchOutlines(1), // outlines
+        fetchOutlines(1),
+        fetchCompanies(1),
       ]);
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -230,8 +248,20 @@ export const AdminDashboard = () => {
     }
   };
 
+  const fetchUsers = async () => {
+    if (!isSuperAdmin()) return;
+    try {
+      const { data, error } = await supabase.from("profiles").select("id, email").order("email");
+
+      if (error) throw error;
+      setUsers(data || []);
+    } catch (error) {
+      console.error("Error fetching users:", error);
+    }
+  };
+
   const fetchMentees = async (page) => {
-    if (!isAdmin()) return;
+    if (!isSuperAdmin()) return;
     setMenteesData(prev => ({ ...prev, loading: true }));
     try {
       const from = (page - 1) * PAGE_SIZE;
@@ -260,7 +290,7 @@ export const AdminDashboard = () => {
   };
 
   const fetchMentors = async (page) => {
-    if (!isAdmin()) return;
+    if (!isSuperAdmin()) return;
     setMentorsData(prev => ({ ...prev, loading: true }));
     try {
       const from = (page - 1) * PAGE_SIZE;
@@ -289,7 +319,7 @@ export const AdminDashboard = () => {
   };
 
   // const fetchFeedback = async (page) => {
-  //   if (!isAdmin()) return;
+  //   if (!isSuperAdmin()) return;
   //   setFeedbackData(prev => ({ ...prev, loading: true }));
   //   try {
   //     const from = (page - 1) * PAGE_SIZE;
@@ -343,7 +373,7 @@ export const AdminDashboard = () => {
   };
 
   const fetchEvents = async (page) => {
-    if (!isAdmin()) return;
+    if (!isSuperAdmin()) return;
     setEventsData(prev => ({ ...prev, loading: true }));
     try {
       const from = (page - 1) * PAGE_SIZE;
@@ -370,9 +400,37 @@ export const AdminDashboard = () => {
     }
   };
 
+  const fetchCompanies = async (page) => {
+    if (!isSuperAdmin()) return;
+    setCompaniesData((prev) => ({ ...prev, loading: true }));
+    try {
+      const from = (page - 1) * PAGE_SIZE;
+      const to = from + PAGE_SIZE - 1;
+
+      const { data, count, error } = await supabase
+        .from("companies")
+        .select("*", { count: "exact" })
+        .order("created_at", { ascending: false })
+        .range(from, to);
+
+      if (error) throw error;
+
+      setCompaniesData({
+        data: data || [],
+        total: count || 0,
+        loading: false,
+      });
+      setCompaniesPage(page);
+    } catch (error) {
+      console.error("Error fetching companies:", error);
+      setCompaniesData((prev) => ({ ...prev, loading: false }));
+      toast.error("Failed to fetch companies data");
+    }
+  };
+
   const handleEventSubmit = async (e) => {
     e.preventDefault();
-    if (!isAdmin()) return;
+    if (!isSuperAdmin()) return;
 
     try {
       // Find the monthIndex based on the selected month
@@ -424,6 +482,73 @@ export const AdminDashboard = () => {
     }
   };
 
+  const handleCompanySubmit = async (e) => {
+    e.preventDefault();
+    if (!isSuperAdmin()) return;
+
+    try {
+      // Validate required fields
+      if (!companyForm.name || !companyForm.owner_name || !companyForm.owner_email || !companyForm.owner_password) {
+        toast.error("Please fill in all required fields");
+        return;
+      }
+
+      const { name, description, website, owner_email, owner_user_id, owner_name } = companyForm;
+
+      // 1️⃣ Insert company data into 'companies' table
+      const { data: companyData, error: companyError } = await supabase
+        .from("companies")
+        .insert([
+          {
+            name,
+            description,
+            website,
+            owner_name,
+            owner_email,
+          },
+        ])
+        .select()
+        .single();
+
+        if (companyError) throw companyError;
+
+        // const { error: memberError } = await supabase.from("company_members").insert([
+        //   {
+        //     company_id: companyData.id,
+        //     user_id: owner_user_id, 
+        //     name: owner_name,
+        //     role: "owner",
+        //   },
+        // ]);
+
+        // if (memberError) throw memberError;
+
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+
+      toast.success("Company and owner account created successfully!");
+
+      // Reset form
+      setCompanyForm({
+        name: "",
+        description: "",
+        website: "",
+        owner_name: "",
+        owner_email: "",
+        owner_password: "",
+      });
+
+      setShowCompanyForm(false);
+
+      // Refresh companies data and stats
+      await fetchCompanies(1);
+      await fetchStats();
+    } catch (error) {
+      console.error("Error creating company:", error);
+      toast.error("Failed to create company: " + error.message);
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -437,7 +562,7 @@ export const AdminDashboard = () => {
     );
   }
 
-  if (!user || !isAdmin()) {
+  if (!user || !isSuperAdmin()) {
     return (
       <div className="min-h-screen bg-hero-gradient flex items-center justify-center p-4">
         <Card className="w-full max-w-md shadow-card bg-white/95 backdrop-blur-sm">
@@ -565,6 +690,21 @@ export const AdminDashboard = () => {
               </CardContent>
             </Card>
           </div>
+
+          <div onClick={() => handleCardClick(4)} className="cursor-pointer">
+            <Card className="hover:shadow-2xl transition-all bg-card/90 backdrop-blur-lg border border-border shadow-xl">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium text-muted-foreground">Companies</CardTitle>
+                <FileText className="h-4 w-4 text-accent" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold text-foreground">{stats.companies}</div>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Companies Created
+                </p>
+              </CardContent>
+            </Card>
+          </div>
           
           <Link href="/exports">
             <Card className="cursor-pointer hover:shadow-2xl transition-all bg-card/90 backdrop-blur-lg border border-border shadow-xl">
@@ -641,6 +781,22 @@ export const AdminDashboard = () => {
             pageSize={PAGE_SIZE}
           />
         )}
+        {activeSection === 4 && (
+          <CompaniesTable
+            data={companiesData}
+            currentPage={companiesPage}
+            onPageChange={fetchCompanies}
+            exportToExcel={exportToExcel}
+            exportingTable={exportingTable}
+            pageSize={PAGE_SIZE}
+            showCompanyForm={showCompanyForm}
+            setShowCompanyForm={setShowCompanyForm}
+            companyForm={companyForm}
+            setCompanyForm={setCompanyForm}
+            handleCompanySubmit={handleCompanySubmit}
+            users={users}
+          />
+        )}
         {/* Feedback section commented out - not currently implemented
         {activeSection === 2 && (
           <FeedbackTable
@@ -670,6 +826,7 @@ export const AdminDashboard = () => {
             {activeSection === 1 && 'Mentors'} 
             {activeSection === 2 && 'Events'}
             {activeSection === 3 && 'Outlines'}
+            {activeSection === 4 && 'Companies'}
           </div>
           <Button
             type="button"
@@ -1777,6 +1934,236 @@ const MentorsTable = ({ data, currentPage, onPageChange, exportToExcel, exportin
               </PaginationContent>
             </Pagination>
           </div>
+        )}
+      </CardContent>
+    </Card>
+  );
+};
+
+const CompaniesTable = ({
+  data,
+  currentPage,
+  onPageChange,
+  exportToExcel,
+  exportingTable,
+  pageSize,
+  showCompanyForm,
+  setShowCompanyForm,
+  companyForm,
+  setCompanyForm,
+  handleCompanySubmit,
+  users,
+}) => {
+  const totalPages = Math.ceil(data.total / pageSize);
+
+  return (
+    <Card className="bg-card/90 backdrop-blur-lg border border-border shadow-xl">
+      <CardHeader>
+        <div className="flex flex-col sm:flex-row gap-4 sm:justify-between sm:items-center">
+          <div>
+            <CardTitle className="text-foreground">Companies</CardTitle>
+            <CardDescription className="text-muted-foreground">
+              All registered companies ({data.total} total)
+            </CardDescription>
+          </div>
+          <div className="flex gap-2">
+            <Button onClick={() => setShowCompanyForm(!showCompanyForm)} className="w-full sm:w-auto">
+              <Plus className="h-4 w-4 mr-2" />
+              Create Company
+            </Button>
+            <Button
+              onClick={() => exportToExcel("companies", data.data, "companies_export")}
+              disabled={exportingTable === "companies"}
+              variant="outline"
+              className="w-full sm:w-auto"
+            >
+              <FileSpreadsheet className="h-4 w-4 mr-2" />
+              <span className="hidden sm:inline">
+                {exportingTable === "companies" ? "Exporting..." : "Export to Excel"}
+              </span>
+              <span className="sm:hidden">{exportingTable === "companies" ? "Exporting..." : "Export"}</span>
+            </Button>
+          </div>
+        </div>
+      </CardHeader>
+      <CardContent>
+        {showCompanyForm && (
+          <Card className="mb-6 border border-border">
+            <CardHeader>
+              <CardTitle className="text-lg">Create New Company</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handleCompanySubmit} className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="name">Company Name *</Label>
+                    <Input
+                      id="name"
+                      value={companyForm.name}
+                      onChange={(e) => setCompanyForm({ ...companyForm, name: e.target.value })}
+                      placeholder="Acme Corporation"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="website">Website</Label>
+                    <Input
+                      id="website"
+                      type="url"
+                      value={companyForm.website}
+                      onChange={(e) => setCompanyForm({ ...companyForm, website: e.target.value })}
+                      placeholder="https://example.com"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="owner_name">Owner Name *</Label>
+                    <Input
+                      id="owner_name"
+                      value={companyForm.owner_name}
+                      onChange={(e) => setCompanyForm({ ...companyForm, owner_name: e.target.value })}
+                      placeholder="John Doe"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="owner_email">Owner Email *</Label>
+                    <Input
+                      id="owner_email"
+                      type="email"
+                      value={companyForm.owner_email}
+                      onChange={(e) => setCompanyForm({ ...companyForm, owner_email: e.target.value })}
+                      placeholder="owner@example.com"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="owner_password">Owner Password *</Label>
+                    <Input
+                      id="owner_password"
+                      type="password"
+                      value={companyForm.owner_password}
+                      onChange={(e) => setCompanyForm({ ...companyForm, owner_password: e.target.value })}
+                      placeholder="Password for owner account"
+                      required
+                      minLength={6}
+                    />
+                  </div>
+                </div>
+                <div>
+                  <Label htmlFor="description">Description</Label>
+                  <Textarea
+                    id="description"
+                    value={companyForm.description}
+                    onChange={(e) => setCompanyForm({ ...companyForm, description: e.target.value })}
+                    rows={3}
+                    placeholder="About the company..."
+                  />
+                </div>
+                <div className="flex gap-2">
+                  <Button type="submit">Create Company</Button>
+                  <Button type="button" variant="outline" onClick={() => setShowCompanyForm(false)}>
+                    Cancel
+                  </Button>
+                </div>
+              </form>
+            </CardContent>
+          </Card>
+        )}
+
+        <div className="overflow-x-auto">
+          <div className="rounded-md border border-border w-max min-w-full bg-card/50 backdrop-blur-sm">
+            <Table>
+              <TableHeader>
+                <TableRow className="border-border bg-muted/50 backdrop-blur-sm">
+                  <TableHead className="text-foreground font-semibold min-w-[200px]">Company Name</TableHead>
+                  <TableHead className="text-foreground font-semibold min-w-[180px]">Owner Email</TableHead>
+                  <TableHead className="text-foreground font-semibold min-w-[200px]">Website</TableHead>
+                  <TableHead className="text-foreground font-semibold min-w-[250px]">Description</TableHead>
+                  <TableHead className="text-foreground font-semibold min-w-[120px]">Created</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {data.loading ? (
+                  <TableRow>
+                    <TableCell colSpan={5} className="text-center py-8">
+                      <div className="flex items-center justify-center">
+                        <Loader2 className="w-6 h-6 animate-spin mr-2" />
+                        Loading companies...
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ) : data.data?.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={5} className="text-center py-8 text-muted-foreground">
+                      No companies found. Create your first company above.
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  data.data?.map((company) => (
+                    <TableRow key={company.id} className="border-border hover:bg-muted/20">
+                      <TableCell className="font-medium text-foreground">{company.name}</TableCell>
+                      <TableCell className="text-foreground">{company.owner_email || "N/A"}</TableCell>
+                      <TableCell className="text-foreground">
+                        {company.website ? (
+                          <a
+                            href={company.website}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-primary hover:underline"
+                          >
+                            {company.website}
+                          </a>
+                        ) : (
+                          "—"
+                        )}
+                      </TableCell>
+                      <TableCell className="text-foreground max-w-[250px] truncate">
+                        {company.description || "—"}
+                      </TableCell>
+                      <TableCell className="text-foreground">
+                        {company.created_at ? new Date(company.created_at).toLocaleDateString() : "—"}
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </div>
+        </div>
+
+        {totalPages > 1 && (
+          <Pagination className="mt-4">
+            <PaginationContent>
+              <PaginationItem>
+                <PaginationPrevious
+                  onClick={() => currentPage > 1 && onPageChange(currentPage - 1)}
+                  className={currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                />
+              </PaginationItem>
+
+              {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                const pageNum = i + 1;
+                return (
+                  <PaginationItem key={pageNum}>
+                    <PaginationLink
+                      onClick={() => onPageChange(pageNum)}
+                      isActive={currentPage === pageNum}
+                      className="cursor-pointer"
+                    >
+                      {pageNum}
+                    </PaginationLink>
+                  </PaginationItem>
+                );
+              })}
+
+              <PaginationItem>
+                <PaginationNext
+                  onClick={() => currentPage < totalPages && onPageChange(currentPage + 1)}
+                  className={currentPage === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
         )}
       </CardContent>
     </Card>

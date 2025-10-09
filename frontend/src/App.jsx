@@ -16,7 +16,10 @@ import ScrollToTop from "./components/ScrollToTop";
 import MatchupPage from "./pages/MatchupPage";
 import AvailabilityScheduler from "./components/AvailabilityScheduler";
 import FixedSlotPoll from "./components/FixedSlotPoll";
-import Chatbot from "./components/Chatbot";
+import JobPortal from "./pages/JobPortal";
+import JobDetails from "./pages/JobDetails";
+import CompanyDashboard from "./pages/CompanyDashboard";
+
 
 
 const queryClient = new QueryClient();
@@ -44,20 +47,27 @@ const App = () => (
       />
       <BrowserRouter>
         <ScrollToTop />
-        <Chatbot />
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/auth" element={<Auth />} />
           <Route path="/resources" element={<ResourceHub />} />
           <Route path="/outlines" element={<OutlinesHub />} />
+          
           <Route path="/outlines/:id" element={<OutlineView />} />
           <Route path="/availability" element={<FixedSlotPoll />} />
           <Route path="/matchup" element={<MatchupPage />} />
           <Route path="/apalsa-mentorship" element={<Index mentorshipPage={true} />} />
           <Route path="/mentorship-selection" element={<Index mentorshipPage={true} initialState="selection" />} />
           <Route path="/thank-you" element={<ThankYou />} />
+          <Route path="/jobs" element={<JobPortal />} />
+          <Route path="/jobs/:id" element={<JobDetails />} />
+          <Route path="/company-dashboard" element={
+            <ProtectedRoute>
+              <CompanyDashboard />
+            </ProtectedRoute>
+          } />
           <Route path="/admin" element={
-            <ProtectedRoute requireAdmin={true}>
+            <ProtectedRoute requireSuperAdmin={true}>
               <AdminDashboard />
             </ProtectedRoute>
           } />
