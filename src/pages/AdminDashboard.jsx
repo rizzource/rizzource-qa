@@ -398,6 +398,13 @@ export const AdminDashboard = () => {
         return;
       }
 
+      // Ensure owner_id is a valid UUID (avoid 'invalid input syntax for type uuid')
+      const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+      if (!uuidRegex.test(companyForm.owner_id)) {
+        toast.error("Please select a valid owner from the list");
+        return;
+      }
+
       // Get owner's email
       const { data: ownerProfile, error: ownerError } = await supabase
         .from("profiles")
@@ -1236,13 +1243,21 @@ const CompaniesTable = ({
                   </div>
                   <div>
                     <Label htmlFor="owner_id">Company Owner *</Label>
-                    <Input
-                      id="owner_id"
+                    <Select
                       value={companyForm.owner_id}
-                      onChange={(e) => setCompanyForm({ ...companyForm, owner_id: e.target.value })}
-                      placeholder="https://example.com"
-                      required
-                    />
+                      onValueChange={(val) => setCompanyForm({ ...companyForm, owner_id: val })}
+                    >
+                      <SelectTrigger id="owner_id">
+                        <SelectValue placeholder="Select owner by email" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {users?.map((u) => (
+                          <SelectItem key={u.id} value={u.id}>
+                            {u.email}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
                   <div>
                     <Label htmlFor="owner_email">Owner Email *</Label>
