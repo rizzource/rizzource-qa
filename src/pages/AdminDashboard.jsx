@@ -41,7 +41,6 @@ import { toast } from "react-toastify";
 import * as XLSX from "xlsx";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
-import CompanyManagement from "@/components/admin/CompanyManagement";
 
 export const AdminDashboard = () => {
   const { user, userProfile, isSuperAdmin } = useAuth();
@@ -56,18 +55,22 @@ export const AdminDashboard = () => {
   // Pagination state for each table
   const [menteesData, setMenteesData] = useState({ data: [], total: 0, loading: false });
   const [mentorsData, setMentorsData] = useState({ data: [], total: 0, loading: false });
+  const [companiesData, setCompaniesData] = useState({ data: [], total: 0, loading: false });
   // const [feedbackData, setFeedbackData] = useState({ data: [], total: 0, loading: false });
 
   const [menteesPage, setMenteesPage] = useState(1);
   const [mentorsPage, setMentorsPage] = useState(1);
+  const [companiesPage, setCompaniesPage] = useState(1);
   // const [feedbackPage, setFeedbackPage] = useState(1);
 
   const [loading, setLoading] = useState(true);
   const [exportingTable, setExportingTable] = useState("");
-  const [activeSection, setActiveSection] = useState(0); // 0=mentees,1=mentors,2=events
+  const [activeSection, setActiveSection] = useState(0); // 0=mentees,1=mentors,2=events,3=companies
   const [eventsData, setEventsData] = useState({ data: [], total: 0, loading: false });
   const [eventsPage, setEventsPage] = useState(1);
   const [showEventForm, setShowEventForm] = useState(false);
+  const [showCompanyForm, setShowCompanyForm] = useState(false);
+  const [users, setUsers] = useState([]);
   const navigate = useNavigate();
 
   // Event form state
@@ -79,6 +82,14 @@ export const AdminDashboard = () => {
     description: "",
     location: "",
     time: "",
+  });
+
+  // Company form state
+  const [companyForm, setCompanyForm] = useState({
+    name: "",
+    description: "",
+    website: "",
+    owner_id: "",
   });
 
   const months = [
@@ -138,12 +149,27 @@ export const AdminDashboard = () => {
   const fetchAllData = async () => {
     if (!isSuperAdmin()) return;
     try {
-      await Promise.all([fetchMentees(1), fetchMentors(1), fetchEvents(1)]);
+      await Promise.all([fetchMentees(1), fetchMentors(1), fetchEvents(1), fetchCompanies(1), fetchUsers()]);
     } catch (error) {
       console.error("Error fetching data:", error);
       toast.error("Failed to fetch dashboard data");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchUsers = async () => {
+    if (!isSuperAdmin()) return;
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('id, email')
+        .order('email');
+
+      if (error) throw error;
+      setUsers(data || []);
+    } catch (error) {
+      console.error('Error fetching users:', error);
     }
   };
 
@@ -287,6 +313,34 @@ export const AdminDashboard = () => {
     }
   };
 
+  const fetchCompanies = async (page) => {
+    if (!isSuperAdmin()) return;
+    setCompaniesData((prev) => ({ ...prev, loading: true }));
+    try {
+      const from = (page - 1) * PAGE_SIZE;
+      const to = from + PAGE_SIZE - 1;
+
+      const { data, count, error } = await supabase
+        .from('companies')
+        .select('*, profiles!companies_owner_id_fkey(email)', { count: 'exact' })
+        .order('created_at', { ascending: false })
+        .range(from, to);
+
+      if (error) throw error;
+
+      setCompaniesData({
+        data: data || [],
+        total: count || 0,
+        loading: false,
+      });
+      setCompaniesPage(page);
+    } catch (error) {
+      console.error('Error fetching companies:', error);
+      setCompaniesData((prev) => ({ ...prev, loading: false }));
+      toast.error('Failed to fetch companies data');
+    }
+  };
+
   const handleEventSubmit = async (e) => {
     e.preventDefault();
     if (!isSuperAdmin()) return;
@@ -333,6 +387,69 @@ export const AdminDashboard = () => {
     } catch (error) {
       console.error("Error creating event:", error);
       toast.error("Failed to create event: " + error.message);
+    }
+  };
+
+  const handleCompanySubmit = async (e) => {
+    e.preventDefault();
+    if (!isSuperAdmin()) return;
+
+    try {
+      // Validate required fields
+      if (!companyForm.name || !companyForm.owner_id) {
+        toast.error('Please fill in all required fields');
+        return;
+      }
+
+      // Create company
+      const { data: companyData, error: companyError } = await supabase
+        .from('companies')
+        .insert({
+          name: companyForm.name,
+          description: companyForm.description || null,
+          website: companyForm.website || null,
+          owner_id: companyForm.owner_id,
+        })
+        .select()
+        .single();
+
+      if (companyError) throw companyError;
+
+      // Add owner to user_roles if not already there
+      await supabase
+        .from('user_roles')
+        .insert({ user_id: companyForm.owner_id, role: 'owner' })
+        .select();
+
+      // Add owner to company_members
+      const { error: memberError } = await supabase
+        .from('company_members')
+        .insert({
+          company_id: companyData.id,
+          user_id: companyForm.owner_id,
+          role: 'owner',
+        });
+
+      if (memberError) throw memberError;
+
+      toast.success('Company created successfully!');
+
+      // Reset form
+      setCompanyForm({
+        name: '',
+        description: '',
+        website: '',
+        owner_id: '',
+      });
+
+      setShowCompanyForm(false);
+
+      // Refresh companies data and stats
+      await fetchCompanies(1);
+      await fetchStats();
+    } catch (error) {
+      console.error('Error creating company:', error);
+      toast.error('Failed to create company: ' + error.message);
     }
   };
 
@@ -514,7 +631,22 @@ export const AdminDashboard = () => {
             months={months}
           />
         )}
-        {activeSection === 3 && <CompanyManagement />}
+        {activeSection === 3 && (
+          <CompaniesTable
+            data={companiesData}
+            currentPage={companiesPage}
+            onPageChange={fetchCompanies}
+            exportToExcel={exportToExcel}
+            exportingTable={exportingTable}
+            pageSize={PAGE_SIZE}
+            showCompanyForm={showCompanyForm}
+            setShowCompanyForm={setShowCompanyForm}
+            companyForm={companyForm}
+            setCompanyForm={setCompanyForm}
+            handleCompanySubmit={handleCompanySubmit}
+            users={users}
+          />
+        )}
         {/* Feedback section commented out - not currently implemented
         {activeSection === 2 && (
           <FeedbackTable
@@ -1019,6 +1151,222 @@ const MentorsTable = ({ data, currentPage, onPageChange, exportToExcel, exportin
               </PaginationContent>
             </Pagination>
           </div>
+        )}
+      </CardContent>
+    </Card>
+  );
+};
+
+const CompaniesTable = ({
+  data,
+  currentPage,
+  onPageChange,
+  exportToExcel,
+  exportingTable,
+  pageSize,
+  showCompanyForm,
+  setShowCompanyForm,
+  companyForm,
+  setCompanyForm,
+  handleCompanySubmit,
+  users,
+}) => {
+  const totalPages = Math.ceil(data.total / pageSize);
+
+  return (
+    <Card className="bg-card/90 backdrop-blur-lg border border-border shadow-xl">
+      <CardHeader>
+        <div className="flex flex-col sm:flex-row gap-4 sm:justify-between sm:items-center">
+          <div>
+            <CardTitle className="text-foreground">Companies</CardTitle>
+            <CardDescription className="text-muted-foreground">
+              All registered companies ({data.total} total)
+            </CardDescription>
+          </div>
+          <div className="flex gap-2">
+            <Button onClick={() => setShowCompanyForm(!showCompanyForm)} className="w-full sm:w-auto">
+              <Plus className="h-4 w-4 mr-2" />
+              Create Company
+            </Button>
+            <Button
+              onClick={() => exportToExcel("companies", data.data, "companies_export")}
+              disabled={exportingTable === "companies"}
+              variant="outline"
+              className="w-full sm:w-auto"
+            >
+              <FileSpreadsheet className="h-4 w-4 mr-2" />
+              <span className="hidden sm:inline">
+                {exportingTable === "companies" ? "Exporting..." : "Export to Excel"}
+              </span>
+              <span className="sm:hidden">{exportingTable === "companies" ? "Exporting..." : "Export"}</span>
+            </Button>
+          </div>
+        </div>
+      </CardHeader>
+      <CardContent>
+        {showCompanyForm && (
+          <Card className="mb-6 border border-border">
+            <CardHeader>
+              <CardTitle className="text-lg">Create New Company</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handleCompanySubmit} className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="name">Company Name *</Label>
+                    <Input
+                      id="name"
+                      value={companyForm.name}
+                      onChange={(e) => setCompanyForm({ ...companyForm, name: e.target.value })}
+                      placeholder="Acme Corporation"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="website">Website</Label>
+                    <Input
+                      id="website"
+                      type="url"
+                      value={companyForm.website}
+                      onChange={(e) => setCompanyForm({ ...companyForm, website: e.target.value })}
+                      placeholder="https://example.com"
+                    />
+                  </div>
+                  <div className="md:col-span-2">
+                    <Label htmlFor="owner_id">Company Owner *</Label>
+                    <Select
+                      value={companyForm.owner_id}
+                      onValueChange={(value) => setCompanyForm({ ...companyForm, owner_id: value })}
+                      required
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select owner" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {users.map((user) => (
+                          <SelectItem key={user.id} value={user.id}>
+                            {user.email}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+                <div>
+                  <Label htmlFor="description">Description</Label>
+                  <Textarea
+                    id="description"
+                    value={companyForm.description}
+                    onChange={(e) => setCompanyForm({ ...companyForm, description: e.target.value })}
+                    rows={3}
+                    placeholder="About the company..."
+                  />
+                </div>
+                <div className="flex gap-2">
+                  <Button type="submit">Create Company</Button>
+                  <Button type="button" variant="outline" onClick={() => setShowCompanyForm(false)}>
+                    Cancel
+                  </Button>
+                </div>
+              </form>
+            </CardContent>
+          </Card>
+        )}
+
+        <div className="overflow-x-auto">
+          <div className="rounded-md border border-border w-max min-w-full bg-card/50 backdrop-blur-sm">
+            <Table>
+              <TableHeader>
+                <TableRow className="border-border bg-muted/50 backdrop-blur-sm">
+                  <TableHead className="text-foreground font-semibold min-w-[200px]">Company Name</TableHead>
+                  <TableHead className="text-foreground font-semibold min-w-[180px]">Owner</TableHead>
+                  <TableHead className="text-foreground font-semibold min-w-[200px]">Website</TableHead>
+                  <TableHead className="text-foreground font-semibold min-w-[250px]">Description</TableHead>
+                  <TableHead className="text-foreground font-semibold min-w-[120px]">Created</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {data.loading ? (
+                  <TableRow>
+                    <TableCell colSpan={5} className="text-center py-8">
+                      <div className="flex items-center justify-center">
+                        <Loader2 className="w-6 h-6 animate-spin mr-2" />
+                        Loading companies...
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ) : data.data?.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={5} className="text-center py-8 text-muted-foreground">
+                      No companies found. Create your first company above.
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  data.data?.map((company) => (
+                    <TableRow key={company.id} className="border-border hover:bg-muted/20">
+                      <TableCell className="font-medium text-foreground">{company.name}</TableCell>
+                      <TableCell className="text-foreground">{company.profiles?.email || "N/A"}</TableCell>
+                      <TableCell className="text-foreground">
+                        {company.website ? (
+                          <a 
+                            href={company.website} 
+                            target="_blank" 
+                            rel="noopener noreferrer" 
+                            className="text-primary hover:underline"
+                          >
+                            {company.website}
+                          </a>
+                        ) : (
+                          "—"
+                        )}
+                      </TableCell>
+                      <TableCell className="text-foreground max-w-[250px] truncate">
+                        {company.description || "—"}
+                      </TableCell>
+                      <TableCell className="text-foreground">
+                        {company.created_at ? new Date(company.created_at).toLocaleDateString() : "—"}
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </div>
+        </div>
+
+        {totalPages > 1 && (
+          <Pagination className="mt-4">
+            <PaginationContent>
+              <PaginationItem>
+                <PaginationPrevious
+                  onClick={() => currentPage > 1 && onPageChange(currentPage - 1)}
+                  className={currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                />
+              </PaginationItem>
+
+              {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                const pageNum = i + 1;
+                return (
+                  <PaginationItem key={pageNum}>
+                    <PaginationLink
+                      onClick={() => onPageChange(pageNum)}
+                      isActive={currentPage === pageNum}
+                      className="cursor-pointer"
+                    >
+                      {pageNum}
+                    </PaginationLink>
+                  </PaginationItem>
+                );
+              })}
+
+              <PaginationItem>
+                <PaginationNext
+                  onClick={() => currentPage < totalPages && onPageChange(currentPage + 1)}
+                  className={currentPage === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
         )}
       </CardContent>
     </Card>
