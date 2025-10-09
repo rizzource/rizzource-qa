@@ -161,15 +161,12 @@ export const AdminDashboard = () => {
   const fetchUsers = async () => {
     if (!isSuperAdmin()) return;
     try {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('id, email')
-        .order('email');
+      const { data, error } = await supabase.from("profiles").select("id, email").order("email");
 
       if (error) throw error;
       setUsers(data || []);
     } catch (error) {
-      console.error('Error fetching users:', error);
+      console.error("Error fetching users:", error);
     }
   };
 
@@ -321,9 +318,9 @@ export const AdminDashboard = () => {
       const to = from + PAGE_SIZE - 1;
 
       const { data, count, error } = await supabase
-        .from('companies')
-        .select('*, owner:profiles!owner_id(email)', { count: 'exact' })
-        .order('created_at', { ascending: false })
+        .from("companies")
+        .select("*", { count: "exact" })
+        .order("created_at", { ascending: false })
         .range(from, to);
 
       if (error) throw error;
@@ -335,9 +332,9 @@ export const AdminDashboard = () => {
       });
       setCompaniesPage(page);
     } catch (error) {
-      console.error('Error fetching companies:', error);
+      console.error("Error fetching companies:", error);
       setCompaniesData((prev) => ({ ...prev, loading: false }));
-      toast.error('Failed to fetch companies data');
+      toast.error("Failed to fetch companies data");
     }
   };
 
@@ -397,13 +394,13 @@ export const AdminDashboard = () => {
     try {
       // Validate required fields
       if (!companyForm.name || !companyForm.owner_id) {
-        toast.error('Please fill in all required fields');
+        toast.error("Please fill in all required fields");
         return;
       }
 
       // Create company
       const { data: companyData, error: companyError } = await supabase
-        .from('companies')
+        .from("companies")
         .insert({
           name: companyForm.name,
           description: companyForm.description || null,
@@ -416,30 +413,25 @@ export const AdminDashboard = () => {
       if (companyError) throw companyError;
 
       // Add owner to user_roles if not already there
-      await supabase
-        .from('user_roles')
-        .insert({ user_id: companyForm.owner_id, role: 'owner' })
-        .select();
+      await supabase.from("user_roles").insert({ user_id: companyForm.owner_id, role: "owner" }).select();
 
       // Add owner to company_members
-      const { error: memberError } = await supabase
-        .from('company_members')
-        .insert({
-          company_id: companyData.id,
-          user_id: companyForm.owner_id,
-          role: 'owner',
-        });
+      const { error: memberError } = await supabase.from("company_members").insert({
+        company_id: companyData.id,
+        user_id: companyForm.owner_id,
+        role: "owner",
+      });
 
       if (memberError) throw memberError;
 
-      toast.success('Company created successfully!');
+      toast.success("Company created successfully!");
 
       // Reset form
       setCompanyForm({
-        name: '',
-        description: '',
-        website: '',
-        owner_id: '',
+        name: "",
+        description: "",
+        website: "",
+        owner_id: "",
       });
 
       setShowCompanyForm(false);
@@ -448,8 +440,8 @@ export const AdminDashboard = () => {
       await fetchCompanies(1);
       await fetchStats();
     } catch (error) {
-      console.error('Error creating company:', error);
-      toast.error('Failed to create company: ' + error.message);
+      console.error("Error creating company:", error);
+      toast.error("Failed to create company: " + error.message);
     }
   };
 
@@ -1308,10 +1300,10 @@ const CompaniesTable = ({
                       <TableCell className="text-foreground">{company.owner?.email || "N/A"}</TableCell>
                       <TableCell className="text-foreground">
                         {company.website ? (
-                          <a 
-                            href={company.website} 
-                            target="_blank" 
-                            rel="noopener noreferrer" 
+                          <a
+                            href={company.website}
+                            target="_blank"
+                            rel="noopener noreferrer"
                             className="text-primary hover:underline"
                           >
                             {company.website}
