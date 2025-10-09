@@ -60,6 +60,8 @@ const CompanyManagement = () => {
   const onSubmit = async (data) => {
     setIsCreating(true);
     try {
+      console.log('Creating company with data:', data);
+      
       // Create owner account
       const { data: authData, error: authError } = await supabase.auth.signUp({
         email: data.owner_email,
@@ -68,21 +70,33 @@ const CompanyManagement = () => {
 
       if (authError) throw authError;
       
-      if (!authData.user) {
-        throw new Error('Failed to create owner account');
+      if (!authData.user || !authData.user.id) {
+        throw new Error('Failed to create owner account - no user ID returned');
+      }
+
+      console.log('Auth user created:', authData.user.id);
+
+      // Validate that we have a valid UUID
+      const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+      if (!uuidRegex.test(authData.user.id)) {
+        throw new Error('Invalid user ID format: ' + authData.user.id);
       }
 
       // Create company with owner information
+      const companyInsertData = {
+        name: data.name,
+        description: data.description || null,
+        website: data.website || null,
+        owner_name: data.owner_name,
+        owner_email: data.owner_email,
+        owner_id: authData.user.id,
+      };
+      
+      console.log('Inserting company data:', companyInsertData);
+      
       const { data: companyData, error: companyError } = await supabase
         .from('companies')
-        .insert({
-          name: data.name,
-          description: data.description,
-          website: data.website,
-          owner_name: data.owner_name,
-          owner_email: data.owner_email,
-          owner_id: authData.user.id,
-        })
+        .insert(companyInsertData)
         .select()
         .single();
 

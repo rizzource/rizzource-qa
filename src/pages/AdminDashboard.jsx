@@ -398,6 +398,15 @@ export const AdminDashboard = () => {
         return;
       }
 
+      // Get owner's email
+      const { data: ownerProfile, error: ownerError } = await supabase
+        .from("profiles")
+        .select("email")
+        .eq("id", companyForm.owner_id)
+        .single();
+
+      if (ownerError) throw ownerError;
+
       // Create company
       const { data: companyData, error: companyError } = await supabase
         .from("companies")
@@ -406,6 +415,7 @@ export const AdminDashboard = () => {
           description: companyForm.description || null,
           website: companyForm.website || null,
           owner_id: companyForm.owner_id,
+          owner_email: ownerProfile?.email || null,
         })
         .select()
         .single();
@@ -419,7 +429,6 @@ export const AdminDashboard = () => {
       const { error: memberError } = await supabase.from("company_members").insert({
         company_id: companyData.id,
         user_id: companyForm.owner_id,
-        name: companyForm.owner_name,
         role: "owner",
       });
 
@@ -433,8 +442,6 @@ export const AdminDashboard = () => {
         description: "",
         website: "",
         owner_id: "",
-        owner_email: "",
-        owner_password: "",
       });
 
       setShowCompanyForm(false);
@@ -1311,7 +1318,7 @@ const CompaniesTable = ({
                   data.data?.map((company) => (
                     <TableRow key={company.id} className="border-border hover:bg-muted/20">
                       <TableCell className="font-medium text-foreground">{company.name}</TableCell>
-                      <TableCell className="text-foreground">{company.owner_name?.email || "N/A"}</TableCell>
+                      <TableCell className="text-foreground">{company.owner_email || "N/A"}</TableCell>
                       <TableCell className="text-foreground">
                         {company.website ? (
                           <a
