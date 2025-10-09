@@ -319,7 +319,7 @@ export const AdminDashboard = () => {
 
       const { data, count, error } = await supabase
         .from("companies")
-        .select("*, owner:profiles!owner_id(email)", { count: "exact" })
+        .select("*", { count: "exact" })
         .order("created_at", { ascending: false })
         .range(from, to);
 
