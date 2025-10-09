@@ -114,17 +114,19 @@ export const AdminDashboard = () => {
   const fetchStats = async () => {
     if (!isSuperAdmin()) return;
     try {
-      const [menteesResponse, mentorsResponse, exportsResponse, eventsResponse] = await Promise.all([
+      const [menteesResponse, mentorsResponse, exportsResponse, eventsResponse, companiesResponse] = await Promise.all([
         supabase.from("profiles").select("*", { count: "exact", head: true }).eq("role", "mentee"),
         supabase.from("profiles").select("*", { count: "exact", head: true }).eq("role", "mentor"),
         supabase.from("data_exports").select("*", { count: "exact", head: true }),
         supabase.from("events").select("*", { count: "exact", head: true }),
+        supabase.from("companies").select("*", { count: "exact", head: true }),
       ]);
 
       setStats({
         mentees: menteesResponse.count || 0,
         mentors: mentorsResponse.count || 0,
         events: eventsResponse.count || 0,
+        companies: companiesResponse.count || 0,
         exports: exportsResponse.count || 0,
       });
     } catch (error) {
@@ -455,7 +457,7 @@ export const AdminDashboard = () => {
           <Card className="bg-card/90 backdrop-blur-lg border border-border shadow-xl">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">Companies</CardTitle>
-              <Calendar className="h-4 w-4 text-accent" />
+              <Building2 className="h-4 w-4 text-accent" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold text-foreground">{stats.companies}</div>
