@@ -54,7 +54,8 @@ export type Database = {
           id: string
           logo_url: string | null
           name: string
-          owner_id: string | null
+          owner_email: string | null
+          owner_name: string | null
           updated_at: string
           website: string | null
         }
@@ -64,7 +65,8 @@ export type Database = {
           id?: string
           logo_url?: string | null
           name: string
-          owner_id?: string | null
+          owner_email?: string | null
+          owner_name?: string | null
           updated_at?: string
           website?: string | null
         }
@@ -74,7 +76,8 @@ export type Database = {
           id?: string
           logo_url?: string | null
           name?: string
-          owner_id?: string | null
+          owner_email?: string | null
+          owner_name?: string | null
           updated_at?: string
           website?: string | null
         }
