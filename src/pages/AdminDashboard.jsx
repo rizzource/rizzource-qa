@@ -91,6 +91,7 @@ export const AdminDashboard = () => {
     website: "",
     owner_name: "",
     owner_email: "",
+    owner_password: "",
   });
 
   const months = [
@@ -394,12 +395,29 @@ export const AdminDashboard = () => {
 
     try {
       // Validate required fields
-      if (!companyForm.name || !companyForm.owner_name) {
+      if (!companyForm.name || !companyForm.owner_name || !companyForm.owner_email || !companyForm.owner_password) {
         toast.error("Please fill in all required fields");
         return;
       }
 
-      // Create company with owner information
+      // Step 1: Create the owner's account
+      const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
+        email: companyForm.owner_email,
+        password: companyForm.owner_password,
+        options: {
+          emailRedirectTo: `${window.location.origin}/`,
+        }
+      });
+
+      if (signUpError) throw signUpError;
+
+      if (!signUpData.user) {
+        throw new Error("Failed to create user account");
+      }
+
+      const userId = signUpData.user.id;
+
+      // Step 2: Create the company
       const { data: companyData, error: companyError } = await supabase
         .from("companies")
         .insert({
@@ -407,15 +425,25 @@ export const AdminDashboard = () => {
           description: companyForm.description || null,
           website: companyForm.website || null,
           owner_name: companyForm.owner_name,
-          owner_email: companyForm.owner_email || null,
-          owner_id: companyForm.owner_name, // Store owner name as owner_id (it's a text field)
+          owner_email: companyForm.owner_email,
         })
         .select()
         .single();
 
       if (companyError) throw companyError;
 
-      toast.success("Company created successfully!");
+      // Step 3: Add the owner to company_members table
+      const { error: memberError } = await supabase
+        .from("company_members")
+        .insert({
+          company_id: companyData.id,
+          user_id: userId,
+          role: "owner",
+        });
+
+      if (memberError) throw memberError;
+
+      toast.success("Company and owner account created successfully!");
 
       // Reset form
       setCompanyForm({
@@ -424,6 +452,7 @@ export const AdminDashboard = () => {
         website: "",
         owner_name: "",
         owner_email: "",
+        owner_password: "",
       });
 
       setShowCompanyForm(false);
@@ -1227,13 +1256,26 @@ const CompaniesTable = ({
                     />
                   </div>
                   <div>
-                    <Label htmlFor="owner_email">Owner Email</Label>
+                    <Label htmlFor="owner_email">Owner Email *</Label>
                     <Input
                       id="owner_email"
                       type="email"
                       value={companyForm.owner_email}
                       onChange={(e) => setCompanyForm({ ...companyForm, owner_email: e.target.value })}
                       placeholder="owner@example.com"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="owner_password">Owner Password *</Label>
+                    <Input
+                      id="owner_password"
+                      type="password"
+                      value={companyForm.owner_password}
+                      onChange={(e) => setCompanyForm({ ...companyForm, owner_password: e.target.value })}
+                      placeholder="Password for owner account"
+                      required
+                      minLength={6}
                     />
                   </div>
                 </div>
