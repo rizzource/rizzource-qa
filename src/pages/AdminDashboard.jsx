@@ -322,7 +322,7 @@ export const AdminDashboard = () => {
 
       const { data, count, error } = await supabase
         .from('companies')
-        .select('*, profiles!companies_owner_id_fkey(email)', { count: 'exact' })
+        .select('*, owner:profiles!owner_id(email)', { count: 'exact' })
         .order('created_at', { ascending: false })
         .range(from, to);
 
@@ -1305,7 +1305,7 @@ const CompaniesTable = ({
                   data.data?.map((company) => (
                     <TableRow key={company.id} className="border-border hover:bg-muted/20">
                       <TableCell className="font-medium text-foreground">{company.name}</TableCell>
-                      <TableCell className="text-foreground">{company.profiles?.email || "N/A"}</TableCell>
+                      <TableCell className="text-foreground">{company.owner?.email || "N/A"}</TableCell>
                       <TableCell className="text-foreground">
                         {company.website ? (
                           <a 
