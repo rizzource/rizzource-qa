@@ -89,9 +89,7 @@ export const AdminDashboard = () => {
     name: "",
     description: "",
     website: "",
-    owner_name: "",
-    owner_email: "",
-    owner_password: "",
+    owner_id: "",
   });
 
   const months = [
@@ -321,7 +319,7 @@ export const AdminDashboard = () => {
 
       const { data, count, error } = await supabase
         .from("companies")
-        .select("*", { count: "exact" })
+        .select("*, owner:profiles!owner_id(email)", { count: "exact" })
         .order("created_at", { ascending: false })
         .range(from, to);
 
@@ -395,28 +393,10 @@ export const AdminDashboard = () => {
 
     try {
       // Validate required fields
-      if (!companyForm.name || !companyForm.owner_name || !companyForm.owner_email || !companyForm.owner_password) {
+      if (!companyForm.name || !companyForm.owner_id) {
         toast.error("Please fill in all required fields");
         return;
       }
-
-      // Create owner user account
-      const { data: authData, error: authError } = await supabase.auth.signUp({
-        email: companyForm.owner_email,
-        password: companyForm.owner_password,
-        options: {
-          emailRedirectTo: `${window.location.origin}/`,
-          data: {
-            role: "owner",
-            name: companyForm.owner_name,
-          },
-        },
-      });
-
-      if (authError) throw authError;
-      if (!authData.user) throw new Error("Failed to create user account");
-
-      const ownerId = authData.user.id;
 
       // Create company
       const { data: companyData, error: companyError } = await supabase
@@ -425,39 +405,33 @@ export const AdminDashboard = () => {
           name: companyForm.name,
           description: companyForm.description || null,
           website: companyForm.website || null,
-          owner_name: companyForm.owner_name,
-          owner_email: companyForm.owner_email,
+          owner_id: companyForm.owner_id,
         })
         .select()
         .single();
 
       if (companyError) throw companyError;
 
-      // Add owner to user_roles
-      await supabase.from("user_roles").insert({
-        user_id: ownerId,
-        role: "owner",
-      });
+      // Add owner to user_roles if not already there
+      await supabase.from("user_roles").insert({ user_id: companyForm.owner_id, role: "owner" }).select();
 
       // Add owner to company_members
       const { error: memberError } = await supabase.from("company_members").insert({
         company_id: companyData.id,
-        user_id: ownerId,
+        user_id: companyForm.owner_id,
         role: "owner",
       });
 
       if (memberError) throw memberError;
 
-      toast.success("Company and owner account created successfully!");
+      toast.success("Company created successfully!");
 
       // Reset form
       setCompanyForm({
         name: "",
         description: "",
         website: "",
-        owner_name: "",
-        owner_email: "",
-        owner_password: "",
+        owner_id: "",
       });
 
       setShowCompanyForm(false);
@@ -1250,38 +1224,24 @@ const CompaniesTable = ({
                       placeholder="https://example.com"
                     />
                   </div>
-                  <div>
-                    <Label htmlFor="owner_name">Owner Name *</Label>
-                    <Input
-                      id="owner_name"
-                      value={companyForm.owner_name}
-                      onChange={(e) => setCompanyForm({ ...companyForm, owner_name: e.target.value })}
-                      placeholder="John Doe"
-                      required
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="owner_email">Owner Email *</Label>
-                    <Input
-                      id="owner_email"
-                      type="email"
-                      value={companyForm.owner_email}
-                      onChange={(e) => setCompanyForm({ ...companyForm, owner_email: e.target.value })}
-                      placeholder="owner@example.com"
-                      required
-                    />
-                  </div>
                   <div className="md:col-span-2">
-                    <Label htmlFor="owner_password">Owner Password *</Label>
-                    <Input
-                      id="owner_password"
-                      type="password"
-                      value={companyForm.owner_password}
-                      onChange={(e) => setCompanyForm({ ...companyForm, owner_password: e.target.value })}
-                      placeholder="Enter secure password"
+                    <Label htmlFor="owner_id">Company Owner *</Label>
+                    <Select
+                      value={companyForm.owner_id}
+                      onValueChange={(value) => setCompanyForm({ ...companyForm, owner_id: value })}
                       required
-                      minLength={6}
-                    />
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select owner" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {users.map((user) => (
+                          <SelectItem key={user.id} value={user.id}>
+                            {user.email}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
                 </div>
                 <div>
@@ -1337,9 +1297,7 @@ const CompaniesTable = ({
                   data.data?.map((company) => (
                     <TableRow key={company.id} className="border-border hover:bg-muted/20">
                       <TableCell className="font-medium text-foreground">{company.name}</TableCell>
-                      <TableCell className="text-foreground">
-                        {company.owner_name || company.owner_email || "N/A"}
-                      </TableCell>
+                      <TableCell className="text-foreground">{company.owner?.email || "N/A"}</TableCell>
                       <TableCell className="text-foreground">
                         {company.website ? (
                           <a
