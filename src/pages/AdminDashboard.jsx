@@ -366,10 +366,10 @@ export const AdminDashboard = () => {
   };
 
   const handlePrev = () =>
-    setActiveSection((prev) => (prev > 0 ? prev - 1 : 2));
+    setActiveSection((prev) => (prev > 0 ? prev - 1 : 3));
   
   const handleNext = () =>
-    setActiveSection((prev) => (prev < 2 ? prev + 1 : 0));
+    setActiveSection((prev) => (prev < 3 ? prev + 1 : 0));
 
   if (loading) {
     return (

@@ -8,6 +8,7 @@ import Footer from '@/components/Footer';
 import CreateJobForm from '@/components/jobs/CreateJobForm';
 import ManageJobs from '@/components/jobs/ManageJobs';
 import ManageApplications from '@/components/jobs/ManageApplications';
+import TeamManagement from '@/components/admin/TeamManagement';
 
 const CompanyDashboard = () => {
   const { user } = useAuth();
@@ -25,6 +26,7 @@ const CompanyDashboard = () => {
               <TabsTrigger value="create-job">Post New Job</TabsTrigger>
               <TabsTrigger value="manage-jobs">Manage Jobs</TabsTrigger>
               <TabsTrigger value="applications">Applications</TabsTrigger>
+              <TabsTrigger value="team">Team Members</TabsTrigger>
             </TabsList>
 
             <TabsContent value="create-job">
@@ -44,6 +46,10 @@ const CompanyDashboard = () => {
 
             <TabsContent value="applications">
               <ManageApplications />
+            </TabsContent>
+
+            <TabsContent value="team">
+              <TeamManagement />
             </TabsContent>
           </Tabs>
         </div>
