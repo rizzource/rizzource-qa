@@ -8,7 +8,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Building2, Trash2, Users } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -16,12 +15,13 @@ const companySchema = z.object({
   name: z.string().min(2, 'Company name must be at least 2 characters'),
   description: z.string().optional(),
   website: z.string().url('Please enter a valid URL').optional().or(z.literal('')),
-  owner_id: z.string().min(1, 'Please select an owner'),
+  owner_name: z.string().min(2, 'Owner name must be at least 2 characters'),
+  owner_email: z.string().email('Please enter a valid email'),
+  owner_password: z.string().min(6, 'Password must be at least 6 characters'),
 });
 
 const CompanyManagement = () => {
   const [companies, setCompanies] = useState([]);
-  const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isCreating, setIsCreating] = useState(false);
 
@@ -31,20 +31,21 @@ const CompanyManagement = () => {
       name: '',
       description: '',
       website: '',
-      owner_id: '',
+      owner_name: '',
+      owner_email: '',
+      owner_password: '',
     },
   });
 
   useEffect(() => {
     fetchCompanies();
-    fetchUsers();
   }, []);
 
   const fetchCompanies = async () => {
     try {
       const { data, error } = await supabase
         .from('companies')
-        .select('*, profiles!companies_owner_id_fkey(email)')
+        .select('*')
         .order('created_at', { ascending: false });
 
       if (error) throw error;
@@ -56,55 +57,62 @@ const CompanyManagement = () => {
     }
   };
 
-  const fetchUsers = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('id, email')
-        .order('email');
-
-      if (error) throw error;
-      setUsers(data || []);
-    } catch (error) {
-      console.error('Error fetching users:', error);
-    }
-  };
-
   const onSubmit = async (data) => {
     setIsCreating(true);
     try {
-      // Create company
+      // Create owner account
+      const { data: authData, error: authError } = await supabase.auth.signUp({
+        email: data.owner_email,
+        password: data.owner_password,
+      });
+
+      if (authError) throw authError;
+      
+      if (!authData.user) {
+        throw new Error('Failed to create owner account');
+      }
+
+      // Create company with owner information
       const { data: companyData, error: companyError } = await supabase
         .from('companies')
-        .insert(data)
+        .insert({
+          name: data.name,
+          description: data.description,
+          website: data.website,
+          owner_name: data.owner_name,
+          owner_email: data.owner_email,
+        })
         .select()
         .single();
 
       if (companyError) throw companyError;
 
-      // Add owner to user_roles if not already there
+      // Add owner to user_roles
       const { error: roleError } = await supabase
         .from('user_roles')
-        .insert({ user_id: data.owner_id, role: 'owner' })
-        .select();
+        .insert({ user_id: authData.user.id, role: 'owner' });
+
+      if (roleError && !roleError.message.includes('duplicate')) {
+        throw roleError;
+      }
 
       // Add owner to company_members
       const { error: memberError } = await supabase
         .from('company_members')
         .insert({
           company_id: companyData.id,
-          user_id: data.owner_id,
+          user_id: authData.user.id,
           role: 'owner',
         });
 
       if (memberError) throw memberError;
 
-      toast.success('Company created successfully!');
+      toast.success('Company and owner account created successfully!');
       form.reset();
       fetchCompanies();
     } catch (error) {
       console.error('Error creating company:', error);
-      toast.error('Failed to create company. Please try again.');
+      toast.error(error.message || 'Failed to create company. Please try again.');
     } finally {
       setIsCreating(false);
     }
@@ -182,24 +190,41 @@ const CompanyManagement = () => {
 
               <FormField
                 control={form.control}
-                name="owner_id"
+                name="owner_name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Company Owner *</FormLabel>
-                    <Select onValueChange={field.onChange} value={field.value}>
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select owner" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {users.map((user) => (
-                          <SelectItem key={user.id} value={user.id}>
-                            {user.email}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <FormLabel>Owner Name *</FormLabel>
+                    <FormControl>
+                      <Input placeholder="John Doe" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="owner_email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Owner Email *</FormLabel>
+                    <FormControl>
+                      <Input type="email" placeholder="owner@example.com" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="owner_password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Owner Password *</FormLabel>
+                    <FormControl>
+                      <Input type="password" placeholder="Minimum 6 characters" {...field} />
+                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -236,7 +261,7 @@ const CompanyManagement = () => {
                         <p className="text-sm text-muted-foreground mt-1">{company.description}</p>
                       )}
                       <div className="flex items-center gap-4 mt-2 text-sm text-muted-foreground">
-                        <span>Owner: {company.profiles?.email || 'N/A'}</span>
+                        <span>Owner: {company.owner_name || company.owner_email || 'N/A'}</span>
                         {company.website && (
                           <a href={company.website} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
                             Visit Website
