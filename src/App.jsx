@@ -25,6 +25,8 @@ import CompanyDashboard from "./pages/CompanyDashboard";
 const queryClient = new QueryClient();
 
 const App = () => (
+  console.log("🔍 Supabase URL:", import.meta.env.VITE_SUPABASE_URL);
+console.log("🔑 Supabase Key (first 8 chars):", import.meta.env.VITE_SUPABASE_ANON_KEY?.slice(0, 8));
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <ToastContainer 
