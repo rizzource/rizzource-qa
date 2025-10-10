@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/components/AuthProvider';
+import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -9,6 +10,7 @@ import { toast } from 'sonner';
 
 const ManageJobs = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -99,7 +101,7 @@ const ManageJobs = () => {
   return (
     <div className="space-y-4">
       {jobs.map((job) => (
-        <Card key={job.id}>
+        <Card key={job.id} className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => navigate(`/jobs/${job.id}`)}>
           <CardHeader>
             <div className="flex items-start justify-between">
               <div>
@@ -113,7 +115,7 @@ const ManageJobs = () => {
           </CardHeader>
           <CardContent>
             <p className="text-sm text-muted-foreground mb-4 line-clamp-2">{job.description}</p>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
               <Button 
                 size="sm" 
                 variant={job.status === 'open' ? 'outline' : 'default'}

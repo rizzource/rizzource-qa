@@ -27,7 +27,7 @@ const JobPortal = () => {
     try {
       const { data: jobsData, error } = await supabase
         .from('jobs')
-        .select('*, companies(name, logo_url)')
+        .select('*, companies(name)')
         .eq('status', 'open')
         .order('created_at', { ascending: false });
 
@@ -102,14 +102,10 @@ const JobPortal = () => {
                 <Card key={job.id} className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => navigate(`/jobs/${job.id}`)}>
                   <CardHeader>
                     <div className="flex items-start justify-between mb-2">
-                      <div className="flex items-center gap-3">
-                        {job.companies?.logo_url ? (
-                          <img src={job.companies.logo_url} alt={job.companies.name} className="w-12 h-12 rounded-lg object-cover" />
-                        ) : (
-                          <div className="w-12 h-12 rounded-lg bg-secondary flex items-center justify-center">
-                            <Building2 className="h-6 w-6 text-primary" />
-                          </div>
-                        )}
+                    <div className="flex items-center gap-3">
+                        <div className="w-12 h-12 rounded-lg bg-secondary flex items-center justify-center">
+                          <Building2 className="h-6 w-6 text-primary" />
+                        </div>
                         <div>
                           <CardTitle className="text-lg">{job.title}</CardTitle>
                           <p className="text-sm text-muted-foreground">{job.companies?.name}</p>
