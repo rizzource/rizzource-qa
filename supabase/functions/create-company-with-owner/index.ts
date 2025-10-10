@@ -4,6 +4,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.7.1";
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
 };
 
 serve(async (req) => {
@@ -29,17 +30,21 @@ serve(async (req) => {
       }
     );
 
-    // Verify the requesting user is an admin
-    const {
-      data: { user },
-      error: authError,
-    } = await supabaseClient.auth.getUser();
+// Verify the requesting user is an admin
+const token = authHeader.replace(/^Bearer\s+/i, "");
+if (!token) {
+  throw new Error("Unauthorized: Missing bearer token");
+}
+const {
+  data: { user },
+  error: authError,
+} = await supabaseClient.auth.getUser(token);
 
-    console.log("Auth check - User:", user?.id, "Error:", authError);
+console.log("Auth check - User:", user?.id, "Error:", authError);
 
-    if (authError || !user) {
-      throw new Error(`Unauthorized: ${authError?.message || "No user found"}`);
-    }
+if (authError || !user) {
+  throw new Error(`Unauthorized: ${authError?.message || "No user found"}`);
+}
 
     // Check if user is admin or superadmin
     const { data: userRoles } = await supabaseClient
