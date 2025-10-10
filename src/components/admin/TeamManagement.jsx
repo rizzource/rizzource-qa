@@ -92,82 +92,22 @@ const TeamManagement = () => {
 
   const onSubmit = async (data) => {
     if (!selectedCompany) return;
-    
+
     setIsAdding(true);
     try {
-      // Check if user already exists with this email
-      const { data: existingProfile, error: checkError } = await supabase
-        .from('profiles')
-        .select('id')
-        .eq('email', data.email)
-        .maybeSingle();
-
-      if (checkError) throw checkError;
-
-      let userId;
-
-      if (existingProfile) {
-        // User already exists
-        userId = existingProfile.id;
-        
-        // Check if already a member
-        const { data: existingMember } = await supabase
-          .from('company_members')
-          .select('id')
-          .eq('company_id', selectedCompany)
-          .eq('user_id', userId)
-          .maybeSingle();
-
-        if (existingMember) {
-          toast.error('This user is already a team member');
-          setIsAdding(false);
-          return;
-        }
-      } else {
-        // Create new user account
-        const { data: newUser, error: signUpError } = await supabase.auth.signUp({
+      // Use edge function to avoid session switching and bypass RLS safely
+      const { data: result, error } = await supabase.functions.invoke('add-team-member', {
+        body: {
+          company_id: selectedCompany,
+          name: data.name,
           email: data.email,
           password: data.password,
-          options: {
-            emailRedirectTo: `${window.location.origin}/`,
-            data: {
-              role: 'user',
-            }
-          }
-        });
-
-        if (signUpError) throw signUpError;
-        if (!newUser.user) throw new Error('Failed to create user');
-
-        userId = newUser.user.id;
-
-        // Profile is automatically created by the handle_new_user trigger
-      }
-
-      // Add to company_members
-      const { error: memberError } = await supabase
-        .from('company_members')
-        .insert({
-          company_id: selectedCompany,
-          user_id: userId,
-          name: data.name,
           role: data.role,
-        });
+        },
+      });
 
-      if (memberError) throw memberError;
-
-      // Add to user_roles
-      const { error: roleError } = await supabase
-        .from('user_roles')
-        .insert({
-          user_id: userId,
-          role: data.role,
-        });
-
-      // Ignore duplicate role errors
-      if (roleError && !roleError.message.includes('duplicate')) {
-        throw roleError;
-      }
+      if (error) throw error;
+      if (!result?.success) throw new Error(result?.error || 'Failed to add team member');
 
       toast.success('Team member added successfully!');
       form.reset();
