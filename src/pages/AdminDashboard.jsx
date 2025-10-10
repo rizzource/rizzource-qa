@@ -391,44 +391,84 @@ export const AdminDashboard = () => {
 
   const handleCompanySubmit = async (e) => {
     e.preventDefault();
-    if (!isSuperAdmin()) return;
+    console.log("🟢 handleCompanySubmit triggered");
+
+    if (!isSuperAdmin()) {
+      console.warn("⚠️ User is not a super admin. Access denied.");
+      return;
+    }
 
     try {
+      console.log("📋 Current company form data:", companyForm);
+
       // Validate required fields
       if (!companyForm.name || !companyForm.owner_name || !companyForm.owner_email || !companyForm.owner_password) {
+        console.warn("⚠️ Missing required fields:", {
+          name: companyForm.name,
+          owner_name: companyForm.owner_name,
+          owner_email: companyForm.owner_email,
+          owner_password: companyForm.owner_password,
+        });
         toast.error("Please fill in all required fields");
         return;
       }
 
       // Ensure we include auth token header when invoking the edge function
-      const { data: sessionData } = await supabase.auth.getSession();
+      console.log("🔐 Fetching Supabase session...");
+      const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+
+      if (sessionError) {
+        console.error("❌ Error fetching session:", sessionError);
+        toast.error("Failed to get authentication session.");
+        return;
+      }
+
+      console.log("✅ Session data received:", sessionData);
       const accessToken = sessionData?.session?.access_token;
+
       if (!accessToken) {
+        console.error("❌ No access token found. User might not be logged in.");
         toast.error("You must be logged in to perform this action.");
         return;
       }
+
+      // Prepare body for edge function
+      const requestBody = {
+        name: companyForm.name,
+        description: companyForm.description || null,
+        website: companyForm.website || null,
+        owner_name: companyForm.owner_name,
+        owner_email: companyForm.owner_email,
+        owner_password: companyForm.owner_password,
+      };
+
+      console.log("📤 Sending request to Edge Function:", requestBody);
 
       // Call edge function to create company with owner account
       const { data, error } = await supabase.functions.invoke("create-company-with-owner", {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
-        body: JSON.stringify({
-          name: companyForm.name,
-          description: companyForm.description || null,
-          website: companyForm.website || null,
-          owner_name: companyForm.owner_name,
-          owner_email: companyForm.owner_email,
-          owner_password: companyForm.owner_password,
-        }),
+        body: JSON.stringify(requestBody),
       });
 
-      if (error) throw error;
-      if (data?.error) throw new Error(data.error);
+      console.log("📥 Response from Edge Function:", { data, error });
 
+      if (error) {
+        console.error("❌ Supabase function error:", error);
+        throw error;
+      }
+
+      if (data?.error) {
+        console.error("❌ Application-level error:", data.error);
+        throw new Error(data.error);
+      }
+
+      console.log("✅ Company and owner created successfully:", data);
       toast.success("Company and owner account created successfully!");
 
       // Reset form
+      console.log("🧹 Resetting company form...");
       setCompanyForm({
         name: "",
         description: "",
@@ -439,12 +479,18 @@ export const AdminDashboard = () => {
       });
 
       setShowCompanyForm(false);
+      console.log("🔄 Company form hidden and state updated.");
 
       // Refresh companies data and stats
+      console.log("🔁 Refreshing companies data...");
       await fetchCompanies(1);
+
+      console.log("📊 Refreshing company stats...");
       await fetchStats();
+
+      console.log("✅ All operations completed successfully.");
     } catch (error) {
-      console.error("Error creating company:", error);
+      console.error("🔥 Error creating company:", error);
       toast.error("Failed to create company: " + error.message);
     }
   };
