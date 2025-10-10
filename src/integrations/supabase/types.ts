@@ -52,11 +52,9 @@ export type Database = {
           created_at: string
           description: string | null
           id: string
-          logo_url: string | null
           name: string
           owner_email: string | null
-          owner_id: string
-          owner_name: string | null
+          owner_name: string
           updated_at: string
           website: string | null
         }
@@ -64,11 +62,9 @@ export type Database = {
           created_at?: string
           description?: string | null
           id?: string
-          logo_url?: string | null
           name: string
           owner_email?: string | null
-          owner_id: string
-          owner_name?: string | null
+          owner_name: string
           updated_at?: string
           website?: string | null
         }
@@ -76,11 +72,9 @@ export type Database = {
           created_at?: string
           description?: string | null
           id?: string
-          logo_url?: string | null
           name?: string
           owner_email?: string | null
-          owner_id?: string
-          owner_name?: string | null
+          owner_name?: string
           updated_at?: string
           website?: string | null
         }
@@ -91,6 +85,7 @@ export type Database = {
           company_id: string
           created_at: string
           id: string
+          name: string
           role: Database["public"]["Enums"]["app_role"]
           user_id: string
         }
@@ -98,6 +93,7 @@ export type Database = {
           company_id: string
           created_at?: string
           id?: string
+          name: string
           role: Database["public"]["Enums"]["app_role"]
           user_id: string
         }
@@ -105,6 +101,7 @@ export type Database = {
           company_id?: string
           created_at?: string
           id?: string
+          name?: string
           role?: Database["public"]["Enums"]["app_role"]
           user_id?: string
         }
@@ -792,7 +789,14 @@ export type Database = {
       }
     }
     Enums: {
-      app_role: "superadmin" | "owner" | "hr" | "admin" | "applicant" | "user"
+      app_role:
+        | "superadmin"
+        | "owner"
+        | "hr"
+        | "admin"
+        | "applicant"
+        | "user"
+        | "employee"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -920,7 +924,15 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["superadmin", "owner", "hr", "admin", "applicant", "user"],
+      app_role: [
+        "superadmin",
+        "owner",
+        "hr",
+        "admin",
+        "applicant",
+        "user",
+        "employee",
+      ],
     },
   },
 } as const
