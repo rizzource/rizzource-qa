@@ -141,16 +141,7 @@ const TeamManagement = () => {
 
         userId = newUser.user.id;
 
-        // Create profile
-        const { error: profileError } = await supabase
-          .from('profiles')
-          .insert({
-            id: userId,
-            email: data.email,
-            role: 'user'
-          });
-
-        if (profileError) throw profileError;
+        // Profile is automatically created by the handle_new_user trigger
       }
 
       // Add to company_members
