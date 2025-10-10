@@ -12,12 +12,19 @@ serve(async (req) => {
   }
 
   try {
+    const authHeader = req.headers.get("Authorization");
+    console.log("Authorization header present:", !!authHeader);
+    
+    if (!authHeader) {
+      throw new Error("Missing Authorization header");
+    }
+
     const supabaseClient = createClient(
       Deno.env.get("SUPABASE_URL") ?? "",
       Deno.env.get("SUPABASE_ANON_KEY") ?? "",
       {
         global: {
-          headers: { Authorization: req.headers.get("Authorization")! },
+          headers: { Authorization: authHeader },
         },
       }
     );
@@ -25,10 +32,13 @@ serve(async (req) => {
     // Verify the requesting user is an admin
     const {
       data: { user },
+      error: authError,
     } = await supabaseClient.auth.getUser();
 
-    if (!user) {
-      throw new Error("Unauthorized");
+    console.log("Auth check - User:", user?.id, "Error:", authError);
+
+    if (authError || !user) {
+      throw new Error(`Unauthorized: ${authError?.message || "No user found"}`);
     }
 
     // Check if user is admin or superadmin
