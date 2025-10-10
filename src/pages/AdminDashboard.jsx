@@ -412,16 +412,15 @@ export const AdminDashboard = () => {
       const { data, error } = await supabase.functions.invoke("create-company-with-owner", {
         headers: {
           Authorization: `Bearer ${accessToken}`,
-          "Content-Type": "application/json",
         },
-        body: {
+        body: JSON.stringify({
           name: companyForm.name,
           description: companyForm.description || null,
           website: companyForm.website || null,
           owner_name: companyForm.owner_name,
           owner_email: companyForm.owner_email,
           owner_password: companyForm.owner_password,
-        },
+        }),
       });
 
       if (error) throw error;
