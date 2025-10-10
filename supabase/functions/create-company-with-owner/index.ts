@@ -119,11 +119,13 @@ serve(async (req) => {
     );
   } catch (error) {
     console.error('Error in create-company-with-owner:', error);
+    const message = (error as Error)?.message ?? String(error);
+    const statusCode = /Unauthorized|Missing Authorization/i.test(message) ? 401 : 400;
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ error: message }),
       {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
-        status: 400,
+        status: statusCode,
       }
     );
   }

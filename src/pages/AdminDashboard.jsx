@@ -400,8 +400,20 @@ export const AdminDashboard = () => {
         return;
       }
 
+      // Ensure we include auth token header when invoking the edge function
+      const { data: sessionData } = await supabase.auth.getSession();
+      const accessToken = sessionData?.session?.access_token;
+      if (!accessToken) {
+        toast.error("You must be logged in to perform this action.");
+        return;
+      }
+
       // Call edge function to create company with owner account
       const { data, error } = await supabase.functions.invoke("create-company-with-owner", {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        },
         body: {
           name: companyForm.name,
           description: companyForm.description || null,
