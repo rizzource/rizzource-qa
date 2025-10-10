@@ -395,27 +395,27 @@ export const AdminDashboard = () => {
 
     try {
       // Validate required fields
-      if (!companyForm.name || !companyForm.owner_name || !companyForm.owner_email) {
+      if (!companyForm.name || !companyForm.owner_name || !companyForm.owner_email || !companyForm.owner_password) {
         toast.error("Please fill in all required fields");
         return;
       }
 
-      // Insert company record using direct .insert()
-      const { data: companyData, error: companyError } = await supabase
-        .from("companies")
-        .insert({
+      // Call edge function to create company with owner account
+      const { data, error } = await supabase.functions.invoke("create-company-with-owner", {
+        body: {
           name: companyForm.name,
           description: companyForm.description || null,
           website: companyForm.website || null,
           owner_name: companyForm.owner_name,
           owner_email: companyForm.owner_email,
-        })
-        .select()
-        .single();
+          owner_password: companyForm.owner_password,
+        },
+      });
 
-      if (companyError) throw companyError;
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
 
-      toast.success("Company created successfully! Note: Owner must register separately to create their account.");
+      toast.success("Company and owner account created successfully!");
 
       // Reset form
       setCompanyForm({
