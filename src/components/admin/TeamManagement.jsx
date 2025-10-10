@@ -16,7 +16,8 @@ import { useAuth } from '@/components/AuthProvider';
 const teamMemberSchema = z.object({
   name: z.string().min(1, 'Name is required'),
   email: z.string().email('Invalid email address'),
-  role: z.enum(['hr', 'admin'], { required_error: 'Please select a role' }),
+  password: z.string().min(6, 'Password must be at least 6 characters'),
+  role: z.enum(['hr', 'admin', 'employee'], { required_error: 'Please select a role' }),
 });
 
 const TeamManagement = () => {
@@ -32,6 +33,7 @@ const TeamManagement = () => {
     defaultValues: {
       name: '',
       email: '',
+      password: '',
       role: '',
     },
   });
@@ -125,7 +127,7 @@ const TeamManagement = () => {
         // Create new user account
         const { data: newUser, error: signUpError } = await supabase.auth.signUp({
           email: data.email,
-          password: Math.random().toString(36).slice(-12) + 'Aa1!', // Generate random password
+          password: data.password,
           options: {
             emailRedirectTo: `${window.location.origin}/`,
             data: {
@@ -306,6 +308,20 @@ const TeamManagement = () => {
 
               <FormField
                 control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Password *</FormLabel>
+                    <FormControl>
+                      <Input type="password" placeholder="Enter password" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
                 name="role"
                 render={({ field }) => (
                   <FormItem>
@@ -319,6 +335,7 @@ const TeamManagement = () => {
                       <SelectContent>
                         <SelectItem value="hr">HR</SelectItem>
                         <SelectItem value="admin">Admin</SelectItem>
+                        <SelectItem value="employee">Employee</SelectItem>
                       </SelectContent>
                     </Select>
                     <FormMessage />
