@@ -77,7 +77,7 @@ const Header = () => {
             {user ? (
               <>
                 <span className="text-xs sm:text-sm text-muted-foreground">
-                  {isSuperAdmin() ? "Super Admin" : userProfile?.role === "mentor" ? "Mentor" : "Mentee"}
+                  {isSuperAdmin() ? "Super Admin" : userRoles.includes('owner') ? "Owner" : userRoles.includes('hr') ? "HR" : userRoles.includes('admin') ? "Admin" : userProfile?.role === "mentor" ? "Mentor" : "Mentee"}
                 </span>
                 {isSuperAdmin() && (
                   <Link
