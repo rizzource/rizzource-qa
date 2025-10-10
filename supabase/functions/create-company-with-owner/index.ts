@@ -90,6 +90,7 @@ serve(async (req) => {
     const { error: memberError } = await supabaseAdmin.from("company_members").insert({
       company_id: companyData.id,
       user_id: newUser.user.id,
+      name: owner_name,
       role: "owner",
     });
 
@@ -107,6 +108,7 @@ serve(async (req) => {
       }
     );
   } catch (error) {
+    console.error('Error in create-company-with-owner:', error);
     return new Response(
       JSON.stringify({ error: error.message }),
       {
