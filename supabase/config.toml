@@ -1,1 +1,11 @@
 project_id = "qicuswuaduuiyrrpoqel"
+
+[functions.add-team-member]
+verify_jwt = false
+
+[auth.hooks.send_email]
+enabled = true
+uri = "supabase_functions_url/auth-email"
+
+[functions.auth-email]
+verify_jwt = false
