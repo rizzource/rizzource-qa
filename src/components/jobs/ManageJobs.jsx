@@ -8,33 +8,26 @@ import { Badge } from '@/components/ui/badge';
 import { Edit, Trash2, Eye, EyeOff } from 'lucide-react';
 import { toast } from 'sonner';
 
-const ManageJobs = () => {
+const ManageJobs = ({ companyId }) => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchJobs();
-  }, [user]);
+    if (companyId) {
+      fetchJobs();
+    }
+  }, [companyId]);
 
   const fetchJobs = async () => {
+    if (!companyId) return;
+
     try {
-      // Get companies where user is a member
-      const { data: memberData, error: memberError } = await supabase
-        .from('company_members')
-        .select('company_id')
-        .eq('user_id', user.id);
-
-      if (memberError) throw memberError;
-
-      const companyIds = memberData.map(cm => cm.company_id);
-
-      // Get jobs for those companies
       const { data: jobsData, error: jobsError } = await supabase
         .from('jobs')
         .select('*, companies(name)')
-        .in('company_id', companyIds)
+        .eq('company_id', companyId)
         .order('created_at', { ascending: false });
 
       if (jobsError) throw jobsError;

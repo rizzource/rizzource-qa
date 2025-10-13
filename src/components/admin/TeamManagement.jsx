@@ -20,10 +20,8 @@ const teamMemberSchema = z.object({
   role: z.enum(['hr', 'admin', 'employee'], { required_error: 'Please select a role' }),
 });
 
-const TeamManagement = () => {
+const TeamManagement = ({ companyId }) => {
   const { user } = useAuth();
-  const [companies, setCompanies] = useState([]);
-  const [selectedCompany, setSelectedCompany] = useState(null);
   const [teamMembers, setTeamMembers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isAdding, setIsAdding] = useState(false);
@@ -39,47 +37,19 @@ const TeamManagement = () => {
   });
 
   useEffect(() => {
-    fetchOwnedCompanies();
-  }, [user]);
-
-  useEffect(() => {
-    if (selectedCompany) {
+    if (companyId) {
       fetchTeamMembers();
     }
-  }, [selectedCompany]);
-
-  const fetchOwnedCompanies = async () => {
-    try {
-      // Get companies where the user is an owner through company_members
-      const { data: memberData, error: memberError } = await supabase
-        .from('company_members')
-        .select('company_id, companies(id, name, description, website)')
-        .eq('user_id', user.id)
-        .eq('role', 'owner');
-
-      if (memberError) throw memberError;
-
-      const ownedCompanies = memberData.map(m => m.companies).filter(Boolean);
-      setCompanies(ownedCompanies || []);
-      if (ownedCompanies && ownedCompanies.length > 0) {
-        setSelectedCompany(ownedCompanies[0].id);
-      }
-    } catch (error) {
-      console.error('Error fetching companies:', error);
-      toast.error('Failed to fetch companies');
-    } finally {
-      setLoading(false);
-    }
-  };
+  }, [companyId]);
 
   const fetchTeamMembers = async () => {
-    if (!selectedCompany) return;
+    if (!companyId) return;
     
     try {
       const { data, error } = await supabase
         .from('company_members')
         .select('*')
-        .eq('company_id', selectedCompany)
+        .eq('company_id', companyId)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
@@ -87,18 +57,23 @@ const TeamManagement = () => {
     } catch (error) {
       console.error('Error fetching team members:', error);
       toast.error('Failed to fetch team members');
+    } finally {
+      setLoading(false);
     }
   };
 
   const onSubmit = async (data) => {
-    if (!selectedCompany) return;
+    if (!companyId) {
+      toast.error('No company selected');
+      return;
+    }
 
     setIsAdding(true);
     try {
       // Use edge function to avoid session switching and bypass RLS safely
       const { data: result, error } = await supabase.functions.invoke('add-team-member', {
         body: {
-          company_id: selectedCompany,
+          company_id: companyId,
           name: data.name,
           email: data.email,
           password: data.password,
@@ -162,12 +137,12 @@ const TeamManagement = () => {
     return <p className="text-muted-foreground">Loading...</p>;
   }
 
-  if (companies.length === 0) {
+  if (!companyId) {
     return (
       <Card>
         <CardContent className="py-8 text-center">
           <Users className="h-12 w-12 text-muted-foreground mx-auto mb-2" />
-          <p className="text-muted-foreground">You don't own any companies yet.</p>
+          <p className="text-muted-foreground">Please select a company to manage team.</p>
         </CardContent>
       </Card>
     );
@@ -175,29 +150,6 @@ const TeamManagement = () => {
 
   return (
     <div className="space-y-6">
-      {/* Company Selection */}
-      {companies.length > 1 && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Select Company</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Select value={selectedCompany} onValueChange={setSelectedCompany}>
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {companies.map((company) => (
-                  <SelectItem key={company.id} value={company.id}>
-                    {company.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </CardContent>
-        </Card>
-      )}
-
       {/* Add Team Member Form */}
       <Card>
         <CardHeader>

@@ -21,15 +21,13 @@ const jobSchema = z.object({
   application_deadline: z.string().optional(),
 });
 
-const CreateJobForm = ({ onSuccess }) => {
+const CreateJobForm = ({ companyId, onSuccess }) => {
   const { user } = useAuth();
-  const [companies, setCompanies] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const form = useForm({
-    resolver: zodResolver(jobSchema),
+    resolver: zodResolver(jobSchema.omit({ company_id: true })),
     defaultValues: {
-      company_id: '',
       title: '',
       description: '',
       location: '',
@@ -39,31 +37,19 @@ const CreateJobForm = ({ onSuccess }) => {
     },
   });
 
-  useEffect(() => {
-    fetchUserCompanies();
-  }, [user]);
-
-  const fetchUserCompanies = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('company_members')
-        .select('companies(*)')
-        .eq('user_id', user.id);
-
-      if (error) throw error;
-      setCompanies(data?.map(cm => cm.companies) || []);
-    } catch (error) {
-      console.error('Error fetching companies:', error);
-    }
-  };
-
   const onSubmit = async (data) => {
+    if (!companyId) {
+      toast.error('No company selected');
+      return;
+    }
+
     setIsSubmitting(true);
     try {
       const { error } = await supabase
         .from('jobs')
         .insert({
           ...data,
+          company_id: companyId,
           created_by: user.id,
           status: 'open',
         });
@@ -81,10 +67,10 @@ const CreateJobForm = ({ onSuccess }) => {
     }
   };
 
-  if (companies.length === 0) {
+  if (!companyId) {
     return (
       <div className="text-center p-6 bg-muted rounded-lg">
-        <p className="text-muted-foreground">You need to be assigned to a company to post jobs.</p>
+        <p className="text-muted-foreground">Please select a company to post jobs.</p>
       </div>
     );
   }
@@ -92,31 +78,6 @@ const CreateJobForm = ({ onSuccess }) => {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-        <FormField
-          control={form.control}
-          name="company_id"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Company *</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select company" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {companies.map((company) => (
-                    <SelectItem key={company.id} value={company.id}>
-                      {company.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
         <FormField
           control={form.control}
           name="title"
