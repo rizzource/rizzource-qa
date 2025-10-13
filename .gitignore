@@ -22,6 +22,11 @@ dist-ssr
 frontend/.env
 backend/.env
 
+# Environment variables
+.env
+.env.local
+.env.*.local
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

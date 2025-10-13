@@ -7,7 +7,8 @@ import Timeline from "./Timeline";
 const MinimalistHome = () => {
   const navigate = useNavigate();
   const { user } = useAuth(); 
-
+  console.log("🔍 Supabase URL:", import.meta.env.VITE_SUPABASE_URL);
+console.log("🔑 Supabase Key (first 8 chars):", import.meta.env.VITE_SUPABASE_ANON_KEY?.slice(0, 8));
   return (
     <section className="relative min-h-screen bg-background overflow-hidden">
       {/* Floating background elements */}

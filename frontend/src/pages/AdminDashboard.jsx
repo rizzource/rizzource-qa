@@ -493,35 +493,29 @@ export const AdminDashboard = () => {
         return;
       }
 
-      const { name, description, website, owner_email, owner_user_id, owner_name } = companyForm;
+      // Ensure we include auth token header when invoking the edge function
+      const { data: sessionData } = await supabase.auth.getSession();
+      const accessToken = sessionData?.session?.access_token;
+      if (!accessToken) {
+        toast.error("You must be logged in to perform this action.");
+        return;
+      }
 
-      // 1️⃣ Insert company data into 'companies' table
-      const { data: companyData, error: companyError } = await supabase
-        .from("companies")
-        .insert([
-          {
-            name,
-            description,
-            website,
-            owner_name,
-            owner_email,
-          },
-        ])
-        .select()
-        .single();
-
-        if (companyError) throw companyError;
-
-        // const { error: memberError } = await supabase.from("company_members").insert([
-        //   {
-        //     company_id: companyData.id,
-        //     user_id: owner_user_id, 
-        //     name: owner_name,
-        //     role: "owner",
-        //   },
-        // ]);
-
-        // if (memberError) throw memberError;
+      // Call edge function to create company with owner account
+      const { data, error } = await supabase.functions.invoke("create-company-with-owner", {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: companyForm.name,
+          description: companyForm.description || null,
+          website: companyForm.website || null,
+          owner_name: companyForm.owner_name,
+          owner_email: companyForm.owner_email,
+          owner_password: companyForm.owner_password,
+        }),
+      });
 
       if (error) throw error;
       if (data?.error) throw new Error(data.error);
@@ -548,6 +542,7 @@ export const AdminDashboard = () => {
       toast.error("Failed to create company: " + error.message);
     }
   };
+
 
   if (loading) {
     return (
