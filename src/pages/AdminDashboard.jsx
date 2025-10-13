@@ -488,60 +488,34 @@ export const AdminDashboard = () => {
 
     try {
       // Validate required fields
-      if (
-        !companyForm.name ||
-        !companyForm.owner_name ||
-        !companyForm.owner_email ||
-        !companyForm.owner_password
-      ) {
+      if (!companyForm.name || !companyForm.owner_name || !companyForm.owner_email || !companyForm.owner_password) {
         toast.error("Please fill in all required fields");
         return;
       }
 
-      // Get session to include access token
+      // Ensure we include auth token header when invoking the edge function
       const { data: sessionData } = await supabase.auth.getSession();
       const accessToken = sessionData?.session?.access_token;
-
-      console.log("🔹 Session Data:", sessionData);
-      console.log("🔹 Access Token:", accessToken ? "Exists ✅" : "Missing ❌");
-
       if (!accessToken) {
         toast.error("You must be logged in to perform this action.");
         return;
       }
 
-      // Prepare request body
-      const requestBody = {
-        name: companyForm.name,
-        description: companyForm.description || null,
-        website: companyForm.website || null,
-        owner_name: companyForm.owner_name,
-        owner_email: companyForm.owner_email,
-        owner_password: companyForm.owner_password,
-      };
-
-      // Debug request before sending
-      console.log("🚀 Invoking Edge Function: create-company-with-owner");
-      console.log("📦 Request Headers:", {
-        Authorization: `Bearer ${accessToken}`,
-        "Content-Type": "application/json",
+      // Call edge function to create company with owner account
+      const { data, error } = await supabase.functions.invoke("create-company-with-owner", {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: companyForm.name,
+          description: companyForm.description || null,
+          website: companyForm.website || null,
+          owner_name: companyForm.owner_name,
+          owner_email: companyForm.owner_email,
+          owner_password: companyForm.owner_password,
+        }),
       });
-      console.log("📄 Request Body (raw object):", requestBody);
-      console.log("📄 Request Body (JSON stringified):", JSON.stringify(requestBody));
-
-      // Invoke the edge function
-      const { data, error } = await supabase.functions.invoke(
-        "create-company-with-owner",
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(requestBody),
-        }
-      );
-
-      console.log("📬 Response from Edge Function:", { data, error });
 
       if (error) throw error;
       if (data?.error) throw new Error(data.error);
@@ -560,11 +534,11 @@ export const AdminDashboard = () => {
 
       setShowCompanyForm(false);
 
-      // Refresh companies and stats
+      // Refresh companies data and stats
       await fetchCompanies(1);
       await fetchStats();
     } catch (error) {
-      console.error("❌ Error creating company:", error);
+      console.error("Error creating company:", error);
       toast.error("Failed to create company: " + error.message);
     }
   };
