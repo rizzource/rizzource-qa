@@ -6,73 +6,53 @@ import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Users, Trash2, UserPlus } from 'lucide-react';
+import { Users, Trash2, UserPlus, Pencil } from 'lucide-react';
 import { toast } from 'sonner';
 import { useAuth } from '@/components/AuthProvider';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
 const teamMemberSchema = z.object({
-  user_id: z.string().min(1, 'Please select a user'),
-  role: z.enum(['hr', 'admin'], { required_error: 'Please select a role' }),
+  name: z.string().min(1, 'Name is required'),
+  email: z.string().email('Invalid email address'),
+  password: z.string().min(6, 'Password must be at least 6 characters'),
+  role: z.enum(['hr', 'admin', 'employee'], { required_error: 'Please select a role' }),
 });
 
-const TeamManagement = () => {
+const TeamManagement = ({ companyId }) => {
   const { user } = useAuth();
-  const [companies, setCompanies] = useState([]);
-  const [selectedCompany, setSelectedCompany] = useState(null);
   const [teamMembers, setTeamMembers] = useState([]);
-  const [availableUsers, setAvailableUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isAdding, setIsAdding] = useState(false);
+  const [editingMember, setEditingMember] = useState(null);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
 
   const form = useForm({
     resolver: zodResolver(teamMemberSchema),
     defaultValues: {
-      user_id: '',
+      name: '',
+      email: '',
+      password: '',
       role: '',
     },
   });
 
   useEffect(() => {
-    fetchOwnedCompanies();
-  }, [user]);
-
-  useEffect(() => {
-    if (selectedCompany) {
+    if (companyId) {
       fetchTeamMembers();
-      fetchAvailableUsers();
     }
-  }, [selectedCompany]);
-
-  const fetchOwnedCompanies = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('companies')
-        .select('*')
-        .eq('owner_id', user.id);
-
-      if (error) throw error;
-      setCompanies(data || []);
-      if (data && data.length > 0) {
-        setSelectedCompany(data[0].id);
-      }
-    } catch (error) {
-      console.error('Error fetching companies:', error);
-      toast.error('Failed to fetch companies');
-    } finally {
-      setLoading(false);
-    }
-  };
+  }, [companyId]);
 
   const fetchTeamMembers = async () => {
-    if (!selectedCompany) return;
+    if (!companyId) return;
     
     try {
       const { data, error } = await supabase
         .from('company_members')
-        .select('*, profiles(email)')
-        .eq('company_id', selectedCompany)
+        .select('*')
+        .eq('company_id', companyId)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
@@ -80,81 +60,45 @@ const TeamManagement = () => {
     } catch (error) {
       console.error('Error fetching team members:', error);
       toast.error('Failed to fetch team members');
-    }
-  };
-
-  const fetchAvailableUsers = async () => {
-    if (!selectedCompany) return;
-
-    try {
-      // Get all users
-      const { data: allUsers, error: usersError } = await supabase
-        .from('profiles')
-        .select('id, email')
-        .order('email');
-
-      if (usersError) throw usersError;
-
-      // Get existing team members
-      const { data: existingMembers, error: membersError } = await supabase
-        .from('company_members')
-        .select('user_id')
-        .eq('company_id', selectedCompany);
-
-      if (membersError) throw membersError;
-
-      // Filter out existing members
-      const existingIds = new Set(existingMembers.map(m => m.user_id));
-      const available = allUsers.filter(u => !existingIds.has(u.id));
-      
-      setAvailableUsers(available || []);
-    } catch (error) {
-      console.error('Error fetching available users:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
   const onSubmit = async (data) => {
-    if (!selectedCompany) return;
-    
+    if (!companyId) {
+      toast.error('No company selected');
+      return;
+    }
+
     setIsAdding(true);
     try {
-      // Add to company_members
-      const { error: memberError } = await supabase
-        .from('company_members')
-        .insert({
-          company_id: selectedCompany,
-          user_id: data.user_id,
+      // Use edge function to avoid session switching and bypass RLS safely
+      const { data: result, error } = await supabase.functions.invoke('add-team-member', {
+        body: {
+          company_id: companyId,
+          name: data.name,
+          email: data.email,
+          password: data.password,
           role: data.role,
-        });
+        },
+      });
 
-      if (memberError) throw memberError;
-
-      // Add to user_roles
-      const { error: roleError } = await supabase
-        .from('user_roles')
-        .insert({
-          user_id: data.user_id,
-          role: data.role,
-        });
-
-      // Ignore duplicate role errors
-      if (roleError && !roleError.message.includes('duplicate')) {
-        throw roleError;
-      }
+      if (error) throw error;
+      if (!result?.success) throw new Error(result?.error || 'Failed to add team member');
 
       toast.success('Team member added successfully!');
       form.reset();
       fetchTeamMembers();
-      fetchAvailableUsers();
     } catch (error) {
       console.error('Error adding team member:', error);
-      toast.error('Failed to add team member');
+      toast.error(error.message || 'Failed to add team member');
     } finally {
       setIsAdding(false);
     }
   };
 
-  const removeMember = async (memberId, userId) => {
+  const removeMember = async (memberId, userId, role) => {
     if (!confirm('Are you sure you want to remove this team member?')) return;
 
     try {
@@ -166,41 +110,72 @@ const TeamManagement = () => {
 
       if (memberError) throw memberError;
 
-      // Check if user is in other companies before removing role
+      // Check if user is in other companies with the same role before removing role
       const { data: otherMemberships, error: checkError } = await supabase
         .from('company_members')
-        .select('id')
-        .eq('user_id', userId);
+        .select('id, role')
+        .eq('user_id', userId)
+        .eq('role', role);
 
       if (checkError) throw checkError;
 
-      // If no other memberships, remove from user_roles
+      // If no other memberships with this role, remove from user_roles
       if (!otherMemberships || otherMemberships.length === 0) {
         await supabase
           .from('user_roles')
           .delete()
-          .eq('user_id', userId);
+          .eq('user_id', userId)
+          .eq('role', role);
       }
 
       toast.success('Team member removed');
       fetchTeamMembers();
-      fetchAvailableUsers();
     } catch (error) {
       console.error('Error removing team member:', error);
       toast.error('Failed to remove team member');
     }
   };
 
+  const updateMember = async (memberId, updateData) => {
+    try {
+      const { data: result, error } = await supabase.functions.invoke('update-team-member', {
+        body: {
+          company_id: companyId,
+          member_id: memberId,
+          name: updateData.name,
+          role: updateData.role,
+          old_role: updateData.oldRole,
+        },
+      });
+
+      if (error) throw error;
+      if (!result?.success) throw new Error(result?.error || 'Failed to update team member');
+
+      toast.success('Team member updated successfully');
+      setIsEditDialogOpen(false);
+      setEditingMember(null);
+      await fetchTeamMembers();
+    } catch (error) {
+      console.error('Error updating team member:', error);
+      toast.error(error.message || 'Failed to update team member');
+    }
+  };
+
+  const openEditDialog = (member) => {
+    setEditingMember(member);
+    setIsEditDialogOpen(true);
+  };
+
   if (loading) {
     return <p className="text-muted-foreground">Loading...</p>;
   }
 
-  if (companies.length === 0) {
+  if (!companyId) {
     return (
       <Card>
         <CardContent className="py-8 text-center">
           <Users className="h-12 w-12 text-muted-foreground mx-auto mb-2" />
-          <p className="text-muted-foreground">You don't own any companies yet.</p>
+          <p className="text-muted-foreground">Please select a company to manage team.</p>
         </CardContent>
       </Card>
     );
@@ -208,29 +183,6 @@ const TeamManagement = () => {
 
   return (
     <div className="space-y-6">
-      {/* Company Selection */}
-      {companies.length > 1 && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Select Company</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Select value={selectedCompany} onValueChange={setSelectedCompany}>
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {companies.map((company) => (
-                  <SelectItem key={company.id} value={company.id}>
-                    {company.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </CardContent>
-        </Card>
-      )}
-
       {/* Add Team Member Form */}
       <Card>
         <CardHeader>
@@ -244,24 +196,41 @@ const TeamManagement = () => {
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
               <FormField
                 control={form.control}
-                name="user_id"
+                name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>User *</FormLabel>
-                    <Select onValueChange={field.onChange} value={field.value}>
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select user" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {availableUsers.map((user) => (
-                          <SelectItem key={user.id} value={user.id}>
-                            {user.email}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <FormLabel>Name *</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter member name" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Email *</FormLabel>
+                    <FormControl>
+                      <Input type="email" placeholder="Enter email address" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Password *</FormLabel>
+                    <FormControl>
+                      <Input type="password" placeholder="Enter password" {...field} />
+                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -282,6 +251,7 @@ const TeamManagement = () => {
                       <SelectContent>
                         <SelectItem value="hr">HR</SelectItem>
                         <SelectItem value="admin">Admin</SelectItem>
+                        <SelectItem value="employee">Employee</SelectItem>
                       </SelectContent>
                     </Select>
                     <FormMessage />
@@ -315,7 +285,7 @@ const TeamManagement = () => {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Email</TableHead>
+                    <TableHead>Name</TableHead>
                     <TableHead>Role</TableHead>
                     <TableHead>Added</TableHead>
                     <TableHead className="text-right">Actions</TableHead>
@@ -325,7 +295,7 @@ const TeamManagement = () => {
                   {teamMembers.map((member) => (
                     <TableRow key={member.id}>
                       <TableCell className="font-medium">
-                        {member.profiles?.email}
+                        {member.name}
                       </TableCell>
                       <TableCell className="capitalize">{member.role}</TableCell>
                       <TableCell>
@@ -333,13 +303,22 @@ const TeamManagement = () => {
                       </TableCell>
                       <TableCell className="text-right">
                         {member.role !== 'owner' && (
-                          <Button
-                            size="sm"
-                            variant="ghost"
-                            onClick={() => removeMember(member.id, member.user_id)}
-                          >
-                            <Trash2 className="h-4 w-4 text-destructive" />
-                          </Button>
+                          <div className="flex gap-2 justify-end">
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={() => openEditDialog(member)}
+                            >
+                              <Pencil className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={() => removeMember(member.id, member.user_id, member.role)}
+                            >
+                              <Trash2 className="h-4 w-4 text-destructive" />
+                            </Button>
+                          </div>
                         )}
                       </TableCell>
                     </TableRow>
@@ -350,7 +329,98 @@ const TeamManagement = () => {
           )}
         </CardContent>
       </Card>
+
+      {/* Edit Dialog */}
+      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Edit Team Member</DialogTitle>
+          </DialogHeader>
+          {editingMember && (
+            <EditMemberForm 
+              member={editingMember} 
+              onSubmit={updateMember}
+              onCancel={() => setIsEditDialogOpen(false)}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
+  );
+};
+
+const EditMemberForm = ({ member, onSubmit, onCancel }) => {
+  const editSchema = z.object({
+    name: z.string().min(1, 'Name is required'),
+    role: z.enum(['hr', 'admin', 'employee'], { required_error: 'Please select a role' }),
+  });
+
+  const form = useForm({
+    resolver: zodResolver(editSchema),
+    defaultValues: {
+      name: member.name || '',
+      role: member.role || '',
+    },
+  });
+
+  useEffect(() => {
+    form.reset({ name: member.name || '', role: member.role || '' });
+  }, [member, form]);
+
+  const handleSubmit = (data) => {
+    onSubmit(member.id, { ...data, oldRole: member.role });
+  };
+
+  return (
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
+        <FormField
+          control={form.control}
+          name="name"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Name *</FormLabel>
+              <FormControl>
+                <Input placeholder="Enter member name" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="role"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Role *</FormLabel>
+              <Select onValueChange={field.onChange} value={field.value}>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select role" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  <SelectItem value="hr">HR</SelectItem>
+                  <SelectItem value="admin">Admin</SelectItem>
+                  <SelectItem value="employee">Employee</SelectItem>
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <div className="flex gap-2 justify-end">
+          <Button type="button" variant="outline" onClick={onCancel}>
+            Cancel
+          </Button>
+          <Button type="submit" disabled={form.formState.isSubmitting}>
+            {form.formState.isSubmitting ? 'Saving...' : 'Save Changes'}
+          </Button>
+        </div>
+      </form>
+    </Form>
   );
 };
 
