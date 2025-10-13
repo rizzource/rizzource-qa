@@ -138,45 +138,23 @@ const TeamManagement = ({ companyId }) => {
 
   const updateMember = async (memberId, updateData) => {
     try {
-      // First get the member details
-      const { data: member, error: fetchError } = await supabase
-        .from('company_members')
-        .select('user_id, role')
-        .eq('id', memberId)
-        .single();
-
-      if (fetchError) throw fetchError;
-
-      // Update company_members
-      const { error: updateError } = await supabase
-        .from('company_members')
-        .update({
+      const { data: result, error } = await supabase.functions.invoke('update-team-member', {
+        body: {
+          company_id: companyId,
+          member_id: memberId,
           name: updateData.name,
           role: updateData.role,
-        })
-        .eq('id', memberId)
-        .eq('company_id', companyId); // Ensure we're updating within the correct company
+          old_role: updateData.oldRole,
+        },
+      });
 
-      if (updateError) throw updateError;
+      if (error) throw error;
+      if (!result?.success) throw new Error(result?.error || 'Failed to update team member');
 
-      // Update user_roles if role changed
-      if (member && updateData.oldRole !== updateData.role) {
-        // Add new role to user_roles
-        const { error: insertError } = await supabase
-          .from('user_roles')
-          .insert({ user_id: member.user_id, role: updateData.role })
-          .select();
-        
-        // Ignore if role already exists (duplicate key)
-        if (insertError && !insertError.message.includes('duplicate')) {
-          console.error('Error adding new role:', insertError);
-        }
-      }
-      
       toast.success('Team member updated successfully');
       setIsEditDialogOpen(false);
       setEditingMember(null);
-      fetchTeamMembers();
+      await fetchTeamMembers();
     } catch (error) {
       console.error('Error updating team member:', error);
       toast.error(error.message || 'Failed to update team member');
@@ -385,6 +363,10 @@ const EditMemberForm = ({ member, onSubmit, onCancel }) => {
     },
   });
 
+  useEffect(() => {
+    form.reset({ name: member.name || '', role: member.role || '' });
+  }, [member, form]);
+
   const handleSubmit = (data) => {
     onSubmit(member.id, { ...data, oldRole: member.role });
   };
@@ -433,8 +415,8 @@ const EditMemberForm = ({ member, onSubmit, onCancel }) => {
           <Button type="button" variant="outline" onClick={onCancel}>
             Cancel
           </Button>
-          <Button type="submit">
-            Save Changes
+          <Button type="submit" disabled={form.formState.isSubmitting}>
+            {form.formState.isSubmitting ? 'Saving...' : 'Save Changes'}
           </Button>
         </div>
       </form>
