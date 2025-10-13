@@ -5,9 +5,8 @@ import { componentTagger } from "lovable-tagger";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
-  root: "./frontend",
   build: {
-    outDir: "../dist",
+    outDir: "./dist",
     sourcemap: true,
   },
   server: {
@@ -21,7 +20,7 @@ export default defineConfig(({ mode }) => ({
   ].filter(Boolean),
   resolve: {
     alias: {
-      "@": path.resolve(__dirname, "./frontend/src"),
+      "@": path.resolve(__dirname, "./src"),
     },
     dedupe: ["react", "react-dom"]
   },
