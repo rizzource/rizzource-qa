@@ -138,47 +138,38 @@ const TeamManagement = ({ companyId }) => {
 
   const updateMember = async (memberId, updateData) => {
     try {
-      const { error } = await supabase
+      // First get the member details
+      const { data: member, error: fetchError } = await supabase
+        .from('company_members')
+        .select('user_id, role')
+        .eq('id', memberId)
+        .single();
+
+      if (fetchError) throw fetchError;
+
+      // Update company_members
+      const { error: updateError } = await supabase
         .from('company_members')
         .update({
           name: updateData.name,
           role: updateData.role,
         })
-        .eq('id', memberId);
+        .eq('id', memberId)
+        .eq('company_id', companyId); // Ensure we're updating within the correct company
 
-      if (error) throw error;
+      if (updateError) throw updateError;
 
       // Update user_roles if role changed
-      if (updateData.oldRole !== updateData.role) {
-        const { data: member } = await supabase
-          .from('company_members')
-          .select('user_id')
-          .eq('id', memberId)
-          .single();
-
-        if (member) {
-          // Add new role
-          await supabase
-            .from('user_roles')
-            .insert({ user_id: member.user_id, role: updateData.role })
-            .onConflict('user_id,role')
-            .ignore();
-
-          // Check if old role is used in other companies
-          const { data: otherMemberships } = await supabase
-            .from('company_members')
-            .select('id')
-            .eq('user_id', member.user_id)
-            .eq('role', updateData.oldRole);
-
-          // If no other memberships with old role, remove it
-          if (!otherMemberships || otherMemberships.length === 0) {
-            await supabase
-              .from('user_roles')
-              .delete()
-              .eq('user_id', member.user_id)
-              .eq('role', updateData.oldRole);
-          }
+      if (member && updateData.oldRole !== updateData.role) {
+        // Add new role to user_roles
+        const { error: insertError } = await supabase
+          .from('user_roles')
+          .insert({ user_id: member.user_id, role: updateData.role })
+          .select();
+        
+        // Ignore if role already exists (duplicate key)
+        if (insertError && !insertError.message.includes('duplicate')) {
+          console.error('Error adding new role:', insertError);
         }
       }
       
@@ -188,7 +179,7 @@ const TeamManagement = ({ companyId }) => {
       fetchTeamMembers();
     } catch (error) {
       console.error('Error updating team member:', error);
-      toast.error('Failed to update team member');
+      toast.error(error.message || 'Failed to update team member');
     }
   };
 
