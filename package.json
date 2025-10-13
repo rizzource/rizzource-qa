@@ -92,5 +92,3 @@
     "preview": "cd frontend && npm run preview"
   }
 }
-
-}
