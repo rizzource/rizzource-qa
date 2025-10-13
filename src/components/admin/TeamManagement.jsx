@@ -9,9 +9,10 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Users, Trash2, UserPlus } from 'lucide-react';
+import { Users, Trash2, UserPlus, Pencil } from 'lucide-react';
 import { toast } from 'sonner';
 import { useAuth } from '@/components/AuthProvider';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
 const teamMemberSchema = z.object({
   name: z.string().min(1, 'Name is required'),
@@ -25,6 +26,8 @@ const TeamManagement = ({ companyId }) => {
   const [teamMembers, setTeamMembers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isAdding, setIsAdding] = useState(false);
+  const [editingMember, setEditingMember] = useState(null);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
 
   const form = useForm({
     resolver: zodResolver(teamMemberSchema),
@@ -131,6 +134,67 @@ const TeamManagement = ({ companyId }) => {
       console.error('Error removing team member:', error);
       toast.error('Failed to remove team member');
     }
+  };
+
+  const updateMember = async (memberId, updateData) => {
+    try {
+      const { error } = await supabase
+        .from('company_members')
+        .update({
+          name: updateData.name,
+          role: updateData.role,
+        })
+        .eq('id', memberId);
+
+      if (error) throw error;
+
+      // Update user_roles if role changed
+      if (updateData.oldRole !== updateData.role) {
+        const { data: member } = await supabase
+          .from('company_members')
+          .select('user_id')
+          .eq('id', memberId)
+          .single();
+
+        if (member) {
+          // Add new role
+          await supabase
+            .from('user_roles')
+            .insert({ user_id: member.user_id, role: updateData.role })
+            .onConflict('user_id,role')
+            .ignore();
+
+          // Check if old role is used in other companies
+          const { data: otherMemberships } = await supabase
+            .from('company_members')
+            .select('id')
+            .eq('user_id', member.user_id)
+            .eq('role', updateData.oldRole);
+
+          // If no other memberships with old role, remove it
+          if (!otherMemberships || otherMemberships.length === 0) {
+            await supabase
+              .from('user_roles')
+              .delete()
+              .eq('user_id', member.user_id)
+              .eq('role', updateData.oldRole);
+          }
+        }
+      }
+      
+      toast.success('Team member updated successfully');
+      setIsEditDialogOpen(false);
+      setEditingMember(null);
+      fetchTeamMembers();
+    } catch (error) {
+      console.error('Error updating team member:', error);
+      toast.error('Failed to update team member');
+    }
+  };
+
+  const openEditDialog = (member) => {
+    setEditingMember(member);
+    setIsEditDialogOpen(true);
   };
 
   if (loading) {
@@ -270,13 +334,22 @@ const TeamManagement = ({ companyId }) => {
                       </TableCell>
                       <TableCell className="text-right">
                         {member.role !== 'owner' && (
-                          <Button
-                            size="sm"
-                            variant="ghost"
-                            onClick={() => removeMember(member.id, member.user_id, member.role)}
-                          >
-                            <Trash2 className="h-4 w-4 text-destructive" />
-                          </Button>
+                          <div className="flex gap-2 justify-end">
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={() => openEditDialog(member)}
+                            >
+                              <Pencil className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={() => removeMember(member.id, member.user_id, member.role)}
+                            >
+                              <Trash2 className="h-4 w-4 text-destructive" />
+                            </Button>
+                          </div>
                         )}
                       </TableCell>
                     </TableRow>
@@ -287,7 +360,94 @@ const TeamManagement = ({ companyId }) => {
           )}
         </CardContent>
       </Card>
+
+      {/* Edit Dialog */}
+      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Edit Team Member</DialogTitle>
+          </DialogHeader>
+          {editingMember && (
+            <EditMemberForm 
+              member={editingMember} 
+              onSubmit={updateMember}
+              onCancel={() => setIsEditDialogOpen(false)}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
+  );
+};
+
+const EditMemberForm = ({ member, onSubmit, onCancel }) => {
+  const editSchema = z.object({
+    name: z.string().min(1, 'Name is required'),
+    role: z.enum(['hr', 'admin', 'employee'], { required_error: 'Please select a role' }),
+  });
+
+  const form = useForm({
+    resolver: zodResolver(editSchema),
+    defaultValues: {
+      name: member.name || '',
+      role: member.role || '',
+    },
+  });
+
+  const handleSubmit = (data) => {
+    onSubmit(member.id, { ...data, oldRole: member.role });
+  };
+
+  return (
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
+        <FormField
+          control={form.control}
+          name="name"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Name *</FormLabel>
+              <FormControl>
+                <Input placeholder="Enter member name" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="role"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Role *</FormLabel>
+              <Select onValueChange={field.onChange} value={field.value}>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select role" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  <SelectItem value="hr">HR</SelectItem>
+                  <SelectItem value="admin">Admin</SelectItem>
+                  <SelectItem value="employee">Employee</SelectItem>
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <div className="flex gap-2 justify-end">
+          <Button type="button" variant="outline" onClick={onCancel}>
+            Cancel
+          </Button>
+          <Button type="submit">
+            Save Changes
+          </Button>
+        </div>
+      </form>
+    </Form>
   );
 };
 

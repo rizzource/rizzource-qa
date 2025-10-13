@@ -8,8 +8,9 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Building2, Trash2, Users } from 'lucide-react';
+import { Building2, Trash2, Users, Pencil } from 'lucide-react';
 import { toast } from 'sonner';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 
 const companySchema = z.object({
   name: z.string().min(2, 'Company name must be at least 2 characters'),
@@ -24,6 +25,8 @@ const CompanyManagement = () => {
   const [companies, setCompanies] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isCreating, setIsCreating] = useState(false);
+  const [editingCompany, setEditingCompany] = useState(null);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
 
   const form = useForm({
     resolver: zodResolver(companySchema),
@@ -159,6 +162,34 @@ const CompanyManagement = () => {
     }
   };
 
+  const updateCompany = async (companyId, updateData) => {
+    try {
+      const { error } = await supabase
+        .from('companies')
+        .update({
+          name: updateData.name,
+          description: updateData.description || null,
+          website: updateData.website || null,
+        })
+        .eq('id', companyId);
+
+      if (error) throw error;
+      
+      toast.success('Company updated successfully');
+      setIsEditDialogOpen(false);
+      setEditingCompany(null);
+      fetchCompanies();
+    } catch (error) {
+      console.error('Error updating company:', error);
+      toast.error('Failed to update company');
+    }
+  };
+
+  const openEditDialog = (company) => {
+    setEditingCompany(company);
+    setIsEditDialogOpen(true);
+  };
+
   return (
     <div className="space-y-6">
       <Card>
@@ -291,13 +322,22 @@ const CompanyManagement = () => {
                         )}
                       </div>
                     </div>
-                    <Button 
-                      size="sm" 
-                      variant="destructive" 
-                      onClick={() => deleteCompany(company.id)}
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
+                    <div className="flex gap-2">
+                      <Button 
+                        size="sm" 
+                        variant="outline" 
+                        onClick={() => openEditDialog(company)}
+                      >
+                        <Pencil className="h-4 w-4" />
+                      </Button>
+                      <Button 
+                        size="sm" 
+                        variant="destructive" 
+                        onClick={() => deleteCompany(company.id)}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
                   </div>
                 </CardContent>
               </Card>
@@ -305,7 +345,101 @@ const CompanyManagement = () => {
           </div>
         )}
       </div>
+
+      {/* Edit Dialog */}
+      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Edit Company</DialogTitle>
+          </DialogHeader>
+          {editingCompany && (
+            <EditCompanyForm 
+              company={editingCompany} 
+              onSubmit={updateCompany}
+              onCancel={() => setIsEditDialogOpen(false)}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
+  );
+};
+
+const EditCompanyForm = ({ company, onSubmit, onCancel }) => {
+  const editSchema = z.object({
+    name: z.string().min(2, 'Company name must be at least 2 characters'),
+    description: z.string().optional(),
+    website: z.string().url('Please enter a valid URL').optional().or(z.literal('')),
+  });
+
+  const form = useForm({
+    resolver: zodResolver(editSchema),
+    defaultValues: {
+      name: company.name || '',
+      description: company.description || '',
+      website: company.website || '',
+    },
+  });
+
+  const handleSubmit = (data) => {
+    onSubmit(company.id, data);
+  };
+
+  return (
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
+        <FormField
+          control={form.control}
+          name="name"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Company Name *</FormLabel>
+              <FormControl>
+                <Input placeholder="Acme Corporation" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="description"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Description</FormLabel>
+              <FormControl>
+                <Textarea placeholder="About the company..." {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="website"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Website</FormLabel>
+              <FormControl>
+                <Input placeholder="https://example.com" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <div className="flex gap-2 justify-end">
+          <Button type="button" variant="outline" onClick={onCancel}>
+            Cancel
+          </Button>
+          <Button type="submit">
+            Save Changes
+          </Button>
+        </div>
+      </form>
+    </Form>
   );
 };
 
