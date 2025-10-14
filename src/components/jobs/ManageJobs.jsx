@@ -4,8 +4,8 @@ import { useAuth } from '@/components/AuthProvider';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Edit, Trash2, Eye, EyeOff } from 'lucide-react';
-import { toast } from 'sonner';
+import { Eye, EyeOff, Loader2, Plus, Edit, Trash2 } from 'lucide-react';
+import { toast } from 'react-toastify';
 import {
   Dialog,
   DialogContent,
@@ -21,17 +21,11 @@ const ManageJobs = () => {
   const { user } = useAuth();
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [editingJob, setEditingJob] = useState(null);
-  const [editDialogOpen, setEditDialogOpen] = useState(false);
-  const [editForm, setEditForm] = useState({
-    title: '',
-    description: '',
-    location: '',
-    job_type: '',
-    salary_range: '',
-    application_deadline: '',
-    status: 'open',
-  });
+
+  // --- Edit/Delete State ---
+  const [editJobId, setEditJobId] = useState(null);
+  const [editForm, setEditForm] = useState(null);
+  const [deletingId, setDeletingId] = useState(null);
 
   useEffect(() => {
     fetchJobs();
@@ -39,7 +33,6 @@ const ManageJobs = () => {
 
   const fetchJobs = async () => {
     try {
-      // Get companies where user is a member
       const { data: memberData, error: memberError } = await supabase
         .from('company_members')
         .select('company_id')
@@ -47,9 +40,8 @@ const ManageJobs = () => {
 
       if (memberError) throw memberError;
 
-      const companyIds = memberData.map(cm => cm.company_id);
+      const companyIds = memberData.map((cm) => cm.company_id);
 
-      // Get jobs for those companies
       const { data: jobsData, error: jobsError } = await supabase
         .from('jobs')
         .select('*, companies(name)')
@@ -57,6 +49,7 @@ const ManageJobs = () => {
         .order('created_at', { ascending: false });
 
       if (jobsError) throw jobsError;
+
       setJobs(jobsData || []);
     } catch (error) {
       console.error('Error fetching jobs:', error);
@@ -75,7 +68,7 @@ const ManageJobs = () => {
         .eq('id', jobId);
 
       if (error) throw error;
-      
+
       toast.success(`Job ${newStatus === 'open' ? 'opened' : 'closed'} successfully`);
       fetchJobs();
     } catch (error) {
@@ -84,42 +77,25 @@ const ManageJobs = () => {
     }
   };
 
-  const deleteJob = async (jobId) => {
-    if (!confirm('Are you sure you want to delete this job posting?')) return;
-
-    try {
-      const { error } = await supabase
-        .from('jobs')
-        .delete()
-        .eq('id', jobId);
-
-      if (error) throw error;
-      
-      toast.success('Job deleted successfully');
-      fetchJobs();
-    } catch (error) {
-      console.error('Error deleting job:', error);
-      toast.error('Failed to delete job');
-    }
-  };
-
-  const openEditDialog = (job) => {
-    setEditingJob(job);
+  // --- Edit Handler ---
+  const handleEditClick = (job) => {
+    setEditJobId(job.id);
     setEditForm({
       title: job.title || '',
       description: job.description || '',
       location: job.location || '',
       job_type: job.job_type || '',
       salary_range: job.salary_range || '',
-      application_deadline: job.application_deadline || '',
+      application_deadline: job.application_deadline
+        ? job.application_deadline.slice(0, 10)
+        : '',
       status: job.status || 'open',
     });
-    setEditDialogOpen(true);
   };
 
-  const updateJob = async () => {
-    if (!editingJob) return;
-
+  // --- Update Job in Supabase ---
+  const handleEditSubmit = async (e) => {
+    e.preventDefault();
     try {
       const { error } = await supabase
         .from('jobs')
@@ -132,22 +108,81 @@ const ManageJobs = () => {
           application_deadline: editForm.application_deadline || null,
           status: editForm.status,
         })
-        .eq('id', editingJob.id);
+        .eq('id', editJobId);
 
       if (error) throw error;
 
-      toast.success('Job updated successfully');
-      setEditDialogOpen(false);
-      setEditingJob(null);
-      fetchJobs();
+      toast.success('Job updated successfully!');
+      setEditJobId(null);
+      setEditForm(null);
+      await fetchJobs();
     } catch (error) {
-      console.error('Error updating job:', error);
-      toast.error('Failed to update job');
+      toast.error('Failed to update job: ' + error.message);
     }
   };
 
+  // --- Delete Handler ---
+  const handleDeleteJob = async (jobId, closeToast) => {
+    setDeletingId(jobId);
+    try {
+      const { error } = await supabase.from('jobs').delete().eq('id', jobId);
+      if (error) throw error;
+      toast.success('Job deleted successfully!');
+      setJobs((prev) => prev.filter((job) => job.id !== jobId));
+      if (closeToast) closeToast();
+    } catch (error) {
+      toast.error('Failed to delete job: ' + error.message);
+    } finally {
+      setDeletingId(null);
+    }
+  };
+
+  // --- Custom Toast Confirm ---
+  const showDeleteConfirm = (jobId) => {
+    toast(
+      ({ closeToast }) => (
+        <div className="flex flex-col gap-3">
+          <span className="font-semibold text-destructive">
+            Are you sure you want to delete this job?
+          </span>
+          <div className="flex gap-2">
+            <Button
+              size="sm"
+              variant="destructive"
+              className="transition-all duration-150 shadow hover:scale-105 focus:ring-2 focus:ring-destructive"
+              onClick={() => handleDeleteJob(jobId, closeToast)}
+              disabled={deletingId === jobId}
+            >
+              {deletingId === jobId ? 'Deleting...' : 'Yes'}
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              className="transition-all duration-150 hover:bg-muted/30"
+              onClick={closeToast}
+            >
+              Cancel
+            </Button>
+          </div>
+        </div>
+      ),
+      {
+        autoClose: false,
+        closeOnClick: false,
+        draggable: false,
+        position: "top-center",
+        className: "bg-card border border-border shadow-lg",
+      }
+    );
+  };
+
   if (loading) {
-    return <div className="text-center py-8">Loading jobs...</div>;
+    return (
+      <div className="flex items-center justify-center py-8">
+        <Loader2 className="w-6 h-6 animate-spin mr-2" />
+        Loading jobs...
+      </div>
+    );
   }
 
   if (jobs.length === 0) {
@@ -162,7 +197,96 @@ const ManageJobs = () => {
 
   return (
     <>
-      <div className="space-y-4">
+      <div className="space-y-6">
+        {/* --- Edit Form --- */}
+        {editJobId && editForm && (
+          <Card className="border border-border">
+            <CardHeader>
+              <CardTitle className="text-lg">Edit Job Posting</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handleEditSubmit} className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="title">Job Title *</Label>
+                    <Input
+                      id="title"
+                      value={editForm.title}
+                      onChange={(e) => setEditForm({ ...editForm, title: e.target.value })}
+                      required
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="job_type">Job Type</Label>
+                    <Input
+                      id="job_type"
+                      value={editForm.job_type}
+                      onChange={(e) => setEditForm({ ...editForm, job_type: e.target.value })}
+                      placeholder="e.g., Full-time, Part-time"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="location">Location</Label>
+                    <Input
+                      id="location"
+                      value={editForm.location}
+                      onChange={(e) => setEditForm({ ...editForm, location: e.target.value })}
+                      placeholder="e.g., Remote, New York"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="salary_range">Salary Range</Label>
+                    <Input
+                      id="salary_range"
+                      value={editForm.salary_range}
+                      onChange={(e) =>
+                        setEditForm({ ...editForm, salary_range: e.target.value })
+                      }
+                      placeholder="e.g., $80,000 - $120,000"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="application_deadline">Application Deadline</Label>
+                    <Input
+                      id="application_deadline"
+                      type="date"
+                      value={editForm.application_deadline}
+                      onChange={(e) =>
+                        setEditForm({ ...editForm, application_deadline: e.target.value })
+                      }
+                    />
+                  </div>
+                </div>
+                <div>
+                  <Label htmlFor="description">Description</Label>
+                  <Textarea
+                    id="description"
+                    value={editForm.description}
+                    onChange={(e) =>
+                      setEditForm({ ...editForm, description: e.target.value })
+                    }
+                    rows={4}
+                  />
+                </div>
+                <div className="flex gap-2">
+                  <Button type="submit">Save Changes</Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => {
+                      setEditJobId(null);
+                      setEditForm(null);
+                    }}
+                  >
+                    Cancel
+                  </Button>
+                </div>
+              </form>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* --- Jobs List --- */}
         {jobs.map((job) => (
           <Card key={job.id}>
             <CardHeader>
@@ -171,20 +295,26 @@ const ManageJobs = () => {
                   <CardTitle className="text-xl">{job.title}</CardTitle>
                   <p className="text-sm text-muted-foreground">{job.companies?.name}</p>
                 </div>
-                <Badge variant={job.status === 'open' ? 'default' : 'secondary'}>
+                <Badge variant={job.status === 'open' ? 'default' : 'primary'} className="px-3 py-1">
                   {job.status}
                 </Badge>
               </div>
             </CardHeader>
             <CardContent>
-              <p className="text-sm text-muted-foreground mb-4 line-clamp-2">{job.description}</p>
+              <p className="text-sm text-muted-foreground mb-4 line-clamp-2">
+                {job.description}
+              </p>
               <div className="flex items-center gap-2">
-                <Button size="sm" variant="outline" onClick={() => openEditDialog(job)}>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => handleEditClick(job)}
+                >
                   <Edit className="h-4 w-4 mr-2" />
                   Edit
                 </Button>
-                <Button 
-                  size="sm" 
+                <Button
+                  size="sm"
                   variant={job.status === 'open' ? 'outline' : 'default'}
                   onClick={() => toggleJobStatus(job.id, job.status)}
                 >
@@ -200,111 +330,21 @@ const ManageJobs = () => {
                     </>
                   )}
                 </Button>
-                <Button size="sm" variant="destructive" onClick={() => deleteJob(job.id)}>
+                <Button
+                  size="sm"
+                  variant="destructive"
+                  disabled={deletingId === job.id}
+                  className="bg-red-600 text-white transition-all duration-150"
+                  onClick={() => showDeleteConfirm(job.id)}
+                >
                   <Trash2 className="h-4 w-4 mr-2" />
-                  Delete
+                  {deletingId === job.id ? 'Deleting...' : 'Delete'}
                 </Button>
               </div>
             </CardContent>
           </Card>
         ))}
       </div>
-
-      <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>Edit Job Posting</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4 py-4">
-            <div className="space-y-2">
-              <Label htmlFor="title">Job Title *</Label>
-              <Input
-                id="title"
-                value={editForm.title}
-                onChange={(e) => setEditForm({ ...editForm, title: e.target.value })}
-                placeholder="e.g., Senior Software Engineer"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="description">Job Description *</Label>
-              <Textarea
-                id="description"
-                value={editForm.description}
-                onChange={(e) => setEditForm({ ...editForm, description: e.target.value })}
-                placeholder="Describe the role, responsibilities, and requirements..."
-                rows={6}
-              />
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="location">Location</Label>
-                <Input
-                  id="location"
-                  value={editForm.location}
-                  onChange={(e) => setEditForm({ ...editForm, location: e.target.value })}
-                  placeholder="e.g., Remote, New York, NY"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="job_type">Job Type</Label>
-                <Input
-                  id="job_type"
-                  value={editForm.job_type}
-                  onChange={(e) => setEditForm({ ...editForm, job_type: e.target.value })}
-                  placeholder="e.g., Full-time, Part-time"
-                />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="salary_range">Salary Range</Label>
-                <Input
-                  id="salary_range"
-                  value={editForm.salary_range}
-                  onChange={(e) => setEditForm({ ...editForm, salary_range: e.target.value })}
-                  placeholder="e.g., $80,000 - $120,000"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="application_deadline">Application Deadline</Label>
-                <Input
-                  id="application_deadline"
-                  type="date"
-                  value={editForm.application_deadline}
-                  onChange={(e) => setEditForm({ ...editForm, application_deadline: e.target.value })}
-                />
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="status">Status</Label>
-              <Select value={editForm.status} onValueChange={(value) => setEditForm({ ...editForm, status: value })}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="open">Open</SelectItem>
-                  <SelectItem value="closed">Closed</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="flex justify-end gap-2 pt-4">
-              <Button variant="outline" onClick={() => setEditDialogOpen(false)}>
-                Cancel
-              </Button>
-              <Button onClick={updateJob}>
-                Save Changes
-              </Button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
     </>
   );
 };

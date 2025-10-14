@@ -7,78 +7,101 @@ const corsHeaders = {
   "Access-Control-Allow-Methods": "POST, OPTIONS",
 };
 
+console.log("🚀 Edge Function 'create-company-with-owner' is now running...");
+
 serve(async (req) => {
+  console.log("📩 Incoming request:", req.method, req.url);
+
   if (req.method === "OPTIONS") {
+    console.log("🟡 Preflight OPTIONS request received");
     return new Response("ok", { headers: corsHeaders });
   }
 
   try {
     const authHeader = req.headers.get("Authorization");
-    console.log("Authorization header present:", !!authHeader);
-    
+    console.log("🔐 Authorization header present:", !!authHeader);
+
     if (!authHeader) {
+      console.error("❌ Missing Authorization header");
       throw new Error("Missing Authorization header");
     }
 
-    const supabaseClient = createClient(
-      Deno.env.get("SUPABASE_URL") ?? "",
-      Deno.env.get("SUPABASE_ANON_KEY") ?? "",
-      {
-        global: {
-          headers: { Authorization: authHeader },
-        },
-      }
-    );
+    console.log("🧩 Initializing Supabase client with user token...");
+    const supabaseClient = createClient(Deno.env.get("SUPABASE_URL") ?? "", Deno.env.get("SUPABASE_ANON_KEY") ?? "", {
+      global: {
+        headers: { Authorization: authHeader },
+      },
+    });
 
-// Verify the requesting user is an admin
-const token = authHeader.replace(/^Bearer\s+/i, "");
-if (!token) {
-  throw new Error("Unauthorized: Missing bearer token");
-}
-const {
-  data: { user },
-  error: authError,
-} = await supabaseClient.auth.getUser(token);
+    // Verify requesting user
+    const token = authHeader.replace(/^Bearer\s+/i, "");
+    console.log("🧾 Extracted Bearer token:", token ? "✅ Present" : "❌ Missing");
 
-console.log("Auth check - User:", user?.id, "Error:", authError);
+    if (!token) {
+      throw new Error("Unauthorized: Missing bearer token");
+    }
 
-if (authError || !user) {
-  throw new Error(`Unauthorized: ${authError?.message || "No user found"}`);
-}
+    console.log("🔍 Verifying user from token...");
+    const {
+      data: { user },
+      error: authError,
+    } = await supabaseClient.auth.getUser(token);
 
-    // Check if user is admin or superadmin
-    const { data: userRoles } = await supabaseClient
+    console.log("👤 Auth check result:", { user: user?.id, authError });
+
+    if (authError || !user) {
+      throw new Error(`Unauthorized: ${authError?.message || "No user found"}`);
+    }
+
+    console.log("✅ User authenticated:", user.email);
+
+    // Check user roles
+    console.log("🔎 Checking if user is admin or superadmin...");
+    const { data: userRoles, error: roleFetchError } = await supabaseClient
       .from("user_roles")
       .select("role")
       .eq("user_id", user.id);
 
-    const isAdmin =
-      userRoles?.some((r) => ["admin", "superadmin"].includes(r.role)) || false;
+    if (roleFetchError) {
+      console.error("❌ Error fetching user roles:", roleFetchError);
+      throw roleFetchError;
+    }
+
+    console.log("📜 User roles found:", userRoles);
+
+    const isAdmin = userRoles?.some((r) => ["admin", "superadmin"].includes(r.role)) || false;
 
     if (!isAdmin) {
+      console.warn("🚫 Access denied: Not an admin or superadmin");
       throw new Error("Only admins can create companies");
     }
 
-    const { name, description, website, owner_name, owner_email, owner_password } =
-      await req.json();
+    console.log("✅ Authorized admin detected. Proceeding to create company and owner...");
 
-    // Use service role to create the owner account
+    const body = await req.json();
+    console.log("📦 Request body received:", body);
+
+    const { name, description, website, owner_name, owner_email, owner_password } = body;
+
+    console.log("🏗 Creating Supabase Admin client...");
     const supabaseAdmin = createClient(
       Deno.env.get("SUPABASE_URL") ?? "",
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
     );
 
-    // Create the owner's user account
+    console.log("👤 Creating new owner account:", owner_email);
     const { data: newUser, error: signUpError } = await supabaseAdmin.auth.admin.createUser({
       email: owner_email,
       password: owner_password,
       email_confirm: true,
     });
 
+    console.log("🧾 Owner creation result:", { newUser, signUpError });
+
     if (signUpError) throw signUpError;
     if (!newUser.user) throw new Error("Failed to create user account");
 
-    // Create the company
+    console.log("🏢 Inserting new company record into 'companies' table...");
     const { data: companyData, error: companyError } = await supabaseAdmin
       .from("companies")
       .insert({
@@ -91,17 +114,20 @@ if (authError || !user) {
       .select()
       .single();
 
+    console.log("🏢 Company insert result:", { companyData, companyError });
+
     if (companyError) throw companyError;
 
-    // Add owner role to user_roles
+    console.log("🧾 Adding 'owner' role for new user...");
     const { error: roleError } = await supabaseAdmin.from("user_roles").insert({
       user_id: newUser.user.id,
       role: "owner",
     });
 
     if (roleError) throw roleError;
+    console.log("✅ Owner role assigned successfully");
 
-    // Add the owner to company_members
+    console.log("👥 Adding new user to 'company_members'...");
     const { error: memberError } = await supabaseAdmin.from("company_members").insert({
       company_id: companyData.id,
       user_id: newUser.user.id,
@@ -110,6 +136,9 @@ if (authError || !user) {
     });
 
     if (memberError) throw memberError;
+    console.log("✅ Owner added to company_members successfully");
+
+    console.log("🎉 Company and owner account successfully created!");
 
     return new Response(
       JSON.stringify({
@@ -120,18 +149,16 @@ if (authError || !user) {
       {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
         status: 200,
-      }
+      },
     );
   } catch (error) {
-    console.error('Error in create-company-with-owner:', error);
-    const message = (error as Error)?.message ?? String(error);
+    console.error("🔥 Error in create-company-with-owner:", error);
+    const message = error instanceof Error ? error.message : String(error);
     const statusCode = /Unauthorized|Missing Authorization/i.test(message) ? 401 : 400;
-    return new Response(
-      JSON.stringify({ error: message }),
-      {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-        status: statusCode,
-      }
-    );
+
+    return new Response(JSON.stringify({ error: message }), {
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      status: statusCode,
+    });
   }
 });

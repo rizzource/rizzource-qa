@@ -484,41 +484,58 @@ export const AdminDashboard = () => {
 
   const handleCompanySubmit = async (e) => {
     e.preventDefault();
-    if (!isSuperAdmin()) return;
+
+    if (!isSuperAdmin()) {
+      return;
+    }
 
     try {
-      // Validate required fields
       if (!companyForm.name || !companyForm.owner_name || !companyForm.owner_email || !companyForm.owner_password) {
         toast.error("Please fill in all required fields");
         return;
       }
 
       // Ensure we include auth token header when invoking the edge function
-      const { data: sessionData } = await supabase.auth.getSession();
+      const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+
+      if (sessionError) {
+        toast.error("Failed to get authentication session.");
+        return;
+      }
+
       const accessToken = sessionData?.session?.access_token;
+
       if (!accessToken) {
         toast.error("You must be logged in to perform this action.");
         return;
       }
 
+      // Prepare body for edge function
+      const requestBody = {
+        name: companyForm.name,
+        description: companyForm.description || null,
+        website: companyForm.website || null,
+        owner_name: companyForm.owner_name,
+        owner_email: companyForm.owner_email,
+        owner_password: companyForm.owner_password,
+      };
+
+
       // Call edge function to create company with owner account
       const { data, error } = await supabase.functions.invoke("create-company-with-owner", {
         headers: {
           Authorization: `Bearer ${accessToken}`,
-          "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          name: companyForm.name,
-          description: companyForm.description || null,
-          website: companyForm.website || null,
-          owner_name: companyForm.owner_name,
-          owner_email: companyForm.owner_email,
-          owner_password: companyForm.owner_password,
-        }),
+        body: JSON.stringify(requestBody),
       });
 
-      if (error) throw error;
-      if (data?.error) throw new Error(data.error);
+      if (error) {
+        throw error;
+      }
+
+      if (data?.error) {
+        throw new Error(data.error);
+      }
 
       toast.success("Company and owner account created successfully!");
 
@@ -538,11 +555,9 @@ export const AdminDashboard = () => {
       await fetchCompanies(1);
       await fetchStats();
     } catch (error) {
-      console.error("Error creating company:", error);
       toast.error("Failed to create company: " + error.message);
     }
   };
-
 
   if (loading) {
     return (
@@ -1951,6 +1966,91 @@ const CompaniesTable = ({
 }) => {
   const totalPages = Math.ceil(data.total / pageSize);
 
+  // --- Edit/Delete State ---
+  const [editCompanyId, setEditCompanyId] = useState(null);
+  const [editForm, setEditForm] = useState(null);
+  const [deletingId, setDeletingId] = useState(null);
+
+  // --- Edit Handler ---
+  const handleEditClick = (company) => {
+    setEditCompanyId(company.id);
+    setEditForm({ ...company });
+    setShowCompanyForm(false);
+  };
+
+  // --- Update Company in Supabase ---
+  const handleEditSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const { error } = await supabase
+        .from("companies")
+        .update({
+          name: editForm.name,
+          description: editForm.description,
+          website: editForm.website,
+          owner_email: editForm.owner_email,
+        })
+        .eq("id", editCompanyId);
+
+      if (error) throw error;
+      toast.success("Company updated!");
+      setEditCompanyId(null);
+      setEditForm(null);
+      await onPageChange(currentPage);
+    } catch (error) {
+      toast.error("Failed to update company: " + error.message);
+    }
+  };
+
+  // --- Delete Handler ---
+  const showDeleteConfirm = (companyId) => {
+    toast(
+      ({ closeToast }) => (
+        <div className="flex flex-col gap-3">
+          <span className="font-semibold text-destructive">Are you sure you want to delete this company?</span>
+          <div className="flex gap-2">
+            <Button
+              size="sm"
+              variant="destructive"
+              className="transition-all duration-150 shadow hover:scale-105 focus:ring-2 focus:ring-destructive"
+              onClick={async () => {
+                closeToast();
+                setDeletingId(companyId);
+                try {
+                  const { error } = await supabase.from("companies").delete().eq("id", companyId);
+                  if (error) throw error;
+                  toast.success("Company deleted successfully!");
+                  await onPageChange(currentPage);
+                } catch (error) {
+                  toast.error("Failed to delete company: " + error.message);
+                } finally {
+                  setDeletingId(null);
+                }
+              }}
+            >
+              Yes
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              className="transition-all duration-150 hover:bg-muted/30"
+              onClick={closeToast}
+            >
+              Cancel
+            </Button>
+          </div>
+        </div>
+      ),
+      {
+        autoClose: false,
+        closeOnClick: false,
+        draggable: false,
+        position: "top-center",
+        className: "bg-card border border-border shadow-lg",
+      }
+    );
+  };
+
   return (
     <Card className="bg-card/90 backdrop-blur-lg border border-border shadow-xl">
       <CardHeader>
@@ -1982,7 +2082,72 @@ const CompaniesTable = ({
         </div>
       </CardHeader>
       <CardContent>
-        {showCompanyForm && (
+        {/* --- Edit Form --- */}
+        {editCompanyId && editForm && (
+          <Card className="mb-6 border border-border">
+            <CardHeader>
+              <CardTitle className="text-lg">Edit Company</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handleEditSubmit} className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="edit-company-name">Company Name *</Label>
+                    <Input
+                      id="edit-company-name"
+                      value={editForm.name}
+                      onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
+                      required
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="edit-company-website">Website</Label>
+                    <Input
+                      id="edit-company-website"
+                      type="url"
+                      value={editForm.website || ""}
+                      onChange={(e) => setEditForm({ ...editForm, website: e.target.value })}
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="edit-company-owner-email">Owner Email</Label>
+                    <Input
+                      id="edit-company-owner-email"
+                      type="email"
+                      value={editForm.owner_email || ""}
+                      onChange={(e) => setEditForm({ ...editForm, owner_email: e.target.value })}
+                    />
+                  </div>
+                </div>
+                <div>
+                  <Label htmlFor="edit-company-description">Description</Label>
+                  <Textarea
+                    id="edit-company-description"
+                    value={editForm.description || ""}
+                    onChange={(e) => setEditForm({ ...editForm, description: e.target.value })}
+                    rows={3}
+                  />
+                </div>
+                <div className="flex gap-2">
+                  <Button type="submit">Save Changes</Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => {
+                      setEditCompanyId(null);
+                      setEditForm(null);
+                    }}
+                  >
+                    Cancel
+                  </Button>
+                </div>
+              </form>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* --- Create Form --- */}
+        {showCompanyForm && !editCompanyId && (
           <Card className="mb-6 border border-border">
             <CardHeader>
               <CardTitle className="text-lg">Create New Company</CardTitle>
@@ -2075,12 +2240,13 @@ const CompaniesTable = ({
                   <TableHead className="text-foreground font-semibold min-w-[200px]">Website</TableHead>
                   <TableHead className="text-foreground font-semibold min-w-[250px]">Description</TableHead>
                   <TableHead className="text-foreground font-semibold min-w-[120px]">Created</TableHead>
+                  <TableHead className="text-foreground font-semibold min-w-[120px]">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {data.loading ? (
                   <TableRow>
-                    <TableCell colSpan={5} className="text-center py-8">
+                    <TableCell colSpan={6} className="text-center py-8">
                       <div className="flex items-center justify-center">
                         <Loader2 className="w-6 h-6 animate-spin mr-2" />
                         Loading companies...
@@ -2089,7 +2255,7 @@ const CompaniesTable = ({
                   </TableRow>
                 ) : data.data?.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={5} className="text-center py-8 text-muted-foreground">
+                    <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
                       No companies found. Create your first company above.
                     </TableCell>
                   </TableRow>
@@ -2117,6 +2283,25 @@ const CompaniesTable = ({
                       </TableCell>
                       <TableCell className="text-foreground">
                         {company.created_at ? new Date(company.created_at).toLocaleDateString() : "—"}
+                      </TableCell>
+                      <TableCell>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="mr-2"
+                          onClick={() => handleEditClick(company)}
+                        >
+                          Edit
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="destructive"
+                          disabled={deletingId === company.id}
+                          className="transition-all duration-150 hover:bg-red-600 hover:text-white"
+                          onClick={() => showDeleteConfirm(company.id)}
+                        >
+                          {deletingId === company.id ? "Deleting..." : "Delete"}
+                        </Button>
                       </TableCell>
                     </TableRow>
                   ))
@@ -2164,109 +2349,111 @@ const CompaniesTable = ({
     </Card>
   );
 };
-
-// const FeedbackTable = ({ data, currentPage, onPageChange, exportToExcel, exportingTable, pageSize }) => {
-//   const totalPages = Math.ceil(data.total / pageSize);
+// --- Feedback Table Component ---
+/*
+const FeedbackTable = ({ data, currentPage, onPageChange, exportToExcel, exportingTable, pageSize }) => {
+  const totalPages = Math.ceil(data.total / pageSize);
   
-//   return (
-//     <Card className="bg-card/90 backdrop-blur-lg border border-border shadow-xl">
-//       <CardHeader>
-//         <div className="flex flex-col sm:flex-row gap-4 sm:justify-between sm:items-center">
-//           <div>
-//             <CardTitle className="text-foreground">Feedback</CardTitle>
-//             <CardDescription className="text-muted-foreground">
-//               User feedback submissions ({data.total} total)
-//             </CardDescription>
-//           </div>
-//           <Button
-//             onClick={() => exportToExcel('feedback', data.data, 'feedback_export')}
-//             disabled={exportingTable === 'feedback'}
-//             className="w-full sm:w-auto"
-//           >
-//             <FileSpreadsheet className="h-4 w-4 mr-2" />
-//             <span className="hidden sm:inline">{exportingTable === 'feedback' ? 'Exporting...' : 'Export to Excel'}</span>
-//             <span className="sm:hidden">{exportingTable === 'feedback' ? 'Exporting...' : 'Export'}</span>
-//           </Button>
-//         </div>
-//       </CardHeader>
-//       <CardContent>
-//         <div className="overflow-x-auto">
-//           <div className="rounded-md border border-border w-max min-w-full bg-card/50 backdrop-blur-sm">
-//             <Table>
-//               <TableHeader>
-//                 <TableRow className="border-border bg-muted/50 backdrop-blur-sm">
-//                   <TableHead className="text-foreground font-semibold min-w-[180px]">Email</TableHead>
-//                   <TableHead className="text-foreground font-semibold min-w-[80px]">Rating</TableHead>
-//                   <TableHead className="text-foreground font-semibold min-w-[200px]">Suggestions</TableHead>
-//                   <TableHead className="text-foreground font-semibold min-w-[100px]">Created At</TableHead>
-//                 </TableRow>
-//               </TableHeader>
-//               <TableBody>
-//                 {data.loading ? (
-//                    <TableRow>
-//                      <TableCell colSpan={4} className="text-center text-muted-foreground py-8">
-//                        <Loader2 className="h-4 w-4 animate-spin mx-auto" />
-//                        <span className="ml-2">Loading...</span>
-//                      </TableCell>
-//                    </TableRow>
-//                  ) : data.data.length === 0 ? (
-//                    <TableRow>
-//                      <TableCell colSpan={4} className="text-center text-muted-foreground py-8">
-//                        No feedback found
-//                      </TableCell>
-//                    </TableRow>
-//                  ) : (
-//                    data.data.map((item) => (
-//                      <TableRow key={item.id} className="border-border hover:bg-muted/50 transition-colors duration-200">
-//                        <TableCell className="text-muted-foreground text-sm">{item.user_email}</TableCell>
-//                        <TableCell className="text-muted-foreground text-sm">{item.rating}/5</TableCell>
-//                        <TableCell className="text-muted-foreground text-sm whitespace-normal break-words max-w-[180px]">{item.suggestions}</TableCell>
-//                        <TableCell className="text-muted-foreground text-sm">
-//                          {new Date(item.created_at).toLocaleDateString()}
-//                        </TableCell>
-//                      </TableRow>
-//                    ))
-//                 )}
-//               </TableBody>
-//             </Table>
-//           </div>
-//         </div>
+  return (
+    <Card className="bg-card/90 backdrop-blur-lg border border-border shadow-xl">
+      <CardHeader>
+        <div className="flex flex-col sm:flex-row gap-4 sm:justify-between sm:items-center">
+          <div>
+            <CardTitle className="text-foreground">Feedback</CardTitle>
+            <CardDescription className="text-muted-foreground">
+              User feedback submissions ({data.total} total)
+            </CardDescription>
+          </div>
+          <Button
+            onClick={() => exportToExcel('feedback', data.data, 'feedback_export')}
+            disabled={exportingTable === 'feedback'}
+            className="w-full sm:w-auto"
+          >
+            <FileSpreadsheet className="h-4 w-4 mr-2" />
+            <span className="hidden sm:inline">{exportingTable === 'feedback' ? 'Exporting...' : 'Export to Excel'}</span>
+            <span className="sm:hidden">{exportingTable === 'feedback' ? 'Exporting...' : 'Export'}</span>
+          </Button>
+        </div>
+      </CardHeader>
+      <CardContent>
+        <div className="overflow-x-auto">
+          <div className="rounded-md border border-border w-max min-w-full bg-card/50 backdrop-blur-sm">
+            <Table>
+              <TableHeader>
+                <TableRow className="border-border bg-muted/50 backdrop-blur-sm">
+                  <TableHead className="text-foreground font-semibold min-w-[180px]">Email</TableHead>
+                  <TableHead className="text-foreground font-semibold min-w-[80px]">Rating</TableHead>
+                  <TableHead className="text-foreground font-semibold min-w-[200px]">Suggestions</TableHead>
+                  <TableHead className="text-foreground font-semibold min-w-[100px]">Created At</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {data.loading ? (
+                   <TableRow>
+                     <TableCell colSpan={4} className="text-center text-muted-foreground py-8">
+                       <Loader2 className="h-4 w-4 animate-spin mx-auto" />
+                       <span className="ml-2">Loading...</span>
+                     </TableCell>
+                   </TableRow>
+                 ) : data.data.length === 0 ? (
+                   <TableRow>
+                     <TableCell colSpan={4} className="text-center text-muted-foreground py-8">
+                       No feedback found
+                     </TableCell>
+                   </TableRow>
+                 ) : (
+                   data.data.map((item) => (
+                     <TableRow key={item.id} className="border-border hover:bg-muted/50 transition-colors duration-200">
+                       <TableCell className="text-muted-foreground text-sm">{item.user_email}</TableCell>
+                       <TableCell className="text-muted-foreground text-sm">{item.rating}/5</TableCell>
+                       <TableCell className="text-muted-foreground text-sm whitespace-normal break-words max-w-[180px]">{item.suggestions}</TableCell>
+                       <TableCell className="text-muted-foreground text-sm">
+                         {new Date(item.created_at).toLocaleDateString()}
+                       </TableCell>
+                     </TableRow>
+                   ))
+                 )}
+              </TableBody>
+            </Table>
+          </div>
+        </div>
         
-//         {/* Pagination Controls */}
-//         {totalPages > 1 && (
-//           <div className="flex justify-center mt-6">
-//             <Pagination>
-//               <PaginationContent>
-//                 <PaginationItem>
-//                   <PaginationPrevious 
-//                     onClick={() => currentPage > 1 && onPageChange(currentPage - 1)}
-//                     className={currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
-//                   />
-//                 </PaginationItem>
+        {/* Pagination Controls *}
+        {totalPages > 1 && (
+          <div className="flex justify-center mt-6">
+            <Pagination>
+              <PaginationContent>
+                <PaginationItem>
+                  <PaginationPrevious 
+                    onClick={() => currentPage > 1 && onPageChange(currentPage - 1)}
+                    className={currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                  />
+                </PaginationItem>
                 
-//                 {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-//                   <PaginationItem key={page}>
-//                     <PaginationLink
-//                       onClick={() => onPageChange(page)}
-//                       isActive={currentPage === page}
-//                       className="cursor-pointer"
-//                     >
-//                       {page}
-//                     </PaginationLink>
-//                   </PaginationItem>
-//                 ))}
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                  <PaginationItem key={page}>
+                    <PaginationLink
+                      onClick={() => onPageChange(page)}
+                      isActive={currentPage === page}
+                      className="cursor-pointer"
+                    >
+                      {page}
+                    </PaginationLink>
+                  </PaginationItem>
+                ))}
                 
-//                 <PaginationItem>
-//                   <PaginationNext 
-//                     onClick={() => currentPage < totalPages && onPageChange(currentPage + 1)}
-//                     className={currentPage === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"}
-//                   />
-//                 </PaginationItem>
-//               </PaginationContent>
-//             </Pagination>
-//           </div>
-//         )}
-//       </CardContent>
-//     </Card>
-//   );
-// };
+                <PaginationItem>
+                  <PaginationNext 
+                    onClick={() => currentPage < totalPages && onPageChange(currentPage + 1)}
+                    className={currentPage === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                  />
+                </PaginationItem>
+              </PaginationContent>
+            </Pagination>
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  );
+};
+*/
