@@ -84,6 +84,7 @@ export type Database = {
         Row: {
           company_id: string
           created_at: string
+          email: string
           id: string
           name: string
           role: Database["public"]["Enums"]["app_role"]
@@ -92,6 +93,7 @@ export type Database = {
         Insert: {
           company_id: string
           created_at?: string
+          email: string
           id?: string
           name: string
           role: Database["public"]["Enums"]["app_role"]
@@ -100,6 +102,7 @@ export type Database = {
         Update: {
           company_id?: string
           created_at?: string
+          email?: string
           id?: string
           name?: string
           role?: Database["public"]["Enums"]["app_role"]
