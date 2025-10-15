@@ -19,7 +19,7 @@ const Header = () => {
       navigate("/");
     }
   };
-  // console.log("UserProfileData", userProfile);
+  console.log("UserProfileData", userProfile);
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border">
       <div className="container mx-auto mobile-optimized">
@@ -74,10 +74,15 @@ const Header = () => {
             <Link to="/jobs" className="font-bold text-primary hover:text-accent transition-colors">
               Jobs
             </Link>
+            {user && !isSuperAdmin() && !userRoles.includes('owner') && !userRoles.includes('hr') && !userRoles.includes('admin') && (
+              <Link to="/my-applications" className="font-bold text-primary hover:text-accent transition-colors">
+                My Applications
+              </Link>
+            )}
             {user ? (
               <>
                 <span className="text-xs sm:text-sm text-muted-foreground">
-                  {isSuperAdmin() ? "Super Admin" : userRoles.includes('owner') ? "Owner" : userRoles.includes('hr') ? "HR" : userRoles.includes('admin') ? "Admin" : userRoles.includes('employee') ? "Employee" : userProfile?.role === "mentor" ? "Mentor" : "Mentee"}
+                  {isSuperAdmin() ? "Super Admin" : userRoles.includes('owner') ? "Owner" : userRoles.includes('hr') ? "HR" : userRoles.includes('admin') ? "Admin" : userRoles.includes('employee') ? "Employee" : userProfile?.role === "mentor" ? "Mentor" : userProfile?.role === "mentee" ? "Mentee" : "User"}
                 </span>
                 {isSuperAdmin() && (
                   <Link

@@ -30,7 +30,7 @@ const JobDetails = () => {
     try {
       const { data, error } = await supabase
         .from('jobs')
-        .select('*, companies(name, logo_url, description, website)')
+        .select('*, companies(name, description, website)')
         .eq('id', id)
         .single();
 
@@ -107,13 +107,9 @@ const JobDetails = () => {
           <Card>
             <CardHeader>
               <div className="flex items-start gap-4 mb-4">
-                {job.companies?.logo_url ? (
-                  <img src={job.companies.logo_url} alt={job.companies.name} className="w-20 h-20 rounded-lg object-cover" />
-                ) : (
-                  <div className="w-20 h-20 rounded-lg bg-secondary flex items-center justify-center">
-                    <Building2 className="h-10 w-10 text-primary" />
-                  </div>
-                )}
+                <div className="w-20 h-20 rounded-lg bg-secondary flex items-center justify-center">
+                  <Building2 className="h-10 w-10 text-primary" />
+                </div>
                 <div className="flex-1">
                   <CardTitle className="text-3xl mb-2">{job.title}</CardTitle>
                   <p className="text-xl text-muted-foreground mb-2">{job.companies?.name}</p>
@@ -127,25 +123,25 @@ const JobDetails = () => {
 
               <div className="flex flex-wrap gap-3">
                 {job.location && (
-                  <Badge variant="outline" className="text-sm">
+                  <Badge variant="outline" className="text-sm px-3 py-1">
                     <MapPin className="h-4 w-4 mr-1" />
                     {job.location}
                   </Badge>
                 )}
                 {job.job_type && (
-                  <Badge variant="outline" className="text-sm">
+                  <Badge variant="outline" className="text-sm px-3 py-1">
                     <Briefcase className="h-4 w-4 mr-1" />
                     {job.job_type}
                   </Badge>
                 )}
                 {job.salary_range && (
-                  <Badge variant="outline" className="text-sm">
+                  <Badge variant="outline" className="text-sm px-3 py-1">
                     <DollarSign className="h-4 w-4 mr-1" />
                     {job.salary_range}
                   </Badge>
                 )}
                 {job.application_deadline && (
-                  <Badge variant="outline" className="text-sm">
+                  <Badge variant="outline" className="text-sm px-3 py-1">
                     <Calendar className="h-4 w-4 mr-1" />
                     Apply by {formatDate(job.application_deadline)}
                   </Badge>
@@ -177,9 +173,15 @@ const JobDetails = () => {
                     <p className="text-green-600 font-medium">You have already applied for this position</p>
                   </div>
                 ) : (
-                  <Button size="lg" className="w-full" onClick={() => setShowApplicationForm(true)}>
-                    Apply for this Position
-                  </Button>
+                  <div className="flex justify-center">
+                    <Button
+                      size="lg"
+                      className="px-6 py-3 text-base font-semibold rounded-xl shadow-md hover:shadow-lg transition-all"
+                      onClick={() => setShowApplicationForm(true)}
+                    >
+                      Apply for this Position
+                    </Button>
+                  </div>
                 )}
               </div>
             </CardContent>
