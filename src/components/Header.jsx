@@ -74,6 +74,11 @@ const Header = () => {
             <Link to="/jobs" className="font-bold text-primary hover:text-accent transition-colors">
               Jobs
             </Link>
+            {user && !isSuperAdmin() && !userRoles.includes('owner') && !userRoles.includes('hr') && !userRoles.includes('admin') && (
+              <Link to="/my-applications" className="font-bold text-primary hover:text-accent transition-colors">
+                My Applications
+              </Link>
+            )}
             {user ? (
               <>
                 <span className="text-xs sm:text-sm text-muted-foreground">

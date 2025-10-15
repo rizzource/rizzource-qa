@@ -19,6 +19,7 @@ import FixedSlotPoll from "./components/FixedSlotPoll";
 import JobPortal from "./pages/JobPortal";
 import JobDetails from "./pages/JobDetails";
 import JobApplicationSuccess from "./pages/JobApplicationSuccess";
+import MyApplications from "./pages/MyApplications";
 import CompanyDashboard from "./pages/CompanyDashboard";
 
 
@@ -63,6 +64,11 @@ const App = () => (
           <Route path="/jobs" element={<JobPortal />} />
           <Route path="/jobs/:id" element={<JobDetails />} />
           <Route path="/job-application-success" element={<JobApplicationSuccess />} />
+          <Route path="/my-applications" element={
+            <ProtectedRoute>
+              <MyApplications />
+            </ProtectedRoute>
+          } />
           <Route path="/company-dashboard" element={
             <ProtectedRoute>
               <CompanyDashboard />
