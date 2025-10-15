@@ -99,7 +99,7 @@ const JobPortal = () => {
           ) : (
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
               {filteredJobs.map((job) => (
-                <Card key={job.id} className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => navigate(`/jobs/${job.id}`)}>
+                <Card key={job.id} className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => job.application_url ? window.open(job.application_url, '_blank') : navigate(`/jobs/${job.id}`)}>
                   <CardHeader>
                     <div className="flex items-start justify-between mb-2">
                     <div className="flex items-center gap-3">
@@ -129,16 +129,24 @@ const JobPortal = () => {
                         </Badge>
                       )}
                     </div>
-                    {job.salary_range && (
-                      <p className="text-sm font-medium text-foreground mb-2">{job.salary_range}</p>
-                    )}
                     <div className="flex items-center justify-between text-xs text-muted-foreground">
                       <span className="flex items-center gap-1">
                         <Clock className="h-3 w-3" />
                         {formatDate(job.application_deadline)}
                       </span>
-                      <Button size="sm" variant="default">
-                        {user ? 'Apply Now' : 'View Details'}
+                      <Button 
+                        size="sm" 
+                        variant="default"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          if (job.application_url) {
+                            window.open(job.application_url, '_blank');
+                          } else {
+                            navigate(`/jobs/${job.id}`);
+                          }
+                        }}
+                      >
+                        Apply Now
                       </Button>
                     </div>
                   </CardContent>
