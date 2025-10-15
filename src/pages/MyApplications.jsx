@@ -83,6 +83,7 @@ const MyApplications = () => {
     const statusConfig = {
       pending: { variant: "secondary", label: "Pending" },
       reviewing: { variant: "default", label: "Reviewing" },
+      shortlisted: { variant: "default", label: "Shortlisted" },
       accepted: { variant: "default", label: "Accepted" },
       rejected: { variant: "destructive", label: "Rejected" },
     };
