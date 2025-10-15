@@ -80,6 +80,7 @@ const MyApplications = () => {
   };
 
   const getStatusBadge = (status) => {
+    const key = String(status || '').toLowerCase().trim();
     const statusConfig = {
       pending: { variant: "secondary", label: "Pending" },
       reviewing: { variant: "default", label: "Reviewing" },
@@ -88,7 +89,7 @@ const MyApplications = () => {
       rejected: { variant: "destructive", label: "Rejected" },
     };
 
-    const config = statusConfig[status] || statusConfig.pending;
+    const config = statusConfig[key] || statusConfig.pending;
     return <Badge variant={config.variant}>{config.label}</Badge>;
   };
 
