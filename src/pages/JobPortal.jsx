@@ -46,8 +46,8 @@ const JobPortal = () => {
     const matchesSearch = job.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
                           job.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
                           job.companies?.name.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesState = !stateFilter || job.location?.toLowerCase().includes(stateFilter.toLowerCase());
-    const matchesAreaOfLaw = !areaOfLawFilter || job.area_of_law === areaOfLawFilter;
+    const matchesState = !stateFilter || stateFilter === 'all' || job.location?.toLowerCase().includes(stateFilter.toLowerCase());
+    const matchesAreaOfLaw = !areaOfLawFilter || areaOfLawFilter === 'all' || job.area_of_law === areaOfLawFilter;
     return matchesSearch && matchesState && matchesAreaOfLaw;
   });
 
