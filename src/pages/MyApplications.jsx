@@ -23,6 +23,28 @@ const MyApplications = () => {
       return;
     }
     fetchApplications();
+
+    // Set up real-time subscription for application updates
+    const channel = supabase
+      .channel('job_applications_changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'job_applications',
+          filter: `applicant_id=eq.${user.id}`
+        },
+        () => {
+          // Refetch applications when any change occurs
+          fetchApplications();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, [user, navigate]);
 
   const fetchApplications = async () => {
