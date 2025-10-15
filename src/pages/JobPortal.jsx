@@ -115,9 +115,11 @@ const JobPortal = () => {
                 <SelectValue placeholder="Area of Law" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Areas</SelectItem>
+                <SelectItem value="all" className="hover:bg-blue-100 focus:bg-blue-100 cursor-pointer">
+                  All Areas
+                </SelectItem>
                 {areasOfLaw.map((area) => (
-                  <SelectItem key={area} value={area}>
+                  <SelectItem key={area} value={area} className="hover:bg-blue-100 focus:bg-blue-100 cursor-pointer">
                     {area}
                   </SelectItem>
                 ))}
