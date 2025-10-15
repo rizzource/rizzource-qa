@@ -5,7 +5,8 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Search, Briefcase, MapPin, Clock, Building2 } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Search, Briefcase, MapPin, Clock, Building2, Scale } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -15,7 +16,8 @@ const JobPortal = () => {
   const [companies, setCompanies] = useState({});
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
-  const [locationFilter, setLocationFilter] = useState('');
+  const [stateFilter, setStateFilter] = useState('');
+  const [areaOfLawFilter, setAreaOfLawFilter] = useState('');
   const navigate = useNavigate();
   const { user } = useAuth();
 
@@ -44,9 +46,13 @@ const JobPortal = () => {
     const matchesSearch = job.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
                           job.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
                           job.companies?.name.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesLocation = !locationFilter || job.location?.toLowerCase().includes(locationFilter.toLowerCase());
-    return matchesSearch && matchesLocation;
+    const matchesState = !stateFilter || job.location?.toLowerCase().includes(stateFilter.toLowerCase());
+    const matchesAreaOfLaw = !areaOfLawFilter || job.area_of_law === areaOfLawFilter;
+    return matchesSearch && matchesState && matchesAreaOfLaw;
   });
+
+  // Get unique areas of law from jobs
+  const areasOfLaw = [...new Set(jobs.map(job => job.area_of_law).filter(Boolean))];
 
   const formatDate = (dateString) => {
     if (!dateString) return 'No deadline';
@@ -75,6 +81,7 @@ const JobPortal = () => {
                 className="pl-10"
               />
             </div>
+            {/* Commented out location filter
             <div className="relative">
               <MapPin className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
               <Input
@@ -84,6 +91,28 @@ const JobPortal = () => {
                 className="pl-10 md:w-64"
               />
             </div>
+            */}
+            <Select value={stateFilter} onValueChange={setStateFilter}>
+              <SelectTrigger className="md:w-48">
+                <SelectValue placeholder="Select State" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All States</SelectItem>
+                <SelectItem value="Georgia">Georgia</SelectItem>
+                <SelectItem value="New York">New York</SelectItem>
+              </SelectContent>
+            </Select>
+            <Select value={areaOfLawFilter} onValueChange={setAreaOfLawFilter}>
+              <SelectTrigger className="md:w-48">
+                <SelectValue placeholder="Area of Law" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Areas</SelectItem>
+                {areasOfLaw.map((area) => (
+                  <SelectItem key={area} value={area}>{area}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
 
           {/* Job Listings */}
@@ -126,6 +155,12 @@ const JobPortal = () => {
                         <Badge variant="outline" className="text-xs">
                           <Briefcase className="h-3 w-3 mr-1" />
                           {job.job_type}
+                        </Badge>
+                      )}
+                      {job.area_of_law && (
+                        <Badge variant="outline" className="text-xs">
+                          <Scale className="h-3 w-3 mr-1" />
+                          {job.area_of_law}
                         </Badge>
                       )}
                     </div>
