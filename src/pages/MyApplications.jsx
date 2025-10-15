@@ -70,6 +70,7 @@ const MyApplications = () => {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
+      console.log('Fetched applications:', data);
       setApplications(data || []);
     } catch (error) {
       console.error('Error fetching applications:', error);
@@ -82,13 +83,13 @@ const MyApplications = () => {
   const getStatusBadge = (status) => {
     const statusConfig = {
       pending: { variant: "secondary", label: "Pending" },
-      reviewing: { variant: "default", label: "Reviewing" },
-      accepted: { variant: "default", label: "Accepted" },
+      reviewed: { variant: "default", label: "Reviewed" },
+      shortlisted: { variant: "default", label: "Shortlisted" },
       rejected: { variant: "destructive", label: "Rejected" },
     };
 
     const config = statusConfig[status] || statusConfig.pending;
-    return <Badge variant={config.variant}>{config.label}</Badge>;
+    return <Badge variant={config.variant} className="px-3 py-1">{config.label}</Badge>;
   };
 
   const formatDate = (dateString) => {
