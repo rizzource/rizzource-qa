@@ -128,7 +128,7 @@ const JobPortal = () => {
           ) : (
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
               {filteredJobs.map((job) => (
-                <Card key={job.id} className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => job.application_url ? window.open(job.application_url, '_blank') : navigate(`/jobs/${job.id}`)}>
+                <Card key={job.id} className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => navigate(`/jobs/${job.id}`)}>
                   <CardHeader>
                     <div className="flex items-start justify-between mb-2">
                     <div className="flex items-center gap-3">
@@ -174,14 +174,10 @@ const JobPortal = () => {
                         variant="default"
                         onClick={(e) => {
                           e.stopPropagation();
-                          if (job.application_url) {
-                            window.open(job.application_url, '_blank');
-                          } else {
-                            navigate(`/jobs/${job.id}`);
-                          }
+                          navigate(`/jobs/${job.id}`);
                         }}
                       >
-                        Apply Now
+                        View Details
                       </Button>
                     </div>
                   </CardContent>

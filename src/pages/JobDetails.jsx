@@ -173,8 +173,18 @@ const JobDetails = () => {
                     <p className="text-green-600 font-medium">You have already applied for this position</p>
                   </div>
                 ) : (
-                  <Button size="lg" className="w-full" onClick={() => setShowApplicationForm(true)}>
-                    Apply for this Position
+                  <Button 
+                    size="lg" 
+                    className="w-full" 
+                    onClick={() => {
+                      if (job.application_url) {
+                        window.open(job.application_url, '_blank');
+                      } else {
+                        setShowApplicationForm(true);
+                      }
+                    }}
+                  >
+                    Apply Now
                   </Button>
                 )}
               </div>
