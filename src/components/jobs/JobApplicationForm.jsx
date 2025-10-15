@@ -46,6 +46,7 @@ const JobApplicationForm = ({ job, onCancel }) => {
         .from('job_applications')
         .insert({
           job_id: job.id,
+          company_id: job.company_id,
           applicant_id: user.id,
           ...data,
         });
