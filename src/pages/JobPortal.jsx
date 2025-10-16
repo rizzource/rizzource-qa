@@ -162,19 +162,19 @@ const JobPortal = () => {
                     <p className="text-sm text-muted-foreground mb-4 line-clamp-2">{job.description}</p>
                     <div className="flex flex-wrap gap-2 mb-4">
                       {job.location && (
-                        <Badge variant="outline" className="text-xs">
+                        <Badge variant="outline" className="text-xs px-3 py-1">
                           <MapPin className="h-3 w-3 mr-1" />
                           {job.location}
                         </Badge>
                       )}
                       {job.job_type && (
-                        <Badge variant="outline" className="text-xs">
+                        <Badge variant="outline" className="text-xs px-3 py-1">
                           <Briefcase className="h-3 w-3 mr-1" />
                           {job.job_type}
                         </Badge>
                       )}
                       {job.area_of_law && (
-                        <Badge variant="outline" className="text-xs">
+                        <Badge variant="outline" className="text-xs px-3 py-1">
                           <Scale className="h-3 w-3 mr-1" />
                           {job.area_of_law}
                         </Badge>

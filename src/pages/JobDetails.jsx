@@ -28,11 +28,7 @@ const JobDetails = () => {
 
   const fetchJobDetails = async () => {
     try {
-      const { data, error } = await supabase
-        .from("jobs")
-        .select("*")
-        .eq("id", id)
-        .single();
+      const { data, error } = await supabase.from("jobs").select("*").eq("id", id).single();
 
       if (error) throw error;
       setJob(data);
@@ -118,25 +114,25 @@ const JobDetails = () => {
 
               <div className="flex flex-wrap gap-3">
                 {job.location && (
-                  <Badge variant="outline" className="text-sm">
+                  <Badge variant="outline" className="text-sm px-3 py-1">
                     <MapPin className="h-4 w-4 mr-1" />
                     {job.location}
                   </Badge>
                 )}
                 {job.job_type && (
-                  <Badge variant="outline" className="text-sm">
+                  <Badge variant="outline" className="text-sm px-3 py-1">
                     <Briefcase className="h-4 w-4 mr-1" />
                     {job.job_type}
                   </Badge>
                 )}
                 {job.salary_range && (
-                  <Badge variant="outline" className="text-sm">
+                  <Badge variant="outline" className="text-sm px-3 py-1">
                     <DollarSign className="h-4 w-4 mr-1" />
                     {job.salary_range}
                   </Badge>
                 )}
                 {job.application_deadline && (
-                  <Badge variant="outline" className="text-sm">
+                  <Badge variant="outline" className="text-sm px-3 py-1">
                     <Calendar className="h-4 w-4 mr-1" />
                     Apply by {formatDate(job.application_deadline)}
                   </Badge>
