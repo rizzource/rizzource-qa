@@ -283,6 +283,7 @@ export type Database = {
           application_url: string | null
           area_of_law: string | null
           company_id: string
+          company_name: string | null
           created_at: string
           created_by: string | null
           description: string
@@ -299,6 +300,7 @@ export type Database = {
           application_url?: string | null
           area_of_law?: string | null
           company_id: string
+          company_name?: string | null
           created_at?: string
           created_by?: string | null
           description: string
@@ -315,6 +317,7 @@ export type Database = {
           application_url?: string | null
           area_of_law?: string | null
           company_id?: string
+          company_name?: string | null
           created_at?: string
           created_by?: string | null
           description?: string

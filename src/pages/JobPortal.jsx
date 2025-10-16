@@ -29,7 +29,7 @@ const JobPortal = () => {
     try {
       const { data: jobsData, error } = await supabase
         .from("jobs")
-        .select("*, companies(name)")
+        .select("*")
         .eq("status", "open")
         .order("created_at", { ascending: false });
 
@@ -46,7 +46,7 @@ const JobPortal = () => {
     const matchesSearch =
       job.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       job.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      job.companies?.name.toLowerCase().includes(searchQuery.toLowerCase());
+      (job.company_name && job.company_name.toLowerCase().includes(searchQuery.toLowerCase()));
     const matchesState =
       !stateFilter || stateFilter === "all" || job.location?.toLowerCase().includes(stateFilter.toLowerCase());
     const matchesAreaOfLaw = !areaOfLawFilter || areaOfLawFilter === "all" || job.area_of_law === areaOfLawFilter;
@@ -153,7 +153,7 @@ const JobPortal = () => {
                         </div>
                         <div>
                           <CardTitle className="text-lg">{job.title}</CardTitle>
-                          <p className="text-sm text-muted-foreground">{job.companies?.name}</p>
+                          <p className="text-sm text-muted-foreground">{job.company_name}</p>
                         </div>
                       </div>
                     </div>
