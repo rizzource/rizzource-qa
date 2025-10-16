@@ -30,7 +30,7 @@ const JobDetails = () => {
     try {
       const { data, error } = await supabase
         .from("jobs")
-        .select("*, companies(name, description, website)")
+        .select("*")
         .eq("id", id)
         .single();
 
@@ -112,17 +112,7 @@ const JobDetails = () => {
                 </div>
                 <div className="flex-1">
                   <CardTitle className="text-3xl mb-2">{job.title}</CardTitle>
-                  <p className="text-xl text-muted-foreground mb-2">{job.companies?.name}</p>
-                  {job.companies?.website && (
-                    <a
-                      href={job.companies.website}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-primary hover:underline text-sm"
-                    >
-                      Visit Company Website
-                    </a>
-                  )}
+                  <p className="text-xl text-muted-foreground mb-2">{job.company_name}</p>
                 </div>
               </div>
 
@@ -159,13 +149,6 @@ const JobDetails = () => {
                 <h3 className="text-xl font-semibold mb-3">Job Description</h3>
                 <p className="text-muted-foreground whitespace-pre-line">{job.description}</p>
               </div>
-
-              {job.companies?.description && (
-                <div>
-                  <h3 className="text-xl font-semibold mb-3">About {job.companies.name}</h3>
-                  <p className="text-muted-foreground">{job.companies.description}</p>
-                </div>
-              )}
 
               <div className="pt-6 border-t">
                 {/* Commented out sign-in requirement
