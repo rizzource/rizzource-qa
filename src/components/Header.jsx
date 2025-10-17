@@ -74,10 +74,15 @@ const Header = () => {
             <Link to="/jobs" className="font-bold text-primary hover:text-accent transition-colors">
               Jobs
             </Link>
+            {user && !isSuperAdmin() && !userRoles.includes('owner') && !userRoles.includes('hr') && !userRoles.includes('admin') && (
+              <Link to="/my-applications" className="font-bold text-primary hover:text-accent transition-colors">
+                My Applications
+              </Link>
+            )}
             {user ? (
               <>
                 <span className="text-xs sm:text-sm text-muted-foreground">
-                  {isSuperAdmin() ? "Super Admin" : userRoles.includes('owner') ? "Owner" : userRoles.includes('hr') ? "HR" : userRoles.includes('admin') ? "Admin" : userRoles.includes('employee') ? "Employee" : userProfile?.role === "mentor" ? "Mentor" : "Mentee"}
+                  {isSuperAdmin() ? "Super Admin" : userRoles.includes('owner') ? "Owner" : userRoles.includes('hr') ? "HR" : userRoles.includes('admin') ? "Admin" : userRoles.includes('employee') ? "Employee" : userProfile?.role === "mentor" ? "Mentor" : userProfile?.role === "mentee" ? "Mentee" : "User"}
                 </span>
                 {isSuperAdmin() && (
                   <Link
@@ -100,7 +105,8 @@ const Header = () => {
                   <span className="hidden sm:inline">Sign Out</span>
                 </Link>
               </>
-            ) : (
+            ) : null
+              /* Commented out Sign In button
               <Link
                 to="/auth"
                 className="inline-flex items-center px-3 py-1.5 text-sm font-medium rounded-md border border-border text-foreground hover:text-primary hover:border-primary transition-colors"
@@ -108,7 +114,8 @@ const Header = () => {
                 <User className="h-4 w-4 mr-1" />
                 <span className="hidden sm:inline">Sign In</span>
               </Link>
-            )}
+              */
+            }
           </div>
         </div>
       </div>

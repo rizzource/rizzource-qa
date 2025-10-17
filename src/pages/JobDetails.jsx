@@ -1,14 +1,14 @@
-import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { supabase } from '@/integrations/supabase/client';
-import { useAuth } from '@/components/AuthProvider';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, MapPin, Briefcase, DollarSign, Calendar, Building2 } from 'lucide-react';
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
-import JobApplicationForm from '@/components/jobs/JobApplicationForm';
+import { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/components/AuthProvider";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { ArrowLeft, MapPin, Briefcase, DollarSign, Calendar, Building2 } from "lucide-react";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
+import JobApplicationForm from "@/components/jobs/JobApplicationForm";
 
 const JobDetails = () => {
   const { id } = useParams();
@@ -28,16 +28,12 @@ const JobDetails = () => {
 
   const fetchJobDetails = async () => {
     try {
-      const { data, error } = await supabase
-        .from('jobs')
-        .select('*, companies(name, logo_url, description, website)')
-        .eq('id', id)
-        .single();
+      const { data, error } = await supabase.from("jobs").select("*").eq("id", id).single();
 
       if (error) throw error;
       setJob(data);
     } catch (error) {
-      console.error('Error fetching job details:', error);
+      console.error("Error fetching job details:", error);
     } finally {
       setLoading(false);
     }
@@ -46,10 +42,10 @@ const JobDetails = () => {
   const checkIfApplied = async () => {
     try {
       const { data, error } = await supabase
-        .from('job_applications')
-        .select('id')
-        .eq('job_id', id)
-        .eq('applicant_id', user.id)
+        .from("job_applications")
+        .select("id")
+        .eq("job_id", id)
+        .eq("applicant_id", user.id)
         .single();
 
       if (data) {
@@ -61,8 +57,8 @@ const JobDetails = () => {
   };
 
   const formatDate = (dateString) => {
-    if (!dateString) return 'No deadline';
-    return new Date(dateString).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+    if (!dateString) return "No deadline";
+    return new Date(dateString).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
   };
 
   if (loading) {
@@ -83,7 +79,7 @@ const JobDetails = () => {
         <div className="min-h-screen bg-background pt-16 flex items-center justify-center">
           <div className="text-center">
             <p className="text-muted-foreground mb-4">Job not found</p>
-            <Button onClick={() => navigate('/jobs')}>Back to Jobs</Button>
+            <Button onClick={() => navigate("/jobs")}>Back to Jobs</Button>
           </div>
         </div>
       </>
@@ -99,7 +95,7 @@ const JobDetails = () => {
       <Header />
       <div className="min-h-screen bg-background pt-16">
         <div className="container mx-auto px-4 py-8 max-w-4xl">
-          <Button variant="ghost" onClick={() => navigate('/jobs')} className="mb-6">
+          <Button variant="ghost" onClick={() => navigate("/jobs")} className="mb-6">
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to Jobs
           </Button>
@@ -116,36 +112,31 @@ const JobDetails = () => {
                 )}
                 <div className="flex-1">
                   <CardTitle className="text-3xl mb-2">{job.title}</CardTitle>
-                  <p className="text-xl text-muted-foreground mb-2">{job.companies?.name}</p>
-                  {job.companies?.website && (
-                    <a href={job.companies.website} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline text-sm">
-                      Visit Company Website
-                    </a>
-                  )}
+                  <p className="text-xl text-muted-foreground mb-2">{job.company_name}</p>
                 </div>
               </div>
 
               <div className="flex flex-wrap gap-3">
                 {job.location && (
-                  <Badge variant="outline" className="text-sm">
+                  <Badge variant="outline" className="text-sm px-3 py-1">
                     <MapPin className="h-4 w-4 mr-1" />
                     {job.location}
                   </Badge>
                 )}
                 {job.job_type && (
-                  <Badge variant="outline" className="text-sm">
+                  <Badge variant="outline" className="text-sm px-3 py-1">
                     <Briefcase className="h-4 w-4 mr-1" />
                     {job.job_type}
                   </Badge>
                 )}
                 {job.salary_range && (
-                  <Badge variant="outline" className="text-sm">
+                  <Badge variant="outline" className="text-sm px-3 py-1">
                     <DollarSign className="h-4 w-4 mr-1" />
                     {job.salary_range}
                   </Badge>
                 )}
                 {job.application_deadline && (
-                  <Badge variant="outline" className="text-sm">
+                  <Badge variant="outline" className="text-sm px-3 py-1">
                     <Calendar className="h-4 w-4 mr-1" />
                     Apply by {formatDate(job.application_deadline)}
                   </Badge>
@@ -159,14 +150,8 @@ const JobDetails = () => {
                 <p className="text-muted-foreground whitespace-pre-line">{job.description}</p>
               </div>
 
-              {job.companies?.description && (
-                <div>
-                  <h3 className="text-xl font-semibold mb-3">About {job.companies.name}</h3>
-                  <p className="text-muted-foreground">{job.companies.description}</p>
-                </div>
-              )}
-
               <div className="pt-6 border-t">
+                {/* Commented out sign-in requirement
                 {!user ? (
                   <div className="text-center">
                     <p className="text-muted-foreground mb-4">Please sign in to apply for this job</p>
@@ -177,10 +162,23 @@ const JobDetails = () => {
                     <p className="text-green-600 font-medium">You have already applied for this position</p>
                   </div>
                 ) : (
-                  <Button size="lg" className="w-full" onClick={() => setShowApplicationForm(true)}>
-                    Apply for this Position
+                */}
+                <div className="flex justify-center">
+                  <Button
+                    size="lg"
+                    className="px-6 py-3 text-base font-semibold rounded-xl shadow-md hover:shadow-lg transition-all"
+                    onClick={() => {
+                      if (job.application_url) {
+                        window.open(job.application_url, "_blank");
+                      } else {
+                        setShowApplicationForm(true);
+                      }
+                    }}
+                  >
+                    Apply Now
                   </Button>
-                )}
+                </div>
+                {/* )} */}
               </div>
             </CardContent>
           </Card>

@@ -46,6 +46,7 @@ const JobApplicationForm = ({ job, onCancel }) => {
         .from('job_applications')
         .insert({
           job_id: job.id,
+          company_id: job.company_id,
           applicant_id: user.id,
           ...data,
         });
@@ -53,7 +54,7 @@ const JobApplicationForm = ({ job, onCancel }) => {
       if (error) throw error;
 
       toast.success('Application submitted successfully!');
-      navigate('/my-applications');
+      navigate('/job-application-success');
     } catch (error) {
       console.error('Error submitting application:', error);
       toast.error('Failed to submit application. Please try again.');

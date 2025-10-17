@@ -223,6 +223,7 @@ export type Database = {
           applicant_id: string
           applicant_name: string
           applicant_phone: string | null
+          company_id: string
           cover_letter: string | null
           created_at: string
           id: string
@@ -236,6 +237,7 @@ export type Database = {
           applicant_id: string
           applicant_name: string
           applicant_phone?: string | null
+          company_id: string
           cover_letter?: string | null
           created_at?: string
           id?: string
@@ -249,6 +251,7 @@ export type Database = {
           applicant_id?: string
           applicant_name?: string
           applicant_phone?: string | null
+          company_id?: string
           cover_letter?: string | null
           created_at?: string
           id?: string
@@ -258,6 +261,13 @@ export type Database = {
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "job_applications_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "job_applications_job_id_fkey"
             columns: ["job_id"]
@@ -270,7 +280,10 @@ export type Database = {
       jobs: {
         Row: {
           application_deadline: string | null
+          application_url: string | null
+          area_of_law: string | null
           company_id: string
+          company_name: string | null
           created_at: string
           created_by: string | null
           description: string
@@ -284,7 +297,10 @@ export type Database = {
         }
         Insert: {
           application_deadline?: string | null
+          application_url?: string | null
+          area_of_law?: string | null
           company_id: string
+          company_name?: string | null
           created_at?: string
           created_by?: string | null
           description: string
@@ -298,7 +314,10 @@ export type Database = {
         }
         Update: {
           application_deadline?: string | null
+          application_url?: string | null
+          area_of_law?: string | null
           company_id?: string
+          company_name?: string | null
           created_at?: string
           created_by?: string | null
           description?: string
