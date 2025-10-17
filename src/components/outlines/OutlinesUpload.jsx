@@ -37,7 +37,7 @@ const OutlinesUpload = ({ onUploadSuccess }) => {
     }
   }, []);
 
-  const topics = ["Constitutional Law", "Contracts", "Criminal Law", "Torts", "Civil Procedure", "Property Law", "Administrative Law", "Evidence", "Tax Law", "Corporate Law", "Employment Law", "Environmental Law", "Leg Reg"];
+  const topics = ["Constitutional Law", "Contracts", "Criminal Law", "Torts", "Civil Procedure", "Property Law", "Administrative Law", "Evidence", "Tax Law", "Corporate Law", "Employment Law", "Environmental Law", "Leg Reg", "Family Law I & II", "Law and Economy", "Business Associations"];
   const years = ["1L", "2L", "3L"];
 
   const handleInputChange = (field, value) => {
@@ -51,20 +51,15 @@ const OutlinesUpload = ({ onUploadSuccess }) => {
     console.log("File selected:", file);
 
     const allowedTypes = [
-      "application/pdf", // PDF
-      "application/vnd.openxmlformats-officedocument.wordprocessingml.document", // DOCX
-      "application/msword", // DOC
-      "audio/mpeg", // MP3
-      "audio/mp4" // M4A
+      "application/pdf",
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document" // .docx
     ];
-
     if (!allowedTypes.includes(file.type)) {
       console.error("Invalid file type:", file.type);
       setUploadStatus("error");
       return;
     }
-
-    if (file.size > 10 * 1024 * 1024) {
+    if (file.size > 10 * 1024 * 1024) { // <-- updated to 10MB
       console.error("File too large:", file.size);
       setUploadStatus("error");
       return;
@@ -338,20 +333,26 @@ const OutlinesUpload = ({ onUploadSuccess }) => {
 
               {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-4"> */}
                 <div className="space-y-2">
-                  <Label htmlFor="year" className="text-primary">Year Level *</Label>
-                  <Select value={formData.year} onValueChange={(value) => handleInputChange('year', value)}>
-                    <SelectTrigger className="bg-card border-border">
-                      <SelectValue placeholder="Select Year" />
-                    </SelectTrigger>
-                    <SelectContent className="bg-card border border-border shadow-lg z-50">
-                      {years.map((year) => (
-                        <SelectItem key={year} value={year}>
-                          {year}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <Label htmlFor="year" className="text-primary">
+                    Year *
+                  </Label>
+                  <input
+                    id="year"
+                    type="text"
+                    value={formData.year}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      // Allow only digits and max 4 characters
+                      if (/^\d{0,4}$/.test(value)) {
+                        handleInputChange("year", value);
+                      }
+                    }}
+                    placeholder="Enter year (e.g. 2025)"
+                    className="bg-card border border-border rounded-md px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-primary"
+                    maxLength={4} // ensures only 4 characters
+                  />
                 </div>
+
 
                 {/* <div className="space-y-2">
                   <Label htmlFor="tags" className="text-primary">Tags (Optional)</Label>

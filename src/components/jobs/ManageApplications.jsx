@@ -15,36 +15,36 @@ const statusColors = {
   rejected: 'bg-red-100 text-red-800',
 };
 
-const ManageApplications = ({ companyId }) => {
+const ManageApplications = () => {
   const { user } = useAuth();
   const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (companyId) {
-      fetchApplications();
-    }
-  }, [companyId]);
+    fetchApplications();
+  }, [user]);
 
   const fetchApplications = async () => {
-    if (!companyId) return;
-
     try {
-      // Get jobs for this company
+      // Get companies where user is a member
+      const { data: memberData, error: memberError } = await supabase
+        .from('company_members')
+        .select('company_id')
+        .eq('user_id', user.id);
+
+      if (memberError) throw memberError;
+
+      const companyIds = memberData.map(cm => cm.company_id);
+
+      // Get jobs for those companies
       const { data: jobsData, error: jobsError } = await supabase
         .from('jobs')
         .select('id')
-        .eq('company_id', companyId);
+        .in('company_id', companyIds);
 
       if (jobsError) throw jobsError;
 
       const jobIds = jobsData.map(j => j.id);
-
-      if (jobIds.length === 0) {
-        setApplications([]);
-        setLoading(false);
-        return;
-      }
 
       // Get applications for those jobs
       const { data: applicationsData, error: applicationsError } = await supabase

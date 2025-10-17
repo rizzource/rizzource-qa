@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Calendar, MapPin, Clock, ChevronLeft, ChevronRight } from 'lucide-react';
+import { X, Calendar, MapPin, Clock, ChevronLeft, ChevronRight, Pencil, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { createPortal } from 'react-dom';
 import { supabase } from '@/integrations/supabase/client';
@@ -11,7 +11,7 @@ const mockEvents = [
     id: 1,
     title: 'Begin drafting personal course outlines',
     date: 'Late October 2025',
-    month: 'Oct',
+    month: 'October',
     monthIndex: 9,
     year: 2025,
     description: 'Start first-pass drafts for each course; map topics and headings.',
@@ -22,7 +22,7 @@ const mockEvents = [
     id: 2,
     title: 'Refine personal course outlines',
     date: 'Early November 2025',
-    month: 'Nov',
+    month: 'November',
     monthIndex: 10,
     year: 2025,
     description: 'Tighten organization and add case notes; finalize before reading days.',
@@ -33,7 +33,7 @@ const mockEvents = [
     id: 3,
     title: 'Last day of fall classes',
     date: 'Nov 24, 2025',
-    month: 'Nov',
+    month: 'November',
     monthIndex: 10,
     year: 2025,
     description: 'Instruction ends for the fall term.',
@@ -44,7 +44,7 @@ const mockEvents = [
     id: 4,
     title: 'Reading days',
     date: 'Dec 1–2, 2025',
-    month: 'Dec',
+    month: 'December',
     monthIndex: 11,
     year: 2025,
     description: 'No classes; dedicated study time before finals.',
@@ -55,7 +55,7 @@ const mockEvents = [
     id: 5,
     title: 'Final exams',
     date: 'Dec 3–12, 2025',
-    month: 'Dec',
+    month: 'December',
     monthIndex: 11,
     year: 2025,
     description: 'Comprehensive examinations for fall courses.',
@@ -66,7 +66,7 @@ const mockEvents = [
     id: 8,
     title: '1L Mock Interview Program – Registration closes',
     date: 'Jan 3, 2025',
-    month: 'Jan',
+    month: 'January',
     monthIndex: 0,
     year: 2025,
     description: 'Last day to register for the 1L Mock Interview Program.',
@@ -77,7 +77,7 @@ const mockEvents = [
     id: 9,
     title: '1L Mock Interview Program – Virtual interviews',
     date: 'Jan 27, 29 & 31, 2025',
-    month: 'Jan',
+    month: 'January',
     monthIndex: 0,
     year: 2025,
     description: 'Practice interviews with feedback.',
@@ -88,7 +88,7 @@ const mockEvents = [
     id: 10,
     title: 'February Interview Program – Registration closes',
     date: 'Jan 3, 2025',
-    month: 'Jan',
+    month: 'January',
     monthIndex: 0,
     year: 2025,
     description: 'Final day to register for February Interview Program.',
@@ -99,7 +99,7 @@ const mockEvents = [
     id: 11,
     title: 'February Interview Program (virtual)',
     date: 'Feb 4–5, 2025',
-    month: 'Feb',
+    month: 'February',
     monthIndex: 1,
     year: 2025,
     description: 'Employer interviews held virtually.',
@@ -110,7 +110,7 @@ const mockEvents = [
     id: 12,
     title: 'February Interview Program (on-campus)',
     date: 'Feb 6, 2025',
-    month: 'Feb',
+    month: 'February',
     monthIndex: 1,
     year: 2025,
     description: 'On-campus interviews with participating employers.',
@@ -121,7 +121,7 @@ const mockEvents = [
     id: 13,
     title: 'March Interview Program – Registration closes',
     date: 'Feb 14, 2025',
-    month: 'Feb',
+    month: 'February',
     monthIndex: 1,
     year: 2025,
     description: 'Final day to register for March Interview Program.',
@@ -132,7 +132,7 @@ const mockEvents = [
     id: 14,
     title: 'March Interview Program (virtual)',
     date: 'Mar 18–19, 2025',
-    month: 'Mar',
+    month: 'March',
     monthIndex: 2,
     year: 2025,
     description: 'Two days of virtual interviews.',
@@ -143,7 +143,7 @@ const mockEvents = [
     id: 15,
     title: 'March Interview Program (on-campus)',
     date: 'Mar 20, 2025',
-    month: 'Mar',
+    month: 'March',
     monthIndex: 2,
     year: 2025,
     description: 'On-campus interview day.',
@@ -154,7 +154,7 @@ const mockEvents = [
     id: 16,
     title: 'April Interview Program – Registration closes',
     date: 'Feb 28, 2025',
-    month: 'Feb',
+    month: 'February',
     monthIndex: 1,
     year: 2025,
     description: 'Final day to register for April Interview Program.',
@@ -165,7 +165,7 @@ const mockEvents = [
     id: 17,
     title: 'April Interview Program (virtual)',
     date: 'Apr 1–2, 2025',
-    month: 'Apr',
+    month: 'April',
     monthIndex: 3,
     year: 2025,
     description: 'Two virtual interview days.',
@@ -176,7 +176,7 @@ const mockEvents = [
     id: 18,
     title: 'Meet the Employer – Registration closes',
     date: 'Apr 25, 2025',
-    month: 'Apr',
+    month: 'April',
     monthIndex: 3,
     year: 2025,
     description: 'Last day to register for Meet the Employer.',
@@ -211,7 +211,7 @@ const mockEvents = [
     id: 21,
     title: 'Big law & mid-sized firms – 1L applications open',
     date: 'Dec 1, 2025',
-    month: 'Dec',
+    month: 'December',
     monthIndex: 11,
     year: 2025,
     description: 'Most firms accept 1L apps starting Dec 1; decisions often Feb–Mar 2026.',
@@ -222,7 +222,7 @@ const mockEvents = [
     id: 22,
     title: 'Government & public interest – 1L apps open',
     date: 'Dec 1, 2025',
-    month: 'Dec',
+    month: 'December',
     monthIndex: 11,
     year: 2025,
     description: 'Many public sector employers begin accepting 1L apps.',
@@ -233,7 +233,7 @@ const mockEvents = [
     id: 23,
     title: 'Judicial externships – typical window',
     date: 'Dec 2025 – Jan 2026',
-    month: 'Dec',
+    month: 'December',
     monthIndex: 11,
     year: 2025,
     description: 'Most applications submitted in Dec–Jan.',
@@ -257,7 +257,7 @@ const mockEvents = [
     id: 29,
     title: 'Haywood Burns Memorial Fellowship – deadline',
     date: 'Jan 6, 2025',
-    month: 'Jan',
+    month: 'January',
     monthIndex: 0,
     year: 2025,
     description: 'Application deadline.',
@@ -268,7 +268,7 @@ const mockEvents = [
     id: 30,
     title: 'Peggy Browning Fund Fellowship – deadline',
     date: 'Jan 17, 2025',
-    month: 'Jan',
+    month: 'January',
     monthIndex: 0,
     year: 2025,
     description: 'Application deadline.',
@@ -279,7 +279,7 @@ const mockEvents = [
     id: 32,
     title: 'EPIC Grants (Emory) – deadline',
     date: 'Mar 31, 2025 (5 p.m.)',
-    month: 'Mar',
+    month: 'March',
     monthIndex: 2,
     year: 2025,
     description: 'EPIC summer funding applications due.',
@@ -292,7 +292,7 @@ const mockEvents = [
     id: 33,
     title: 'DOJ SLIP – applications window',
     date: 'Aug 22 – Sep 2, 2025',
-    month: 'Aug',
+    month: 'August',
     monthIndex: 7,
     year: 2025,
     description: 'Apply for DOJ Summer Law Intern Program.',
@@ -303,7 +303,7 @@ const mockEvents = [
     id: 35,
     title: 'HNBA/VIA Avanza Internships – window',
     date: 'Jun 30 – Jul 18, 2025',
-    month: 'Jun',
+    month: 'June',
     monthIndex: 5,
     year: 2025,
     description: 'Applications accepted during this period.',
@@ -329,7 +329,7 @@ const mockEvents = [
     id: 38,
     title: 'Action Plan: Oct–Nov 2025',
     date: 'Oct–Nov 2025',
-    month: 'Oct',
+    month: 'October',
     monthIndex: 9,
     year: 2025,
     description: 'Draft/refine outlines; register for Spring Interview Programs; research diversity fellowships; prep materials.',
@@ -340,7 +340,7 @@ const mockEvents = [
     id: 39,
     title: 'Action Plan: Dec 2025',
     date: 'Dec 2025',
-    month: 'Dec',
+    month: 'December',
     monthIndex: 11,
     year: 2025,
     description: 'Apply starting Dec 1 to big law, government, public interest; submit fellowships with Dec deadlines; begin judicial externship apps.',
@@ -351,7 +351,7 @@ const mockEvents = [
     id: 42,
     title: 'Action Plan: Aug–Sep 2025',
     date: 'Aug–Sep 2025',
-    month: 'Aug',
+    month: 'August',
     monthIndex: 7,
     year: 2025,
     description: 'Apply to DOJ SLIP (Aug 22–Sep 2); watch state AG & corporate postings.',
@@ -360,7 +360,10 @@ const mockEvents = [
   }
 ];
 
-const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const months = [
+  'January', 'February', 'March', 'April', 'May', 'June',
+  'July', 'August', 'September', 'October', 'November', 'December'
+];
 
 const Timeline = () => {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -369,10 +372,17 @@ const Timeline = () => {
   const [direction, setDirection] = useState(0); // For animation direction
   const [events, setEvents] = useState(mockEvents);
   const [loading, setLoading] = useState(true);
+  const [isEditing, setIsEditing] = useState(false);
+  const [year, setYear] = useState("2025/2026");
 
   useEffect(() => {
     fetchEvents();
   }, []);
+
+  const handleSave = () => {
+    setIsEditing(false);
+    console.log("Saved year:", year);
+  };
 
   const fetchEvents = async () => {
     try {
@@ -396,7 +406,8 @@ const Timeline = () => {
           year: event.year,
           description: event.description || '',
           location: event.location || '',
-          time: event.time || ''
+          time: event.time || '',
+          priority: event.priority === true || event.priority === 'true'
         }))];
         setEvents(combinedEvents);
       }
@@ -501,7 +512,37 @@ const getEventsForMonth = (month) => {
 </div>
 
         {/* Timeline Header */}
-        <h2 className="text-2xl font-semibold text-center mb-8">Timeline - 1L (2025/2026)</h2>
+        <div className="flex items-center justify-center gap-2 mb-8">
+          {isEditing ? (
+            <>
+              <input
+                type="text"
+                value={year}
+                onChange={(e) => setYear(e.target.value)}
+                className="text-2xl font-semibold text-center border-b border-accent focus:outline-none focus:ring-0 bg-transparent"
+                autoFocus
+              />
+              <button
+                onClick={handleSave}
+                className="p-1 rounded-full hover:bg-accent/10"
+              >
+                <Check className="w-5 h-5 text-accent" />
+              </button>
+            </>
+          ) : (
+            <>
+              <h2 className="text-2xl font-semibold text-center">
+                Timeline - 1L ({year})
+              </h2>
+              <button
+                onClick={() => setIsEditing(true)}
+                className="p-1 rounded-full hover:bg-accent/10"
+              >
+                <Pencil className="w-5 h-5 text-accent" />
+              </button>
+            </>
+          )}
+        </div>
 
         {/* Timeline */}
         <div className="relative">
@@ -527,9 +568,12 @@ const getEventsForMonth = (month) => {
                     hasEvents ? 'border-primary' : 'border-border'
                   }`}></div>
                   
-                  {/* Month Label */}
-                  <div className="text-sm font-medium text-foreground uppercase tracking-wider">
-                    {month}
+                  {/* Month Label with event count */}
+                  <div className="text-sm font-medium text-foreground text-center">
+                    {month}{" "}
+                    <span className="text-xs text-muted-foreground">
+                      ({monthEvents.length})
+                    </span>
                   </div>
                   
                   {/* Events Dropdown */}
@@ -546,19 +590,44 @@ const getEventsForMonth = (month) => {
                           <div className="text-sm font-semibold text-card-foreground mb-3 border-b border-border pb-2">
                             {month}
                           </div>
+
                           <div className="space-y-2">
-                            {monthEvents.map((event) => (
-                              <div key={event.id} className="text-sm">
-                                <div className="font-medium text-card-foreground">
-                                  • {event.title}
-                                </div>
-                                {event.description && (
-                                  <div className="text-muted-foreground text-xs mt-1 ml-2">
-                                    {event.description}
-                                  </div>
-                                )}
-                              </div>
-                            ))}
+                            {(() => {
+                              const priorityEvents = monthEvents.filter((event) => event.priority);
+                              const displayedEvents = priorityEvents.slice(0, 5);
+                              const remainingCount = priorityEvents.length - displayedEvents.length;
+
+                              return (
+                                <>
+                                  {displayedEvents.map((event) => (
+                                    <div key={event.id} className="text-sm">
+                                      <div className="font-medium text-card-foreground">
+                                        • {event.title}
+                                      </div>
+                                      {/* Optional description */}
+                                      {/* {event.description && (
+                                        <div className="text-muted-foreground text-xs mt-1 ml-2">
+                                          {event.description}
+                                        </div>
+                                      )} */}
+                                    </div>
+                                  ))}
+
+                                  {remainingCount > 0 && (
+                                    <div className="text-xs text-muted-foreground italic">
+                                      +{remainingCount} more priority event
+                                      {remainingCount > 1 ? "s" : ""}
+                                    </div>
+                                  )}
+
+                                  {priorityEvents.length === 0 && (
+                                    <div className="text-xs text-muted-foreground italic">
+                                      No priority events this month.
+                                    </div>
+                                  )}
+                                </>
+                              );
+                            })()}
                           </div>
                         </div>
                       </motion.div>
@@ -611,7 +680,9 @@ const getEventsForMonth = (month) => {
             transition={{ duration: 0.4 }}
             className="grid gap-6 md:grid-cols-2 lg:grid-cols-3"
           >
-            {sortedEvents.map((event, eventIndex) => (
+            {sortedEvents
+            .filter(event => event.priority) // ✅ show only priority events
+            .map((event, eventIndex) => (
               <motion.div
                 key={event.id}
                 initial={{ opacity: 0, y: 20 }}

@@ -286,6 +286,7 @@ const TeamManagement = ({ companyId }) => {
                 <TableHeader>
                   <TableRow>
                     <TableHead>Name</TableHead>
+                    <TableHead>Email</TableHead> 
                     <TableHead>Role</TableHead>
                     <TableHead>Added</TableHead>
                     <TableHead className="text-right">Actions</TableHead>
@@ -296,6 +297,9 @@ const TeamManagement = ({ companyId }) => {
                     <TableRow key={member.id}>
                       <TableCell className="font-medium">
                         {member.name}
+                      </TableCell>
+                      <TableCell>
+                        {member.email}
                       </TableCell>
                       <TableCell className="capitalize">{member.role}</TableCell>
                       <TableCell>
