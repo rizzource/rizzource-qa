@@ -18,7 +18,6 @@ const Auth = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
-  const [signupRole, setSignupRole] = useState(''); // <-- capture role from shadcn Select
 
   const { user, signIn, signUp } = useAuth();
   const navigate = useNavigate();
@@ -59,13 +58,6 @@ const Auth = () => {
       const password = formData.get('password');
       const confirmPassword = formData.get('confirmPassword');
 
-      // IMPORTANT: get role from state (shadcn Select isn't a native control)
-      const role = signupRole;
-
-      if (!role) {
-        setError('Please select a role');
-        return;
-      }
       if (password !== confirmPassword) {
         setError('Passwords do not match');
         return;
@@ -75,7 +67,7 @@ const Auth = () => {
         return;
       }
 
-      const { error } = await signUp(email, password, { role });
+      const { error } = await signUp(email, password);
       if (error) {
         if (error.message?.toLowerCase().includes('already')) {
           setError('An account with this email already exists. Please sign in instead.');
@@ -171,28 +163,11 @@ const Auth = () => {
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="role" className="text-foreground font-medium">
-                        Role *
-                      </Label>
-                      <Select value={signupRole} onValueChange={setSignupRole} required>
-                        <SelectTrigger className="bg-card border-input text-foreground focus:border-accent focus:ring-2 focus:ring-accent">
-                          <SelectValue placeholder="Select your role" />
-                        </SelectTrigger>
-                        <SelectContent className="bg-card border border-border rounded-md shadow-lg z-50">
-                          <SelectItem value="mentor">Mentor</SelectItem>
-                          <SelectItem value="mentee">Mentee</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      {/* Mirror into the form so FormData still has 'role' if you ever read from it */}
-                      <input type="hidden" name="role" value={signupRole} />
-                    </div>
-
-                    <div className="space-y-2">
                       <Label htmlFor="signup-password" className="text-foreground font-medium">
                         Password
                       </Label>
                       <Input id="signup-password" name="password" type="password" autoComplete="new-password"
-                        placeholder="Create a password (min. 4 characters)" required className="input-focus-green" />
+                        placeholder="Create a password (min. 6 characters)" required className="input-focus-green" />
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="confirm-password" className="text-foreground font-medium">

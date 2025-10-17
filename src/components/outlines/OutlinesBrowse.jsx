@@ -21,6 +21,36 @@ const OutlinesBrowse = () => {
   });
   const [outlines, setOutlines] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [years, setYears] = useState(["All Years"]);
+
+  const fetchYears = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("outlines")
+        .select("year", { distinct: true }); // ✅ distinct years only
+
+      if (error) {
+        console.error("Error fetching years:", error);
+        return;
+      }
+
+      if (data && data.length > 0) {
+        // Extract and clean
+        const uniqueYears = [...new Set(data.map((item) => item.year))].sort();
+
+        setYears(["All Years", ...uniqueYears]);
+      } else {
+        setYears(["All Years"]); // fallback if no outlines
+      }
+    } catch (err) {
+      console.error("Unexpected error:", err);
+    }
+  };
+
+  useEffect(() => {
+    fetchYears();
+  }, []);
+
 
   // Single, page-level preview state (replaces Dialog)
   const [previewOutline, setPreviewOutline] = useState(null);
@@ -36,7 +66,6 @@ const OutlinesBrowse = () => {
     "Administrative Law",
     "Evidence",
   ];
-  const years = ["All Years", "1L", "2L", "3L"];
   const ratings = ["All Ratings", "5 Stars", "4+ Stars", "3+ Stars", "2+ Stars", "1+ Stars"];
   const sortOptions = ["Newest", "Highest Rated", "Most Popular"];
 

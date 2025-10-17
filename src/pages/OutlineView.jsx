@@ -15,6 +15,7 @@ import { Document, Page, pdfjs } from 'react-pdf';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
 import 'react-pdf/dist/Page/TextLayer.css';
 import pdfWorkerSrc from 'pdfjs-dist/build/pdf.worker.min?url';
+import mammoth from "mammoth";
 
 // Configure PDF.js worker via Vite asset URL
 pdfjs.GlobalWorkerOptions.workerSrc = pdfWorkerSrc;
@@ -30,9 +31,8 @@ const OutlineView = () => {
   const [pageNumber, setPageNumber] = useState(1);
   const [pdfError, setPdfError] = useState(null);
   const [showPdfDialog, setShowPdfDialog] = useState(false);
+  const [extractedText, setExtractedText] = useState("");
   const navigate = useNavigate();
-
-  // Remove the mockOutline constant since we're now fetching from Supabase
 
   useEffect(() => {
     const fetchOutline = async () => {
@@ -76,6 +76,57 @@ const OutlineView = () => {
 
     fetchOutline();
   }, [id]);
+
+  useEffect(() => {
+    const extractTextFromFile = async () => {
+      if (!outline?.file_url || !outline?.file_type) return;
+
+      try {
+        if (outline.file_type === "application/pdf") {
+          // PDF extraction using pdfjs
+          const loadingTask = pdfjs.getDocument(outline.file_url);
+          const pdf = await loadingTask.promise;
+          let text = "";
+          for (let i = 1; i <= pdf.numPages; i++) {
+            const page = await pdf.getPage(i);
+            const content = await page.getTextContent();
+            text += content.items.map(item => item.str).join(" ") + "\n";
+          }
+          setExtractedText(text.trim());
+        } else if (
+          outline.file_type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" // .docx
+        ) {
+          // DOCX extraction using mammoth
+          const response = await fetch(outline.file_url);
+          const arrayBuffer = await response.arrayBuffer();
+          const result = await mammoth.extractRawText({ arrayBuffer });
+          setExtractedText(result.value.trim());
+        } else if (
+          outline.file_type === "application/msword" // .doc
+        ) {
+          // DOC extraction using mammoth (may not always work)
+          const response = await fetch(outline.file_url);
+          const arrayBuffer = await response.arrayBuffer();
+          const result = await mammoth.extractRawText({ arrayBuffer });
+          setExtractedText(result.value.trim());
+        } else if (
+          outline.file_type === "audio/mpeg" || // .mp3
+          outline.file_type === "audio/mp3" ||
+          outline.file_type === "audio/x-m4a" || // .m4a
+          outline.file_type === "audio/mp4"
+        ) {
+          setExtractedText("This is an audio file. Text preview is not available.");
+        } else {
+          setExtractedText("Preview not supported for this file type.");
+        }
+      } catch (err) {
+        setExtractedText("Could not extract text from this document.");
+        console.error("Text extraction error:", err);
+      }
+    };
+
+    extractTextFromFile();
+  }, [outline?.file_url, outline?.file_type]);
 
   const handleRatingSubmit = async (rating) => {
     setRatingLoading(true);
@@ -301,17 +352,19 @@ const OutlineView = () => {
                 </CardHeader>
               </Card>
 
-              {/* Notes */}
-              {/* <Card className="bg-card backdrop-blur-sm border-border">
-                <CardContent className="p-6">
-                  <h3 className="text-lg font-semibold text-primary mb-4">Description & Notes</h3>
-                  <div className="prose prose-sm max-w-none text-muted-foreground">
-                    <div className="whitespace-pre-line leading-relaxed">
-                      {outline.notes}
-                    </div>
+              {/* Description Field (Extracted Text) */}
+              <Card className="bg-card backdrop-blur-sm border-border">
+                <CardHeader>
+                  <CardTitle className="text-lg text-primary">Description</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="prose prose-sm max-w-none text-muted-foreground whitespace-pre-line">
+                    {extractedText
+                      ? extractedText
+                      : "Extracting document text..."}
                   </div>
                 </CardContent>
-              </Card> */}
+              </Card>
 
               {/* PDF Viewer - Button to open dialog */}
               {outline.file_url && outline.file_type === 'application/pdf' && (
