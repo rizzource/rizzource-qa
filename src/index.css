@@ -8,112 +8,154 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* Light Cream Theme - Clean Minimalist Design */
-    --background: 39 36% 91%;        /* #EDE5D3 - palette light beige */
-    --foreground: 0 0% 11%;          /* #1C1C1C - near-black for body text */
-
-    --card:50 33% 98%;               /* #FAF9F6 - light cream cards */
-    --card-foreground: 0 0% 11%;
-
+    /* Finnegan-inspired Color Palette */
+    --brand-primary: 162 47% 36%;        /* Professional teal-green */
+    --brand-primary-foreground: 0 0% 100%;
+    --brand-secondary: 162 35% 28%;      /* Darker teal */
+    --brand-accent: 162 55% 45%;         /* Brighter accent green */
+    
+    /* Surface colors */
+    --surface: 0 0% 100%;                /* Pure white */
+    --surface-alt: 210 20% 98%;          /* Very light gray */
+    --background: 0 0% 100%;
+    --foreground: 210 15% 20%;           /* Dark charcoal */
+    
+    /* Card & UI elements */
+    --card: 0 0% 100%;
+    --card-foreground: 210 15% 20%;
     --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 11%;
-
-    /* Primary: Dark Green for headings and logo */
-    --primary: 98 67% 10%;           /* #14290A - dark green */
-    --primary-foreground: 50 33% 98%; /* cream on dark green */
-
-    /* Secondary: Muted green for icons */
-    --secondary: 98 29% 18%;         /* #2C3A20 - muted green */
-    --secondary-foreground: 50 33% 98%;
-
-    /* Muted colors */
-    --muted: 0 0% 90%;               /* #E5E5E5 - light gray for backgrounds */
-    --muted-foreground: 0 0% 33%;    /* #555555 - muted text */
-
-    /* Gold accent system */
-    --gold-primary: 45 67% 54%;      /* #D4AF37 - warm muted gold */
-    --gold-light: 45 67% 54%;        /* same as primary */
-    --gold-dark: 45 61% 47%;         /* #C19A2E - darker gold for hover */
-    --gold-accent: 45 67% 54%;
-    --accent: 45 67% 54%;            /* muted gold for highlights */
-    --accent-foreground: 98 67% 10%; /* dark green on gold */
-
-    /* Soft gray for alternative icons */
-    --soft-gray: 0 0% 55%;           /* #8C8C8C */
-
-    /* Border and input styling */
-    --border: 0 0% 87%;              /* #DDDDDD - light gray borders */
-    --input: 0 0% 87%;
-    --ring: 45 67% 54%;              /* Gold focus ring */
-
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
-
-    /* Enhanced gradients - Light Cream Theme */
-    --gradient-hero: linear-gradient(135deg, hsl(50 33% 98%), hsl(50 33% 96%));
-    --gradient-gold: linear-gradient(135deg, hsl(45 67% 54%), hsl(45 61% 47%));
-    --gradient-card: linear-gradient(135deg, hsl(0 0% 100%), hsl(50 33% 99%));
+    --popover-foreground: 210 15% 20%;
+    
+    /* Primary (using brand green) */
+    --primary: 162 47% 36%;
+    --primary-foreground: 0 0% 100%;
+    --primary-green: 162 47% 36%;
+    
+    /* Secondary (muted neutrals) */
+    --secondary: 210 15% 95%;
+    --secondary-foreground: 210 15% 20%;
+    --secondary-green: 162 35% 28%;
+    
+    /* Muted states */
+    --muted: 210 15% 95%;
+    --muted-foreground: 210 10% 50%;
+    
+    /* Accent (teal-green) */
+    --accent: 162 47% 36%;
+    --accent-foreground: 0 0% 100%;
+    
+    /* Text colors */
+    --text: 210 15% 20%;
+    --text-muted: 210 10% 50%;
+    
+    /* Borders */
+    --border: 210 15% 88%;
+    --input: 210 15% 88%;
+    
+    /* Link colors */
+    --link: 162 47% 36%;
+    --link-hover: 162 55% 45%;
+    
+    /* Focus states */
+    --ring: 162 47% 36%;
+    --focus-ring: 162 55% 45%;
+    
+    /* Destructive */
+    --destructive: 0 70% 50%;
+    --destructive-foreground: 0 0% 100%;
+    
+    /* Light green utility */
+    --light-green: 162 55% 45%;
+    
+    /* Gold accents (keeping for compatibility) */
+    --gold-primary: 42 68% 62%;
+    --gold-secondary: 38 92% 50%;
+    --gold-accent: 45 93% 47%;
+    --gold-light: 48 95% 76%;
+    --gold-dark: 36 77% 49%;
+    
+    /* Neutrals */
+    --neutral-light: 210 20% 98%;
+    --neutral-dark: 210 15% 20%;
+    
+    /* Border radius */
+    --radius: 0.25rem;                   /* Subtle, professional corners */
+    
+    /* Spacing scale */
+    --space-1: 0.25rem;
+    --space-2: 0.5rem;
+    --space-3: 0.75rem;
+    --space-4: 1rem;
+    --space-5: 1.5rem;
+    --space-6: 2rem;
+    --space-7: 3rem;
+    --space-8: 4rem;
+    
+    /* Shadows */
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    
+    /* Enhanced gradients - Professional Theme */
+    --gradient-hero: linear-gradient(135deg, hsl(0 0% 100%), hsl(210 20% 98%));
+    --gradient-green: linear-gradient(135deg, hsl(162 47% 36%), hsl(162 35% 28%));
+    --gradient-card: linear-gradient(135deg, hsl(0 0% 100%), hsl(210 20% 99%));
     
     /* Enhanced shadows */
-    --shadow-gold: 0 10px 30px -10px hsl(51 100% 50% / 0.3);
-    --shadow-green: 0 10px 30px -10px hsl(98 67% 19% / 0.2);
-    --shadow-card: 0 4px 20px -4px hsl(98 67% 19% / 0.1);
-
-    --radius: 0.5rem;
+    --shadow-green: 0 10px 30px -10px hsl(162 47% 36% / 0.2);
+    --shadow-card: 0 4px 20px -4px hsl(210 15% 20% / 0.1);
 
     --sidebar-background: 0 0% 98%;
-
-    --sidebar-foreground: 240 5.3% 26.1%;
-
-    --sidebar-primary: 240 5.9% 10%;
-
-    --sidebar-primary-foreground: 0 0% 98%;
-
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-foreground: 210 15% 20%;
+    --sidebar-primary: 162 47% 36%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 210 15% 95%;
+    --sidebar-accent-foreground: 210 15% 20%;
+    --sidebar-border: 210 15% 88%;
+    --sidebar-ring: 162 55% 45%;
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
+    --background: 210 20% 10%;
+    --foreground: 210 15% 95%;
+    --card: 210 20% 12%;
+    --card-foreground: 210 15% 95%;
+    --popover: 210 20% 10%;
+    --popover-foreground: 210 15% 95%;
+    --primary: 162 55% 45%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 210 15% 18%;
+    --secondary-foreground: 210 15% 95%;
+    --muted: 210 15% 18%;
+    --muted-foreground: 210 10% 60%;
+    --accent: 162 55% 45%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 62% 50%;
+    --destructive-foreground: 210 15% 95%;
+    --border: 210 15% 25%;
+    --input: 210 15% 25%;
+    --ring: 162 55% 45%;
+    --text: 210 15% 95%;
+    --text-muted: 210 10% 60%;
+    --link: 162 55% 45%;
+    --link-hover: 162 65% 55%;
+    --gold-primary: 42 68% 62%;
+    --gold-secondary: 38 92% 50%;
+    --gold-accent: 45 93% 47%;
+    --gold-light: 48 95% 76%;
+    --gold-dark: 36 77% 49%;
+    --neutral-light: 210 15% 90%;
+    --neutral-dark: 210 20% 12%;
+    --surface: 210 20% 10%;
+    --surface-alt: 210 20% 12%;
+    --sidebar-background: 210 20% 10%;
+    --sidebar-foreground: 210 15% 95%;
+    --sidebar-primary: 162 55% 45%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-accent: 210 15% 18%;
+    --sidebar-accent-foreground: 210 15% 95%;
+    --sidebar-border: 210 15% 25%;
+    --sidebar-ring: 162 55% 45%;
   }
 }
 
