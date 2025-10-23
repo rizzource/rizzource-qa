@@ -170,9 +170,9 @@ const JobPortal = () => {
                     <CardHeader>
                       <div className="flex items-start justify-between mb-2">
                         <div className="flex items-center gap-3">
-                          <div className="w-12 h-12 rounded-lg bg-secondary flex items-center justify-center">
+                          {/* <div className="w-12 h-12 rounded-lg bg-secondary flex items-center justify-center">
                             <Building2 className="h-6 w-6 text-primary" />
-                          </div>
+                          </div> */}
                           <div>
                             <CardTitle className="text-lg">{job.title}</CardTitle>
                             <p className="text-sm text-muted-foreground">{job.company_name}</p>
