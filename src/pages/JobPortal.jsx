@@ -21,7 +21,7 @@ const JobPortal = () => {
   // Add pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const jobsPerPage = 9;
-  
+
   const navigate = useNavigate();
   const { user } = useAuth();
 
@@ -121,7 +121,7 @@ const JobPortal = () => {
               />
             </div>
             */}
-            <Select value={stateFilter} onValueChange={setStateFilter}>
+            <Select value={stateFilter} onValueChange={(e) => { setCurrentPage(1); setStateFilter(e);}}>
               <SelectTrigger className="md:w-48">
                 <SelectValue placeholder="Select State" />
               </SelectTrigger>
@@ -161,7 +161,7 @@ const JobPortal = () => {
           ) : (
             <>
               <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                {currentJobs.map((job) => (
+                {currentJobs?.map((job) => (
                   <Card
                     key={job.id}
                     className="hover:shadow-lg transition-shadow cursor-pointer"
@@ -232,7 +232,7 @@ const JobPortal = () => {
                 >
                   Previous
                 </Button>
-                
+
                 {[...Array(totalPages)].map((_, index) => (
                   <Button
                     key={index + 1}
@@ -242,7 +242,7 @@ const JobPortal = () => {
                     {index + 1}
                   </Button>
                 ))}
-                
+
                 <Button
                   variant="outline"
                   disabled={currentPage === totalPages}
