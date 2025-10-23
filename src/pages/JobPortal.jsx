@@ -139,7 +139,7 @@ const JobPortal = () => {
             </Select>
             {/* Replace the existing Reset Filters Button with this */}
             <Button 
-              size="sm"
+              size="lg"
               variant="default"
               onClick={resetFilters}
               className="md:w-48"
