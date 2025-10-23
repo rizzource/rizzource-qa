@@ -76,6 +76,14 @@ const JobPortal = () => {
     setCurrentPage(pageNumber);
   };
 
+  // First, add a reset function near your other state management code
+  const resetFilters = () => {
+    setSearchQuery("");
+    setStateFilter("");
+    setAreaOfLawFilter("");
+    setCurrentPage(1);
+  };
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [currentPage]);
@@ -129,21 +137,15 @@ const JobPortal = () => {
                 </SelectItem>
               </SelectContent>
             </Select>
-            <Select value={areaOfLawFilter} onValueChange={setAreaOfLawFilter}>
-              <SelectTrigger className="md:w-48">
-                <SelectValue placeholder="Area of Law" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all" className="hover:bg-blue-100 focus:bg-blue-100 cursor-pointer">
-                  All Areas
-                </SelectItem>
-                {areasOfLaw.map((area) => (
-                  <SelectItem key={area} value={area} className="hover:bg-blue-100 focus:bg-blue-100 cursor-pointer">
-                    {area}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            {/* Replace the existing Reset Filters Button with this */}
+            <Button 
+              size="sm"
+              variant="default"
+              onClick={resetFilters}
+              className="md:w-48"
+            >
+              Reset Filters
+            </Button>
           </div>
 
           {/* Job Listings */}
