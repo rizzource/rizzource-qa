@@ -175,7 +175,7 @@ const JobDetails = () => {
                       }
                     }}
                   >
-                    Apply Now
+                    Visit Website
                   </Button>
                 </div>
                 {/* )} */}
