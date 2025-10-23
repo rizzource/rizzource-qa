@@ -57,7 +57,7 @@ const JobDetails = () => {
   };
 
   const formatDate = (dateString) => {
-    if (!dateString) return "No deadline";
+    if (!dateString) return "No deadline specified";
     return new Date(dateString).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
   };
 
@@ -175,7 +175,7 @@ const JobDetails = () => {
                       }
                     }}
                   >
-                    Apply Now
+                    Visit Website
                   </Button>
                 </div>
                 {/* )} */}
