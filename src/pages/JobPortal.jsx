@@ -10,6 +10,8 @@ import { Search, Briefcase, MapPin, Clock, Building2, Scale } from "lucide-react
 import { useNavigate } from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { fetchUsaJobs } from "@/services/usaJobs";
+import { saveJobsToDatabase } from "@/services/jobService";
 
 const JobPortal = () => {
   const [jobs, setJobs] = useState([]);
@@ -29,15 +31,32 @@ const JobPortal = () => {
     fetchJobs();
   }, []);
 
+  // Replace the existing fetchJobs function with this:
   const fetchJobs = async () => {
     try {
+      setLoading(true);
+      
+      // Add debug logs
+      console.log('Fetching USA Jobs...');
+      const usaJobs = await fetchUsaJobs();
+      console.log('USA Jobs received:', usaJobs);
+      
+      console.log('Saving jobs to database...');
+      await saveJobsToDatabase(usaJobs);
+      
+      console.log('Fetching all jobs from database...');
       const { data: jobsData, error } = await supabase
         .from("jobs")
         .select("*")
         .eq("status", "open")
         .order("created_at", { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Supabase error:', error);
+        throw error;
+      }
+      
+      console.log('Jobs from database:', jobsData);
       setJobs(jobsData || []);
     } catch (error) {
       console.error("Error fetching jobs:", error);
@@ -145,6 +164,13 @@ const JobPortal = () => {
               className="md:w-48"
             >
               Reset Filters
+            </Button>
+            <Button 
+              onClick={fetchJobs}
+              className="md:w-48"
+              variant="outline"
+            >
+              Sync USA Jobs
             </Button>
           </div>
 
