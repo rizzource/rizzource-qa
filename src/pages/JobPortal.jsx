@@ -114,8 +114,8 @@ const JobPortal = () => {
         <div className="container mx-auto px-4 py-8">
           {/* Hero Section */}
           <div className="text-center mb-12">
-            <h1 className="text-4xl font-bold text-foreground mb-4">Find Your Dream Job</h1>
-            <p className="text-muted-foreground text-lg">Browse opportunities from top companies</p>
+            <h1 className="text-4xl font-bold text-foreground mb-4">Every 1L Summer Job. One Smart Search</h1>
+            <p className="text-muted-foreground text-lg">Rizzource scans firm sites, job boards, and courts live so you don't have to.</p>
           </div>
 
           {/* Search & Filter */}
@@ -196,9 +196,9 @@ const JobPortal = () => {
                     <CardHeader>
                       <div className="flex items-start justify-between mb-2">
                         <div className="flex items-center gap-3">
-                          <div className="w-12 h-12 rounded-lg bg-secondary flex items-center justify-center">
+                          {/* <div className="w-12 h-12 rounded-lg bg-secondary flex items-center justify-center">
                             <Building2 className="h-6 w-6 text-primary" />
-                          </div>
+                          </div> */}
                           <div>
                             <CardTitle className="text-lg">{job.title}</CardTitle>
                             <p className="text-sm text-muted-foreground">{job.company_name}</p>
