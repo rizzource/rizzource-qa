@@ -8,64 +8,64 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* Finnegan-inspired Color Palette */
-    --brand-primary: 162 47% 36%;        /* Professional teal-green */
+    /* Slate & Sky Color Palette */
+    --brand-primary: 218 33% 17%;        /* Deep slate blue */
     --brand-primary-foreground: 0 0% 100%;
-    --brand-secondary: 162 35% 28%;      /* Darker teal */
-    --brand-accent: 162 55% 45%;         /* Brighter accent green */
+    --brand-secondary: 187 94% 43%;      /* Aqua secondary */
+    --brand-accent: 217 91% 60%;         /* Bright professional blue */
     
     /* Surface colors */
-    --surface: 0 0% 100%;                /* Pure white */
-    --surface-alt: 210 20% 98%;          /* Very light gray */
-    --background: 0 0% 100%;
-    --foreground: 210 15% 20%;           /* Dark charcoal */
+    --surface: 210 40% 98%;              /* Soft off-white */
+    --surface-alt: 214 32% 96%;          /* Very light slate */
+    --background: 210 40% 98%;
+    --foreground: 218 33% 17%;           /* Deep slate text */
     
     /* Card & UI elements */
     --card: 0 0% 100%;
-    --card-foreground: 210 15% 20%;
+    --card-foreground: 218 33% 17%;
     --popover: 0 0% 100%;
-    --popover-foreground: 210 15% 20%;
+    --popover-foreground: 218 33% 17%;
     
-    /* Primary (using brand green) */
-    --primary: 162 47% 36%;
+    /* Primary (using brand slate blue) */
+    --primary: 218 33% 17%;
     --primary-foreground: 0 0% 100%;
-    --primary-green: 162 47% 36%;
+    --primary-green: 217 91% 60%;        /* Accent blue for compatibility */
     
-    /* Secondary (muted neutrals) */
-    --secondary: 210 15% 95%;
-    --secondary-foreground: 210 15% 20%;
-    --secondary-green: 162 35% 28%;
+    /* Secondary (muted slate) */
+    --secondary: 214 32% 91%;
+    --secondary-foreground: 218 33% 17%;
+    --secondary-green: 217 91% 60%;
     
     /* Muted states */
-    --muted: 210 15% 95%;
-    --muted-foreground: 210 10% 50%;
+    --muted: 214 32% 91%;
+    --muted-foreground: 215 16% 47%;
     
-    /* Accent (teal-green) */
-    --accent: 162 47% 36%;
+    /* Accent (bright blue) */
+    --accent: 217 91% 60%;
     --accent-foreground: 0 0% 100%;
     
     /* Text colors */
-    --text: 210 15% 20%;
-    --text-muted: 210 10% 50%;
+    --text: 218 33% 17%;
+    --text-muted: 215 16% 47%;
     
     /* Borders */
-    --border: 210 15% 88%;
-    --input: 210 15% 88%;
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
     
     /* Link colors */
-    --link: 162 47% 36%;
-    --link-hover: 162 55% 45%;
+    --link: 217 91% 60%;
+    --link-hover: 217 91% 50%;
     
     /* Focus states */
-    --ring: 162 47% 36%;
-    --focus-ring: 162 55% 45%;
+    --ring: 217 91% 60%;
+    --focus-ring: 217 91% 60%;
     
     /* Destructive */
-    --destructive: 0 70% 50%;
+    --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
     
-    /* Light green utility */
-    --light-green: 162 55% 45%;
+    /* Light green utility (now blue) */
+    --light-green: 217 91% 60%;
     
     /* Gold accents (keeping for compatibility) */
     --gold-primary: 42 68% 62%;
@@ -96,66 +96,66 @@ All colors MUST be HSL.
     --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
     --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
     
-    /* Enhanced gradients - Professional Theme */
-    --gradient-hero: linear-gradient(135deg, hsl(0 0% 100%), hsl(210 20% 98%));
-    --gradient-green: linear-gradient(135deg, hsl(162 47% 36%), hsl(162 35% 28%));
-    --gradient-card: linear-gradient(135deg, hsl(0 0% 100%), hsl(210 20% 99%));
+    /* Enhanced gradients - Slate & Sky Theme */
+    --gradient-hero: linear-gradient(135deg, hsl(210 40% 98%), hsl(214 32% 96%));
+    --gradient-green: linear-gradient(135deg, hsl(217 91% 60%), hsl(187 94% 43%));
+    --gradient-card: linear-gradient(135deg, hsl(0 0% 100%), hsl(210 40% 99%));
     
     /* Enhanced shadows */
-    --shadow-green: 0 10px 30px -10px hsl(162 47% 36% / 0.2);
-    --shadow-card: 0 4px 20px -4px hsl(210 15% 20% / 0.1);
+    --shadow-green: 0 10px 30px -10px hsl(217 91% 60% / 0.2);
+    --shadow-card: 0 4px 20px -4px hsl(218 33% 17% / 0.1);
 
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 210 15% 20%;
-    --sidebar-primary: 162 47% 36%;
+    --sidebar-background: 210 40% 98%;
+    --sidebar-foreground: 218 33% 17%;
+    --sidebar-primary: 217 91% 60%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 210 15% 95%;
-    --sidebar-accent-foreground: 210 15% 20%;
-    --sidebar-border: 210 15% 88%;
-    --sidebar-ring: 162 55% 45%;
+    --sidebar-accent: 214 32% 91%;
+    --sidebar-accent-foreground: 218 33% 17%;
+    --sidebar-border: 214 32% 91%;
+    --sidebar-ring: 217 91% 60%;
   }
 
   .dark {
-    --background: 210 20% 10%;
-    --foreground: 210 15% 95%;
-    --card: 210 20% 12%;
-    --card-foreground: 210 15% 95%;
-    --popover: 210 20% 10%;
-    --popover-foreground: 210 15% 95%;
-    --primary: 162 55% 45%;
+    --background: 222 47% 11%;
+    --foreground: 210 40% 98%;
+    --card: 222 47% 14%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222 47% 11%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 217 91% 60%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 210 15% 18%;
-    --secondary-foreground: 210 15% 95%;
-    --muted: 210 15% 18%;
-    --muted-foreground: 210 10% 60%;
-    --accent: 162 55% 45%;
+    --secondary: 218 33% 20%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 218 33% 20%;
+    --muted-foreground: 215 16% 65%;
+    --accent: 217 91% 60%;
     --accent-foreground: 0 0% 100%;
-    --destructive: 0 62% 50%;
-    --destructive-foreground: 210 15% 95%;
-    --border: 210 15% 25%;
-    --input: 210 15% 25%;
-    --ring: 162 55% 45%;
-    --text: 210 15% 95%;
-    --text-muted: 210 10% 60%;
-    --link: 162 55% 45%;
-    --link-hover: 162 65% 55%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 218 33% 25%;
+    --input: 218 33% 25%;
+    --ring: 217 91% 60%;
+    --text: 210 40% 98%;
+    --text-muted: 215 16% 65%;
+    --link: 217 91% 60%;
+    --link-hover: 187 94% 43%;
     --gold-primary: 42 68% 62%;
     --gold-secondary: 38 92% 50%;
     --gold-accent: 45 93% 47%;
     --gold-light: 48 95% 76%;
     --gold-dark: 36 77% 49%;
-    --neutral-light: 210 15% 90%;
-    --neutral-dark: 210 20% 12%;
-    --surface: 210 20% 10%;
-    --surface-alt: 210 20% 12%;
-    --sidebar-background: 210 20% 10%;
-    --sidebar-foreground: 210 15% 95%;
-    --sidebar-primary: 162 55% 45%;
+    --neutral-light: 215 16% 80%;
+    --neutral-dark: 222 47% 14%;
+    --surface: 222 47% 11%;
+    --surface-alt: 222 47% 14%;
+    --sidebar-background: 222 47% 11%;
+    --sidebar-foreground: 210 40% 98%;
+    --sidebar-primary: 217 91% 60%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 210 15% 18%;
-    --sidebar-accent-foreground: 210 15% 95%;
-    --sidebar-border: 210 15% 25%;
-    --sidebar-ring: 162 55% 45%;
+    --sidebar-accent: 218 33% 20%;
+    --sidebar-accent-foreground: 210 40% 98%;
+    --sidebar-border: 218 33% 25%;
+    --sidebar-ring: 217 91% 60%;
   }
 }
 
