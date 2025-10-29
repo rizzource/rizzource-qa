@@ -1,21 +1,27 @@
 import { Scale, BookOpen, Users, Mail } from "lucide-react"; 
+import { useTheme } from "next-themes";
+import logoLight from "@/assets/rizzource-logo-light.png";
+import logoDark from "@/assets/rizzource-logo-dark.png";
 
 const Footer = () => { 
-  return ( 
+  const { theme } = useTheme();
+  
+  return (
     <footer className="bg-primary text-primary-foreground"> 
       <div className="container mx-auto px-4 py-16"> 
         <div className="space-y-8"> 
           {/* Brand Section */} 
           <div className="space-y-4"> 
             <div className="flex items-center space-x-3"> 
-              <div className="w-10 h-10 bg-gold-light rounded-lg flex items-center justify-center"> 
-                <Scale className="w-6 h-6 text-primary" /> 
-              </div> 
+              <img 
+                src={theme === "dark" ? logoDark : logoLight} 
+                alt="RIZZource" 
+                className="h-12 w-auto"
+              />
               <div> 
-                <h3 className="text-xl font-bold">RIZZource</h3> 
                 <p className="text-sm text-primary-foreground/80">Law School and Beyond </p> 
               </div> 
-            </div> 
+            </div>
             <p className="text-primary-foreground/80 leading-relaxed"> Student-driven resource to support your journey through Law School and Beyond. </p> 
             {/* 
             <div className="flex space-x-4"> 

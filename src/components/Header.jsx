@@ -4,12 +4,16 @@ import { Scale, Shield, LogOut, User, ArrowLeft } from "lucide-react";
 import { useAuth } from "./AuthProvider";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { ThemeToggle } from "./ThemeToggle";
+import { useTheme } from "next-themes";
+import logoLight from "@/assets/rizzource-logo-light.png";
+import logoDark from "@/assets/rizzource-logo-dark.png";
 
 const Header = () => {
   const { user, userProfile, userRoles, isSuperAdmin, signOut } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const { pathname } = useLocation();
+  const { theme } = useTheme();
   // Get current path
   const handleSignOut = async () => {
     await signOut();
@@ -27,15 +31,13 @@ const Header = () => {
         <div className="flex items-center justify-between h-14 sm:h-16">
           {/* Logo */}
           <a href="/" className="flex items-center space-x-2 sm:space-x-3 touch-friendly flex-1 sm:flex-initial">
-            {/* <div className="w-8 h-8 sm:w-10 sm:h-10 bg-secondary rounded-lg flex items-center justify-center flex-shrink-0">
-              <Scale className="w-5 h-5 sm:w-6 sm:h-6 text-primary-foreground" />
-            </div> */}
-            <div className="flex-1 sm:block">
-              <h1 className="text-base sm:text-lg md:text-xl leading-tight text-primary font-bold">
-                <span className="text-accent">RIZZ</span>
-                <span>ource</span>
-              </h1>
-              <p className="text-xs hidden sm:block text-muted-foreground">Law School and Beyond</p>
+            <img 
+              src={theme === "dark" ? logoDark : logoLight} 
+              alt="RIZZource" 
+              className="h-8 sm:h-10 w-auto"
+            />
+            <div className="hidden sm:block">
+              <p className="text-xs text-muted-foreground">Law School and Beyond</p>
             </div>
           </a>
           {/* Right-hand controls */}

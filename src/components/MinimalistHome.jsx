@@ -1,10 +1,14 @@
 import { Button } from "@/components/ui/button";
 import { Scale, BookOpen, Users } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "./AuthProvider";  
+import { useAuth } from "./AuthProvider";
+import { useTheme } from "next-themes";
+import logoLight from "@/assets/rizzource-logo-light.png";
+import logoDark from "@/assets/rizzource-logo-dark.png";
 import Timeline from "./Timeline";
 
 const MinimalistHome = () => {
+  const { theme } = useTheme();
   const navigate = useNavigate();
   const { user } = useAuth(); 
   console.log("🔍 Supabase URL:", import.meta.env.VITE_SUPABASE_URL);
@@ -29,14 +33,12 @@ console.log("🔑 Supabase Key (first 8 chars):", import.meta.env.VITE_SUPABASE_
           {/* Content Section */}
           <div className="text-center space-y-6 lg:space-y-8">
             {/* RIZZource Logo */}
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 md:gap-6 mb-8 sm:mb-10 md:mb-12">
-              <div className="w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 bg-secondary/10 rounded-lg flex items-center justify-center flex-shrink-0 backdrop-blur-sm border border-border">
-                <Scale className="w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10 text-secondary" />
-              </div>
-              <h1 className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl xl:text-7xl leading-tight break-words font-bold">
-                <span className="text-accent">RIZZ</span>
-                <span className="text-primary">ource</span>
-              </h1>
+            <div className="flex flex-col items-center justify-center gap-6 mb-8 sm:mb-10 md:mb-12">
+              <img 
+                src={theme === "dark" ? logoDark : logoLight} 
+                alt="RIZZource" 
+                className="h-24 sm:h-32 md:h-40 lg:h-48 w-auto"
+              />
             </div>
             
             <div style={{marginTop: -15}}>
