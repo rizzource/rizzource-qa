@@ -3,6 +3,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { useTheme } from "next-themes";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import ThankYou from "./pages/ThankYou";
@@ -26,9 +27,11 @@ import CompanyDashboard from "./pages/CompanyDashboard";
 
 const queryClient = new QueryClient();
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
+const AppContent = () => {
+  const { theme } = useTheme();
+  
+  return (
+    <>
       <ToastContainer 
         position="top-center"
         autoClose={5000}
@@ -39,7 +42,7 @@ const App = () => (
         pauseOnFocusLoss
         draggable
         pauseOnHover
-        theme="light"
+        theme={theme === "dark" ? "dark" : "light"}
         style={{
           zIndex: 2147483647
         }}
@@ -83,6 +86,14 @@ const App = () => (
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
+    </>
+  );
+};
+
+const App = () => (
+  <QueryClientProvider client={queryClient}>
+    <TooltipProvider>
+      <AppContent />
     </TooltipProvider>
   </QueryClientProvider>
 );

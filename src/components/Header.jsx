@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Scale, Shield, LogOut, User, ArrowLeft } from "lucide-react";
 import { useAuth } from "./AuthProvider";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import { ThemeToggle } from "./ThemeToggle";
 
 const Header = () => {
   const { user, userProfile, userRoles, isSuperAdmin, signOut } = useAuth();
@@ -39,6 +40,7 @@ const Header = () => {
           </a>
           {/* Right-hand controls */}
           <div className="flex items-center gap-2 sm:gap-4">
+            <ThemeToggle />
             {location.pathname === "/auth" ? (
               // Show Back to Home Button on Auth Page
               <Link
