@@ -11,8 +11,8 @@ All colors MUST be HSL.
     /* Slate & Sky Color Palette */
     --brand-primary: 218 33% 17%;        /* Deep slate blue */
     --brand-primary-foreground: 0 0% 100%;
-    --brand-secondary: 187 94% 43%;      /* Aqua secondary */
-    --brand-accent: 217 91% 60%;         /* Bright professional blue */
+    --brand-secondary: 185 85% 34%;      /* Deeper teal blue-green */
+    --brand-accent: 218 55% 54%;         /* Muted warm blue */
     
     /* Surface colors */
     --surface: 210 40% 98%;              /* Soft off-white */
@@ -29,19 +29,19 @@ All colors MUST be HSL.
     /* Primary (using brand slate blue) */
     --primary: 218 33% 17%;
     --primary-foreground: 0 0% 100%;
-    --primary-green: 217 91% 60%;        /* Accent blue for compatibility */
+    --primary-green: 218 55% 54%;        /* Muted warm blue for compatibility */
     
     /* Secondary (muted slate) */
     --secondary: 214 32% 91%;
     --secondary-foreground: 218 33% 17%;
-    --secondary-green: 217 91% 60%;
+    --secondary-green: 218 55% 54%;
     
     /* Muted states */
     --muted: 214 32% 91%;
     --muted-foreground: 215 16% 47%;
     
-    /* Accent (bright blue) */
-    --accent: 217 91% 60%;
+    /* Accent (muted warm blue) */
+    --accent: 218 55% 54%;
     --accent-foreground: 0 0% 100%;
     
     /* Text colors */
@@ -53,19 +53,19 @@ All colors MUST be HSL.
     --input: 214 32% 91%;
     
     /* Link colors */
-    --link: 217 91% 60%;
-    --link-hover: 217 91% 50%;
+    --link: 218 55% 54%;
+    --link-hover: 218 55% 44%;
     
     /* Focus states */
-    --ring: 217 91% 60%;
-    --focus-ring: 217 91% 60%;
+    --ring: 218 55% 54%;
+    --focus-ring: 218 55% 54%;
     
     /* Destructive */
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
     
-    /* Light green utility (now blue) */
-    --light-green: 217 91% 60%;
+    /* Light blue utility (warm muted blue) */
+    --light-green: 218 55% 54%;
     
     /* Gold accents (keeping for compatibility) */
     --gold-primary: 42 68% 62%;
@@ -98,21 +98,21 @@ All colors MUST be HSL.
     
     /* Enhanced gradients - Slate & Sky Theme */
     --gradient-hero: linear-gradient(135deg, hsl(210 40% 98%), hsl(214 32% 96%));
-    --gradient-green: linear-gradient(135deg, hsl(217 91% 60%), hsl(187 94% 43%));
+    --gradient-green: linear-gradient(135deg, hsl(218 55% 54%), hsl(185 85% 34%));
     --gradient-card: linear-gradient(135deg, hsl(0 0% 100%), hsl(210 40% 99%));
     
     /* Enhanced shadows */
-    --shadow-green: 0 10px 30px -10px hsl(217 91% 60% / 0.2);
+    --shadow-green: 0 10px 30px -10px hsl(218 55% 54% / 0.2);
     --shadow-card: 0 4px 20px -4px hsl(218 33% 17% / 0.1);
 
     --sidebar-background: 210 40% 98%;
     --sidebar-foreground: 218 33% 17%;
-    --sidebar-primary: 217 91% 60%;
+    --sidebar-primary: 218 55% 54%;
     --sidebar-primary-foreground: 0 0% 100%;
     --sidebar-accent: 214 32% 91%;
     --sidebar-accent-foreground: 218 33% 17%;
     --sidebar-border: 214 32% 91%;
-    --sidebar-ring: 217 91% 60%;
+    --sidebar-ring: 218 55% 54%;
   }
 
   .dark {
@@ -122,23 +122,23 @@ All colors MUST be HSL.
     --card-foreground: 210 40% 98%;
     --popover: 222 47% 11%;
     --popover-foreground: 210 40% 98%;
-    --primary: 217 91% 60%;
+    --primary: 218 55% 54%;
     --primary-foreground: 0 0% 100%;
     --secondary: 218 33% 20%;
     --secondary-foreground: 210 40% 98%;
     --muted: 218 33% 20%;
     --muted-foreground: 215 16% 65%;
-    --accent: 217 91% 60%;
+    --accent: 218 55% 54%;
     --accent-foreground: 0 0% 100%;
     --destructive: 0 84% 60%;
     --destructive-foreground: 210 40% 98%;
     --border: 218 33% 25%;
     --input: 218 33% 25%;
-    --ring: 217 91% 60%;
+    --ring: 218 55% 54%;
     --text: 210 40% 98%;
     --text-muted: 215 16% 65%;
-    --link: 217 91% 60%;
-    --link-hover: 187 94% 43%;
+    --link: 218 55% 54%;
+    --link-hover: 185 85% 34%;
     --gold-primary: 42 68% 62%;
     --gold-secondary: 38 92% 50%;
     --gold-accent: 45 93% 47%;
@@ -150,12 +150,12 @@ All colors MUST be HSL.
     --surface-alt: 222 47% 14%;
     --sidebar-background: 222 47% 11%;
     --sidebar-foreground: 210 40% 98%;
-    --sidebar-primary: 217 91% 60%;
+    --sidebar-primary: 218 55% 54%;
     --sidebar-primary-foreground: 0 0% 100%;
     --sidebar-accent: 218 33% 20%;
     --sidebar-accent-foreground: 210 40% 98%;
     --sidebar-border: 218 33% 25%;
-    --sidebar-ring: 217 91% 60%;
+    --sidebar-ring: 218 55% 54%;
   }
 }
 
