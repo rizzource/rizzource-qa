@@ -19,7 +19,11 @@ export const fetchUsaJobs = async () => {
       throw new Error(`Failed to fetch USA jobs: ${data.ErrorMessage || response.statusText}`);
     }
 
-    return data.SearchResult.SearchResultItems;
+    return data.SearchResult.SearchResultItems.map(job => ({
+      ...job,
+      source_id: job.id || `usajobs_${job.positionID}`, // Add a unique identifier
+      // ...other job properties
+    }));
   } catch (error) {
     console.error('Error fetching USA jobs:', error);
     throw error;

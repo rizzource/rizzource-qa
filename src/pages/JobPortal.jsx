@@ -11,6 +11,7 @@ import { useNavigate } from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { fetchUsaJobs } from "@/services/usaJobs";
+import { fetchAdzunaJobs } from "@/services/adzuna";
 import { saveJobsToDatabase } from "@/services/jobService";
 
 const JobPortal = () => {
@@ -35,16 +36,25 @@ const JobPortal = () => {
   const fetchJobs = async () => {
     try {
       setLoading(true);
-      
-      // Add debug logs
-      console.log('Fetching USA Jobs...');
+
+      // === 1. Fetch USA Jobs ===
+      console.log("Fetching USA Jobs...");
       const usaJobs = await fetchUsaJobs();
-      console.log('USA Jobs received:', usaJobs);
-      
-      console.log('Saving jobs to database...');
-      await saveJobsToDatabase(usaJobs);
-      
-      console.log('Fetching all jobs from database...');
+      console.log("USA Jobs received:", usaJobs?.length || 0);
+
+      console.log("Saving USA Jobs to database...");
+      await saveJobsToDatabase(usaJobs, "usajobs");
+
+      // === 2. Fetch Adzuna Jobs ===
+      console.log("Fetching Adzuna Jobs...");
+      const adzunaJobs = await fetchAdzunaJobs();
+      console.log("Adzuna Jobs received:", adzunaJobs?.length || 0);
+
+      console.log("Saving Adzuna Jobs to database...");
+      await saveJobsToDatabase(adzunaJobs, "adzuna");
+
+      // === 3. Fetch all jobs from database ===
+      console.log("Fetching all jobs from database...");
       const { data: jobsData, error } = await supabase
         .from("jobs")
         .select("*")
@@ -52,14 +62,14 @@ const JobPortal = () => {
         .order("created_at", { ascending: false });
 
       if (error) {
-        console.error('Supabase error:', error);
+        console.error("Supabase error:", error);
         throw error;
       }
-      
-      console.log('Jobs from database:', jobsData);
+
+      console.log("Jobs from database:", jobsData);
       setJobs(jobsData || []);
     } catch (error) {
-      console.error("Error fetching jobs:", error);
+      console.error("❌ Error fetching jobs:", error);
     } finally {
       setLoading(false);
     }
