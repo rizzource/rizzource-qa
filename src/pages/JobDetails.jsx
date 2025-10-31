@@ -167,7 +167,7 @@ const JobDetails = () => {
                       Apply for this Position
                     </Button>
                   </div>
-                )}
+                )}*/}
               </div>
             </CardContent>
           </Card>
