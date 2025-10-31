@@ -1,21 +1,16 @@
-import { useState, useEffect } from 'react';
-import { supabase } from '@/integrations/supabase/client';
-import { useAuth } from '@/components/AuthProvider';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Eye, EyeOff, Loader2, Plus, Edit, Trash2 } from 'lucide-react';
-import { toast } from 'react-toastify';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { useState, useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/components/AuthProvider";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Eye, EyeOff, Loader2, Plus, Edit, Trash2 } from "lucide-react";
+import { toast } from "sonner";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const ManageJobs = () => {
   const { user } = useAuth();
@@ -34,26 +29,26 @@ const ManageJobs = () => {
   const fetchJobs = async () => {
     try {
       const { data: memberData, error: memberError } = await supabase
-        .from('company_members')
-        .select('company_id')
-        .eq('user_id', user.id);
+        .from("company_members")
+        .select("company_id")
+        .eq("user_id", user.id);
 
       if (memberError) throw memberError;
 
       const companyIds = memberData.map((cm) => cm.company_id);
 
       const { data: jobsData, error: jobsError } = await supabase
-        .from('jobs')
-        .select('*, companies(name)')
-        .in('company_id', companyIds)
-        .order('created_at', { ascending: false });
+        .from("jobs")
+        .select("*, companies(name)")
+        .in("company_id", companyIds)
+        .order("created_at", { ascending: false });
 
       if (jobsError) throw jobsError;
 
       setJobs(jobsData || []);
     } catch (error) {
-      console.error('Error fetching jobs:', error);
-      toast.error('Failed to load jobs');
+      console.error("Error fetching jobs:", error);
+      toast.error("Failed to load jobs");
     } finally {
       setLoading(false);
     }
@@ -61,19 +56,16 @@ const ManageJobs = () => {
 
   const toggleJobStatus = async (jobId, currentStatus) => {
     try {
-      const newStatus = currentStatus === 'open' ? 'closed' : 'open';
-      const { error } = await supabase
-        .from('jobs')
-        .update({ status: newStatus })
-        .eq('id', jobId);
+      const newStatus = currentStatus === "open" ? "closed" : "open";
+      const { error } = await supabase.from("jobs").update({ status: newStatus }).eq("id", jobId);
 
       if (error) throw error;
 
-      toast.success(`Job ${newStatus === 'open' ? 'opened' : 'closed'} successfully`);
+      toast.success(`Job ${newStatus === "open" ? "opened" : "closed"} successfully`);
       fetchJobs();
     } catch (error) {
-      console.error('Error updating job status:', error);
-      toast.error('Failed to update job status');
+      console.error("Error updating job status:", error);
+      toast.error("Failed to update job status");
     }
   };
 
@@ -81,15 +73,13 @@ const ManageJobs = () => {
   const handleEditClick = (job) => {
     setEditJobId(job.id);
     setEditForm({
-      title: job.title || '',
-      description: job.description || '',
-      location: job.location || '',
-      job_type: job.job_type || '',
-      salary_range: job.salary_range || '',
-      application_deadline: job.application_deadline
-        ? job.application_deadline.slice(0, 10)
-        : '',
-      status: job.status || 'open',
+      title: job.title || "",
+      description: job.description || "",
+      location: job.location || "",
+      job_type: job.job_type || "",
+      salary_range: job.salary_range || "",
+      application_deadline: job.application_deadline ? job.application_deadline.slice(0, 10) : "",
+      status: job.status || "open",
     });
   };
 
@@ -98,7 +88,7 @@ const ManageJobs = () => {
     e.preventDefault();
     try {
       const { error } = await supabase
-        .from('jobs')
+        .from("jobs")
         .update({
           title: editForm.title,
           description: editForm.description,
@@ -108,16 +98,16 @@ const ManageJobs = () => {
           application_deadline: editForm.application_deadline || null,
           status: editForm.status,
         })
-        .eq('id', editJobId);
+        .eq("id", editJobId);
 
       if (error) throw error;
 
-      toast.success('Job updated successfully!');
+      toast.success("Job updated successfully!");
       setEditJobId(null);
       setEditForm(null);
       await fetchJobs();
     } catch (error) {
-      toast.error('Failed to update job: ' + error.message);
+      toast.error("Failed to update job: " + error.message);
     }
   };
 
@@ -125,13 +115,13 @@ const ManageJobs = () => {
   const handleDeleteJob = async (jobId, closeToast) => {
     setDeletingId(jobId);
     try {
-      const { error } = await supabase.from('jobs').delete().eq('id', jobId);
+      const { error } = await supabase.from("jobs").delete().eq("id", jobId);
       if (error) throw error;
-      toast.success('Job deleted successfully!');
+      toast.success("Job deleted successfully!");
       setJobs((prev) => prev.filter((job) => job.id !== jobId));
       if (closeToast) closeToast();
     } catch (error) {
-      toast.error('Failed to delete job: ' + error.message);
+      toast.error("Failed to delete job: " + error.message);
     } finally {
       setDeletingId(null);
     }
@@ -142,9 +132,7 @@ const ManageJobs = () => {
     toast(
       ({ closeToast }) => (
         <div className="flex flex-col gap-3">
-          <span className="font-semibold text-destructive">
-            Are you sure you want to delete this job?
-          </span>
+          <span className="font-semibold text-destructive">Are you sure you want to delete this job?</span>
           <div className="flex gap-2">
             <Button
               size="sm"
@@ -153,7 +141,7 @@ const ManageJobs = () => {
               onClick={() => handleDeleteJob(jobId, closeToast)}
               disabled={deletingId === jobId}
             >
-              {deletingId === jobId ? 'Deleting...' : 'Yes'}
+              {deletingId === jobId ? "Deleting..." : "Yes"}
             </Button>
             <Button
               size="sm"
@@ -172,7 +160,7 @@ const ManageJobs = () => {
         draggable: false,
         position: "top-center",
         className: "bg-card border border-border shadow-lg",
-      }
+      },
     );
   };
 
@@ -239,9 +227,7 @@ const ManageJobs = () => {
                     <Input
                       id="salary_range"
                       value={editForm.salary_range}
-                      onChange={(e) =>
-                        setEditForm({ ...editForm, salary_range: e.target.value })
-                      }
+                      onChange={(e) => setEditForm({ ...editForm, salary_range: e.target.value })}
                       placeholder="e.g., $80,000 - $120,000"
                     />
                   </div>
@@ -251,9 +237,7 @@ const ManageJobs = () => {
                       id="application_deadline"
                       type="date"
                       value={editForm.application_deadline}
-                      onChange={(e) =>
-                        setEditForm({ ...editForm, application_deadline: e.target.value })
-                      }
+                      onChange={(e) => setEditForm({ ...editForm, application_deadline: e.target.value })}
                     />
                   </div>
                 </div>
@@ -262,9 +246,7 @@ const ManageJobs = () => {
                   <Textarea
                     id="description"
                     value={editForm.description}
-                    onChange={(e) =>
-                      setEditForm({ ...editForm, description: e.target.value })
-                    }
+                    onChange={(e) => setEditForm({ ...editForm, description: e.target.value })}
                     rows={4}
                   />
                 </div>
@@ -295,30 +277,24 @@ const ManageJobs = () => {
                   <CardTitle className="text-xl">{job.title}</CardTitle>
                   <p className="text-sm text-muted-foreground">{job.companies?.name}</p>
                 </div>
-                <Badge variant={job.status === 'open' ? 'default' : 'primary'} className="px-3 py-1">
+                <Badge variant={job.status === "open" ? "default" : "primary"} className="px-3 py-1">
                   {job.status}
                 </Badge>
               </div>
             </CardHeader>
             <CardContent>
-              <p className="text-sm text-muted-foreground mb-4 line-clamp-2">
-                {job.description}
-              </p>
+              <p className="text-sm text-muted-foreground mb-4 line-clamp-2">{job.description}</p>
               <div className="flex items-center gap-2">
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={() => handleEditClick(job)}
-                >
+                <Button size="sm" variant="outline" onClick={() => handleEditClick(job)}>
                   <Edit className="h-4 w-4 mr-2" />
                   Edit
                 </Button>
                 <Button
                   size="sm"
-                  variant={job.status === 'open' ? 'outline' : 'default'}
+                  variant={job.status === "open" ? "outline" : "default"}
                   onClick={() => toggleJobStatus(job.id, job.status)}
                 >
-                  {job.status === 'open' ? (
+                  {job.status === "open" ? (
                     <>
                       <EyeOff className="h-4 w-4 mr-2" />
                       Close
@@ -338,7 +314,7 @@ const ManageJobs = () => {
                   onClick={() => showDeleteConfirm(job.id)}
                 >
                   <Trash2 className="h-4 w-4 mr-2" />
-                  {deletingId === job.id ? 'Deleting...' : 'Delete'}
+                  {deletingId === job.id ? "Deleting..." : "Delete"}
                 </Button>
               </div>
             </CardContent>

@@ -18,8 +18,10 @@ const MyApplications = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!user?.id) return;
-
+    if (!user) {
+      navigate('/auth');
+      return;
+    }
     fetchApplications();
 
     // Set up real-time subscription for application updates
@@ -33,11 +35,9 @@ const MyApplications = () => {
           table: 'job_applications',
           filter: `applicant_id=eq.${user.id}`
         },
-        (payload) => {
-          // Only refetch if the changed row belongs to this user
-          if (payload.new?.applicant_id === user.id || payload.old?.applicant_id === user.id) {
-            fetchApplications();
-          }
+        () => {
+          // Refetch applications when any change occurs
+          fetchApplications();
         }
       )
       .subscribe();
@@ -45,7 +45,7 @@ const MyApplications = () => {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [user?.id]);
+  }, [user, navigate]);
 
   const fetchApplications = async () => {
     try {
@@ -70,7 +70,6 @@ const MyApplications = () => {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      console.log('Fetched applications:', data);
       setApplications(data || []);
     } catch (error) {
       console.error('Error fetching applications:', error);
@@ -81,15 +80,17 @@ const MyApplications = () => {
   };
 
   const getStatusBadge = (status) => {
+    const key = String(status || '').toLowerCase().trim();
     const statusConfig = {
       pending: { variant: "secondary", label: "Pending" },
-      reviewed: { variant: "default", label: "Reviewed" },
+      reviewing: { variant: "default", label: "Reviewing" },
       shortlisted: { variant: "default", label: "Shortlisted" },
+      accepted: { variant: "default", label: "Accepted" },
       rejected: { variant: "destructive", label: "Rejected" },
     };
 
-    const config = statusConfig[status] || statusConfig.pending;
-    return <Badge variant={config.variant} className="px-3 py-1">{config.label}</Badge>;
+    const config = statusConfig[key] || statusConfig.pending;
+    return <Badge variant={config.variant}>{config.label}</Badge>;
   };
 
   const formatDate = (dateString) => {

@@ -26,9 +26,9 @@ const Header = () => {
         <div className="flex items-center justify-between h-14 sm:h-16">
           {/* Logo */}
           <a href="/" className="flex items-center space-x-2 sm:space-x-3 touch-friendly flex-1 sm:flex-initial">
-            <div className="w-8 h-8 sm:w-10 sm:h-10 bg-secondary rounded-lg flex items-center justify-center flex-shrink-0">
+            {/* <div className="w-8 h-8 sm:w-10 sm:h-10 bg-secondary rounded-lg flex items-center justify-center flex-shrink-0">
               <Scale className="w-5 h-5 sm:w-6 sm:h-6 text-primary-foreground" />
-            </div>
+            </div> */}
             <div className="flex-1 sm:block">
               <h1 className="text-base sm:text-lg md:text-xl leading-tight text-primary font-bold">
                 <span className="text-accent">RIZZ</span>
@@ -105,7 +105,8 @@ const Header = () => {
                   <span className="hidden sm:inline">Sign Out</span>
                 </Link>
               </>
-            ) : (
+            ) : null
+              /* Commented out Sign In button
               <Link
                 to="/auth"
                 className="inline-flex items-center px-3 py-1.5 text-sm font-medium rounded-md border border-border text-foreground hover:text-primary hover:border-primary transition-colors"
@@ -113,7 +114,8 @@ const Header = () => {
                 <User className="h-4 w-4 mr-1" />
                 <span className="hidden sm:inline">Sign In</span>
               </Link>
-            )}
+              */
+            }
           </div>
         </div>
       </div>
