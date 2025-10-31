@@ -11,6 +11,8 @@ import Footer from "@/components/Footer";
 import JobApplicationForm from "@/components/jobs/JobApplicationForm";
 import ResumeUpload from "@/components/jobs/ResumeUpload";
 import { toast } from "sonner";
+import jsPDF from "jspdf";
+import { Document, Packer, Paragraph, TextRun } from "docx";
 
 const JobDetails = () => {
   const { id } = useParams();
@@ -110,18 +112,42 @@ const JobDetails = () => {
         return;
       }
 
-      // Download the enhanced CV
-      const blob = new Blob([data.enhancedCV], { type: 'text/plain' });
+      const enhancedText = data.enhancedCV;
+      const fileName = `enhanced-cv-${job.title.replace(/\s+/g, '-')}`;
+
+      // Generate PDF
+      const pdf = new jsPDF();
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const margin = 15;
+      const maxWidth = pageWidth - margin * 2;
+      
+      const lines = pdf.splitTextToSize(enhancedText, maxWidth);
+      pdf.text(lines, margin, margin);
+      pdf.save(`${fileName}.pdf`);
+
+      // Generate DOCX
+      const doc = new Document({
+        sections: [{
+          properties: {},
+          children: enhancedText.split('\n').map(line => 
+            new Paragraph({
+              children: [new TextRun(line)]
+            })
+          )
+        }]
+      });
+
+      const blob = await Packer.toBlob(doc);
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `enhanced-cv-${job.title.replace(/\s+/g, '-')}.txt`;
+      a.download = `${fileName}.docx`;
       document.body.appendChild(a);
       a.click();
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
 
-      toast.success('CV enhanced successfully! Download started.');
+      toast.success('CV enhanced successfully! PDF and Word files downloaded.');
     } catch (error) {
       console.error('Error enhancing CV:', error);
       toast.error('Failed to enhance CV. Please try again.');
