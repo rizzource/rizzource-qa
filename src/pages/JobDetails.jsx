@@ -151,7 +151,6 @@ const JobDetails = () => {
               </div>
 
               <div className="pt-6 border-t">
-                {/* Commented out sign-in requirement
                 {!user ? (
                   <div className="text-center">
                     <p className="text-muted-foreground mb-4">Please sign in to apply for this job</p>
@@ -162,23 +161,22 @@ const JobDetails = () => {
                     <p className="text-green-600 font-medium">You have already applied for this position</p>
                   </div>
                 ) : (
-                */}
-                <div className="flex justify-center">
-                  <Button
-                    size="lg"
-                    className="px-6 py-3 text-base font-semibold rounded-xl shadow-md hover:shadow-lg transition-all"
-                    onClick={() => {
-                      if (job.application_url) {
-                        window.open(job.application_url, "_blank");
-                      } else {
-                        setShowApplicationForm(true);
-                      }
-                    }}
-                  >
-                    Visit Website
-                  </Button>
-                </div>
-                {/* )} */}
+                  <div className="flex justify-center">
+                    <Button
+                      size="lg"
+                      className="px-6 py-3 text-base font-semibold rounded-xl shadow-md hover:shadow-lg transition-all"
+                      onClick={() => {
+                        if (job.application_url) {
+                          window.open(job.application_url, "_blank");
+                        } else {
+                          setShowApplicationForm(true);
+                        }
+                      }}
+                    >
+                      {job.application_url ? 'Visit Website' : 'Apply Now'}
+                    </Button>
+                  </div>
+                )}
               </div>
             </CardContent>
           </Card>
