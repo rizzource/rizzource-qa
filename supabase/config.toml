@@ -8,9 +8,5 @@ uri = "supabase_functions_url/auth-email"
 verify_jwt = false
 project_id = "ixwnucfebopjqcokohhw"
 
-[auth.hooks.send_email]
-enabled = true
-uri = "supabase_functions_url/auth-email"
-
-[functions.auth-email]
-verify_jwt = false
+[functions.enhance-cv]
+verify_jwt = true

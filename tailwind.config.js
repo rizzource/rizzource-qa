@@ -17,8 +17,29 @@ export default {
 		},
 		extend: {
 			fontFamily: {
-				'merriweather': ['Merriweather', 'serif'],
-				'inter': ['Inter', 'sans-serif'],
+				'sans': ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+				'serif': ['Merriweather', 'Georgia', 'serif'],
+				'merriweather': ['Merriweather', 'Georgia', 'serif'],
+				'inter': ['Inter', 'system-ui', 'sans-serif'],
+			},
+			fontSize: {
+				'body': ['1rem', { lineHeight: '1.6' }],
+				'h1': ['2.5rem', { lineHeight: '1.2', fontWeight: '600' }],
+				'h2': ['2rem', { lineHeight: '1.3', fontWeight: '600' }],
+				'h3': ['1.5rem', { lineHeight: '1.4', fontWeight: '600' }],
+				'h4': ['1.25rem', { lineHeight: '1.4', fontWeight: '600' }],
+				'h5': ['1.125rem', { lineHeight: '1.5', fontWeight: '600' }],
+				'h6': ['1rem', { lineHeight: '1.5', fontWeight: '600' }],
+			},
+			spacing: {
+				'1': 'var(--space-1)',
+				'2': 'var(--space-2)',
+				'3': 'var(--space-3)',
+				'4': 'var(--space-4)',
+				'5': 'var(--space-5)',
+				'6': 'var(--space-6)',
+				'7': 'var(--space-7)',
+				'8': 'var(--space-8)',
 			},
 			colors: {
 				border: 'hsl(var(--border))',
@@ -26,6 +47,23 @@ export default {
 				ring: 'hsl(var(--ring))',
 				background: 'hsl(var(--background))',
 				foreground: 'hsl(var(--foreground))',
+				brand: {
+					primary: 'hsl(var(--brand-primary))',
+					secondary: 'hsl(var(--brand-secondary))',
+					accent: 'hsl(var(--brand-accent))',
+				},
+				surface: {
+					DEFAULT: 'hsl(var(--surface))',
+					alt: 'hsl(var(--surface-alt))',
+				},
+				text: {
+					DEFAULT: 'hsl(var(--text))',
+					muted: 'hsl(var(--text-muted))',
+				},
+				link: {
+					DEFAULT: 'hsl(var(--link))',
+					hover: 'hsl(var(--link-hover))',
+				},
 				primary: {
 					DEFAULT: 'hsl(var(--primary))',
 					foreground: 'hsl(var(--primary-foreground))',
@@ -83,6 +121,16 @@ export default {
 				lg: 'var(--radius)',
 				md: 'calc(var(--radius) - 2px)',
 				sm: 'calc(var(--radius) - 4px)'
+			},
+			boxShadow: {
+				'sm': 'var(--shadow-sm)',
+				'md': 'var(--shadow-md)',
+				'lg': 'var(--shadow-lg)',
+			},
+			letterSpacing: {
+				'tight': '-0.02em',
+				'normal': '0',
+				'wide': '0.02em',
 			},
 			keyframes: {
 				'accordion-down': {

@@ -282,15 +282,18 @@ export type Database = {
           application_deadline: string | null
           application_url: string | null
           area_of_law: string | null
-          company_id: string
+          company_id: string | null
           company_name: string | null
           created_at: string
           created_by: string | null
           description: string
+          external_job_id: string | null
           id: string
           job_type: string | null
           location: string | null
           salary_range: string | null
+          source: string | null
+          source_id: string | null
           status: string | null
           title: string
           updated_at: string
@@ -299,15 +302,18 @@ export type Database = {
           application_deadline?: string | null
           application_url?: string | null
           area_of_law?: string | null
-          company_id: string
+          company_id?: string | null
           company_name?: string | null
           created_at?: string
           created_by?: string | null
           description: string
+          external_job_id?: string | null
           id?: string
           job_type?: string | null
           location?: string | null
           salary_range?: string | null
+          source?: string | null
+          source_id?: string | null
           status?: string | null
           title: string
           updated_at?: string
@@ -316,15 +322,18 @@ export type Database = {
           application_deadline?: string | null
           application_url?: string | null
           area_of_law?: string | null
-          company_id?: string
+          company_id?: string | null
           company_name?: string | null
           created_at?: string
           created_by?: string | null
           description?: string
+          external_job_id?: string | null
           id?: string
           job_type?: string | null
           location?: string | null
           salary_range?: string | null
+          source?: string | null
+          source_id?: string | null
           status?: string | null
           title?: string
           updated_at?: string
@@ -623,6 +632,9 @@ export type Database = {
           created_at: string
           email: string | null
           id: string
+          resume_file_name: string | null
+          resume_uploaded_at: string | null
+          resume_url: string | null
           role: string | null
           updated_at: string
         }
@@ -630,6 +642,9 @@ export type Database = {
           created_at?: string
           email?: string | null
           id: string
+          resume_file_name?: string | null
+          resume_uploaded_at?: string | null
+          resume_url?: string | null
           role?: string | null
           updated_at?: string
         }
@@ -637,6 +652,9 @@ export type Database = {
           created_at?: string
           email?: string | null
           id?: string
+          resume_file_name?: string | null
+          resume_uploaded_at?: string | null
+          resume_url?: string | null
           role?: string | null
           updated_at?: string
         }
@@ -716,10 +734,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      export_data_to_json: {
-        Args: { table_name: string }
-        Returns: Json
-      }
+      export_data_to_json: { Args: { table_name: string }; Returns: Json }
       get_availability_heatmap: {
         Args: { target_date: string }
         Returns: {
@@ -739,22 +754,13 @@ export type Database = {
           start_time: string
         }[]
       }
-      get_current_user_role: {
-        Args: Record<PropertyKey, never>
-        Returns: string
-      }
+      get_current_user_role: { Args: never; Returns: string }
       get_group_member_emails: {
         Args: { user_email: string }
         Returns: string[]
       }
-      get_group_user_count: {
-        Args: { poll_id_param: string }
-        Returns: number
-      }
-      get_job_company_id: {
-        Args: { _job_id: string }
-        Returns: string
-      }
+      get_group_user_count: { Args: { poll_id_param: string }; Returns: number }
+      get_job_company_id: { Args: { _job_id: string }; Returns: string }
       get_slot_rankings: {
         Args: { poll_id_param: string }
         Returns: {
@@ -778,14 +784,8 @@ export type Database = {
         Args: { _company_id: string; _user_id: string }
         Returns: Database["public"]["Enums"]["app_role"]
       }
-      get_user_email: {
-        Args: { _user_id: string }
-        Returns: string
-      }
-      get_user_group_id: {
-        Args: Record<PropertyKey, never>
-        Returns: number
-      }
+      get_user_email: { Args: { _user_id: string }; Returns: string }
+      get_user_group_id: { Args: never; Returns: number }
       has_company_role: {
         Args: {
           _company_id: string
@@ -801,10 +801,7 @@ export type Database = {
         }
         Returns: boolean
       }
-      is_admin: {
-        Args: Record<PropertyKey, never>
-        Returns: boolean
-      }
+      is_admin: { Args: never; Returns: boolean }
       is_company_member: {
         Args: { _company_id: string; _user_id: string }
         Returns: boolean
@@ -813,14 +810,8 @@ export type Database = {
         Args: { _company_id: string; _user_id: string }
         Returns: boolean
       }
-      is_superadmin: {
-        Args: Record<PropertyKey, never>
-        Returns: boolean
-      }
-      seed_fixed_poll: {
-        Args: Record<PropertyKey, never>
-        Returns: string
-      }
+      is_superadmin: { Args: never; Returns: boolean }
+      seed_fixed_poll: { Args: never; Returns: string }
     }
     Enums: {
       app_role:

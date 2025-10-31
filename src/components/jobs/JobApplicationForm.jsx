@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -27,6 +27,19 @@ const JobApplicationForm = ({ job, onCancel }) => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [userProfile, setUserProfile] = useState(null);
+
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      const { data } = await supabase
+        .from('profiles')
+        .select('resume_url')
+        .eq('id', user.id)
+        .single();
+      setUserProfile(data);
+    };
+    if (user) fetchUserProfile();
+  }, [user]);
 
   const form = useForm({
     resolver: zodResolver(applicationSchema),
@@ -38,6 +51,12 @@ const JobApplicationForm = ({ job, onCancel }) => {
       cover_letter: '',
     },
   });
+
+  useEffect(() => {
+    if (userProfile?.resume_url) {
+      form.setValue('resume_url', userProfile.resume_url);
+    }
+  }, [userProfile, form]);
 
   const onSubmit = async (data) => {
     setIsSubmitting(true);
