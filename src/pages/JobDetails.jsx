@@ -231,7 +231,12 @@ const JobDetails = () => {
 
       if (dbError) throw dbError;
 
-      toast.success('Enhanced CV generated and saved successfully!');
+      // Open the generated enhanced CV in a new window/tab
+      if (publicUrl) {
+        window.open(publicUrl, "_blank", "noopener,noreferrer");
+      }
+
+      toast.success('Enhanced CV generated, saved and opened in a new window!');
       setShowEnhancedModal(false);
     } catch (err) {
       console.error('Error generating and uploading CV:', err);
