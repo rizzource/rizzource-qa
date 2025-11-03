@@ -13,6 +13,7 @@ import ResumeUpload from "@/components/jobs/ResumeUpload";
 import { toast } from "sonner";
 import jsPDF from "jspdf";
 import { Document, Packer, Paragraph, TextRun } from "docx";
+import { PDFDocument, StandardFonts } from 'pdf-lib';
 
 const JobDetails = () => {
   const { id } = useParams();
@@ -25,6 +26,15 @@ const JobDetails = () => {
   const [userProfile, setUserProfile] = useState(null);
   const [showResumeUpload, setShowResumeUpload] = useState(false);
   const [enhancingCV, setEnhancingCV] = useState(false);
+
+  // New state for enhanced modal and editable text
+  const [showEnhancedModal, setShowEnhancedModal] = useState(false);
+  const [enhancedText, setEnhancedText] = useState("");
+  const [editableText, setEditableText] = useState("");
+  const [copied, setCopied] = useState(false);
+
+  // Add new state for enhanced CV
+  const [enhancedCVUrl, setEnhancedCVUrl] = useState(null);
 
   useEffect(() => {
     fetchJobDetails();
@@ -112,42 +122,12 @@ const JobDetails = () => {
         return;
       }
 
-      const enhancedText = data.enhancedCV;
-      const fileName = `enhanced-cv-${job.title.replace(/\s+/g, '-')}`;
-
-      // Generate PDF
-      const pdf = new jsPDF();
-      const pageWidth = pdf.internal.pageSize.getWidth();
-      const margin = 15;
-      const maxWidth = pageWidth - margin * 2;
-      
-      const lines = pdf.splitTextToSize(enhancedText, maxWidth);
-      pdf.text(lines, margin, margin);
-      pdf.save(`${fileName}.pdf`);
-
-      // Generate DOCX
-      const doc = new Document({
-        sections: [{
-          properties: {},
-          children: enhancedText.split('\n').map(line => 
-            new Paragraph({
-              children: [new TextRun(line)]
-            })
-          )
-        }]
-      });
-
-      const blob = await Packer.toBlob(doc);
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `${fileName}.docx`;
-      document.body.appendChild(a);
-      a.click();
-      window.URL.revokeObjectURL(url);
-      document.body.removeChild(a);
-
-      toast.success('CV enhanced successfully! PDF and Word files downloaded.');
+      // Show enhanced text in editable modal instead of auto download
+      const aiEnhanced = data.enhancedCV || "";
+      setEnhancedText(aiEnhanced);
+      setEditableText(aiEnhanced);
+      setShowEnhancedModal(true);
+      toast.success('AI suggestions ready — review and edit in the modal.');
     } catch (error) {
       console.error('Error enhancing CV:', error);
       toast.error('Failed to enhance CV. Please try again.');
@@ -156,9 +136,171 @@ const JobDetails = () => {
     }
   };
 
+  // Generate downloadable files from current editable text
+  const generateNewCV = async () => {
+    try {
+      const fileName = `enhanced-cv-${job.title.replace(/\s+/g, '-')}-${Date.now()}`;
+
+      // Create PDF document
+      const pdfDoc = await PDFDocument.create();
+      const page = pdfDoc.addPage([595, 842]); // A4 size in points
+      const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
+      
+      const fontSize = 11;
+      const lineHeight = fontSize * 1.2; // Reduced line height
+      const margin = 50;
+      const maxWidth = page.getSize().width - (margin * 2);
+      
+      // Split text into paragraphs and handle each paragraph
+      const paragraphs = editableText.split('\n').filter(para => para.trim()); // Remove empty lines
+
+      let y = page.getSize().height - margin;
+      let currentPage = page;
+
+      for (const paragraph of paragraphs) {
+        // Split paragraph into words and create lines
+        const words = paragraph.split(' ');
+        let currentLine = '';
+        const lines = [];
+
+        for (const word of words) {
+          const testLine = currentLine ? `${currentLine} ${word}` : word;
+          const lineWidth = font.widthOfTextAtSize(testLine, fontSize);
+
+          if (lineWidth > maxWidth) {
+            lines.push(currentLine);
+            currentLine = word;
+          } else {
+            currentLine = testLine;
+          }
+        }
+        if (currentLine) {
+          lines.push(currentLine);
+        }
+
+        // Draw lines of current paragraph
+        for (const line of lines) {
+          if (y < margin + fontSize) {
+            // Create new page if we run out of space
+            currentPage = pdfDoc.addPage([595, 842]);
+            y = currentPage.getSize().height - margin;
+          }
+
+          currentPage.drawText(line, {
+            x: margin,
+            y,
+            size: fontSize,
+            font,
+          });
+          y -= lineHeight;
+        }
+
+        // Add spacing between paragraphs
+        y -= fontSize; // Add single line space between paragraphs
+      }
+
+      // Generate PDF bytes
+      const pdfBytes = await pdfDoc.save();
+      const pdfBlob = new Blob([pdfBytes], { type: 'application/pdf' });
+
+      // Upload to Supabase Storage
+      const { data: uploadData, error: uploadError } = await supabase.storage
+        .from('assets')
+        .upload(`enhanced-cvs/${user.id}/${fileName}.pdf`, pdfBlob, {
+          contentType: 'application/pdf',
+          cacheControl: '3600',
+          upsert: true
+        });
+
+      if (uploadError) throw uploadError;
+
+      // Get the public URL
+      const { data: { publicUrl } } = supabase.storage
+        .from('assets')
+        .getPublicUrl(`enhanced-cvs/${user.id}/${fileName}.pdf`);
+
+      // Save reference to database
+      const { error: dbError } = await supabase
+        .from('enhanced_cvs')
+        .insert({
+          user_id: user.id,
+          job_id: job.id,
+          file_path: `enhanced-cvs/${user.id}/${fileName}.pdf`,
+          public_url: publicUrl
+        });
+
+      if (dbError) throw dbError;
+
+      toast.success('Enhanced CV generated and saved successfully!');
+      setShowEnhancedModal(false);
+    } catch (err) {
+      console.error('Error generating and uploading CV:', err);
+      toast.error('Failed to generate and save CV. Please try again.');
+    }
+  };
+
+  const copyEnhancedText = async () => {
+    try {
+      await navigator.clipboard.writeText(editableText || "");
+      toast.success('Copied to clipboard');
+      setCopied(true);
+      // reset label after a short delay
+      setTimeout(() => setCopied(false), 3000);
+    } catch (err) {
+      console.error('Copy failed:', err);
+      toast.error('Failed to copy text');
+    }
+  };
+
   const formatDate = (dateString) => {
     if (!dateString) return "No deadline specified";
     return new Date(dateString).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
+  };
+
+  // Add this new function to fetch the enhanced CV
+  const fetchEnhancedCV = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('enhanced_cvs')
+        .select('public_url')
+        .eq('user_id', user.id)
+        .eq('job_id', id)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .single();
+
+      if (error) throw error;
+      return data?.public_url;
+    } catch (error) {
+      console.error('Error fetching enhanced CV:', error);
+      return null;
+    }
+  };
+
+  // Modify the application button click handler
+  const handleApplyClick = async () => {
+    if (job.application_url) {
+      window.open(job.application_url, "_blank");
+    } else {
+      try {
+        // Fetch the enhanced CV URL before opening the form
+        const enhancedUrl = await fetchEnhancedCV();
+        console.log("Enhanced CV URL:", enhancedUrl); // Debug log
+        
+        if (enhancedUrl) {
+          setEnhancedCVUrl(enhancedUrl);
+          toast.success("Using your AI-enhanced CV for this application");
+        } else {
+          console.log("Using original resume:", userProfile?.resume_url); // Debug log
+          setEnhancedCVUrl(null);
+        }
+        
+        setShowApplicationForm(true);
+      } catch (error) {
+        console.error("Error preparing application:", error);
+        toast.error("Error preparing your application");
+      }
+    }
   };
 
   if (loading) {
@@ -186,8 +328,17 @@ const JobDetails = () => {
     );
   }
 
+  // Update the conditional render for application form
   if (showApplicationForm) {
-    return <JobApplicationForm job={job} onCancel={() => setShowApplicationForm(false)} />;
+    return (
+      <JobApplicationForm 
+        job={job} 
+        onCancel={() => setShowApplicationForm(false)} 
+        resumeUrl={enhancedCVUrl || userProfile?.resume_url}
+        // Add this prop to help with debugging
+        isEnhancedCV={!!enhancedCVUrl}
+      />
+    );
   }
 
   if (showResumeUpload) {
@@ -307,13 +458,7 @@ const JobDetails = () => {
                     <Button
                       size="lg"
                       className="px-6 py-3 text-base font-semibold rounded-xl hover:bg-blue-100 hover:text-blue-600 transition-colors duration-300"
-                      onClick={() => {
-                        if (job.application_url) {
-                          window.open(job.application_url, "_blank");
-                        } else {
-                          setShowApplicationForm(true);
-                        }
-                      }}
+                      onClick={handleApplyClick}
                     >
                       {job.application_url ? 'Visit Website' : 'Apply Now'}
                     </Button>
@@ -324,6 +469,48 @@ const JobDetails = () => {
           </Card>
         </div>
       </div>
+
+      {/* Enhanced CV Modal */}
+      {showEnhancedModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+          <div
+            className="absolute inset-0 bg-black/50"
+            onClick={() => setShowEnhancedModal(false)}
+          />
+          <div className="relative z-10 w-full max-w-4xl bg-white rounded-lg shadow-lg p-6 mx-4">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold">AI Suggested CV Changes</h3>
+              <button
+                onClick={() => setShowEnhancedModal(false)}
+                className="text-muted-foreground hover:text-foreground"
+                aria-label="Close"
+              >
+                ×
+              </button>
+            </div>
+            <p className="text-sm text-muted-foreground mb-3">Edit the suggestions below, then generate a new CV or copy the text.</p>
+
+            <textarea
+              value={editableText}
+              onChange={(e) => setEditableText(e.target.value)}
+              className="w-full h-64 p-3 border border-slate-200 rounded-md bg-surface text-foreground resize-y"
+            />
+
+            <div className="flex justify-end gap-3 mt-4">
+              <Button variant="outline" onClick={copyEnhancedText}>
+                {copied ? "Copied" : "Copy Text"}
+              </Button>
+              <Button 
+              className="hover:bg-blue-100 hover:text-blue-600 transition-colors duration-300"
+              onClick={generateNewCV}
+              >
+                Generate New CV
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <Footer />
     </>
   );
