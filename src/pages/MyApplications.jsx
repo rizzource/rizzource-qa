@@ -136,7 +136,10 @@ const MyApplications = () => {
                   <p className="text-muted-foreground mb-6">
                     You haven't applied to any jobs yet. Start exploring opportunities!
                   </p>
-                  <Button onClick={() => navigate('/jobs')}>
+                  <Button 
+                  className="rounded-xl hover:bg-blue-100 hover:text-blue-600 transition-colors duration-300"
+                  onClick={() => navigate('/jobs')}
+                  >
                     Browse Jobs
                   </Button>
                 </CardContent>

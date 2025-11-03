@@ -175,10 +175,10 @@ const JobApplicationForm = ({ job, onCancel }) => {
                   />
 
                   <div className="flex gap-4">
-                    <Button type="button" variant="outline" onClick={onCancel} className="flex-1">
+                    <Button type="button" variant="outline" onClick={onCancel} className="flex-1 rounded-xl">
                       Cancel
                     </Button>
-                    <Button type="submit" disabled={isSubmitting} className="flex-1">
+                    <Button type="submit" disabled={isSubmitting} className="flex-1 rounded-xl hover:bg-blue-100 hover:text-blue-600 transition-colors duration-300">
                       {isSubmitting ? 'Submitting...' : 'Submit Application'}
                     </Button>
                   </div>

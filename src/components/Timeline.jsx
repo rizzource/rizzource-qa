@@ -497,7 +497,7 @@ const getEventsForMonth = (month) => {
   <Button 
     variant="outline" 
     onClick={() => setEventType("Academic Events")} 
-    className="flex items-center bg-primary text-primary-foreground hover:bg-primary/90"
+    className="flex items-center bg-primary text-primary-foreground hover:bg-primary/70 hover:text-white"
   >
     Academic Events
   </Button>
@@ -505,7 +505,7 @@ const getEventsForMonth = (month) => {
    <Button 
     variant="outline" 
     onClick={() => setEventType("Job Events")} 
-    className="flex items-center bg-yellow-500 text-white hover:bg-yellow-600"
+    className="flex items-center border-primary bg-white text-primary hover:bg-primary/20"
   >
     Job Events
   </Button> 

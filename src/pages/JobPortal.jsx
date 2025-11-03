@@ -167,17 +167,17 @@ const JobPortal = () => {
               </SelectContent>
             </Select>
             {/* Replace the existing Reset Filters Button with this */}
-            <Button 
+            <Button
               size="lg"
               variant="default"
               onClick={resetFilters}
-              className="md:w-48"
+              className="md:w-48 rounded-xl hover:bg-blue-100 hover:text-blue-600 transition-colors duration-300"
             >
               Reset Filters
             </Button>
             <Button 
               onClick={fetchJobs}
-              className="md:w-48"
+              className="md:w-48 rounded-xl"
               variant="outline"
             >
               Sync USA Jobs
@@ -246,6 +246,7 @@ const JobPortal = () => {
                         <Button
                           size="sm"
                           variant="default"
+                          className="rounded-xl hover:bg-blue-100 hover:text-blue-600 transition-colors duration-300"
                           onClick={(e) => {
                             e.stopPropagation();
                             navigate(`/jobs/${job.id}`);

@@ -42,7 +42,7 @@ const Header = () => {
           </a>
           {/* Right-hand controls */}
           <div className="flex items-center gap-2 sm:gap-4">
-            <ThemeToggle />
+            {/* <ThemeToggle /> */}
             {location.pathname === "/auth" ? (
               // Show Back to Home Button on Auth Page
               <Link

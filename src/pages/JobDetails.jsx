@@ -286,7 +286,12 @@ const JobDetails = () => {
                 {!user ? (
                   <div className="text-center">
                     <p className="text-muted-foreground mb-4">Please sign in to apply for this job</p>
-                    <Button onClick={() => navigate('/auth')}>Sign In</Button>
+                    <Button 
+                    className="rounded-xl hover:bg-blue-100 hover:text-blue-600 transition-colors duration-300"
+                    onClick={() => navigate('/auth')}
+                    >
+                      Sign In
+                    </Button>
                   </div>
                 ) : !userProfile?.resume_url ? (
                   <div className="text-center">
@@ -301,7 +306,7 @@ const JobDetails = () => {
                   <div className="flex justify-center">
                     <Button
                       size="lg"
-                      className="px-6 py-3 text-base font-semibold rounded-xl shadow-md hover:shadow-lg transition-all"
+                      className="px-6 py-3 text-base font-semibold rounded-xl hover:bg-blue-100 hover:text-blue-600 transition-colors duration-300"
                       onClick={() => {
                         if (job.application_url) {
                           window.open(job.application_url, "_blank");
