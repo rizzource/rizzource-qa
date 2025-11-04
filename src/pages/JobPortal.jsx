@@ -117,6 +117,28 @@ const JobPortal = () => {
     window.scrollTo(0, 0);
   }, [currentPage]);
 
+  // Add this helper function before the return statement
+  const getPaginationRange = () => {
+    const range = [];
+    const showPages = 5;
+    const halfShow = Math.floor(showPages / 2);
+    
+    let start = currentPage - halfShow;
+    let end = currentPage + halfShow;
+
+    if (start < 1) {
+      start = 1;
+      end = Math.min(showPages, totalPages);
+    }
+
+    if (end > totalPages) {
+      end = totalPages;
+      start = Math.max(1, totalPages - showPages + 1);
+    }
+
+    return { start, end };
+  };
+
   return (
     <>
       <Header />
@@ -270,15 +292,48 @@ const JobPortal = () => {
                   Previous
                 </Button>
 
-                {[...Array(totalPages)].map((_, index) => (
+                {/* First page */}
+                {getPaginationRange().start > 1 && (
+                  <>
+                    <Button
+                      variant={currentPage === 1 ? "default" : "outline"}
+                      className={currentPage === 1 ? "hover:bg-blue-100 hover:text-blue-600 transition-colors duration-300" : ""}
+                      onClick={() => handlePageChange(1)}
+                    >
+                      1
+                    </Button>
+                    {getPaginationRange().start > 2 && <span className="mx-1">...</span>}
+                  </>
+                )}
+
+                {/* Visible page numbers */}
+                {Array.from(
+                  { length: getPaginationRange().end - getPaginationRange().start + 1 },
+                  (_, i) => getPaginationRange().start + i
+                ).map((pageNum) => (
                   <Button
-                    key={index + 1}
-                    variant={currentPage === index + 1 ? "default" : "outline"}
-                    onClick={() => handlePageChange(index + 1)}
+                    key={pageNum}
+                    variant={currentPage === pageNum ? "default" : "outline"}
+                    className={currentPage === pageNum ? "hover:bg-blue-100 hover:text-blue-600 transition-colors duration-300" : ""}
+                    onClick={() => handlePageChange(pageNum)}
                   >
-                    {index + 1}
+                    {pageNum}
                   </Button>
                 ))}
+
+                {/* Last page */}
+                {getPaginationRange().end < totalPages && (
+                  <>
+                    {getPaginationRange().end < totalPages - 1 && <span className="mx-1">...</span>}
+                    <Button
+                      variant={currentPage === totalPages ? "default" : "outline"}
+                      className={currentPage === totalPages ? "hover:bg-blue-100 hover:text-blue-600 transition-colors duration-300" : ""}
+                      onClick={() => handlePageChange(totalPages)}
+                    >
+                      {totalPages}
+                    </Button>
+                  </>
+                )}
 
                 <Button
                   variant="outline"
