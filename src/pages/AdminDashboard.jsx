@@ -98,6 +98,47 @@ export const AdminDashboard = () => {
   const navigate = useNavigate();
   const topRef = useRef(null);
 
+  // AI CV prompt state (admin editable)
+  const [aiCvPrompt, setAiCvPrompt] = useState("");
+  const [loadingPrompt, setLoadingPrompt] = useState(false);
+  const [savingPrompt, setSavingPrompt] = useState(false);
+
+  // Dummy API: fetch current AI CV prompt (replace with real API later)
+  const fetchAICVPrompt = async () => {
+    if (!isSuperAdmin()) return;
+    try {
+      setLoadingPrompt(true);
+      // simulate network delay
+      await new Promise((res) => setTimeout(res, 300));
+      // currently hardcoded prompt; replace with backend value later
+      const existing = "Improve the candidate's CV focusing on clarity, achievements, and measurable results. Keep tone professional and concise. Prioritize technical skills, tools, and impact per role.";
+      setAiCvPrompt(existing);
+    } catch (err) {
+      console.error("Failed to fetch AI CV prompt:", err);
+      toast.error("Failed to load AI CV prompt");
+    } finally {
+      setLoadingPrompt(false);
+    }
+  };
+
+  // Dummy API: save prompt to backend (replace with real API later)
+  const saveAICVPrompt = async (prompt) => {
+    if (!isSuperAdmin()) return;
+    try {
+      setSavingPrompt(true);
+      // simulate network delay / API call
+      await new Promise((res) => setTimeout(res, 500));
+      // TODO: call backend endpoint to persist prompt
+      // e.g. await supabase.functions.invoke('save-ai-prompt', { body: JSON.stringify({ prompt }) })
+      return { ok: true };
+    } catch (err) {
+      console.error("Failed to save AI CV prompt:", err);
+      throw err;
+    } finally {
+      setSavingPrompt(false);
+    }
+  };
+
   // Scroll to top function
   const scrollToTop = () => {
     if (topRef.current) {
@@ -165,6 +206,7 @@ export const AdminDashboard = () => {
     }
     fetchStats();
     fetchAllData();
+    fetchAICVPrompt();
   }, [user, userProfile, navigate, isSuperAdmin]);
 
   const fetchStats = async () => {
