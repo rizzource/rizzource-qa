@@ -14,6 +14,10 @@ import { toast } from "sonner";
 import jsPDF from "jspdf";
 import { Document, Packer, Paragraph, TextRun } from "docx";
 import { PDFDocument, StandardFonts } from 'pdf-lib';
+import * as pdfjsLib from 'pdfjs-dist';
+// For Vite: import the worker as a URL so the dev server/bundler can serve it
+// (use the legacy entry to match the legacy pdf build).
+// import pdfWorkerUrl from 'pdfjs-dist/legacy/build/pdf.worker.min.js?url';
 
 const JobDetails = () => {
   const { id } = useParams();
@@ -98,32 +102,25 @@ const JobDetails = () => {
 
     setEnhancingCV(true);
     try {
-      // Fetch the resume content
-      const response = await fetch(userProfile.resume_url);
-      const resumeText = await response.text();
+      // Extract only the Work / Professional Experience section from uploaded resume PDF
+      const resumeWorkText = await extractWorkHistoryFromPdf(userProfile.resume_url);
 
-      // Call edge function to enhance CV
-      const { data, error } = await supabase.functions.invoke('enhance-cv', {
-        body: {
-          resumeText,
-          jobDescription: job.description,
-          jobTitle: job.title,
-        }
-      });
-
-      if (error) {
-        if (error.message?.includes('429')) {
-          toast.error('Rate limit exceeded. Please try again later.');
-        } else if (error.message?.includes('402')) {
-          toast.error('AI credits exhausted. Please add credits to continue.');
-        } else {
-          throw error;
-        }
-        return;
+      if (!resumeWorkText) {
+        toast.error('Could not extract work history from resume. Using full resume text instead.');
       }
 
+      const payload = {
+        resumeText: resumeWorkText || "NO_EXTRACTED_TEXT", // required key: extracted work history/professional experience text
+        jobDescription: job.description || "",
+        jobTitle: job.title || "",
+        userID: user.id
+      };
+
+      // Call dummy API (replace with real API call or supabase.functions.invoke when ready)
+      const apiResponse = await dummyEnhanceCvApi(payload);
+
       // Show enhanced text in editable modal instead of auto download
-      const aiEnhanced = data.enhancedCV || "";
+      const aiEnhanced = apiResponse.enhancedCV || "";
       setEnhancedText(aiEnhanced);
       setEditableText(aiEnhanced);
       setShowEnhancedModal(true);
@@ -133,6 +130,174 @@ const JobDetails = () => {
       toast.error('Failed to enhance CV. Please try again.');
     } finally {
       setEnhancingCV(false);
+    }
+  };
+
+  // Helper: extract Work / Professional Experience section from PDF resume URL
+  const extractWorkHistoryFromPdf = async (pdfUrl) => {
+    try {
+      let arrayBuffer = null;
+
+      // 1) Try direct fetch (public URL)
+      try {
+        const res = await fetch(pdfUrl);
+        if (!res.ok) throw new Error(`Fetch failed: ${res.status}`);
+        arrayBuffer = await res.arrayBuffer();
+      } catch (fetchErr) {
+        console.warn("Direct fetch of resume URL failed:", fetchErr);
+
+        // 2) Try to download via Supabase Storage
+        // If resume_file_name is present, try common buckets and the exact filename
+        const tryDownloadFromSupabase = async (bucket, path) => {
+          try {
+            const { data, error } = await supabase.storage.from(bucket).download(path);
+            if (error) throw error;
+            return await data.arrayBuffer();
+          } catch (err) {
+            return null;
+          }
+        };
+
+        // Attempt parsing Supabase public URL pattern:
+        // https://<project>.supabase.co/storage/v1/object/public/<bucket>/<path/to/file.pdf>
+        try {
+          const parsed = new URL(pdfUrl);
+          const storagePrefix = "/storage/v1/object/public/";
+          const idx = parsed.pathname.indexOf(storagePrefix);
+          if (idx !== -1) {
+            const storagePath = decodeURIComponent(parsed.pathname.substring(idx + storagePrefix.length)); // "<bucket>/<path...>"
+            const parts = storagePath.split("/");
+            const bucket = parts.shift();
+            const path = parts.join("/");
+            arrayBuffer = await tryDownloadFromSupabase(bucket, path);
+          }
+        } catch (err) {
+          // ignore URL parse errors
+        }
+
+        // 3) If still not found, try fallback buckets and resume_file_name if available
+        if (!arrayBuffer && userProfile?.resume_file_name) {
+          const candidateBuckets = ["assets", "resumes", "resumes-public", "public"];
+          for (const b of candidateBuckets) {
+            const ab = await tryDownloadFromSupabase(b, userProfile.resume_file_name);
+            if (ab) {
+              arrayBuffer = ab;
+              break;
+            }
+          }
+        }
+
+        if (!arrayBuffer) {
+          throw new Error("Unable to obtain resume PDF bytes via fetch or Supabase storage");
+        }
+      }
+
+      // Use pdfjs to extract text (disable worker to avoid setup complexity)
+      const uint8 = new Uint8Array(arrayBuffer);
+      const loadingTask = pdfjsLib.getDocument({ 
+        data: uint8,
+        disableWorker: true // Disable worker to avoid CORS/version issues
+      });
+      const pdf = await loadingTask.promise;
+
+      let fullText = "";
+      for (let i = 1; i <= pdf.numPages; i++) {
+        const page = await pdf.getPage(i);
+        const content = await page.getTextContent();
+        const strings = content.items.map((it) => (it.str ? it.str : ""));
+        fullText += strings.join(" ") + "\n";
+      }
+
+      const lower = fullText.toLowerCase();
+
+      // Common section headers to detect the work history section
+      const headers = [
+        "work experience",
+        "professional experience",
+        "experience",
+        "employment history",
+        "professional background",
+        "career experience"
+      ];
+
+      // Find start of the section (pick earliest match)
+      let startIndex = -1;
+      let foundHeader = "";
+      for (const h of headers) {
+        const idx = lower.indexOf(h);
+        if (idx !== -1 && (startIndex === -1 || idx < startIndex)) {
+          startIndex = idx;
+          foundHeader = h;
+        }
+      }
+
+      // If no header found, return the full text as fallback
+      if (startIndex === -1) {
+        console.warn("No experience header matched — returning full resume text as fallback");
+        return fullText.trim();
+      }
+
+      // Determine end of section by searching for next common resume section header
+      const endHeaders = [
+        "education",
+        "skills",
+        "certifications",
+        "projects",
+        "summary",
+        "contact",
+        "profile",
+        "objective",
+        "languages",
+        "references",
+        "achievements"
+      ];
+
+      let endIndex = fullText.length;
+      for (const eh of endHeaders) {
+        const idx = lower.indexOf(eh, startIndex + foundHeader.length);
+        if (idx !== -1 && idx < endIndex) {
+          endIndex = idx;
+        }
+      }
+
+      const extracted = fullText.substring(startIndex, endIndex).trim();
+      // If extraction is very small, return full text to be safe
+      if (!extracted || extracted.length < 30) {
+        console.warn("Extracted section is empty or too short — returning full resume text as fallback");
+        return fullText.trim();
+      }
+      return extracted;
+    } catch (err) {
+      console.error("extractWorkHistoryFromPdf error:", err);
+      // Return null to let caller fall back to NO_EXTRACTED_TEXT behavior
+      return null;
+    }
+  };
+
+  // Dummy API call — returns a simulated enhanced CV response
+  const dummyEnhanceCvApi = async (payload) => {
+    try {
+      console.log("Dummy enhance payload:", payload);
+      // simulate processing delay
+      await new Promise((r) => setTimeout(r, 700));
+
+      // Very simple "enhancement" echo for testing — replace with real AI response integration
+      const sampleEnhanced = [
+        `Enhanced CV for: ${payload.jobTitle}`,
+        `User ID: ${payload.userID}`,
+        "",
+        "Suggested improvements:",
+        "- Tailor bullet points to match job description keywords.",
+        "- Quantify achievements where possible.",
+        "",
+        "Extracted Work / Professional Experience (source):",
+        payload.resumeText.slice(0, 500) + (payload.resumeText.length > 500 ? "..." : "")
+      ].join("\n\n");
+
+      return { enhancedCV: sampleEnhanced };
+    } catch (err) {
+      console.error("dummyEnhanceCvApi error:", err);
+      throw err;
     }
   };
 
