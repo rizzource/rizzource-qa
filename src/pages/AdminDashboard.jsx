@@ -98,6 +98,51 @@ export const AdminDashboard = () => {
   const navigate = useNavigate();
   const topRef = useRef(null);
 
+  // AI CV prompt state (admin editable)
+  const [aiCvPrompt, setAiCvPrompt] = useState("");
+  const [loadingPrompt, setLoadingPrompt] = useState(false);
+  const [savingPrompt, setSavingPrompt] = useState(false);
+
+  // New state for prompt management
+  const [showPromptForm, setShowPromptForm] = useState(false);
+  const [editingPrompt, setEditingPrompt] = useState(false);
+
+  // Dummy API: fetch current AI CV prompt (replace with real API later)
+  const fetchAICVPrompt = async () => {
+    if (!isSuperAdmin()) return;
+    try {
+      setLoadingPrompt(true);
+      // simulate network delay
+      await new Promise((res) => setTimeout(res, 300));
+      // currently hardcoded prompt; replace with backend value later
+      const existing = "Improve the candidate's CV focusing on clarity, achievements, and measurable results. Keep tone professional and concise. Prioritize technical skills, tools, and impact per role.";
+      setAiCvPrompt(existing);
+    } catch (err) {
+      console.error("Failed to fetch AI CV prompt:", err);
+      toast.error("Failed to load AI CV prompt");
+    } finally {
+      setLoadingPrompt(false);
+    }
+  };
+
+  // Dummy API: save prompt to backend (replace with real API later)
+  const saveAICVPrompt = async (prompt) => {
+    if (!isSuperAdmin()) return;
+    try {
+      setSavingPrompt(true);
+      // simulate network delay / API call
+      await new Promise((res) => setTimeout(res, 500));
+      // TODO: call backend endpoint to persist prompt
+      // e.g. await supabase.functions.invoke('save-ai-prompt', { body: JSON.stringify({ prompt }) })
+      return { ok: true };
+    } catch (err) {
+      console.error("Failed to save AI CV prompt:", err);
+      throw err;
+    } finally {
+      setSavingPrompt(false);
+    }
+  };
+
   // Scroll to top function
   const scrollToTop = () => {
     if (topRef.current) {
@@ -107,12 +152,12 @@ export const AdminDashboard = () => {
 
   // Update handlePrev and handleNext to scroll to top
   const handlePrev = () => {
-    setActiveSection((prev) => (prev > 0 ? prev - 1 : 4));
+    setActiveSection((prev) => (prev > 0 ? prev - 1 : 5));
     scrollToTop();
   };
 
   const handleNext = () => {
-    setActiveSection((prev) => (prev < 4 ? prev + 1 : 0));
+    setActiveSection((prev) => (prev < 5 ? prev + 1 : 0));
     scrollToTop();
   };
 
@@ -165,6 +210,7 @@ export const AdminDashboard = () => {
     }
     fetchStats();
     fetchAllData();
+    fetchAICVPrompt();
   }, [user, userProfile, navigate, isSuperAdmin]);
 
   const fetchStats = async () => {
@@ -716,6 +762,21 @@ export const AdminDashboard = () => {
             </Card>
           </div>
           
+          <div onClick={() => handleCardClick(5)} className="cursor-pointer">
+            <Card className="hover:shadow-2xl transition-all bg-card/90 backdrop-blur-lg border border-border shadow-xl">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium text-muted-foreground">AI CV Prompt</CardTitle>
+                <MessageSquare className="h-4 w-4 text-accent" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold text-foreground">1</div>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Active AI prompt
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+          
           <Link href="/exports">
             <Card className="cursor-pointer hover:shadow-2xl transition-all bg-card/90 backdrop-blur-lg border border-border shadow-xl">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -807,6 +868,19 @@ export const AdminDashboard = () => {
             users={users}
           />
         )}
+        {activeSection === 5 && (
+          <PromptManagementTable
+            aiCvPrompt={aiCvPrompt}
+            setAiCvPrompt={setAiCvPrompt}
+            loadingPrompt={loadingPrompt}
+            savingPrompt={savingPrompt}
+            saveAICVPrompt={saveAICVPrompt}
+            showPromptForm={showPromptForm}
+            setShowPromptForm={setShowPromptForm}
+            editingPrompt={editingPrompt}
+            setEditingPrompt={setEditingPrompt}
+          />
+        )}
         {/* Feedback section commented out - not currently implemented
         {activeSection === 2 && (
           <FeedbackTable
@@ -837,6 +911,7 @@ export const AdminDashboard = () => {
             {activeSection === 2 && 'Events'}
             {activeSection === 3 && 'Outlines'}
             {activeSection === 4 && 'Companies'}
+            {activeSection === 5 && 'AI CV Prompt'}
           </div>
           <Button
             type="button"
@@ -1031,7 +1106,7 @@ const OutlinesTable = ({
                 exportToExcel("outlines", outlinesToRender, "outlines_export")
               }
               disabled={exportingTable === "outlines"}
-              className="w-full sm:w-auto"
+              className="md:w-46 hover:bg-blue-100 hover:text-blue-600 transition-colors duration-300"
             >
               <FileSpreadsheet className="h-4 w-4 mr-2" />
               {exportingTable === "outlines"
@@ -1377,7 +1452,7 @@ const EventsTable = ({
           <div className="flex gap-2">
             <Button
               onClick={() => setShowEventForm(!showEventForm)}
-              className="w-full sm:w-auto"
+              className="md:w-46 hover:bg-blue-100 hover:text-blue-600 transition-colors duration-300"
             >
               <Plus className="h-4 w-4 mr-2" />
               Add Event
@@ -1386,7 +1461,7 @@ const EventsTable = ({
               onClick={() => exportToExcel('events', data.data, 'events_export')}
               disabled={exportingTable === 'events'}
               variant="outline"
-              className="w-full sm:w-auto"
+              className="md:w-46 hover:bg-blue-100 hover:text-blue-600 transition-colors duration-300"
             >
               <FileSpreadsheet className="h-4 w-4 mr-2" />
               <span className="hidden sm:inline">{exportingTable === 'events' ? 'Exporting...' : 'Export to Excel'}</span>
@@ -1494,8 +1569,8 @@ const EventsTable = ({
                   />
                 </div>
                 <div className="flex gap-2">
-                  <Button type="submit">Create Event</Button>
-                  <Button type="button" variant="outline" onClick={() => setShowEventForm(false)}>
+                  <Button type="submit" className="md:w-46 hover:bg-blue-100 hover:text-blue-600 transition-colors duration-300">Create Event</Button>
+                  <Button type="button" variant="outline" onClick={() => setShowEventForm(false)} className="md:w-46 hover:bg-blue-100 hover:text-blue-600 transition-colors duration-300">
                     Cancel
                   </Button>
                 </div>
@@ -1746,7 +1821,7 @@ const MenteesTable = ({ data, currentPage, onPageChange, exportToExcel, exportin
           <Button
             onClick={() => exportToExcel('profiles_mentees', data.data, 'mentees_export')}
             disabled={exportingTable === 'profiles_mentees'}
-            className="w-full sm:w-auto"
+            className="md:w-46 hover:bg-blue-100 hover:text-blue-600 transition-colors duration-300"
           >
             <FileSpreadsheet className="h-4 w-4 mr-2" />
             <span className="hidden sm:inline">{exportingTable === 'profiles_mentees' ? 'Exporting...' : 'Export to Excel'}</span>
@@ -1856,7 +1931,7 @@ const MentorsTable = ({ data, currentPage, onPageChange, exportToExcel, exportin
           <Button
             onClick={() => exportToExcel('profiles_mentors', data.data, 'mentors_export')}
             disabled={exportingTable === 'profiles_mentors'}
-            className="w-full sm:w-auto"
+            className="md:w-46 hover:bg-blue-100 hover:text-blue-600 transition-colors duration-300"
           >
             <FileSpreadsheet className="h-4 w-4 mr-2" />
             <span className="hidden sm:inline">{exportingTable === 'profiles_mentors' ? 'Exporting...' : 'Export to Excel'}</span>
@@ -1943,7 +2018,7 @@ const MentorsTable = ({ data, currentPage, onPageChange, exportToExcel, exportin
                 </PaginationItem>
               </PaginationContent>
             </Pagination>
-          </div>
+                   </div>
         )}
       </CardContent>
     </Card>
@@ -2062,7 +2137,7 @@ const CompaniesTable = ({
             </CardDescription>
           </div>
           <div className="flex gap-2">
-            <Button onClick={() => setShowCompanyForm(!showCompanyForm)} className="w-full sm:w-auto">
+            <Button onClick={() => setShowCompanyForm(!showCompanyForm)} className="md:w-46 hover:bg-blue-100 hover:text-blue-600 transition-colors duration-300">
               <Plus className="h-4 w-4 mr-2" />
               Create Company
             </Button>
@@ -2070,7 +2145,7 @@ const CompaniesTable = ({
               onClick={() => exportToExcel("companies", data.data, "companies_export")}
               disabled={exportingTable === "companies"}
               variant="outline"
-              className="w-full sm:w-auto"
+              className="md:w-46 hover:bg-blue-100 hover:text-blue-600 transition-colors duration-300"
             >
               <FileSpreadsheet className="h-4 w-4 mr-2" />
               <span className="hidden sm:inline">
@@ -2220,8 +2295,8 @@ const CompaniesTable = ({
                   />
                 </div>
                 <div className="flex gap-2">
-                  <Button type="submit">Create Company</Button>
-                  <Button type="button" variant="outline" onClick={() => setShowCompanyForm(false)}>
+                  <Button type="submit" className="md:w-46 hover:bg-blue-100 hover:text-blue-600 transition-colors duration-300">Create Company</Button>
+                  <Button type="button" variant="outline" onClick={() => setShowCompanyForm(false)} className="md:w-46 hover:bg-blue-100 hover:text-blue-600 transition-colors duration-300">
                     Cancel
                   </Button>
                 </div>
@@ -2349,6 +2424,186 @@ const CompaniesTable = ({
     </Card>
   );
 };
+
+// --- Prompt Management Table Component ---
+const PromptManagementTable = ({
+  aiCvPrompt,
+  setAiCvPrompt,
+  loadingPrompt,
+  savingPrompt,
+  saveAICVPrompt,
+  showPromptForm,
+  setShowPromptForm,
+  editingPrompt,
+  setEditingPrompt,
+}) => {
+  const [tempPrompt, setTempPrompt] = useState(aiCvPrompt);
+
+  useEffect(() => {
+    setTempPrompt(aiCvPrompt);
+  }, [aiCvPrompt]);
+
+  const handleSavePrompt = async (e) => {
+    e.preventDefault();
+    
+    if (!tempPrompt.trim()) {
+      toast.error("Prompt cannot be empty");
+      return;
+    }
+
+    try {
+      const result = await saveAICVPrompt(tempPrompt);
+      if (result.ok) {
+        setAiCvPrompt(tempPrompt);
+        setEditingPrompt(false);
+        setShowPromptForm(false);
+        toast.success("AI CV Prompt updated successfully!");
+      }
+    } catch (error) {
+      toast.error("Failed to save prompt: " + error.message);
+    }
+  };
+
+  const handleCancel = () => {
+    setTempPrompt(aiCvPrompt);
+    setEditingPrompt(false);
+    setShowPromptForm(false);
+  };
+
+  return (
+    <Card className="bg-card/90 backdrop-blur-lg border border-border shadow-xl">
+      <CardHeader>
+        <div className="flex flex-col sm:flex-row gap-4 sm:justify-between sm:items-center">
+          <div>
+            <CardTitle className="text-foreground">AI CV Prompt Configuration</CardTitle>
+            <CardDescription className="text-muted-foreground">
+              Manage the prompt used by AI to improve candidate CVs
+            </CardDescription>
+          </div>
+          <Button
+            onClick={() => {
+              setShowPromptForm(!showPromptForm);
+              setEditingPrompt(!editingPrompt);
+              setTempPrompt(aiCvPrompt);
+            }}
+            disabled={loadingPrompt}
+            className="md:w-46 hover:bg-blue-100 hover:text-blue-600 transition-colors duration-300"
+          >
+            {loadingPrompt ? (
+              <>
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                Loading...
+              </>
+            ) : editingPrompt ? (
+              <>
+                <ArrowLeft className="h-4 w-4 mr-2" />
+                Cancel Edit
+              </>
+            ) : (
+              <>
+                <Plus className="h-4 w-4 mr-2" />
+                Edit Prompt
+              </>
+            )}
+          </Button>
+        </div>
+      </CardHeader>
+
+      <CardContent>
+        {/* Current Prompt Display */}
+        {!editingPrompt && (
+          <Card className="border border-border bg-muted/30 p-6">
+            <div className="space-y-3">
+              <h3 className="font-semibold text-foreground text-lg">Current Prompt:</h3>
+              <div className="bg-background/50 rounded-lg p-4 border border-border/50">
+                <p className="text-foreground leading-relaxed whitespace-pre-wrap">
+                  {loadingPrompt ? (
+                    <div className="flex items-center gap-2">
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      Loading prompt...
+                    </div>
+                  ) : aiCvPrompt ? (
+                    aiCvPrompt
+                  ) : (
+                    <span className="text-muted-foreground italic">No prompt configured yet</span>
+                  )}
+                </p>
+              </div>
+              <p className="text-xs text-muted-foreground">
+                This prompt is sent to the AI model when processing CV improvement requests.
+              </p>
+            </div>
+          </Card>
+        )}
+
+        {/* Edit Form */}
+        {editingPrompt && (
+          <Card className="border border-border bg-muted/20 p-6">
+            <form onSubmit={handleSavePrompt} className="space-y-4">
+              <div>
+                <Label htmlFor="ai-prompt" className="text-lg font-semibold text-foreground mb-2 block">
+                  Edit AI CV Prompt *
+                </Label>
+                <Textarea
+                  id="ai-prompt"
+                  value={tempPrompt}
+                  onChange={(e) => setTempPrompt(e.target.value)}
+                  rows={8}
+                  placeholder="Enter the prompt for AI CV improvement..."
+                  className="w-full font-mono text-sm resize-none"
+                  required
+                />
+              </div>
+
+              <div className="bg-accent/10 border border-accent/30 rounded-lg p-4">
+                <p className="text-sm text-foreground mb-2 font-semibold">Tips for effective prompts:</p>
+                <ul className="text-xs text-muted-foreground space-y-1 list-disc list-inside">
+                  <li>Be specific about CV improvement goals</li>
+                  <li>Include tone and style preferences</li>
+                  <li>Mention key elements to prioritize (skills, achievements, impact)</li>
+                  <li>Specify the desired output format or length considerations</li>
+                </ul>
+              </div>
+
+              <div className="flex gap-2 pt-2">
+                <Button
+                  type="submit"
+                  disabled={savingPrompt || !tempPrompt.trim()}
+                  className="md:w-46 hover:bg-blue-100 hover:text-blue-600 transition-colors duration-300"
+                >
+                  {savingPrompt ? (
+                    <>
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      Saving...
+                    </>
+                  ) : (
+                    <>
+                      <FileText className="h-4 w-4 mr-2" />
+                      Save Prompt
+                    </>
+                  )}
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={handleCancel}
+                  disabled={savingPrompt}
+                  className="md:w-46 hover:bg-blue-100 hover:text-blue-600 transition-colors duration-300"
+                >
+                  Cancel
+                </Button>
+              </div>
+
+              <p className="text-xs text-muted-foreground">
+                Changes will be applied to all new CV improvement requests.
+              </p>
+            </form>
+          </Card>
+        )}
+      </CardContent>
+    </Card>
+  );
+};
 // --- Feedback Table Component ---
 /*
 const FeedbackTable = ({ data, currentPage, onPageChange, exportToExcel, exportingTable, pageSize }) => {
@@ -2455,5 +2710,4 @@ const FeedbackTable = ({ data, currentPage, onPageChange, exportToExcel, exporti
       </CardContent>
     </Card>
   );
-};
-*/
+}; */
