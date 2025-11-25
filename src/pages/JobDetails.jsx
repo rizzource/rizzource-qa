@@ -100,37 +100,8 @@ const JobDetails = () => {
       return;
     }
 
-    setEnhancingCV(true);
-    try {
-      // Extract only the Work / Professional Experience section from uploaded resume PDF
-      const resumeWorkText = await extractWorkHistoryFromPdf(userProfile.resume_url);
-
-      if (!resumeWorkText) {
-        toast.error('Could not extract work history from resume. Using full resume text instead.');
-      }
-
-      const payload = {
-        resumeText: resumeWorkText || "NO_EXTRACTED_TEXT", // required key: extracted work history/professional experience text
-        jobDescription: job.description || "",
-        jobTitle: job.title || "",
-        userID: user.id
-      };
-
-      // Call dummy API (replace with real API call or supabase.functions.invoke when ready)
-      const apiResponse = await dummyEnhanceCvApi(payload);
-
-      // Show enhanced text in editable modal instead of auto download
-      const aiEnhanced = apiResponse.enhancedCV || "";
-      setEnhancedText(aiEnhanced);
-      setEditableText(aiEnhanced);
-      setShowEnhancedModal(true);
-      toast.success('AI suggestions ready — review and edit in the modal.');
-    } catch (error) {
-      console.error('Error enhancing CV:', error);
-      toast.error('Failed to enhance CV. Please try again.');
-    } finally {
-      setEnhancingCV(false);
-    }
+    // Navigate to CVEnhancer page with job ID
+    navigate(`/cv-enhancer/${id}`);
   };
 
   // Helper: extract Work / Professional Experience section from PDF resume URL
