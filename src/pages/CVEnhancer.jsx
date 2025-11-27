@@ -221,23 +221,83 @@ const CVEnhancer = () => {
   // Highlight differences while preserving original whitespace/line breaks.
   // New words in enhanced CV (compared case-insensitively to original) are wrapped in <mark>.
   const buildHighlightedHtml = (orig, enhanced) => {
-    if (!enhanced) return textToHtml(orig || "");
-    const origWords = (orig || "").match(/\S+/g) || [];
-    const origSet = new Set(origWords.map(w => w.replace(/[^\w]/g, "").toLowerCase()));
+    if (!orig || !enhanced) return textToHtml(enhanced || orig || "");
 
-    // escape enhanced text first to avoid accidental HTML injection
-    const escaped = escapeHtml(enhanced);
+    const oWords = orig.match(/\S+/g) || [];
+    const eWords = enhanced.match(/\S+/g) || [];
 
-    // wrap each non-whitespace token if it's not present in original
-    const highlighted = escaped.replace(/\S+/g, (token) => {
-      const clean = token.replace(/[^\w]/g, "").toLowerCase();
-      if (clean && !origSet.has(clean)) {
-        return `<mark>${token}</mark>`;
+    const dp = Array(oWords.length + 1).fill(null).map(
+      () => Array(eWords.length + 1).fill(0)
+    );
+
+    for (let i = 1; i <= oWords.length; i++) {
+      for (let j = 1; j <= eWords.length; j++) {
+        if (oWords[i - 1].toLowerCase() === eWords[j - 1].toLowerCase()) {
+          dp[i][j] = dp[i - 1][j - 1] + 1;
+        } else {
+          dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);
+        }
       }
-      return token;
+    }
+
+    let i = oWords.length;
+    let j = eWords.length;
+    const diff = [];
+
+    while (i > 0 && j > 0) {
+      if (oWords[i - 1].toLowerCase() === eWords[j - 1].toLowerCase()) {
+        diff.push({ word: eWords[j - 1], type: "same" });
+        i--; j--;
+      } else if (dp[i - 1][j] >= dp[i][j - 1]) {
+        diff.push({ word: oWords[i - 1], type: "removed" });
+        i--;
+      } else {
+        diff.push({ word: eWords[j - 1], type: "added" });
+        j--;
+      }
+    }
+
+    while (i > 0) { diff.push({ word: oWords[i - 1], type: "removed" }); i--; }
+    while (j > 0) { diff.push({ word: eWords[j - 1], type: "added" }); j--; }
+
+    diff.reverse();
+
+    // 🔥 Store original→enhanced phrase groups for REVERT button
+    const newMap = {};
+    let html = "";
+    let addBuffer = [];
+    let removeBuffer = [];
+
+    const flushBuffers = () => {
+      if (addBuffer.length && removeBuffer.length) {
+        const enhancedPhrase = addBuffer.join(" ");
+        const originalPhrase = removeBuffer.join(" ");
+        newMap[enhancedPhrase] = originalPhrase;
+      }
+      if (addBuffer.length) {
+        html += `<mark data-new="${escapeHtml(addBuffer.join(" "))}" data-old="${escapeHtml(removeBuffer.join(" "))}">${escapeHtml(addBuffer.join(" "))}</mark> `;
+      }
+      addBuffer = [];
+      removeBuffer = [];
+    };
+
+    diff.forEach(({ word, type }) => {
+      if (type === "added") {
+        addBuffer.push(word);
+      } else if (type === "removed") {
+        removeBuffer.push(word);
+      } else {
+        flushBuffers();
+        html += escapeHtml(word) + " ";
+      }
     });
 
-    return `<pre style="white-space:pre-wrap; font-family:inherit; font-size:inherit;">${highlighted}</pre>`;
+    flushBuffers();
+
+    // Save mapping for revert functionality
+    setOriginalEnhancedMap(newMap);
+
+    return `<pre style="white-space:pre-wrap; font-family:inherit; font-size:inherit;">${html.trim()}</pre>`;
   };
 
   // Dummy API simulating AI suggestions (replace in production)
@@ -288,8 +348,50 @@ const CVEnhancer = () => {
       };
       const resp = await dummyEnhanceCvApi(payload);
       setEnhancedText(resp.enhancedCV || "");
-      const html = buildHighlightedHtml(originalText || "", resp.enhancedCV || "");
+
+      // Build map of replaced phrases (general — NOT tied to hardcoded verbs)
+      const buildReplacementMap = (orig, enhanced) => {
+        const map = {};
+        if (!orig || !enhanced) return map;
+
+        const oWords = orig.split(/\s+/);
+        const eWords = enhanced.split(/\s+/);
+
+        // Walk side-by-side to detect *inserted sequences* replacing single original words
+        let i = 0, j = 0;
+
+        while (i < oWords.length && j < eWords.length) {
+          if (oWords[i] === eWords[j]) {
+            i++; j++;
+            continue;
+          }
+
+          // word differs → detect replacement block
+          const originalWord = oWords[i];
+
+          let block = [];
+          while (j < eWords.length && eWords[j] !== originalWord && eWords[j] !== oWords[i+1]) {
+            block.push(eWords[j]);
+            j++;
+          }
+
+          if (block.length) {
+            map[originalWord] = block.join(" ");
+          }
+
+          i++;
+        }
+
+        return map;
+      };
+
+      const map = buildReplacementMap(originalText, resp.enhancedCV);
+      setOriginalEnhancedMap(map);
+
+      // Rebuild highlighted HTML using the map
+      const html = buildHighlightedHtml(originalText, resp.enhancedCV, map);
       setEditorHtml(html);
+
       toast.success("AI suggestions ready — edit them in the editor below.");
     } catch (err) {
       console.error("AI call failed:", err);
