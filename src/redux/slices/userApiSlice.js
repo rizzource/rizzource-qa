@@ -6,7 +6,7 @@ import CryptoJS from "crypto-js";
 // -----------------------------------
 // CONFIG
 // -----------------------------------
-const BASE_URL = "https://192.168.100.49:45458/api";
+const BASE_URL = "https://rizzource-c2amh0adhpcbgjgx.canadacentral-01.azurewebsites.net/api";
 const SECRET_KEY = "33Browntrucks!@#";
 
 // -----------------------------------
@@ -20,19 +20,19 @@ const decrypt = (cipher) => {
     try {
         const bytes = CryptoJS.AES.decrypt(cipher, SECRET_KEY);
         return JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
-    } catch (err) {
+    } catch {
         return null;
     }
 };
 
 // -----------------------------------
-// RESTORE STORED SESSION (if exists)
+// RESTORED SESSION
 // -----------------------------------
 const storedSession = localStorage.getItem("rizzource_session");
 const restored = storedSession ? decrypt(storedSession) : null;
 
 // -----------------------------------
-// ASYNC THUNKS
+// THUNKS
 // -----------------------------------
 
 // LOGIN USER
@@ -44,8 +44,7 @@ export const loginUser = createAsyncThunk(
                 Email,
                 Password,
             });
-
-            return res.data; // contains token + user object in data
+            return res.data;
         } catch (err) {
             return rejectWithValue(err.response?.data || "Login failed");
         }
@@ -64,7 +63,6 @@ export const registerUser = createAsyncThunk(
                 Email,
                 Password,
             });
-
             return res.data;
         } catch (err) {
             return rejectWithValue(err.response?.data || "Registration failed");
@@ -91,7 +89,7 @@ export const getScrappedJobs = createAsyncThunk(
     async (_, { rejectWithValue }) => {
         try {
             const res = await axios.get(`${BASE_URL}/Ollama/GetScrappedJobs`);
-            return res.data; // expected: { data: [] }
+            return res.data;
         } catch (err) {
             return rejectWithValue(err.response?.data || "Fetch failed");
         }
@@ -107,9 +105,16 @@ const initialState = {
 
     token: restored?.token || null,
     user: restored?.user || null,
-    roles: restored?.roles || [],   // <-- NEW
+    roles: restored?.roles || [],
+
     scrapResult: null,
     scrappedJobs: [],
+
+    // Selected Job from JobPortal → JobDetails
+    selectedJob: null,
+
+    // Temporary per-job CV storage
+    tempResume: null
 };
 
 // -----------------------------------
@@ -123,12 +128,28 @@ const userApiSlice = createSlice({
             state.token = null;
             state.user = null;
             state.roles = [];
+            state.selectedJob = null;
+            state.tempResume = null;
             localStorage.removeItem("rizzource_session");
-        }
+        },
+
+        // Store selected job
+        setSelectedJob(state, action) {
+            state.selectedJob = action.payload;
+        },
+
+        // Temporary Resume Storage
+        setTempResume(state, action) {
+            state.tempResume = action.payload; // { file, url, text }
+        },
+
+        clearTempResume(state) {
+            state.tempResume = null;
+        },
     },
 
     extraReducers: (builder) => {
-        // LOGIN -----------------------------------------
+        // LOGIN
         builder
             .addCase(loginUser.pending, (state) => {
                 state.loading = true;
@@ -139,23 +160,22 @@ const userApiSlice = createSlice({
 
                 state.token = action.payload.token;
                 state.user = action.payload.data;
-                state.roles = action.payload.data?.roles || [];  // <-- NEW
+                state.roles = action.payload.data?.roles || [];
 
                 const encrypted = encrypt({
                     token: action.payload.token,
                     user: action.payload.data,
-                    roles: action.payload.data?.roles || [],        // <-- NEW
+                    roles: action.payload.data?.roles || [],
                 });
 
                 localStorage.setItem("rizzource_session", encrypted);
             })
-
             .addCase(loginUser.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload;
             });
 
-        // REGISTER ---------------------------------------
+        // REGISTER
         builder
             .addCase(registerUser.pending, (state) => {
                 state.loading = true;
@@ -163,18 +183,16 @@ const userApiSlice = createSlice({
             })
             .addCase(registerUser.fulfilled, (state) => {
                 state.loading = false;
-                // Do nothing — user still needs to sign in
             })
             .addCase(registerUser.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload;
             });
 
-        // SCRAP JOBS --------------------------------------
+        // SCRAP
         builder
             .addCase(scrapJobs.pending, (state) => {
                 state.loading = true;
-                state.error = null;
             })
             .addCase(scrapJobs.fulfilled, (state, action) => {
                 state.loading = false;
@@ -185,22 +203,27 @@ const userApiSlice = createSlice({
                 state.error = action.payload;
             });
 
-        // GET SCRAPPED JOBS -------------------------------
+        // GET SCRAPPED JOBS
         builder
             .addCase(getScrappedJobs.pending, (state) => {
                 state.loading = true;
-                state.error = null;
             })
             .addCase(getScrappedJobs.fulfilled, (state, action) => {
                 state.loading = false;
-                state.scrappedJobs = action.payload.data || [];
+                state.scrappedJobs = action.payload?.data || [];
             })
             .addCase(getScrappedJobs.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload;
             });
-    },
+    }
 });
 
-export const { logout } = userApiSlice.actions;
+export const {
+    logout,
+    setSelectedJob,
+    setTempResume,
+    clearTempResume,
+} = userApiSlice.actions;
+
 export default userApiSlice.reducer;

@@ -1,99 +1,98 @@
-import { useState } from 'react';
+// src/components/jobs/ResumeUpload.jsx
+import { useState } from "react";
 
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Upload, FileText } from "lucide-react";
+import { toast } from "sonner";
 
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Upload, FileText, X } from 'lucide-react';
-import { toast } from 'sonner';
+import * as pdfjsLib from "pdfjs-dist";
+import workerSrc from "pdfjs-dist/build/pdf.worker?url";
+
+pdfjsLib.GlobalWorkerOptions.workerSrc = workerSrc;
 
 const ResumeUpload = ({ onUploadComplete }) => {
-  const { user } = useAuth();
   const [uploading, setUploading] = useState(false);
-  const [resumeUrl, setResumeUrl] = useState('');
+  const [resumeUrl, setResumeUrl] = useState("");
+
+  // Extract text from PDF
+  const extractPdfText = async (arrayBuffer) => {
+    const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+    let text = "";
+
+    for (let i = 1; i <= pdf.numPages; i++) {
+      const page = await pdf.getPage(i);
+      const content = await page.getTextContent();
+      const strings = content.items.map((it) => it.str || "");
+      text += strings.join(" ") + "\n";
+    }
+
+    return text.trim();
+  };
+
+  // Extract text from DOC/DOCX
+  const extractDocText = async (file) => {
+    const raw = await file.text();
+    return raw.trim().slice(0, 8000);
+  };
 
   const handleFileUpload = async (event) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
-    // Validate file type
-    const allowedTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+    const allowedTypes = [
+      "application/pdf",
+      "application/msword",
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    ];
+
     if (!allowedTypes.includes(file.type)) {
-      toast.error('Please upload a PDF or Word document');
+      toast.error("Please upload a PDF or Word document");
       return;
     }
 
-    // Validate file size (5MB max)
     if (file.size > 5 * 1024 * 1024) {
-      toast.error('File size must be less than 5MB');
+      toast.error("File size must be less than 5MB");
       return;
     }
 
     setUploading(true);
+
     try {
-      const fileExt = file.name.split('.').pop();
-      const fileName = `${user.id}-${Date.now()}.${fileExt}`;
-      const filePath = `resumes/${fileName}`;
+      let extractedText = "";
 
-      const { error: uploadError } = await supabase.storage
-        .from('assets')
-        .upload(filePath, file);
+      if (file.type === "application/pdf") {
+        const buffer = await file.arrayBuffer();
+        extractedText = await extractPdfText(buffer);
+      } else {
+        extractedText = await extractDocText(file);
+      }
 
-      if (uploadError) throw uploadError;
+      if (!extractedText || extractedText.length < 20) {
+        toast.error("Could not extract readable text from resume");
+        setUploading(false);
+        return;
+      }
 
-      const { data: { publicUrl } } = supabase.storage
-        .from('assets')
-        .getPublicUrl(filePath);
-
-      const { error: updateError } = await supabase
-        .from('profiles')
-        .update({
-          resume_url: publicUrl,
-          resume_file_name: file.name,
-          resume_uploaded_at: new Date().toISOString(),
-        })
-        .eq('id', user.id);
-
-      if (updateError) throw updateError;
-
-      toast.success('Resume uploaded successfully!');
-      setResumeUrl(publicUrl);
-      if (onUploadComplete) onUploadComplete(publicUrl);
-    } catch (error) {
-      console.error('Error uploading resume:', error);
-      toast.error('Failed to upload resume. Please try again.');
+      onUploadComplete(file, extractedText);
+      toast.success("Resume uploaded successfully!");
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to process resume");
     } finally {
       setUploading(false);
     }
   };
 
-  const handleUrlSubmit = async () => {
+  const handleUrlSubmit = () => {
     if (!resumeUrl.trim()) {
-      toast.error('Please enter a valid URL');
+      toast.error("Please enter a valid URL");
       return;
     }
 
-    setUploading(true);
-    try {
-      const { error } = await supabase
-        .from('profiles')
-        .update({
-          resume_url: resumeUrl,
-          resume_file_name: 'External Resume',
-          resume_uploaded_at: new Date().toISOString(),
-        })
-        .eq('id', user.id);
-
-      if (error) throw error;
-
-      toast.success('Resume URL saved successfully!');
-      if (onUploadComplete) onUploadComplete(resumeUrl);
-    } catch (error) {
-      console.error('Error saving resume URL:', error);
-      toast.error('Failed to save resume URL. Please try again.');
-    } finally {
-      setUploading(false);
-    }
+    onUploadComplete(resumeUrl, ""); // URL mode (rarely used)
+    toast.success("Resume URL saved");
   };
 
   return (
@@ -107,14 +106,16 @@ const ResumeUpload = ({ onUploadComplete }) => {
           You need to upload your resume before applying for jobs
         </p>
       </CardHeader>
+
       <CardContent className="space-y-4">
+        {/* Upload File */}
         <div>
-          <label htmlFor="resume-file" className="block text-sm font-medium mb-2">
+          <label className="block text-sm font-medium mb-2">
             Upload File (PDF or Word)
           </label>
+
           <div className="flex items-center gap-2">
             <Input
-              id="resume-file"
               type="file"
               accept=".pdf,.doc,.docx"
               onChange={handleFileUpload}
@@ -125,6 +126,7 @@ const ResumeUpload = ({ onUploadComplete }) => {
           </div>
         </div>
 
+        {/* Divider */}
         <div className="relative">
           <div className="absolute inset-0 flex items-center">
             <span className="w-full border-t" />
@@ -134,13 +136,11 @@ const ResumeUpload = ({ onUploadComplete }) => {
           </div>
         </div>
 
+        {/* URL Input */}
         <div>
-          <label htmlFor="resume-url" className="block text-sm font-medium mb-2">
-            Provide Resume URL
-          </label>
+          <label className="block text-sm font-medium mb-2">Provide Resume URL</label>
           <div className="flex items-center gap-2">
             <Input
-              id="resume-url"
               type="url"
               placeholder="https://drive.google.com/your-resume"
               value={resumeUrl}
@@ -148,6 +148,7 @@ const ResumeUpload = ({ onUploadComplete }) => {
               disabled={uploading}
               className="flex-1"
             />
+
             <Button
               onClick={handleUrlSubmit}
               disabled={uploading || !resumeUrl.trim()}
@@ -159,9 +160,7 @@ const ResumeUpload = ({ onUploadComplete }) => {
         </div>
 
         {uploading && (
-          <p className="text-sm text-muted-foreground text-center">
-            Uploading...
-          </p>
+          <p className="text-sm text-muted-foreground text-center">Uploading...</p>
         )}
       </CardContent>
     </Card>
