@@ -78,7 +78,7 @@ const Header = () => {
               Jobs
             </Link>
 
-            {user &&
+            {/* {user &&
               !isSuperAdmin() &&
               !roles.includes("owner") &&
               !roles.includes("hr") &&
@@ -86,7 +86,7 @@ const Header = () => {
                 <Link to="/my-applications" className="font-bold text-primary hover:text-accent transition-colors">
                   My Applications
                 </Link>
-              )}
+              )} */}
 
             {/* AUTH SECTION */}
             {user ? (

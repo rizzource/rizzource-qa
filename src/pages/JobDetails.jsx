@@ -201,8 +201,11 @@ const JobDetails = () => {
                   <div className="flex justify-center">
                     <Button
                       variant="outline"
-                      size="lg"
-                      className="px-6 py-3 text-base font-semibold rounded-xl"
+                      size="md"
+                      className="relative overflow-hidden group px-5 py-3 text-md font-bold rounded-xl
+                             bg-gradient-to-r from-accent to-primary text-white shadow-md 
+                             transition-all duration-300 ease-out
+                             hover:shadow-xl hover:scale-105"
                       onClick={handleEnhanceCV}
                     // disabled={enhancingCV || !userProfile.resume_url}
                     >

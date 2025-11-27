@@ -47,7 +47,7 @@ const MinimalistHome = () => {
               </p>
             </div>
 
-            {/* View Matchups Button - only show when logged in */}
+            {/* View Matchups Button - only show when logged in
             {user && (
               <div className="flex justify-center mt-8">
                 <Button
@@ -59,15 +59,13 @@ const MinimalistHome = () => {
                              hover:shadow-xl hover:scale-105"
                 >
                   <span className="relative z-10">View Matchups</span>
-                  {/* Animated hover overlay */}
                   <span className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl"></span>
                 </Button>
               </div>
-            )}
-          </div>
+            )}*/}
+          </div> 
 
-          {/* Timeline Component */}
-          {user && <Timeline />}
+          {/* {user && <Timeline />} */}
         </div>
       </div>
     </section>
