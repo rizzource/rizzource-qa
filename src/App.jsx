@@ -22,7 +22,7 @@ import JobDetails from "./pages/JobDetails";
 import JobApplicationSuccess from "./pages/JobApplicationSuccess";
 import MyApplications from "./pages/MyApplications";
 import CompanyDashboard from "./pages/CompanyDashboard";
-
+import CVEnhancer from "@/pages/CVEnhancer";
 
 
 const queryClient = new QueryClient();
@@ -82,6 +82,7 @@ const AppContent = () => {
               <AdminDashboard />
             </ProtectedRoute>
           } />
+          <Route path="/cv-enhancer/:jobId" element={<CVEnhancer />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
