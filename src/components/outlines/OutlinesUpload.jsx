@@ -10,7 +10,7 @@ import { Upload, FileText, AlertCircle, CheckCircle, X } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useNavigate } from "react-router-dom";
 
-import { useAuth } from "@/components/AuthProvider";
+
 import { toast } from "react-toastify";
 
 const OutlinesUpload = ({ onUploadSuccess }) => {

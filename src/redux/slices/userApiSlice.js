@@ -7,7 +7,7 @@ import CryptoJS from "crypto-js";
 // CONFIG
 // -----------------------------------
 const BASE_URL = "https://192.168.100.49:45458/api";
-const SECRET_KEY = "rizzource-encryption-key-please-change-this";
+const SECRET_KEY = "33Browntrucks!@#";
 
 // -----------------------------------
 // ENCRYPTION HELPERS

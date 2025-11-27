@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-import { useAuth } from '@/components/AuthProvider';
+
 import { useUserCompanies } from '@/hooks/useUserCompanies';
 import { useCompanyRole } from '@/hooks/useCompanyRole';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';

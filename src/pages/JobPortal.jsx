@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-import { useAuth } from "@/components/AuthProvider";
+
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -13,6 +13,7 @@ import Footer from "@/components/Footer";
 import { fetchUsaJobs } from "@/services/usaJobs";
 import { fetchAdzunaJobs } from "@/services/adzuna";
 import { saveJobsToDatabase } from "@/services/jobService";
+import useAuth from "../hooks/useAuth";
 
 const JobPortal = () => {
   const [jobs, setJobs] = useState([]);

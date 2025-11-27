@@ -1,7 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Scale, BookOpen, Users } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "./AuthProvider";
 import { useTheme } from "next-themes";
 import logoLight from "@/assets/rizzource-logo-light.png";
 import logoDark from "@/assets/rizzource-logo-dark.png";
@@ -10,9 +9,10 @@ import Timeline from "./Timeline";
 const MinimalistHome = () => {
   const { theme } = useTheme();
   const navigate = useNavigate();
-  const { user } = useAuth(); 
+
+  const user = [];
   console.log("🔍 Supabase URL:", import.meta.env.VITE_SUPABASE_URL);
-console.log("🔑 Supabase Key (first 8 chars):", import.meta.env.VITE_SUPABASE_ANON_KEY?.slice(0, 8));
+  console.log("🔑 Supabase Key (first 8 chars):", import.meta.env.VITE_SUPABASE_ANON_KEY?.slice(0, 8));
   return (
     <section className="relative min-h-screen bg-background overflow-hidden">
       {/* Floating background elements */}
@@ -34,14 +34,14 @@ console.log("🔑 Supabase Key (first 8 chars):", import.meta.env.VITE_SUPABASE_
           <div className="text-center space-y-6 lg:space-y-8">
             {/* RIZZource Logo */}
             <div className="flex flex-col items-center justify-center gap-6 mb-8 sm:mb-10 md:mb-12">
-              <img 
-                src={theme === "dark" ? logoDark : logoLight} 
-                alt="RIZZource" 
+              <img
+                src={theme === "dark" ? logoDark : logoLight}
+                alt="RIZZource"
                 className="h-24 sm:h-32 md:h-40 lg:h-48 w-auto"
               />
             </div>
-            
-            <div style={{marginTop: -15}}>
+
+            <div style={{ marginTop: -15 }}>
               <p className="text-lg sm:text-xl lg:text-2xl text-muted-foreground leading-relaxed max-w-4xl mx-auto break-words">
                 Resources and tools for tomorrow’s legal minds
               </p>

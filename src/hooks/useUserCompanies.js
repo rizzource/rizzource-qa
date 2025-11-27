@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-import { useAuth } from '@/components/AuthProvider';
+
 
 /**
  * Hook to fetch all companies where the user is a member

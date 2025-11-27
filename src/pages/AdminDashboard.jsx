@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { Link } from 'react-router-dom'; 
-import { useAuth } from "@/components/AuthProvider";
+
 import {
   Card,
   CardContent,

@@ -117,9 +117,36 @@ const Auth = () => {
             <CardContent>
               <Tabs defaultValue="signin">
                 <TabsList className="grid grid-cols-2 mb-6">
-                  <TabsTrigger value="signin">Sign In</TabsTrigger>
-                  <TabsTrigger value="signup">Sign Up</TabsTrigger>
+
+                  <TabsTrigger
+                    value="signin"
+                    className="
+    data-[state=active]:bg-primary 
+    data-[state=active]:text-primary-foreground 
+    rounded-md 
+    transition-all 
+    duration-200
+  "
+                  >
+                    Sign In
+                  </TabsTrigger>
+
+                  <TabsTrigger
+                    value="signup"
+                    className="
+    data-[state=active]:bg-primary 
+    data-[state=active]:text-primary-foreground 
+    rounded-md 
+    transition-all 
+    duration-200
+  "
+                  >
+                    Sign Up
+                  </TabsTrigger>
+
+
                 </TabsList>
+
 
                 {/* SIGN IN */}
                 <TabsContent value="signin">

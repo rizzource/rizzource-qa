@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 
-import { useAuth } from '@/components/AuthProvider';
+
 import { toast } from 'react-toastify';
 
 export const useChoiceTallies = (pollId) => {

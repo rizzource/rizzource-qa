@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Calendar, X } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 
-import { useAuth } from '@/components/AuthProvider';
+
 import { toast } from 'react-toastify';
 import { useBestChoice } from '@/hooks/useBestChoice';
 import { useChoiceTallies } from '@/hooks/useChoiceTallies';

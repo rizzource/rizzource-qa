@@ -11,7 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Users, Trash2, UserPlus, Pencil } from 'lucide-react';
 import { toast } from 'sonner';
-import { useAuth } from '@/components/AuthProvider';
+
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
 const teamMemberSchema = z.object({

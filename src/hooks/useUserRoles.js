@@ -1,10 +1,10 @@
-import { useAuth } from '@/components/AuthProvider';
 
-export const useUserRoles = () => {
-  const { userRoles, isSuperAdmin, hasRole } = useAuth();
+
+export const useroles = () => {
+  const { roles, isSuperAdmin, hasRole } = useAuth();
 
   return {
-    userRoles,
+    roles,
     isSuperAdmin: isSuperAdmin(),
     isOwner: hasRole('owner'),
     isHR: hasRole('hr'),

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-import { useAuth } from '@/components/AuthProvider';
+
 
 /**
  * Hook to check user's role within a specific company

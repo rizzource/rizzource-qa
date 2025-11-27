@@ -1,15 +1,15 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Scale, Shield, LogOut, User, ArrowLeft } from "lucide-react";
-import { useAuth } from "./AuthProvider";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { ThemeToggle } from "./ThemeToggle";
 import { useTheme } from "next-themes";
 import logoLight from "@/assets/rizzource-logo-light.png";
 import logoDark from "@/assets/rizzource-logo-dark.png";
+import useAuth from "../hooks/useAuth";
 
 const Header = () => {
-  const { user, userProfile, userRoles, isSuperAdmin, signOut } = useAuth();
+  const { user, userProfile, roles, isSuperAdmin, signOut } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const { pathname } = useLocation();
@@ -70,7 +70,7 @@ const Header = () => {
                 Resource Hub
               </Link>
             )}
-            {(userRoles.includes('owner') || userRoles.includes('hr') || userRoles.includes('admin')) && (
+            {(roles?.includes('owner') || roles.includes('hr') || roles.includes('admin')) && (
               <Link to="/company-dashboard" className="font-bold text-primary hover:text-accent transition-colors">
                 Company
               </Link>
@@ -78,7 +78,7 @@ const Header = () => {
             <Link to="/jobs" className="font-bold text-primary hover:text-accent transition-colors">
               Jobs
             </Link>
-            {user && !isSuperAdmin() && !userRoles.includes('owner') && !userRoles.includes('hr') && !userRoles.includes('admin') && (
+            {user && !isSuperAdmin() && !roles.includes('owner') && !roles.includes('hr') && !roles.includes('admin') && (
               <Link to="/my-applications" className="font-bold text-primary hover:text-accent transition-colors">
                 My Applications
               </Link>
@@ -86,7 +86,7 @@ const Header = () => {
             {user ? (
               <>
                 <span className="text-xs sm:text-sm text-muted-foreground">
-                  {isSuperAdmin() ? "Super Admin" : userRoles.includes('owner') ? "Owner" : userRoles.includes('hr') ? "HR" : userRoles.includes('admin') ? "Admin" : userRoles.includes('employee') ? "Employee" : userProfile?.role === "mentor" ? "Mentor" : userProfile?.role === "mentee" ? "Mentee" : "User"}
+                  {isSuperAdmin() ? "Super Admin" : roles.includes('owner') ? "Owner" : roles.includes('hr') ? "HR" : roles.includes('admin') ? "Admin" : roles.includes('employee') ? "Employee" : userProfile?.role === "mentor" ? "Mentor" : userProfile?.role === "mentee" ? "Mentee" : "User"}
                 </span>
                 {isSuperAdmin() && (
                   <Link

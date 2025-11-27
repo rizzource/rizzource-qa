@@ -19,11 +19,11 @@ const AvailabilityScheduler = () => {
 
   useEffect(() => {
     // Get current user
-    const getCurrentUser = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      setCurrentUser(user);
-    };
-    getCurrentUser();
+    // const getCurrentUser = async () => {
+    //   const { data: { user } } = await supabase.auth.getUser();
+    //   setCurrentUser(user);
+    // };
+    // getCurrentUser();
 
     // Get scheduling data from location state or use defaults
     const data = location.state || {
