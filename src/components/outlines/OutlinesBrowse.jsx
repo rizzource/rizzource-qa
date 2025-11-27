@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 // ⛔️ Removed shadcn Dialog imports to avoid portal/z-index issues in this view
 import { Search, Filter, Star, Download, Eye, FileText, BookOpen, X } from "lucide-react";
 import { Link } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
+
 
 
 const OutlinesBrowse = () => {

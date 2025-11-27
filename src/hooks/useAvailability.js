@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { supabase } from '@/integrations/supabase/client';
+
 import { toast } from 'react-toastify';
 
 // Generate 15-minute time slots between start and end times

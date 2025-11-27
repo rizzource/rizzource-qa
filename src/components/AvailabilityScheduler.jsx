@@ -7,7 +7,7 @@ import { format, addDays, startOfWeek } from 'date-fns';
 import { useAvailability } from '@/hooks/useAvailability';
 import AvailabilityGrid from './AvailabilityGrid';
 import GroupHeatmapGrid from './GroupHeatmapGrid';
-import { supabase } from '@/integrations/supabase/client';
+
 import { toast } from 'react-toastify';
 
 const AvailabilityScheduler = () => {

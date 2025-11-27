@@ -3,7 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Calendar, X } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
-import { supabase } from '@/integrations/supabase/client';
+
 import { useAuth } from '@/components/AuthProvider';
 import { toast } from 'react-toastify';
 import { useBestChoice } from '@/hooks/useBestChoice';

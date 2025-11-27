@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Download, FileSpreadsheet, Shield } from 'lucide-react';
 import { useAuth } from './AuthProvider';
-import { supabase } from '@/integrations/supabase/client';
+
 import { toast } from 'react-toastify';
 import * as XLSX from 'xlsx';
 

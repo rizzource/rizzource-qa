@@ -7,7 +7,7 @@ import { Separator } from "@/components/ui/separator";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { ArrowLeft, Star, Download, FileText, Eye, User, X } from "lucide-react";
 import { toast } from 'react-toastify';
-import { supabase } from "@/integrations/supabase/client";
+
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { downloadOutlineAsPDF, downloadOutlineAsDocx } from "@/utils/outlineDownload";

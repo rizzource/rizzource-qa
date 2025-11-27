@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, Calendar, MapPin, Clock, ChevronLeft, ChevronRight, Pencil, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { createPortal } from 'react-dom';
-import { supabase } from '@/integrations/supabase/client';
+
 
 const mockEvents = [
   // --- Academic Timeline (Fall 2025) ---

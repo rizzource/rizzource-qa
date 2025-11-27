@@ -1,4 +1,4 @@
-import { supabase } from "@/integrations/supabase/client";
+
 
 export const saveJobsToDatabase = async (jobs, source) => {
   try {
