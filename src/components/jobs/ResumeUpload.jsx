@@ -76,6 +76,11 @@ const ResumeUpload = ({ onUploadComplete }) => {
       }
 
       onUploadComplete(file, extractedText);
+
+      navigate("/resume/editor", {
+        state: { file, extractedText }
+      });
+
       toast.success("Resume uploaded successfully!");
     } catch (err) {
       console.error(err);
