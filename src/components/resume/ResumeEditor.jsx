@@ -30,6 +30,12 @@ import {
     MapPin,
     Linkedin,
     Download,
+    Sparkles,
+    Shield,
+    Zap,
+    FileCheck,
+    FileUp,
+    Brain,
 } from "lucide-react"
 import { toast } from "sonner"
 import { generateNewBulletThunk, improveBulletThunk } from "../../redux/slices/userApiSlice"
@@ -477,26 +483,30 @@ const ResumeEditor = ({ onBack, initialFile = null, initialExtractedText = "" })
     if (!resumeData) {
         return (
             <div className="min-h-screen bg-background">
-                <div style={{marginTop: 90, marginLeft: 50}}>
-                    <Button variant="ghost" onClick={() => onBack()}>
-                        <ArrowLeft className="h-4 w-4 mr-2" /> Back
-                    </Button>
-                    </div>
-                <div className="container mx-auto px-4 py-8 max-w-2xl" style={{marginTop: -30}}>
+                <div className="container mx-auto px-4 py-8 max-w-2xl">
+                        <Button variant="ghost" onClick={() => onBack()} className="mb-6">
+                            <ArrowLeft className="h-4 w-4 mr-2" /> Back
+                        </Button>
+
                     <Card>
-                        <CardHeader>
-                            <CardTitle className="text-2xl flex items-center gap-2">
-                                <FileText className="h-6 w-6 text-primary" />
-                                Upload Your Resume
-                            </CardTitle>
-                            <p className="text-muted-foreground">Upload a PDF or DOCX file to enhance your resume with AI</p>
+                        <CardHeader className="text-center pb-2">
+                            <div className="flex justify-center mb-4">
+                                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center">
+                                    <FileText className="h-8 w-8 text-primary" />
+                                </div>
+                            </div>
+                            <CardTitle className="text-2xl">Upload Your Resume</CardTitle>
+                            <p className="text-muted-foreground mt-2">Upload a PDF or DOCX file to enhance your resume with AI</p>
                         </CardHeader>
-                        <CardContent>
+                        <CardContent className="space-y-6">
                             <div
                                 className={`
-                  border-2 border-dashed rounded-xl p-12 text-center
-                  transition-colors duration-300 cursor-pointer
-                  ${isParsing ? "border-primary bg-primary/5" : "border-border hover:border-primary hover:bg-secondary/50"}
+                  border-2 border-dashed rounded-xl p-10 text-center
+                  transition-all duration-300 cursor-pointer
+                  ${isParsing
+                                        ? "border-primary bg-primary/5"
+                                        : "border-border hover:border-primary hover:bg-secondary/50 hover:shadow-lg"
+                                    }
                 `}
                                 onDrop={handleDrop}
                                 onDragOver={(e) => e.preventDefault()}
@@ -512,27 +522,68 @@ const ResumeEditor = ({ onBack, initialFile = null, initialExtractedText = "" })
 
                                 {isParsing ? (
                                     <div className="flex flex-col items-center gap-4">
-                                        <Loader2 className="h-12 w-12 text-primary animate-spin" />
+                                        <div className="relative">
+                                            <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center">
+                                                <Loader2 className="h-10 w-10 text-primary animate-spin" />
+                                            </div>
+                                        </div>
                                         <div>
-                                            <p className="text-lg font-medium">Parsing your resume...</p>
-                                            <p className="text-muted-foreground text-sm">Extracting sections and content</p>
+                                            <p className="text-lg font-semibold">Parsing your resume...</p>
+                                            <p className="text-muted-foreground text-sm mt-1">Extracting sections and content with AI</p>
                                         </div>
                                     </div>
                                 ) : (
-                                    <div className="flex flex-col items-center gap-4">
-                                        <div className="w-16 h-16 rounded-full bg-secondary flex items-center justify-center">
-                                            <Upload className="h-8 w-8 text-primary" />
+                                    <div className="flex flex-col items-center gap-5">
+                                        <div className="relative">
+                                            <div className="w-20 h-20 rounded-full bg-secondary flex items-center justify-center group-hover:scale-110 transition-transform">
+                                                <FileUp className="h-10 w-10 text-primary" />
+                                            </div>
+                                            <div className="absolute -top-1 -right-1 w-6 h-6 rounded-full bg-green-500 flex items-center justify-center">
+                                                <Upload className="h-4 w-4 text-white" />
+                                            </div>
                                         </div>
                                         <div>
-                                            <p className="text-lg font-medium">Drop your resume here or click to browse</p>
-                                            <p className="text-muted-foreground text-sm mt-1">Supports PDF and DOCX files</p>
+                                            <p className="text-lg font-semibold">Drop your resume here or click to browse</p>
+                                            <p className="text-muted-foreground text-sm mt-1">
+                                                We'll parse and structure your content automatically
+                                            </p>
                                         </div>
-                                        <div className="flex gap-2">
-                                            <Badge variant="outline">PDF</Badge>
-                                            <Badge variant="outline">DOCX</Badge>
+                                        <div className="flex gap-3">
+                                            <Badge variant="outline" className="px-3 py-1 flex items-center gap-1.5">
+                                                <FileCheck className="h-3.5 w-3.5 text-red-500" />
+                                                PDF
+                                            </Badge>
+                                            <Badge variant="outline" className="px-3 py-1 flex items-center gap-1.5">
+                                                <FileCheck className="h-3.5 w-3.5 text-blue-500" />
+                                                DOCX
+                                            </Badge>
                                         </div>
                                     </div>
                                 )}
+                            </div>
+
+                            <div className="grid grid-cols-3 gap-4 pt-4">
+                                <div className="flex flex-col items-center text-center p-4 rounded-lg bg-secondary/30">
+                                    <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center mb-2">
+                                        <Sparkles className="h-5 w-5 text-primary" />
+                                    </div>
+                                    <p className="text-sm font-medium">AI-Powered</p>
+                                    <p className="text-xs text-muted-foreground mt-1">Enhance bullets with AI</p>
+                                </div>
+                                <div className="flex flex-col items-center text-center p-4 rounded-lg bg-secondary/30">
+                                    <div className="w-10 h-10 rounded-full bg-green-500/10 flex items-center justify-center mb-2">
+                                        <Shield className="h-5 w-5 text-green-500" />
+                                    </div>
+                                    <p className="text-sm font-medium">Secure</p>
+                                    <p className="text-xs text-muted-foreground mt-1">Your data stays private</p>
+                                </div>
+                                <div className="flex flex-col items-center text-center p-4 rounded-lg bg-secondary/30">
+                                    <div className="w-10 h-10 rounded-full bg-orange-500/10 flex items-center justify-center mb-2">
+                                        <Zap className="h-5 w-5 text-orange-500" />
+                                    </div>
+                                    <p className="text-sm font-medium">Instant</p>
+                                    <p className="text-xs text-muted-foreground mt-1">Results in seconds</p>
+                                </div>
                             </div>
                         </CardContent>
                     </Card>
