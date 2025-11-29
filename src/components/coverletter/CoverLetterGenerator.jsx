@@ -32,6 +32,8 @@ const CoverLetterGenerator = ({ onBack, initialResumeText = "", initialJobTitle 
     const [resumeText, setResumeText] = useState(initialResumeText)
     const [resumeFile, setResumeFile] = useState(null)
     const [parsing, setParsing] = useState(false)
+    // Mobile screen toggle: 'editor' | 'preview'
+    const [mobileView, setMobileView] = useState("editor");
 
     // Job details state
     const [jobTitle, setJobTitle] = useState(initialJobTitle)
@@ -213,10 +215,42 @@ JavaScript, TypeScript, React, Node.js, Python, AWS, Docker, PostgreSQL`
     return (<>
 
         <div className="min-h-screen bg-background flex flex-col" style={{ marginTop: 60 }}>
+            {/* Mobile Toggle Bar */}
+            <div className="md:hidden sticky top-[60px] z-20 bg-background border-b">
+                <div className="flex">
+                    <button
+                        className={`flex-1 py-3 text-center text-sm font-medium ${mobileView === "editor"
+                            ? "border-b-2 border-primary text-primary"
+                            : "text-muted-foreground"
+                            }`}
+                        onClick={() => setMobileView("editor")}
+                    >
+                        Editor
+                    </button>
+
+                    <button
+                        className={`flex-1 py-3 text-center text-sm font-medium ${mobileView === "preview"
+                            ? "border-b-2 border-primary text-primary"
+                            : "text-muted-foreground"
+                            }`}
+                        onClick={() => setMobileView("preview")}
+                    >
+                        Preview
+                    </button>
+                </div>
+            </div>
+
             {/* Main split view */}
-            <div className="flex-1 flex overflow-hidden">
+            <div className="flex-1 flex overflow-hidden md:flex-row flex-col">
                 {/* Left Panel - Editor */}
-                <div className="w-1/2 border-r flex flex-col">
+                <div
+                    className={`
+        flex flex-col border-r
+        ${mobileView === "editor" ? "block" : "hidden"}
+        md:block md:w-1/2
+    `}
+                >
+
                     {/* Editor Header */}
                     <div className="p-4 border-b bg-card flex items-center gap-3">
                         <Button variant="ghost" size="sm" onClick={() => navigate(`/jobs/${jobId}`)}>
@@ -231,7 +265,8 @@ JavaScript, TypeScript, React, Node.js, Python, AWS, Docker, PostgreSQL`
                     </div>
 
                     {/* Editor Content - Scrollable */}
-                    <div className="flex-1 overflow-y-auto p-6 space-y-4">
+                    <div className="flex-1 overflow-y-auto p-6 space-y-6 md:space-y-4">
+
                         {/* Resume Section */}
                         <Card>
                             <CardHeader className="cursor-pointer py-3" onClick={() => toggleSection("resume")}>
@@ -420,7 +455,14 @@ JavaScript, TypeScript, React, Node.js, Python, AWS, Docker, PostgreSQL`
                 </div>
 
                 {/* Right Panel - Preview */}
-                <div className="w-1/2 flex flex-col bg-muted/30">
+                <div
+                    className={`
+        flex flex-col bg-muted/30
+        ${mobileView === "preview" ? "block" : "hidden"}
+        md:block md:w-1/2
+    `}
+                >
+
                     {/* Preview Header */}
                     <div className="p-4 border-b bg-card flex items-center justify-between">
                         <span className="font-semibold">Live Preview</span>

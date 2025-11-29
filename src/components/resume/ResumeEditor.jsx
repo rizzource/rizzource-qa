@@ -644,7 +644,8 @@ const ResumeEditor = ({ onBack, initialFile = null, initialExtractedText = "" })
                 >
 
                     <ScrollArea className="h-full">
-                        <div className="p-6 space-y-6">
+                        <div className="p-6 space-y-8 md:space-y-6">
+
                             {/* Personal Info Section */}
                             {/* <div className="flex items-center gap-4"> */}
                             {/* {onBack && ( */}
@@ -669,7 +670,7 @@ const ResumeEditor = ({ onBack, initialFile = null, initialExtractedText = "" })
                                 </CardHeader>
                                 {!collapsedSections["personal"] && (
                                     <CardContent className="space-y-4 pt-0">
-                                        <div className="grid grid-cols-2 gap-4">
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-4">
                                             <div>
                                                 <label className="text-sm font-medium text-muted-foreground">Full Name</label>
                                                 <Input
@@ -830,7 +831,7 @@ const ResumeEditor = ({ onBack, initialFile = null, initialExtractedText = "" })
                                             </div>
 
                                             {/* Bullets */}
-                                            <div className="space-y-2">
+                                            <div className="space-y-4 md:space-y-2">
                                                 {exp.bullets.map((bullet) => (
                                                     <div key={bullet.id} className="group relative">
                                                         <div className="flex items-start gap-2">
