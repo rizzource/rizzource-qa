@@ -35,42 +35,6 @@ import { toast } from "sonner"
 import { generateNewBulletThunk, improveBulletThunk } from "../../redux/slices/userApiSlice"
 import { useDispatch } from "react-redux"
 
-// Mock AI function - replace with real API
-// const dispatch = useDispatch();
-const generateAIBullets = async (bulletText, jobTitle) => {
-    const result = await dispatch(
-        improveBulletThunk({
-            bulletText,
-            jobTitle
-        })
-    );
-
-    if (result.meta.requestStatus === "fulfilled") {
-        return result.payload.improvements;
-    } else {
-        toast.error("Failed to improve bullet");
-        return [];
-    }
-};
-
-
-const generateNewBullet = async () => {
-    const result = await dispatch(
-        generateNewBulletThunk({
-            jobTitle,
-            company
-        })
-    );
-
-    if (result.meta.requestStatus === "fulfilled") {
-        return result.payload.newBullets;
-    } else {
-        toast.error("Could not generate bullet");
-        return [];
-    }
-};
-
-
 // File parser mock - in real implementation, use a library like pdf-parse or mammoth
 const parseResumeFile = async (file) => {
     await new Promise((resolve) => setTimeout(resolve, 2000))
@@ -262,6 +226,41 @@ const ResumeEditor = ({ onBack, initialFile = null, initialExtractedText = "" })
     // Section collapse state
     const [collapsedSections, setCollapsedSections] = useState({})
 
+    const dispatch = useDispatch();
+    const generateAIBullets = async (bulletText, jobTitle) => {
+        const result = await dispatch(
+            improveBulletThunk({
+                bulletText,
+                jobTitle
+            })
+        );
+
+        if (result.meta.requestStatus === "fulfilled") {
+            return result.payload.improvements;
+        } else {
+            toast.error("Failed to improve bullet");
+            return [];
+        }
+    };
+
+
+    const generateNewBullet = async () => {
+        const result = await dispatch(
+            generateNewBulletThunk({
+                jobTitle,
+                company
+            })
+        );
+
+        if (result.meta.requestStatus === "fulfilled") {
+            return result.payload.newBullets;
+        } else {
+            toast.error("Could not generate bullet");
+            return [];
+        }
+    };
+
+
     // Handle file upload
     const handleFileSelect = async (e) => {
         const file = e.target.files?.[0]
@@ -323,7 +322,12 @@ const ResumeEditor = ({ onBack, initialFile = null, initialExtractedText = "" })
 
         try {
             const suggestions = await generateAIBullets(bulletText, exp.title)
-            setAiSuggestions(suggestions.map((text, i) => ({ id: `sug-${i}`, text })))
+            setAiSuggestions(
+                suggestions.map((text, i) => ({
+                    id: `sug-${i}`,
+                    text: text.replace(/^\d+\.\s*/, "")
+                }))
+            );
         } catch (error) {
             toast.error("Failed to generate suggestions")
         } finally {
@@ -341,7 +345,12 @@ const ResumeEditor = ({ onBack, initialFile = null, initialExtractedText = "" })
         setIsGenerating(true)
         try {
             const suggestions = await generateAIBullets(bullet.text, exp.title)
-            setAiSuggestions(suggestions.map((text, i) => ({ id: `sug-new-${i}`, text })))
+            setAiSuggestions(
+                suggestions.map((text, i) => ({
+                    id: `sug-new-${i}`,
+                    text: text.replace(/^\d+\.\s*/, "")
+                }))
+            );
         } catch (error) {
             toast.error("Failed to regenerate suggestions")
         } finally {
@@ -379,7 +388,12 @@ const ResumeEditor = ({ onBack, initialFile = null, initialExtractedText = "" })
 
         try {
             const suggestions = await generateNewBullet(exp.title, exp.company)
-            setAiSuggestions(suggestions.map((text, i) => ({ id: `new-${i}`, text })))
+            setAiSuggestions(
+                suggestions.map((text, i) => ({
+                    id: `new-${i}`,
+                    text: text.replace(/^\d+\.\s*/, "")
+                }))
+            );
         } catch (error) {
             toast.error("Failed to generate bullet suggestions")
         } finally {
@@ -463,13 +477,12 @@ const ResumeEditor = ({ onBack, initialFile = null, initialExtractedText = "" })
     if (!resumeData) {
         return (
             <div className="min-h-screen bg-background">
-                <div className="container mx-auto px-4 py-8 max-w-2xl">
-                    {onBack && (
-                        <Button variant="ghost" onClick={onBack} className="mb-6">
-                            <ArrowLeft className="h-4 w-4 mr-2" /> Back
-                        </Button>
-                    )}
-
+                <div style={{marginTop: 90, marginLeft: 50}}>
+                    <Button variant="ghost" onClick={() => onBack()}>
+                        <ArrowLeft className="h-4 w-4 mr-2" /> Back
+                    </Button>
+                    </div>
+                <div className="container mx-auto px-4 py-8 max-w-2xl" style={{marginTop: -30}}>
                     <Card>
                         <CardHeader>
                             <CardTitle className="text-2xl flex items-center gap-2">
@@ -530,7 +543,7 @@ const ResumeEditor = ({ onBack, initialFile = null, initialExtractedText = "" })
 
     // Main Editor with Side-by-Side Preview
     return (
-        <div className="min-h-screen bg-background">
+        <div className="min-h-screen bg-background" style={{ marginTop: 70 }}>
             {/* Header */}
             {/* <div className="border-b bg-background sticky top-0 z-10">
                 <div className="container mx-auto px-4 py-4">
@@ -547,13 +560,13 @@ const ResumeEditor = ({ onBack, initialFile = null, initialExtractedText = "" })
                     <ScrollArea className="h-full">
                         <div className="p-6 space-y-6">
                             {/* Personal Info Section */}
-                            <div className="flex items-center gap-4">
-                                {onBack && (
-                                    <Button variant="ghost" onClick={onBack} size="sm">
-                                        <ArrowLeft className="h-4 w-4 mr-2" /> Back
-                                    </Button>
-                                )}
-                            </div>
+                            {/* <div className="flex items-center gap-4"> */}
+                            {/* {onBack && ( */}
+                            <Button variant="ghost" onClick={() => setResumeData(false)} size="sm">
+                                <ArrowLeft className="h-4 w-4 mr-2" /> Back
+                            </Button>
+                            {/* )} */}
+                            {/* </div> */}
                             <Card>
                                 <CardHeader className="cursor-pointer py-3" onClick={() => toggleSection("personal")}>
                                     <div className="flex items-center justify-between">
@@ -842,7 +855,7 @@ const ResumeEditor = ({ onBack, initialFile = null, initialExtractedText = "" })
                                                     variant="outline"
                                                     size="sm"
                                                     onClick={() => handleAddManualBullet(exp.id)}
-                                                    className="text-xs h-8"
+                                                    className="text-xs h-6"
                                                 >
                                                     <Plus className="h-3 w-3 mr-1" />
                                                     Add Bullet
@@ -851,7 +864,7 @@ const ResumeEditor = ({ onBack, initialFile = null, initialExtractedText = "" })
                                                     variant="outline"
                                                     size="sm"
                                                     onClick={() => handleAddBulletWithAI(exp.id)}
-                                                    className="text-xs h-8 relative overflow-hidden group px-3 font-semibold rounded-lg
+                                                    className="text-xs h-6 relative overflow-hidden group px-3 font-semibold rounded-lg
                                    bg-gradient-to-r from-accent to-primary text-primary-foreground shadow-sm
                                    transition-all duration-300 ease-out hover:shadow-md hover:scale-105"
                                                 >

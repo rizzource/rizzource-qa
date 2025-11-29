@@ -99,19 +99,13 @@ const JobDetails = () => {
   // NEW: Generate Cover Letter
   // -----------------------------
   const handleGenerateCoverLetter = () => {
-    if (!tempResume?.text) {
-      toast.error("Please upload your resume first");
-      setShowResumeUpload(true);
-      return;
-    }
-
-    navigate("/cover-letter/generator", {
-      state: {
-        resumeData: tempResume.text,
-        jobTitle: job.title,
-        company: job.company,
-      },
-    });
+    navigate("/cover-letter/generator"
+      , {
+        state: {
+          jobId: job.id,
+        },
+      }
+    );
   };
 
   const handleApplyClick = () => {
@@ -129,7 +123,7 @@ const JobDetails = () => {
     return (
       <>
         <Header />
-        <div style={{ marginTop: "auto" }}><ResumeEditor /></div>
+        <div style={{ marginTop: "auto" }}><ResumeEditor onBack={() => setShowResumeUpload(false)} /></div>
         <Footer />
       </>
     );
@@ -254,26 +248,28 @@ const JobDetails = () => {
                     </p>
                     <Button onClick={() => navigate("/auth")}>Sign In</Button>
                   </div>
-                ) : !tempResume ? (
-                  <div className="text-center">
-                    <p className="text-muted-foreground mb-2">
-                      Please upload your resume to apply
-                    </p>
-                    <Button onClick={() => setShowResumeUpload(true)}>
-                      Upload Resume
-                    </Button>
-                  </div>
-                ) : (
-                  <div className="flex justify-center">
-                    <Button
-                      size="lg"
-                      className="px-6 py-3 text-base font-semibold rounded-xl hover:bg-blue-100 hover:text-blue-600 transition-colors duration-300"
-                      onClick={handleApplyClick}
-                    >
-                      {job.application_url ? "Visit Website" : "Apply Now"}
-                    </Button>
-                  </div>
-                )}
+                  // ) : !tempResume ? (
+                  //   <div className="text-center">
+                  //     <p className="text-muted-foreground mb-2">
+                  //       Please upload your resume to apply
+                  //     </p>
+                  //     <Button onClick={() => setShowResumeUpload(true)}>
+                  //       Upload Resume
+                  //     </Button>
+                  //   </div>
+                )
+                  :
+                  (
+                    <div className="flex justify-center">
+                      <Button
+                        size="lg"
+                        className="px-6 py-3 text-base font-semibold rounded-xl hover:bg-blue-100 hover:text-blue-600 transition-colors duration-300"
+                        onClick={handleApplyClick}
+                      >
+                        {job.application_url ? "Visit Website" : "Apply Now"}
+                      </Button>
+                    </div>
+                  )}
               </div>
             </CardContent>
           </Card>

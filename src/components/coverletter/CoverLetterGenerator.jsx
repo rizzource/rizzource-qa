@@ -1,5 +1,3 @@
-"use client"
-
 import { useState, useRef } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card"
@@ -27,6 +25,7 @@ import {
 import { toast } from "sonner"
 import { generateCoverLetterThunk, reGenerateCoverLetterThunk } from "../../redux/slices/userApiSlice"
 import { useDispatch } from "react-redux"
+import { useLocation, useNavigate } from "react-router-dom"
 
 const CoverLetterGenerator = ({ onBack, initialResumeText = "", initialJobTitle = "", initialCompany = "" }) => {
     // Resume state
@@ -208,16 +207,19 @@ JavaScript, TypeScript, React, Node.js, Python, AWS, Docker, PostgreSQL`
 
         html2pdf().set(opt).from(element).save()
     }
+    const navigate = useNavigate();
+    const location = useLocation();
+    const { jobId } = location.state || {};
+    return (<>
 
-    return (
-        <div className="min-h-screen bg-background flex flex-col">
+        <div className="min-h-screen bg-background flex flex-col" style={{ marginTop: 60 }}>
             {/* Main split view */}
             <div className="flex-1 flex overflow-hidden">
                 {/* Left Panel - Editor */}
                 <div className="w-1/2 border-r flex flex-col">
                     {/* Editor Header */}
                     <div className="p-4 border-b bg-card flex items-center gap-3">
-                        <Button variant="ghost" size="sm" onClick={onBack}>
+                        <Button variant="ghost" size="sm" onClick={() => navigate(`/jobs/${jobId}`)}>
                             <ArrowLeft className="h-4 w-4 mr-2" /> Back
                         </Button>
                         {resumeFile && (
@@ -423,8 +425,8 @@ JavaScript, TypeScript, React, Node.js, Python, AWS, Docker, PostgreSQL`
                     <div className="p-4 border-b bg-card flex items-center justify-between">
                         <span className="font-semibold">Live Preview</span>
                         <div className="flex items-center gap-2">
-                            <FileText className="h-4 w-4 text-muted-foreground" />
-                            <Input value={letterName} onChange={(e) => setLetterName(e.target.value)} className="w-40 h-8 text-sm" />
+                            {/* <FileText className="h-4 w-4 text-muted-foreground" /> */}
+                            {/* <Input value={letterName} onChange={(e) => setLetterName(e.target.value)} className="w-40 h-8 text-sm" /> */}
                             <Button variant="outline" size="sm" onClick={handleExportPDF} disabled={!coverLetter}>
                                 <Download className="h-4 w-4 mr-2" />
                                 Export PDF
@@ -480,6 +482,8 @@ JavaScript, TypeScript, React, Node.js, Python, AWS, Docker, PostgreSQL`
                 </div>
             </div>
         </div>
+
+    </>
     )
 }
 

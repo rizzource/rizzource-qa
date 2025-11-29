@@ -25,6 +25,7 @@ import CompanyDashboard from "./pages/CompanyDashboard";
 import CVEnhancer from "@/pages/CVEnhancer";
 import CoverLetterGenerator from './components/coverletter/CoverLetterGenerator';
 import ResumeEditor from './components/resume/ResumeEditor';
+import Layout from './Layout';
 
 
 const queryClient = new QueryClient();
@@ -55,40 +56,42 @@ const AppContent = () => {
       <BrowserRouter>
         <ScrollToTop />
         <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/auth" element={<Auth />} />
-          <Route path="/resources" element={<ResourceHub />} />
-          <Route path="/outlines" element={<OutlinesHub />} />
+          <Route element={<Layout />}>
+            <Route path="/" element={<Index />} />
+            <Route path="/auth" element={<Auth />} />
+            <Route path="/resources" element={<ResourceHub />} />
+            <Route path="/outlines" element={<OutlinesHub />} />
 
-          <Route path="/outlines/:id" element={<OutlineView />} />
-          <Route path="/availability" element={<FixedSlotPoll />} />
-          <Route path="/matchup" element={<MatchupPage />} />
-          <Route path="/apalsa-mentorship" element={<Index mentorshipPage={true} />} />
-          <Route path="/mentorship-selection" element={<Index mentorshipPage={true} initialState="selection" />} />
-          <Route path="/thank-you" element={<ThankYou />} />
-          <Route path="/jobs" element={<JobPortal />} />
-          <Route path="/jobs/:id" element={<JobDetails />} />
-          <Route path="/job-application-success" element={<JobApplicationSuccess />} />
-          <Route path="/cover-letter/generator" element={<CoverLetterGenerator />} />
-          <Route path="/my-applications" element={
-            <ProtectedRoute>
-              <MyApplications />
-            </ProtectedRoute>
-          } />
-          <Route path="/company-dashboard" element={
-            <ProtectedRoute>
-              <CompanyDashboard />
-            </ProtectedRoute>
-          } />
-          <Route path="/admin" element={
-            <ProtectedRoute requireSuperAdmin={true}>
-              <AdminDashboard />
-            </ProtectedRoute>
-          } />
-          <Route path="/cv-enhancer/:jobId" element={<CVEnhancer />} />
-          <Route path="/resume/editor" element={<ResumeEditor />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
+            <Route path="/outlines/:id" element={<OutlineView />} />
+            <Route path="/availability" element={<FixedSlotPoll />} />
+            <Route path="/matchup" element={<MatchupPage />} />
+            <Route path="/apalsa-mentorship" element={<Index mentorshipPage={true} />} />
+            <Route path="/mentorship-selection" element={<Index mentorshipPage={true} initialState="selection" />} />
+            <Route path="/thank-you" element={<ThankYou />} />
+            <Route path="/jobs" element={<JobPortal />} />
+            <Route path="/jobs/:id" element={<JobDetails />} />
+            <Route path="/job-application-success" element={<JobApplicationSuccess />} />
+            <Route path="/cover-letter/generator" element={<CoverLetterGenerator />} />
+            <Route path="/my-applications" element={
+              <ProtectedRoute>
+                <MyApplications />
+              </ProtectedRoute>
+            } />
+            <Route path="/company-dashboard" element={
+              <ProtectedRoute>
+                <CompanyDashboard />
+              </ProtectedRoute>
+            } />
+            <Route path="/admin" element={
+              <ProtectedRoute requireSuperAdmin={true}>
+                <AdminDashboard />
+              </ProtectedRoute>
+            } />
+            <Route path="/cv-enhancer/:jobId" element={<CVEnhancer />} />
+            <Route path="/resume/editor" element={<ResumeEditor />} />
+            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+            <Route path="*" element={<NotFound />} />
+          </Route>
         </Routes>
       </BrowserRouter>
     </>
