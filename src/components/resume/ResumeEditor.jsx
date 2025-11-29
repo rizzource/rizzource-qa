@@ -218,6 +218,9 @@ const ResumeEditor = ({ onBack, initialFile = null, initialExtractedText = "" })
     // Upload state
     const [uploadedFile, setUploadedFile] = useState(initialFile)
     const [isParsing, setIsParsing] = useState(false)
+    // Mobile responsive mode toggle
+    const [mobileView, setMobileView] = useState("editor"); // 'editor' | 'preview'
+
     const fileInputRef = useRef(null)
 
     // Resume data state
@@ -484,9 +487,9 @@ const ResumeEditor = ({ onBack, initialFile = null, initialExtractedText = "" })
         return (
             <div className="min-h-screen bg-background">
                 <div className="container mx-auto px-4 py-8 max-w-2xl">
-                        <Button variant="ghost" onClick={() => onBack()} className="mb-6">
-                            <ArrowLeft className="h-4 w-4 mr-2" /> Back
-                        </Button>
+                    <Button variant="ghost" onClick={() => onBack()} className="mb-6">
+                        <ArrowLeft className="h-4 w-4 mr-2" /> Back
+                    </Button>
 
                     <Card>
                         <CardHeader className="text-center pb-2">
@@ -605,9 +608,41 @@ const ResumeEditor = ({ onBack, initialFile = null, initialExtractedText = "" })
             </div> */}
 
             {/* Main Content - Split View */}
-            <div className="flex h-[calc(100vh-73px)]">
+            {/* Mobile Toggle Bar */}
+            <div className="md:hidden sticky top-[73px] z-20 bg-background border-b">
+                <div className="flex">
+                    <button
+                        className={`flex-1 py-3 text-center text-sm font-medium ${mobileView === "editor"
+                            ? "border-b-2 border-primary text-primary"
+                            : "text-muted-foreground"
+                            }`}
+                        onClick={() => setMobileView("editor")}
+                    >
+                        Editor
+                    </button>
+
+                    <button
+                        className={`flex-1 py-3 text-center text-sm font-medium ${mobileView === "preview"
+                            ? "border-b-2 border-primary text-primary"
+                            : "text-muted-foreground"
+                            }`}
+                        onClick={() => setMobileView("preview")}
+                    >
+                        Preview
+                    </button>
+                </div>
+            </div>
+
+            <div className="flex h-[calc(100vh-73px)] md:flex-row flex-col">
                 {/* Left Panel - Editor */}
-                <div className="w-1/2 border-r overflow-hidden">
+                <div
+                    className={`
+        border-r overflow-hidden
+        ${mobileView === "editor" ? "block" : "hidden"}
+        md:block md:w-1/2
+    `}
+                >
+
                     <ScrollArea className="h-full">
                         <div className="p-6 space-y-6">
                             {/* Personal Info Section */}
@@ -1112,7 +1147,14 @@ const ResumeEditor = ({ onBack, initialFile = null, initialExtractedText = "" })
                 </div>
 
                 {/* Right Panel - Live Preview */}
-                <div className="w-1/2 bg-muted/30 overflow-hidden">
+                <div
+                    className={`
+        bg-muted/30 overflow-hidden
+        ${mobileView === "preview" ? "block" : "hidden"}
+        md:block md:w-1/2
+    `}
+                >
+
                     <div className="h-full flex flex-col">
                         <div className="p-3 border-b bg-background flex items-center justify-between">
                             <span className="text-sm font-medium text-muted-foreground">Live Preview</span>
