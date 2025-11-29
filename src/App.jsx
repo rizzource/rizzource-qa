@@ -23,17 +23,18 @@ import JobApplicationSuccess from "./pages/JobApplicationSuccess";
 import MyApplications from "./pages/MyApplications";
 import CompanyDashboard from "./pages/CompanyDashboard";
 import CVEnhancer from "@/pages/CVEnhancer";
-import ResumeEditor from "./components/ResumeEditor";
+import CoverLetterGenerator from './components/coverletter/CoverLetterGenerator';
+import ResumeEditor from './components/resume/ResumeEditor';
 
 
 const queryClient = new QueryClient();
 
 const AppContent = () => {
   const { theme } = useTheme();
-  
+
   return (
     <>
-      <ToastContainer 
+      <ToastContainer
         position="top-center"
         autoClose={5000}
         hideProgressBar={false}
@@ -58,7 +59,7 @@ const AppContent = () => {
           <Route path="/auth" element={<Auth />} />
           <Route path="/resources" element={<ResourceHub />} />
           <Route path="/outlines" element={<OutlinesHub />} />
-          
+
           <Route path="/outlines/:id" element={<OutlineView />} />
           <Route path="/availability" element={<FixedSlotPoll />} />
           <Route path="/matchup" element={<MatchupPage />} />
@@ -68,6 +69,7 @@ const AppContent = () => {
           <Route path="/jobs" element={<JobPortal />} />
           <Route path="/jobs/:id" element={<JobDetails />} />
           <Route path="/job-application-success" element={<JobApplicationSuccess />} />
+          <Route path="/cover-letter/generator" element={<CoverLetterGenerator />} />
           <Route path="/my-applications" element={
             <ProtectedRoute>
               <MyApplications />

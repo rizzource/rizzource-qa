@@ -1,5 +1,8 @@
 // src/components/jobs/ResumeUpload.jsx
+"use client";
+
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -13,10 +16,14 @@ import workerSrc from "pdfjs-dist/build/pdf.worker?url";
 pdfjsLib.GlobalWorkerOptions.workerSrc = workerSrc;
 
 const ResumeUpload = ({ onUploadComplete }) => {
+  const navigate = useNavigate();
+
   const [uploading, setUploading] = useState(false);
   const [resumeUrl, setResumeUrl] = useState("");
 
+  // -----------------------------
   // Extract text from PDF
+  // -----------------------------
   const extractPdfText = async (arrayBuffer) => {
     const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
     let text = "";
@@ -31,12 +38,18 @@ const ResumeUpload = ({ onUploadComplete }) => {
     return text.trim();
   };
 
-  // Extract text from DOC/DOCX
+  // -----------------------------
+  // Extract text from DOC / DOCX
+  // (Simple fallback parser)
+  // -----------------------------
   const extractDocText = async (file) => {
     const raw = await file.text();
     return raw.trim().slice(0, 8000);
   };
 
+  // -----------------------------
+  // Handle file upload
+  // -----------------------------
   const handleFileUpload = async (event) => {
     const file = event.target.files?.[0];
     if (!file) return;
@@ -78,7 +91,7 @@ const ResumeUpload = ({ onUploadComplete }) => {
       onUploadComplete(file, extractedText);
 
       navigate("/resume/editor", {
-        state: { file, extractedText }
+        state: { file, extractedText },
       });
 
       toast.success("Resume uploaded successfully!");
@@ -90,16 +103,22 @@ const ResumeUpload = ({ onUploadComplete }) => {
     }
   };
 
+  // -----------------------------
+  // Handle URL mode
+  // -----------------------------
   const handleUrlSubmit = () => {
     if (!resumeUrl.trim()) {
       toast.error("Please enter a valid URL");
       return;
     }
 
-    onUploadComplete(resumeUrl, ""); // URL mode (rarely used)
+    onUploadComplete(resumeUrl, "");
     toast.success("Resume URL saved");
   };
 
+  // -----------------------------
+  // UI
+  // -----------------------------
   return (
     <Card>
       <CardHeader>

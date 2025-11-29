@@ -6,7 +6,8 @@ import CryptoJS from "crypto-js";
 // -----------------------------------
 // CONFIG
 // -----------------------------------
-const BASE_URL = "https://rizzource-c2amh0adhpcbgjgx.canadacentral-01.azurewebsites.net/api";
+const BASE_URL =
+    "https://rizzource-c2amh0adhpcbgjgx.canadacentral-01.azurewebsites.net/api";
 const SECRET_KEY = "33Browntrucks!@#";
 
 // -----------------------------------
@@ -32,7 +33,7 @@ const storedSession = localStorage.getItem("rizzource_session");
 const restored = storedSession ? decrypt(storedSession) : null;
 
 // -----------------------------------
-// THUNKS
+// EXISTING THUNKS
 // -----------------------------------
 
 // LOGIN USER
@@ -54,7 +55,10 @@ export const loginUser = createAsyncThunk(
 // REGISTER USER
 export const registerUser = createAsyncThunk(
     "user/registerUser",
-    async ({ FirstName, LastName, UserName, Email, Password }, { rejectWithValue }) => {
+    async (
+        { FirstName, LastName, UserName, Email, Password },
+        { rejectWithValue }
+    ) => {
         try {
             const res = await axios.post(`${BASE_URL}/User/Register`, {
                 FirstName,
@@ -97,6 +101,103 @@ export const getScrappedJobs = createAsyncThunk(
 );
 
 // -----------------------------------
+// 🔵 NEW — AI THUNKS
+// -----------------------------------
+
+// 1️⃣ Generate Cover Letter
+export const generateCoverLetterThunk = createAsyncThunk(
+    "ai/generateCoverLetter",
+    async (
+        { resumeText, jobDescription, jobTitle, company, selectedTone },
+        { rejectWithValue }
+    ) => {
+        try {
+            const res = await axios.post(
+                `${BASE_URL}/ai/generate-cover-letter`,
+                {
+                    resumeText,
+                    jobDescription,
+                    jobTitle,
+                    company,
+                    tone: selectedTone,
+                }
+            );
+            return res.data; // expects { coverLetter }
+        } catch (err) {
+            return rejectWithValue(
+                err.response?.data || "Failed to generate cover letter"
+            );
+        }
+    }
+);
+
+// 2️⃣ Re-generate Cover Letter
+export const reGenerateCoverLetterThunk = createAsyncThunk(
+    "ai/reGenerateCoverLetter",
+    async (
+        { resumeText, jobDescription, jobTitle, company, tone },
+        { rejectWithValue }
+    ) => {
+        try {
+            const res = await axios.post(
+                `${BASE_URL}/ai/regenerate-cover-letter`,
+                {
+                    resumeText,
+                    jobDescription,
+                    jobTitle,
+                    company,
+                    tone,
+                }
+            );
+            return res.data; // expects { coverLetter }
+        } catch (err) {
+            return rejectWithValue(
+                err.response?.data || "Failed to regenerate"
+            );
+        }
+    }
+);
+
+// 3️⃣ Improve Existing Bullet
+export const improveBulletThunk = createAsyncThunk(
+    "ai/improveBullet",
+    async ({ bulletText, jobTitle }, { rejectWithValue }) => {
+        try {
+            const res = await axios.post(`${BASE_URL}/ai/improve-bullet`, {
+                bulletText,
+                jobTitle,
+            });
+            return res.data; // expects { improvements: [] }
+        } catch (err) {
+            return rejectWithValue(
+                err.response?.data || "Failed to improve bullet"
+            );
+        }
+    }
+);
+
+// 4️⃣ Generate New Bullet Ideas
+export const generateNewBulletThunk = createAsyncThunk(
+    "ai/generateNewBullet",
+    async ({ jobTitle, company }, { rejectWithValue }) => {
+        try {
+            const res = await axios.post(
+                `${BASE_URL}/ai/generate-new-bullet`,
+                {
+                    jobTitle,
+                    company,
+                }
+            );
+            return res.data; // expects { newBullets: [] }
+        } catch (err) {
+            return rejectWithValue(
+                err.response?.data || "Failed to generate bullet"
+            );
+        }
+    }
+);
+
+// -----------------------------------
 // INITIAL STATE
 // -----------------------------------
 const initialState = {
@@ -110,11 +211,13 @@ const initialState = {
     scrapResult: null,
     scrappedJobs: [],
 
-    // Selected Job from JobPortal → JobDetails
     selectedJob: null,
+    tempResume: null,
 
-    // Temporary per-job CV storage
-    tempResume: null
+    // 🔵 AI Results
+    coverLetter: "",
+    improvedBullets: [],
+    newBullets: [],
 };
 
 // -----------------------------------
@@ -133,14 +236,12 @@ const userApiSlice = createSlice({
             localStorage.removeItem("rizzource_session");
         },
 
-        // Store selected job
         setSelectedJob(state, action) {
             state.selectedJob = action.payload;
         },
 
-        // Temporary Resume Storage
         setTempResume(state, action) {
-            state.tempResume = action.payload; // { file, url, text }
+            state.tempResume = action.payload;
         },
 
         clearTempResume(state) {
@@ -149,7 +250,9 @@ const userApiSlice = createSlice({
     },
 
     extraReducers: (builder) => {
-        // LOGIN
+        // -----------------------------------
+        // EXISTING USER/LLM LOGIC
+        // -----------------------------------
         builder
             .addCase(loginUser.pending, (state) => {
                 state.loading = true;
@@ -175,7 +278,6 @@ const userApiSlice = createSlice({
                 state.error = action.payload;
             });
 
-        // REGISTER
         builder
             .addCase(registerUser.pending, (state) => {
                 state.loading = true;
@@ -189,7 +291,6 @@ const userApiSlice = createSlice({
                 state.error = action.payload;
             });
 
-        // SCRAP
         builder
             .addCase(scrapJobs.pending, (state) => {
                 state.loading = true;
@@ -203,7 +304,6 @@ const userApiSlice = createSlice({
                 state.error = action.payload;
             });
 
-        // GET SCRAPPED JOBS
         builder
             .addCase(getScrappedJobs.pending, (state) => {
                 state.loading = true;
@@ -216,14 +316,54 @@ const userApiSlice = createSlice({
                 state.loading = false;
                 state.error = action.payload;
             });
-    }
+
+        // -----------------------------------
+        // 🔵 NEW — AI REDUCERS
+        // -----------------------------------
+
+        builder
+            .addCase(generateCoverLetterThunk.fulfilled, (state, action) => {
+                state.coverLetter = action.payload.coverLetter;
+            })
+            .addCase(reGenerateCoverLetterThunk.fulfilled, (state, action) => {
+                state.coverLetter = action.payload.coverLetter;
+            })
+            .addCase(improveBulletThunk.fulfilled, (state, action) => {
+                state.improvedBullets = action.payload.improvements || [];
+            })
+            .addCase(generateNewBulletThunk.fulfilled, (state, action) => {
+                state.newBullets = action.payload.newBullets || [];
+            });
+
+        // LOADING & ERROR FOR AI CALLS
+        builder
+            .addMatcher(
+                (a) =>
+                    a.type.startsWith("ai/") && a.type.endsWith("/pending"),
+                (state) => {
+                    state.loading = true;
+                    state.error = null;
+                }
+            )
+            .addMatcher(
+                (a) =>
+                    a.type.startsWith("ai/") && a.type.endsWith("/fulfilled"),
+                (state) => {
+                    state.loading = false;
+                }
+            )
+            .addMatcher(
+                (a) =>
+                    a.type.startsWith("ai/") && a.type.endsWith("/rejected"),
+                (state, action) => {
+                    state.loading = false;
+                    state.error = action.payload;
+                }
+            );
+    },
 });
 
-export const {
-    logout,
-    setSelectedJob,
-    setTempResume,
-    clearTempResume,
-} = userApiSlice.actions;
+export const { logout, setSelectedJob, setTempResume, clearTempResume } =
+    userApiSlice.actions;
 
 export default userApiSlice.reducer;
