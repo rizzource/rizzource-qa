@@ -52,8 +52,8 @@ const JobPortal = () => {
     ? favoriteJobs?.filter((job) => {
       const matchesSearch =
         (job.title || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
-        (job.description || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
-        (job.company_name || "").toLowerCase().includes(searchQuery.toLowerCase());
+        (job.jobDescription || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (job.company || "").toLowerCase().includes(searchQuery.toLowerCase());
 
       const matchesState =
         !stateFilter || stateFilter === "all"
@@ -69,8 +69,8 @@ const JobPortal = () => {
     }) : scrappedJobs?.filter((job) => {
       const matchesSearch =
         (job.title || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
-        (job.description || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
-        (job.company_name || "").toLowerCase().includes(searchQuery.toLowerCase());
+        (job.jobDescription || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (job.company || "").toLowerCase().includes(searchQuery.toLowerCase());
 
       const matchesState =
         !stateFilter || stateFilter === "all"
@@ -269,12 +269,12 @@ const JobPortal = () => {
                       </button>
 
                       <CardTitle className="text-lg">{job.title}</CardTitle>
-                      <p className="text-sm text-muted-foreground">{job.company_name}</p>
+                      <p className="text-sm text-muted-foreground">{job.company}</p>
                     </CardHeader>
 
                     <CardContent>
                       <p className="text-sm text-muted-foreground mb-4 line-clamp-2">
-                        {job.description}
+                        {job.jobDescription}
                       </p>
 
                       <div className="flex flex-wrap gap-2 mb-4">
@@ -295,7 +295,7 @@ const JobPortal = () => {
                       <div className="flex justify-between items-center text-xs text-muted-foreground">
                         <span className="flex items-center gap-1">
                           <Clock className="h-3 w-3" />
-                          {formatDate(job.application_deadline)}
+                          {job.applicationDeadline}
                         </span>
 
                         <Button

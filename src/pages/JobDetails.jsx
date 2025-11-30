@@ -134,8 +134,8 @@ const JobDetails = () => {
   };
 
   const handleApplyClick = () => {
-    if (job.application_url) {
-      window.open(job.application_url, "_blank");
+    if (job.jobUrl) {
+      window.open(job.jobUrl, "_blank");
       return;
     }
     setShowApplicationForm(true);
@@ -235,10 +235,10 @@ const JobDetails = () => {
                   </Badge>
                 )}
 
-                {job.deadline && (
+                {job.applicationDeadline && (
                   <Badge variant="outline">
                     <Calendar className="h-4 w-4 mr-1" />
-                    Apply by {formatDate(job.deadline)}
+                    {job.applicationDeadline}
                   </Badge>
                 )}
               </div>
@@ -248,7 +248,7 @@ const JobDetails = () => {
               <div>
                 <h3 className="text-xl font-semibold mb-2">Job Description</h3>
                 <p className="text-muted-foreground whitespace-pre-line">
-                  {job.description}
+                  {job.jobDescription}
                 </p>
               </div>
 
@@ -311,7 +311,7 @@ const JobDetails = () => {
                         className="px-6 py-3 text-base font-semibold rounded-xl hover:bg-blue-100 hover:text-blue-600 transition-colors duration-300"
                         onClick={handleApplyClick}
                       >
-                        {job.application_url ? "Visit Website" : "Apply Now"}
+                        {job.jobUrl ? "Visit Website" : "Apply Now"}
                       </Button>
                     </div>
                   )}
