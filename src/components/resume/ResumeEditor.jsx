@@ -223,6 +223,9 @@ const ResumeEditor = ({ onBack, initialFile = null, initialExtractedText = "" })
     const [mobileView, setMobileView] = useState("editor"); // 'editor' | 'preview'
 
     const fileInputRef = useRef(null)
+    // Skill Modal State
+    const [isSkillModalOpen, setIsSkillModalOpen] = useState(false);
+    const [newSkill, setNewSkill] = useState("");
 
     // Resume data state
     const [resumeData, setResumeData] = useState(null)
@@ -1161,15 +1164,8 @@ const ResumeEditor = ({ onBack, initialFile = null, initialExtractedText = "" })
                                                 variant="outline"
                                                 size="sm"
                                                 className="h-6 text-xs bg-transparent"
-                                                onClick={() => {
-                                                    const skill = prompt("Enter a new skill:")
-                                                    if (skill) {
-                                                        setResumeData({
-                                                            ...resumeData,
-                                                            skills: [...resumeData.skills, skill],
-                                                        })
-                                                    }
-                                                }}
+                                                onClick={() => setIsSkillModalOpen(true)}
+
                                             >
                                                 <Plus className="h-3 w-3 mr-1" />
                                                 Add
@@ -1219,6 +1215,42 @@ const ResumeEditor = ({ onBack, initialFile = null, initialExtractedText = "" })
                             </div>
                         </ScrollArea>
                     </div>
+                    {/* Add Skill Modal */}
+                    {isSkillModalOpen && (
+                        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+                            <div className="bg-white p-6 rounded-lg w-[90%] max-w-sm shadow-xl space-y-4">
+                                <h2 className="text-lg font-semibold">Add a Skill</h2>
+
+                                <Input
+                                    placeholder="Enter skill..."
+                                    value={newSkill}
+                                    onChange={(e) => setNewSkill(e.target.value)}
+                                />
+
+                                <div className="flex justify-end gap-2">
+                                    <Button variant="outline" onClick={() => setIsSkillModalOpen(false)}>
+                                        Cancel
+                                    </Button>
+
+                                    <Button
+                                        onClick={() => {
+                                            if (newSkill.trim()) {
+                                                setResumeData({
+                                                    ...resumeData,
+                                                    skills: [...resumeData.skills, newSkill.trim()],
+                                                });
+                                                setNewSkill("");
+                                                setIsSkillModalOpen(false);
+                                            }
+                                        }}
+                                    >
+                                        Add
+                                    </Button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
                 </div>
             </div>
         </div>
