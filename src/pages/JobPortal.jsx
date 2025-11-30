@@ -28,7 +28,9 @@ const JobPortal = () => {
   const navigate = useNavigate();
 
   // Redux data
-  const { scrappedJobs, loading, favoriteJobs } = useSelector(state => state.userApi);
+  const { scrappedJobs, loading, favoriteJobs } = useSelector(
+    (state) => state.userApi
+  );
 
   // UI state
   const [searchQuery, setSearchQuery] = useState("");
@@ -43,65 +45,155 @@ const JobPortal = () => {
   useEffect(() => {
     if (window.location.href.includes("favoritejobs")) {
       dispatch(getFavoriteJobs());
+    } else {
+      dispatch(getScrappedJobs());
     }
-    else { dispatch(getScrappedJobs()); }
   }, [dispatch]);
 
-  // Filter logic
-  const filteredJobs = (window.location.href.includes("favoritejobs"))
-    ? favoriteJobs?.filter((job) => {
-      const matchesSearch =
-        (job.title || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
-        (job.jobDescription || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
-        (job.company || "").toLowerCase().includes(searchQuery.toLowerCase());
+  // ------------------------------------------------------------
+  // 1️⃣ FILTER OUT BAD PLACEHOLDER JOBS
+  // ------------------------------------------------------------
 
-      const matchesState =
-        !stateFilter || stateFilter === "all"
-          ? true
-          : job.location?.toLowerCase().includes(stateFilter.toLowerCase());
+  const isBadJob = (job) => {
+    if (!job) return true;
 
-      const matchesAreaOfLaw =
-        !areaOfLawFilter || areaOfLawFilter === "all"
-          ? true
-          : job.area_of_law === areaOfLawFilter;
+    const badTitle = job.title?.toLowerCase().includes("no 1l summer internship");
+    const badLocation = job.location?.toLowerCase().includes("georgia or new york");
+    const badCompany = job.company?.toLowerCase().includes("no firm name available");
 
-      return matchesSearch && matchesState && matchesAreaOfLaw;
-    }) : scrappedJobs?.filter((job) => {
-      const matchesSearch =
-        (job.title || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
-        (job.jobDescription || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
-        (job.company || "").toLowerCase().includes(searchQuery.toLowerCase());
+    return badTitle || badLocation || badCompany;
+  };
 
-      const matchesState =
-        !stateFilter || stateFilter === "all"
-          ? true
-          : job.location?.toLowerCase().includes(stateFilter.toLowerCase());
+  const cleanedScrappedJobs = scrappedJobs?.filter((job) => !isBadJob(job)) || [];
+  const cleanedFavoriteJobs = favoriteJobs?.filter((job) => !isBadJob(job)) || [];
 
-      const matchesAreaOfLaw =
-        !areaOfLawFilter || areaOfLawFilter === "all"
-          ? true
-          : job.area_of_law === areaOfLawFilter;
+  // ------------------------------------------------------------
+  // 2️⃣ DYNAMIC STATE LIST
+  // ------------------------------------------------------------
 
-      return matchesSearch && matchesState && matchesAreaOfLaw;
-    });
+  const extractState = (location = "") => {
+    const lower = location.toLowerCase();
 
-  // Areas of law (from backend jobs)
-  const areasOfLaw = [...new Set(scrappedJobs?.map((j) => j.area_of_law).filter(Boolean))];
+    // Direct DC mapping
+    if (lower.includes("washington, d.c.") || lower.includes("dc")) return "District of Columbia";
 
-  // Pagination
+    // Look for ", XX"
+    const stateAbbrMatch = location.match(/,\s*([A-Z]{2})$/);
+    if (stateAbbrMatch) {
+      const abbr = stateAbbrMatch[1];
+      const map = {
+        GA: "Georgia",
+        NY: "New York",
+        CA: "California",
+        TX: "Texas",
+        IL: "Illinois",
+        MA: "Massachusetts",
+        VA: "Virginia",
+        PA: "Pennsylvania",
+        WA: "Washington",
+        FL: "Florida"
+      };
+      return map[abbr] || abbr;
+    }
+
+    const knownStates = [
+      "Georgia",
+      "New York",
+      "California",
+      "Texas",
+      "Illinois",
+      "Massachusetts",
+      "Virginia",
+      "Pennsylvania",
+      "Washington",
+      "Florida",
+      "District of Columbia"
+    ];
+
+    for (const s of knownStates) {
+      if (lower.includes(s.toLowerCase())) return s;
+    }
+
+    return null;
+  };
+
+  const allJobsCombined = window.location.href.includes("favoritejobs")
+    ? cleanedFavoriteJobs
+    : cleanedScrappedJobs;
+
+  const dynamicStates = Array.from(
+    new Set(
+      allJobsCombined
+        ?.map((j) => extractState(j.location))
+        .filter(Boolean)
+    )
+  ).sort();
+
+  const statesList = ["All States", ...dynamicStates];
+
+  // ------------------------------------------------------------
+  // 3️⃣ DYNAMIC AREAS OF LAW (split + dedupe + clean)
+  // ------------------------------------------------------------
+
+  const areasOfLawRaw = allJobsCombined
+    ?.map((j) => j.areaOfLaw)
+    .filter(Boolean)
+    .filter(
+      (a) =>
+        a.toLowerCase() !== "no area of law specified" &&
+        a.toLowerCase() !== "n/a" &&
+        a.toLowerCase() !== "none"
+    );
+
+  const splitAreas = areasOfLawRaw.flatMap((a) =>
+    a.split(",").map((s) => s.trim())
+  );
+
+  const areasOfLaw = [
+    "All Areas of Law",
+    ...Array.from(new Set(splitAreas)).sort(),
+  ];
+
+  // ------------------------------------------------------------
+  // 4️⃣ FILTERING LOGIC
+  // ------------------------------------------------------------
+
+  const filteredJobs = allJobsCombined.filter((job) => {
+    const matchesSearch =
+      (job.title || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (job.jobDescription || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (job.company || "").toLowerCase().includes(searchQuery.toLowerCase());
+
+    // State matching
+    const jobState = extractState(job.location);
+    const matchesState =
+      !stateFilter ||
+      stateFilter === "All States" ||
+      jobState === stateFilter;
+
+    // Area of Law matching (OR logic for comma-separated categories)
+    const jobAreas = job.areaOfLaw
+      ?.split(",")
+      .map((a) => a.trim().toLowerCase()) || [];
+
+    const matchesArea =
+      !areaOfLawFilter ||
+      areaOfLawFilter === "All Areas of Law" ||
+      jobAreas.includes(areaOfLawFilter.toLowerCase());
+
+    return matchesSearch && matchesState && matchesArea;
+  });
+
+  // ------------------------------------------------------------
+  // 5️⃣ PAGINATION
+  // ------------------------------------------------------------
+
   const indexOfLastJob = currentPage * jobsPerPage;
   const indexOfFirstJob = indexOfLastJob - jobsPerPage;
   const currentJobs = filteredJobs.slice(indexOfFirstJob, indexOfLastJob);
   const totalPages = Math.ceil(filteredJobs.length / jobsPerPage);
 
   const handlePageChange = (page) => setCurrentPage(page);
-
-  const resetFilters = () => {
-    setSearchQuery("");
-    setStateFilter("");
-    setAreaOfLawFilter("");
-    setCurrentPage(1);
-  };
 
   const getPaginationRange = () => {
     const showPages = 5;
@@ -123,14 +215,13 @@ const JobPortal = () => {
     return pages;
   };
 
-  const formatDate = (dateString) => {
-    if (!dateString) return "No deadline specified";
-    return new Date(dateString).toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-    });
+  const resetFilters = () => {
+    setSearchQuery("");
+    setStateFilter("");
+    setAreaOfLawFilter("");
+    setCurrentPage(1);
   };
+
   const addFavoriteJob = async (jobId) => {
     if (!user) {
       toast.error("Please sign in to save favorite jobs");
@@ -146,11 +237,9 @@ const JobPortal = () => {
 
       toast.success("Job added to your favorites!");
 
-      // Refresh favorites ONLY when on /favoritejobs
       if (window.location.href.includes("favoritejobs")) {
         dispatch(getFavoriteJobs());
-      }
-      else {
+      } else {
         dispatch(getScrappedJobs());
       }
     } catch (err) {
@@ -159,6 +248,19 @@ const JobPortal = () => {
     }
   };
 
+  const formatDate = (dateString) => {
+    if (!dateString) return "No deadline specified";
+    return new Date(dateString).toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    });
+  };
+
+  // ------------------------------------------------------------
+  // 6️⃣ UI
+  // ------------------------------------------------------------
+
   return (
     <>
       <Toaster richColors closeButton position="top-center" />
@@ -166,9 +268,8 @@ const JobPortal = () => {
       <Header />
       <div className="min-h-screen bg-background pt-16">
         <div className="container mx-auto px-4 py-8">
-
           {/* HERO */}
-          {window.location.href.includes("favoritejobs") ?
+          {window.location.href.includes("favoritejobs") ? (
             <div className="text-center mb-12">
               <h1 className="text-4xl font-bold text-foreground mb-4">
                 Favorites at a Glance
@@ -176,7 +277,9 @@ const JobPortal = () => {
               <p className="text-muted-foreground text-lg">
                 Review, prioritize, and apply faster with your curated job list.
               </p>
-            </div> : <div className="text-center mb-12">
+            </div>
+          ) : (
+            <div className="text-center mb-12">
               <h1 className="text-4xl font-bold text-foreground mb-4">
                 Every 1L Summer Job. One Smart Search
               </h1>
@@ -184,10 +287,10 @@ const JobPortal = () => {
                 Rizzource scans firms, job boards, and courts—so you don’t have to.
               </p>
             </div>
-          }
+          )}
+
           {/* SEARCH & FILTERS */}
           <div className="flex flex-col md:flex-row gap-4 mb-8">
-
             <div className="flex-1 relative">
               <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
               <Input
@@ -198,6 +301,7 @@ const JobPortal = () => {
               />
             </div>
 
+            {/* STATE SELECT */}
             <Select
               value={stateFilter}
               onValueChange={(v) => {
@@ -209,17 +313,39 @@ const JobPortal = () => {
                 <SelectValue placeholder="Select State" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All States</SelectItem>
-                <SelectItem value="georgia">Georgia</SelectItem>
-                <SelectItem value="new york">New York</SelectItem>
+                {statesList.map((state) => (
+                  <SelectItem key={state} value={state}>
+                    {state}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
 
-            <Button
-              size="lg"
-              onClick={resetFilters}
-              className="md:w-48 rounded-xl"
+            {/* AREA OF LAW SELECT */}
+            <Select
+              value={areaOfLawFilter}
+              onValueChange={(v) => {
+                setAreaOfLawFilter(v);
+                setCurrentPage(1);
+              }}
             >
+              <SelectTrigger className="md:w-48">
+                <SelectValue placeholder="Area of Law" />
+              </SelectTrigger>
+              <SelectContent>
+                {areasOfLaw.map((area) => (
+                  <SelectItem
+                    key={area}
+                    value={area}
+                    className="max-w-[260px] truncate"
+                  >
+                    {area}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            <Button size="lg" onClick={resetFilters} className="md:w-48 rounded-xl">
               Reset Filters
             </Button>
           </div>
@@ -248,7 +374,6 @@ const JobPortal = () => {
                     }}
                   >
                     <CardHeader className="relative">
-
                       {/* ❤️ Favorite Button */}
                       <button
                         onClick={(e) => {
@@ -284,10 +409,10 @@ const JobPortal = () => {
                             {job.location}
                           </Badge>
                         )}
-                        {job.area_of_law && (
+                        {job.areaOfLaw && (
                           <Badge variant="outline">
                             <Scale className="h-3 w-3 mr-1" />
-                            {job.area_of_law}
+                            {job.areaOfLaw}
                           </Badge>
                         )}
                       </div>
@@ -315,8 +440,6 @@ const JobPortal = () => {
                   </Card>
                 ))}
               </div>
-
-
 
               {/* PAGINATION */}
               <div className="flex justify-center items-center gap-2 mt-8">
