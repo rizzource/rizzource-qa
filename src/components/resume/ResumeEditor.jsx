@@ -257,7 +257,7 @@ const ResumeEditor = ({ onBack, initialFile = null, initialExtractedText = "" })
     };
 
 
-    const generateNewBullet = async () => {
+    const generateNewBullet = async (jobTitle, company) => {
         const result = await dispatch(
             generateNewBulletThunk({
                 jobTitle,
@@ -427,7 +427,7 @@ const ResumeEditor = ({ onBack, initialFile = null, initialExtractedText = "" })
     // Add new bullet with AI
     const handleAddBulletWithAI = async (expId) => {
         const exp = resumeData?.experience.find((e) => e.id === expId)
-        if (!exp) return
+        if (exp?.length == 0) return;
 
         setShowNewBulletAI(expId)
         setIsGenerating(true)
