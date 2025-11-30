@@ -47,22 +47,21 @@ const MinimalistHome = () => {
               </p>
             </div>
 
-            {/* View Matchups Button - only show when logged in
             {user && (
               <div className="flex justify-center mt-8">
                 <Button
-                  onClick={() => navigate('/matchup')}
+                  onClick={() => navigate('/jobs')}
                   size="lg"
-                  className="relative overflow-hidden group px-10 py-4 text-lg font-bold rounded-2xl
+                  className="relative overflow-hidden group px-10 py-6 text-lg font-bold rounded-2xl
                              bg-gradient-to-r from-accent to-primary text-white shadow-md 
                              transition-all duration-300 ease-out
                              hover:shadow-xl hover:scale-105"
                 >
-                  <span className="relative z-10">View Matchups</span>
+                  <span className="relative z-10">Explore Jobs</span>
                   <span className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl"></span>
                 </Button>
               </div>
-            )}*/}
+            )}
           </div> 
 
           {/* {user && <Timeline />} */}
