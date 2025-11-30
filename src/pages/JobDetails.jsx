@@ -17,6 +17,7 @@ import {
   Building2,
   Sparkles,
   FileSignature,
+  ExternalLink
 } from "lucide-react";
 
 import Header from "@/components/Header";
@@ -252,69 +253,77 @@ const JobDetails = () => {
                 </p>
               </div>
 
-              <div className="pt-6 border-t space-y-4">
+              <div className="pt-6 border-t border-border/60 space-y-5">
                 {user && (
-                  <div className="flex flex-col items-center gap-3">
-                    {/* ------------------------------------
-                        UPDATED Enhance CV Button
-                    ------------------------------------- */}
+                  <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+                    {/* Enhance CV Button */}
                     <Button
                       variant="outline"
-                      size="md"
-                      className="relative overflow-hidden group px-5 py-3 text-md font-bold rounded-xl
-                               bg-gradient-to-r from-accent to-primary text-white shadow-md 
-                               transition-all duration-300 ease-out
-                               hover:shadow-xl hover:scale-105"
+                      size="lg"
+                      className="relative w-full sm:w-auto overflow-hidden group px-6 py-3 text-sm font-semibold rounded-xl
+                             bg-gradient-to-r from-violet-500 to-purple-600 text-white border-0
+                             shadow-md shadow-violet-500/25
+                             transition-all duration-300 ease-out
+                             hover:shadow-lg hover:shadow-violet-500/30 hover:scale-[1.02]
+                             active:scale-[0.98]"
                       onClick={handleEnhanceCV}
                     >
-                      <Sparkles className="h-5 w-5 mr-2" />
+                      {/* Shine effect */}
+                      <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out" />
+                      <Sparkles className="h-4 w-4 mr-2" />
                       Enhance CV with AI
                     </Button>
 
-                    {/* ------------------------------------
-                        NEW Generate Cover Letter Button
-                    ------------------------------------- */}
+                    {/* Generate Cover Letter Button */}
                     <Button
                       variant="outline"
-                      size="md"
-                      className="px-5 py-3 text-md font-semibold rounded-xl hover:bg-blue-100 hover:text-blue-600 transition-colors duration-300"
+                      size="lg"
+                      className="w-full sm:w-auto px-6 py-3 text-sm font-semibold rounded-xl
+                             border-border/60 bg-background
+                             transition-all duration-200
+                             hover:bg-primary/5 hover:border-primary/30 hover:text-primary
+                             active:scale-[0.98]"
                       onClick={handleGenerateCoverLetter}
                     >
-                      <FileSignature className="h-5 w-5 mr-2" />
+                      <FileSignature className="h-4 w-4 mr-2" />
                       Generate Cover Letter
                     </Button>
                   </div>
                 )}
 
                 {!user ? (
-                  <div className="text-center">
-                    <p className="text-muted-foreground mb-2">
-                      Please sign in to apply
-                    </p>
-                    <Button onClick={() => navigate("/auth")}>Sign In</Button>
+                  <div className="text-center py-4 px-6 bg-muted/30 rounded-xl border border-border/40">
+                    <p className="text-muted-foreground mb-3 text-sm">Please sign in to apply for this position</p>
+                    <Button
+                      className="rounded-xl px-6 font-semibold transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
+                      onClick={() => alert("Navigating to auth")}
+                    >
+                      Sign In
+                    </Button>
                   </div>
-                  // ) : !tempResume ? (
-                  //   <div className="text-center">
-                  //     <p className="text-muted-foreground mb-2">
-                  //       Please upload your resume to apply
-                  //     </p>
-                  //     <Button onClick={() => setShowResumeUpload(true)}>
-                  //       Upload Resume
-                  //     </Button>
-                  //   </div>
-                )
-                  :
-                  (
-                    <div className="flex justify-center">
-                      <Button
-                        size="lg"
-                        className="px-6 py-3 text-base font-semibold rounded-xl hover:bg-blue-100 hover:text-blue-600 transition-colors duration-300"
-                        onClick={handleApplyClick}
-                      >
-                        {job.jobUrl ? "Visit Website" : "Apply Now"}
-                      </Button>
-                    </div>
-                  )}
+                ) : (
+                  <div className="flex justify-center">
+                    <Button
+                      size="lg"
+                      className="px-8 py-3 text-sm font-semibold rounded-xl
+                             bg-primary text-primary-foreground
+                             shadow-md shadow-primary/25
+                             transition-all duration-200
+                             hover:shadow-lg hover:shadow-primary/30 hover:scale-[1.02]
+                             active:scale-[0.98]"
+                      onClick={handleApplyClick}
+                    >
+                      {job.jobUrl ? (
+                        <>
+                          Visit Website
+                          <ExternalLink className="h-4 w-4 ml-2" />
+                        </>
+                      ) : (
+                        "Apply Now"
+                      )}
+                    </Button>
+                  </div>
+                )}
               </div>
             </CardContent>
           </Card>

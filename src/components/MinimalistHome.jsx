@@ -52,7 +52,7 @@ const MinimalistHome = () => {
                 <Button
                   onClick={() => navigate('/jobs')}
                   size="lg"
-                  className="relative overflow-hidden group px-10 py-6 text-lg font-bold rounded-2xl
+                  className="relative overflow-hidden group px-10 py-4 text-lg font-bold rounded-2xl
                              bg-gradient-to-r from-accent to-primary text-white shadow-md 
                              transition-all duration-300 ease-out
                              hover:shadow-xl hover:scale-105"
