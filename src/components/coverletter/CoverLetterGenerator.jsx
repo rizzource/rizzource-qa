@@ -196,7 +196,7 @@ JavaScript, TypeScript, React, Node.js, Python, AWS, Docker, PostgreSQL`
 
         toast.success("Preparing PDF...")
 
-        const html2pdf = (await import("html2pdf.js")).default
+        // const html2pdf = (await import("html2pdf.js")).default
         const element = previewRef.current
 
         const opt = {
@@ -207,7 +207,7 @@ JavaScript, TypeScript, React, Node.js, Python, AWS, Docker, PostgreSQL`
             jsPDF: { unit: "in", format: "letter", orientation: "portrait" },
         }
 
-        html2pdf().set(opt).from(element).save()
+          window.html2pdf().from(element).save();
     }
     const navigate = useNavigate();
     const location = useLocation();

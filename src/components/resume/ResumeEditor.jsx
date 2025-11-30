@@ -38,8 +38,9 @@ import {
     Brain,
 } from "lucide-react"
 import { toast } from "sonner"
-import { generateNewBulletThunk, improveBulletThunk } from "../../redux/slices/userApiSlice"
+import { fileUpload, generateNewBulletThunk, improveBulletThunk } from "../../redux/slices/userApiSlice"
 import { useDispatch } from "react-redux"
+import { buildResumeHtml } from "../../lib/utils"
 
 // File parser mock - in real implementation, use a library like pdf-parse or mammoth
 const parseResumeFile = async (file) => {
@@ -225,7 +226,7 @@ const ResumeEditor = ({ onBack, initialFile = null, initialExtractedText = "" })
 
     // Resume data state
     const [resumeData, setResumeData] = useState(null)
-
+    const [originalFileUrl, setOriginalFileUrl] = useState('');
     // AI enhancement state
     const [activeBulletId, setActiveBulletId] = useState(null)
     const [aiSuggestions, setAiSuggestions] = useState([])
@@ -269,56 +270,90 @@ const ResumeEditor = ({ onBack, initialFile = null, initialExtractedText = "" })
         }
     };
 
-
+    const BASE_URL =
+        "https://rizzource-c2amh0adhpcbgjgx.canadacentral-01.azurewebsites.net/api";
     // Handle file upload
     const handleFileSelect = async (e) => {
         const file = e.target.files?.[0]
         if (!file) return
 
-        const validTypes = ["application/pdf", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"]
+        const validTypes = [
+            "application/pdf",
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        ]
         if (!validTypes.includes(file.type)) {
             toast.error("Please upload a PDF or DOCX file")
             return
         }
 
         setUploadedFile(file)
+        setIsParsing(true);
+        dispatch(fileUpload({ file }))
+            .unwrap()
+            .then((data) => {
+                // data = { resume, fileUrl }
+                setResumeData(data.resume);
+                setOriginalFileUrl(data.fileUrl);
+                setIsParsing(false);
+                toast.success("Resume parsed successfully!");
+            })
+            .catch((err) => {
+                setIsParsing(false);
+                toast.error(err || "Failed to parse resume");
+            });
 
-        try {
-            setIsParsing(true)
-            const parsed = await parseResumeFile(file)
-            setResumeData(parsed)
-            toast.success("Resume parsed successfully!")
-        } catch (error) {
-            toast.error("Failed to parse resume")
-        } finally {
-            setIsParsing(false)
-        }
     }
+
+
+    const onDownloadPdf = () => {
+        const htmlString = buildResumeHtml(resumeData);
+
+        // Create a temporary DOM container
+        const element = document.createElement("div");
+        element.innerHTML = htmlString;
+
+        const opt = {
+            margin: 0.5,
+            filename: "Resume.pdf",
+            html2canvas: { scale: 2 },
+            jsPDF: { unit: "in", format: "letter", orientation: "portrait" }
+        };
+
+        window.html2pdf().from(element).save();
+
+    };
 
     const handleDrop = useCallback(async (e) => {
         e.preventDefault()
         const file = e.dataTransfer.files[0]
         if (!file) return
 
-        const validTypes = ["application/pdf", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"]
+        const validTypes = [
+            "application/pdf",
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        ]
         if (!validTypes.includes(file.type)) {
             toast.error("Please upload a PDF or DOCX file")
             return
         }
 
         setUploadedFile(file)
-
-        try {
-            setIsParsing(true)
-            const parsed = await parseResumeFile(file)
-            setResumeData(parsed)
-            toast.success("Resume parsed successfully!")
-        } catch (error) {
-            toast.error("Failed to parse resume")
-        } finally {
-            setIsParsing(false)
-        }
+        setIsParsing(true);
+        dispatch(fileUpload({ file }))
+            .unwrap()
+            .then((data) => {
+                // data = { resume, fileUrl }
+                setResumeData(data.resume);
+                setOriginalFileUrl(data.fileUrl);
+                setIsParsing(false);
+                toast.success("Resume parsed successfully!");
+            })
+            .catch((err) => {
+                setIsParsing(false);
+                toast.error(err || "Failed to parse resume");
+            });
     }, [])
+
 
     // AI Bullet Enhancement
     const handleEnhanceBullet = async (expId, bulletId, bulletText) => {
@@ -1164,7 +1199,7 @@ const ResumeEditor = ({ onBack, initialFile = null, initialExtractedText = "" })
                                     <FileText className="h-3 w-3" />
                                     {uploadedFile?.name}
                                 </Badge>
-                                <Button variant="outline" size="sm">
+                                <Button variant="outline" size="sm" onClick={() => onDownloadPdf()}>
                                     <Download className="h-4 w-4 mr-2" />
                                     Export PDF
                                 </Button>

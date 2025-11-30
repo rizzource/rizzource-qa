@@ -1,4 +1,3 @@
-// src/redux/slices/userApiSlice.js
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import CryptoJS from "crypto-js";
@@ -74,6 +73,25 @@ export const registerUser = createAsyncThunk(
     }
 );
 
+// FILE UPLOAD
+export const fileUpload = createAsyncThunk(
+    "resume/upload",
+    async ({ file }, { rejectWithValue }) => {
+        try {
+            const formData = new FormData();
+            formData.append("file", file);
+
+            const res = await axios.post(`${BASE_URL}/resume/upload`, formData, {
+                headers: { "Content-Type": "multipart/form-data" },
+            });
+
+            return res.data;
+        } catch (err) {
+            return rejectWithValue(err.response?.data || "File upload failed");
+        }
+    }
+);
+
 // SCRAP JOBS
 export const scrapJobs = createAsyncThunk(
     "user/scrapJobs",
@@ -99,6 +117,7 @@ export const getScrappedJobs = createAsyncThunk(
         }
     }
 );
+
 export const getFavoriteJobs = createAsyncThunk(
     "user/getFavoriteJobs",
     async (_, { rejectWithValue }) => {
@@ -110,22 +129,24 @@ export const getFavoriteJobs = createAsyncThunk(
         }
     }
 );
+
 export const saveFavoriteJob = createAsyncThunk(
     "user/saveFavoriteJob",
     async ({ jobId }, { rejectWithValue }) => {
         try {
-            const res = await axios.post(`${BASE_URL}/Ollama/SaveFavoriteJob/${jobId}`);
+            const res = await axios.post(
+                `${BASE_URL}/Ollama/SaveFavoriteJob/${jobId}`
+            );
             return res.data;
         } catch (err) {
             return rejectWithValue(err.response?.data || "Post failed");
         }
     }
 );
-// -----------------------------------
-// 🔵 NEW — AI THUNKS
-// -----------------------------------
 
-// 1️⃣ Generate Cover Letter
+// -----------------------------------
+// AI THUNKS
+// -----------------------------------
 export const generateCoverLetterThunk = createAsyncThunk(
     "ai/generateCoverLetter",
     async (
@@ -143,7 +164,7 @@ export const generateCoverLetterThunk = createAsyncThunk(
                     tone: selectedTone,
                 }
             );
-            return res.data; // expects { coverLetter }
+            return res.data;
         } catch (err) {
             return rejectWithValue(
                 err.response?.data || "Failed to generate cover letter"
@@ -152,7 +173,6 @@ export const generateCoverLetterThunk = createAsyncThunk(
     }
 );
 
-// 2️⃣ Re-generate Cover Letter
 export const reGenerateCoverLetterThunk = createAsyncThunk(
     "ai/reGenerateCoverLetter",
     async (
@@ -170,7 +190,7 @@ export const reGenerateCoverLetterThunk = createAsyncThunk(
                     tone,
                 }
             );
-            return res.data; // expects { coverLetter }
+            return res.data;
         } catch (err) {
             return rejectWithValue(
                 err.response?.data || "Failed to regenerate"
@@ -179,7 +199,6 @@ export const reGenerateCoverLetterThunk = createAsyncThunk(
     }
 );
 
-// 3️⃣ Improve Existing Bullet
 export const improveBulletThunk = createAsyncThunk(
     "ai/improveBullet",
     async ({ bulletText, jobTitle }, { rejectWithValue }) => {
@@ -188,7 +207,7 @@ export const improveBulletThunk = createAsyncThunk(
                 bulletText,
                 jobTitle,
             });
-            return res.data; // expects { improvements: [] }
+            return res.data;
         } catch (err) {
             return rejectWithValue(
                 err.response?.data || "Failed to improve bullet"
@@ -197,7 +216,6 @@ export const improveBulletThunk = createAsyncThunk(
     }
 );
 
-// 4️⃣ Generate New Bullet Ideas
 export const generateNewBulletThunk = createAsyncThunk(
     "ai/generateNewBullet",
     async ({ jobTitle, company }, { rejectWithValue }) => {
@@ -209,7 +227,7 @@ export const generateNewBulletThunk = createAsyncThunk(
                     company,
                 }
             );
-            return res.data; // expects { newBullets: [] }
+            return res.data;
         } catch (err) {
             return rejectWithValue(
                 err.response?.data || "Failed to generate bullet"
@@ -235,7 +253,6 @@ const initialState = {
     selectedJob: null,
     tempResume: null,
 
-    // 🔵 AI Results
     coverLetter: "",
     improvedBullets: [],
     newBullets: [],
@@ -271,9 +288,7 @@ const userApiSlice = createSlice({
     },
 
     extraReducers: (builder) => {
-        // -----------------------------------
-        // EXISTING USER/LLM LOGIC
-        // -----------------------------------
+        // EXISTING REDUCERS (unchanged)
         builder
             .addCase(loginUser.pending, (state) => {
                 state.loading = true;
@@ -311,6 +326,7 @@ const userApiSlice = createSlice({
                 state.loading = false;
                 state.error = action.payload;
             });
+
         builder
             .addCase(saveFavoriteJob.pending, (state) => {
                 state.loading = true;
@@ -323,6 +339,7 @@ const userApiSlice = createSlice({
                 state.loading = false;
                 state.error = action.payload;
             });
+
         builder
             .addCase(scrapJobs.pending, (state) => {
                 state.loading = true;
@@ -348,6 +365,7 @@ const userApiSlice = createSlice({
                 state.loading = false;
                 state.error = action.payload;
             });
+
         builder
             .addCase(getFavoriteJobs.pending, (state) => {
                 state.loading = true;
@@ -360,10 +378,8 @@ const userApiSlice = createSlice({
                 state.loading = false;
                 state.error = action.payload;
             });
-        // -----------------------------------
-        // 🔵 NEW — AI REDUCERS
-        // -----------------------------------
 
+        // AI REDUCERS
         builder
             .addCase(generateCoverLetterThunk.fulfilled, (state, action) => {
                 state.coverLetter = action.payload.coverLetter;
@@ -378,11 +394,10 @@ const userApiSlice = createSlice({
                 state.newBullets = action.payload.newBullets || [];
             });
 
-        // LOADING & ERROR FOR AI CALLS
+        // Loading & Errors for AI
         builder
             .addMatcher(
-                (a) =>
-                    a.type.startsWith("ai/") && a.type.endsWith("/pending"),
+                (a) => a.type.startsWith("ai/") && a.type.endsWith("/pending"),
                 (state) => {
                     state.loading = true;
                     state.error = null;
@@ -390,7 +405,8 @@ const userApiSlice = createSlice({
             )
             .addMatcher(
                 (a) =>
-                    a.type.startsWith("ai/") && a.type.endsWith("/fulfilled"),
+                    a.type.startsWith("ai/") &&
+                    a.type.endsWith("/fulfilled"),
                 (state) => {
                     state.loading = false;
                 }
