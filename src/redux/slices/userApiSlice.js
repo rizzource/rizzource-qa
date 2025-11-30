@@ -92,6 +92,27 @@ export const fileUpload = createAsyncThunk(
     }
 );
 
+/* -----------------------------------
+   GOOGLE LOGIN (NEW)
+----------------------------------- */
+export const googleLogin = createAsyncThunk(
+    "user/google-code-login",
+    async ({ code }, { rejectWithValue }) => {
+        try {
+            const res = await axios.post(`${BASE_URL}/User/google-code-login`, {
+                code,
+            });
+
+            return res.data;
+        } catch (err) {
+            return rejectWithValue(
+                err.response?.data || "Google login failed"
+            );
+        }
+    }
+);
+
+
 // SCRAP JOBS
 export const scrapJobs = createAsyncThunk(
     "user/scrapJobs",
@@ -296,7 +317,6 @@ const userApiSlice = createSlice({
             })
             .addCase(loginUser.fulfilled, (state, action) => {
                 state.loading = false;
-
                 state.token = action.payload.token;
                 state.user = action.payload.data;
                 state.roles = action.payload.data?.roles || [];
@@ -340,6 +360,37 @@ const userApiSlice = createSlice({
                 state.error = action.payload;
             });
 
+        /* -------------------------
+           GOOGLE LOGIN (NEW)
+        ------------------------- */
+        builder
+            .addCase(googleLogin.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(googleLogin.fulfilled, (state, action) => {
+                state.loading = false;
+
+                state.token = action.payload.token;
+                state.user = action.payload.data;
+                state.roles = action.payload.data?.roles || [];
+
+                const encrypted = encrypt({
+                    token: action.payload.token,
+                    user: action.payload.data,
+                    roles: action.payload.data?.roles || [],
+                });
+
+                localStorage.setItem("rizzource_session", encrypted);
+            })
+            .addCase(googleLogin.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
+            });
+
+        /* -------------------------
+           SCRAP JOBS
+        ------------------------- */
         builder
             .addCase(scrapJobs.pending, (state) => {
                 state.loading = true;
