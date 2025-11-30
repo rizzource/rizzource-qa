@@ -27,15 +27,15 @@ const Header = () => {
     isSuperAdmin()
       ? "Super Admin"
       : "";
-      //  roles.includes("owner")
-      //   ? "Owner"
-      //   : roles.includes("hr")
-      //     ? "HR"
-      //     : roles.includes("admin")
-      //       ? "Admin"
-      //       : roles.includes("employee")
-      //         ? "Employee"
-      //         : "User";
+  //  roles.includes("owner")
+  //   ? "Owner"
+  //   : roles.includes("hr")
+  //     ? "HR"
+  //     : roles.includes("admin")
+  //       ? "Admin"
+  //       : roles.includes("employee")
+  //         ? "Employee"
+  //         : "User";
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border">
@@ -76,9 +76,13 @@ const Header = () => {
             )}
 
             <Link to="/jobs" className="font-bold text-primary hover:text-accent transition-colors">
-              Jobs
+              Job Portal
             </Link>
-
+            {user &&
+              <Link to="/favoritejobs" className="font-bold text-primary hover:text-accent transition-colors">
+                Favorite Jobs
+              </Link>
+            }
             {/* {user &&
               !isSuperAdmin() &&
               !roles.includes("owner") &&

@@ -10,7 +10,8 @@ import {
   Briefcase,
   MapPin,
   Clock,
-  Scale
+  Scale,
+  Heart
 } from "lucide-react";
 
 import Header from "@/components/Header";
@@ -19,47 +20,70 @@ import Footer from "@/components/Footer";
 import { useDispatch, useSelector } from "react-redux";
 import { getScrappedJobs } from "@/redux/slices/userApiSlice";
 import { useNavigate } from "react-router-dom";
-import { setSelectedJob } from "../redux/slices/userApiSlice";
+import { getFavoriteJobs, saveFavoriteJob, setSelectedJob } from "../redux/slices/userApiSlice";
+import { toast, Toaster } from "sonner";
 
 const JobPortal = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   // Redux data
-  const { scrappedJobs, loading } = useSelector(state => state.userApi);
+  const { scrappedJobs, loading, favoriteJobs } = useSelector(state => state.userApi);
 
   // UI state
   const [searchQuery, setSearchQuery] = useState("");
   const [stateFilter, setStateFilter] = useState("");
   const [areaOfLawFilter, setAreaOfLawFilter] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const user = useSelector((state) => state.userApi.user);
 
   const jobsPerPage = 9;
 
   // Fetch jobs on mount
   useEffect(() => {
-    dispatch(getScrappedJobs());
+    if (window.location.href.includes("favoritejobs")) {
+      dispatch(getFavoriteJobs());
+    }
+    else { dispatch(getScrappedJobs()); }
   }, [dispatch]);
 
   // Filter logic
-  const filteredJobs = scrappedJobs?.filter((job) => {
-    const matchesSearch =
-      (job.title || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (job.description || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (job.company_name || "").toLowerCase().includes(searchQuery.toLowerCase());
+  const filteredJobs = (window.location.href.includes("favoritejobs"))
+    ? favoriteJobs?.filter((job) => {
+      const matchesSearch =
+        (job.title || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (job.description || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (job.company_name || "").toLowerCase().includes(searchQuery.toLowerCase());
 
-    const matchesState =
-      !stateFilter || stateFilter === "all"
-        ? true
-        : job.location?.toLowerCase().includes(stateFilter.toLowerCase());
+      const matchesState =
+        !stateFilter || stateFilter === "all"
+          ? true
+          : job.location?.toLowerCase().includes(stateFilter.toLowerCase());
 
-    const matchesAreaOfLaw =
-      !areaOfLawFilter || areaOfLawFilter === "all"
-        ? true
-        : job.area_of_law === areaOfLawFilter;
+      const matchesAreaOfLaw =
+        !areaOfLawFilter || areaOfLawFilter === "all"
+          ? true
+          : job.area_of_law === areaOfLawFilter;
 
-    return matchesSearch && matchesState && matchesAreaOfLaw;
-  });
+      return matchesSearch && matchesState && matchesAreaOfLaw;
+    }) : scrappedJobs?.filter((job) => {
+      const matchesSearch =
+        (job.title || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (job.description || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (job.company_name || "").toLowerCase().includes(searchQuery.toLowerCase());
+
+      const matchesState =
+        !stateFilter || stateFilter === "all"
+          ? true
+          : job.location?.toLowerCase().includes(stateFilter.toLowerCase());
+
+      const matchesAreaOfLaw =
+        !areaOfLawFilter || areaOfLawFilter === "all"
+          ? true
+          : job.area_of_law === areaOfLawFilter;
+
+      return matchesSearch && matchesState && matchesAreaOfLaw;
+    });
 
   // Areas of law (from backend jobs)
   const areasOfLaw = [...new Set(scrappedJobs?.map((j) => j.area_of_law).filter(Boolean))];
@@ -107,24 +131,60 @@ const JobPortal = () => {
       year: "numeric",
     });
   };
+  const addFavoriteJob = async (jobId) => {
+    if (!user) {
+      toast.error("Please sign in to save favorite jobs");
+      return;
+    }
+    try {
+      const result = await dispatch(saveFavoriteJob(jobId));
+
+      if (result.error) {
+        toast.error("Failed to add to favorites. Please try again.");
+        return;
+      }
+
+      toast.success("Job added to your favorites!");
+
+      // Refresh favorites ONLY when on /favoritejobs
+      if (window.location.href.includes("favoritejobs")) {
+        dispatch(getFavoriteJobs());
+      }
+      else {
+        dispatch(getScrappedJobs());
+      }
+    } catch (err) {
+      console.error("Favorite job error:", err);
+      toast.error("Something went wrong while saving your job.");
+    }
+  };
 
   return (
     <>
-      <Header />
+      <Toaster richColors closeButton position="top-center" />
 
+      <Header />
       <div className="min-h-screen bg-background pt-16">
         <div className="container mx-auto px-4 py-8">
 
           {/* HERO */}
-          <div className="text-center mb-12">
-            <h1 className="text-4xl font-bold text-foreground mb-4">
-              Every 1L Summer Job. One Smart Search
-            </h1>
-            <p className="text-muted-foreground text-lg">
-              Rizzource scans firms, job boards, and courts—so you don’t have to.
-            </p>
-          </div>
-
+          {window.location.href.includes("favoritejobs") ?
+            <div className="text-center mb-12">
+              <h1 className="text-4xl font-bold text-foreground mb-4">
+                Favorites at a Glance
+              </h1>
+              <p className="text-muted-foreground text-lg">
+                Review, prioritize, and apply faster with your curated job list.
+              </p>
+            </div> : <div className="text-center mb-12">
+              <h1 className="text-4xl font-bold text-foreground mb-4">
+                Every 1L Summer Job. One Smart Search
+              </h1>
+              <p className="text-muted-foreground text-lg">
+                Rizzource scans firms, job boards, and courts—so you don’t have to.
+              </p>
+            </div>
+          }
           {/* SEARCH & FILTERS */}
           <div className="flex flex-col md:flex-row gap-4 mb-8">
 
@@ -187,7 +247,27 @@ const JobPortal = () => {
                       navigate(`/jobs/${job.id}`);
                     }}
                   >
-                    <CardHeader>
+                    <CardHeader className="relative">
+
+                      {/* ❤️ Favorite Button */}
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          addFavoriteJob(job.id);
+                        }}
+                        className={
+                          "absolute top-2 right-2 p-2 rounded-full transition hover:bg-muted/70 " +
+                          (job.isFavorite ? "text-red-500" : "text-muted-foreground")
+                        }
+                      >
+                        <Heart
+                          className={
+                            "h-5 w-5 transition " +
+                            (job.isFavorite ? "fill-red-500" : "")
+                          }
+                        />
+                      </button>
+
                       <CardTitle className="text-lg">{job.title}</CardTitle>
                       <p className="text-sm text-muted-foreground">{job.company_name}</p>
                     </CardHeader>
@@ -223,6 +303,7 @@ const JobPortal = () => {
                           variant="default"
                           className="rounded-xl"
                           onClick={(e) => {
+                            e.stopPropagation();
                             dispatch(setSelectedJob(job));
                             navigate(`/jobs/${job.id}`);
                           }}
@@ -234,6 +315,8 @@ const JobPortal = () => {
                   </Card>
                 ))}
               </div>
+
+
 
               {/* PAGINATION */}
               <div className="flex justify-center items-center gap-2 mt-8">

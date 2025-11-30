@@ -99,7 +99,28 @@ export const getScrappedJobs = createAsyncThunk(
         }
     }
 );
-
+export const getFavoriteJobs = createAsyncThunk(
+    "user/getFavoriteJobs",
+    async (_, { rejectWithValue }) => {
+        try {
+            const res = await axios.get(`${BASE_URL}/Ollama/GetFavoriteJobs`);
+            return res.data;
+        } catch (err) {
+            return rejectWithValue(err.response?.data || "Fetch failed");
+        }
+    }
+);
+export const saveFavoriteJob = createAsyncThunk(
+    "user/saveFavoriteJob",
+    async ({ jobId }, { rejectWithValue }) => {
+        try {
+            const res = await axios.post(`${BASE_URL}/Ollama/SaveFavoriteJob/${jobId}`);
+            return res.data;
+        } catch (err) {
+            return rejectWithValue(err.response?.data || "Post failed");
+        }
+    }
+);
 // -----------------------------------
 // 🔵 NEW — AI THUNKS
 // -----------------------------------
@@ -210,7 +231,7 @@ const initialState = {
 
     scrapResult: null,
     scrappedJobs: [],
-
+    favoriteJobs: [],
     selectedJob: null,
     tempResume: null,
 
@@ -290,7 +311,18 @@ const userApiSlice = createSlice({
                 state.loading = false;
                 state.error = action.payload;
             });
-
+        builder
+            .addCase(saveFavoriteJob.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(saveFavoriteJob.fulfilled, (state) => {
+                state.loading = false;
+            })
+            .addCase(saveFavoriteJob.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
+            });
         builder
             .addCase(scrapJobs.pending, (state) => {
                 state.loading = true;
@@ -316,7 +348,18 @@ const userApiSlice = createSlice({
                 state.loading = false;
                 state.error = action.payload;
             });
-
+        builder
+            .addCase(getFavoriteJobs.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(getFavoriteJobs.fulfilled, (state, action) => {
+                state.loading = false;
+                state.favoriteJobs = action.payload?.data || [];
+            })
+            .addCase(getFavoriteJobs.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
+            });
         // -----------------------------------
         // 🔵 NEW — AI REDUCERS
         // -----------------------------------

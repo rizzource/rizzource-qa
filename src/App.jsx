@@ -69,6 +69,7 @@ const AppContent = () => {
             <Route path="/mentorship-selection" element={<Index mentorshipPage={true} initialState="selection" />} />
             <Route path="/thank-you" element={<ThankYou />} />
             <Route path="/jobs" element={<JobPortal />} />
+            <Route path="/favoritejobs" element={<JobPortal />} />
             <Route path="/jobs/:id" element={<JobDetails />} />
             <Route path="/job-application-success" element={<JobApplicationSuccess />} />
             <Route path="/cover-letter/generator" element={<CoverLetterGenerator />} />

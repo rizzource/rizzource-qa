@@ -2,6 +2,8 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
+import { Heart } from "lucide-react";
+import { saveFavoriteJob, getFavoriteJobs } from "@/redux/slices/userApiSlice";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
@@ -23,7 +25,7 @@ import Footer from "@/components/Footer";
 import ResumeUpload from "@/components/jobs/ResumeUpload";
 import JobApplicationForm from "@/components/jobs/JobApplicationForm";
 
-import { toast } from "sonner";
+import { toast, Toaster } from "sonner";
 import { setTempResume } from "@/redux/slices/userApiSlice";
 import ResumeEditor from "../components/resume/ResumeEditor";
 
@@ -59,6 +61,29 @@ const JobDetails = () => {
         year: "numeric",
       })
       : "";
+  // -----------------------------
+  // FAVORITE JOB HANDLER
+  // -----------------------------
+  const toggleFavorite = async () => {
+    if (!user) {
+      toast.error("Please sign in to save favorite jobs");
+      return;
+    }
+
+    try {
+      const result = await dispatch(saveFavoriteJob(job.id));
+
+      if (result.error) {
+        toast.error(result.error.message || "Failed to update favorite");
+        return;
+      }
+
+      toast.success("Updated your favorites");
+      dispatch(getFavoriteJobs());
+    } catch (err) {
+      toast.error("Could not update favorite job");
+    }
+  };
 
   // -----------------------------
   // Resume Upload
@@ -148,7 +173,7 @@ const JobDetails = () => {
   return (
     <>
       <Header />
-
+      <Toaster richColors closeButton position="top-center" />
       <div className="min-h-screen bg-background pt-16">
         <div className="container mx-auto px-4 py-8 max-w-4xl">
           <Button variant="ghost" onClick={() => navigate("/jobs")} className="mb-6">
@@ -157,7 +182,26 @@ const JobDetails = () => {
 
           <Card>
             <CardHeader>
-              <div className="flex items-start gap-4 mb-4">
+              <div className="flex items-start gap-4 mb-4 relative">
+
+                {/* ❤️ Favorite Button */}
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toggleFavorite();
+                  }}
+                  className={
+                    "absolute top-0 right-0 p-2 rounded-full transition hover:bg-muted/70 " +
+                    (job.isFavorite ? "text-red-500" : "text-muted-foreground")
+                  }
+                >
+                  <Heart
+                    className={
+                      "h-6 w-6 transition " + (job.isFavorite ? "fill-red-500" : "")
+                    }
+                  />
+                </button>
+
                 <div className="w-20 h-20 rounded-lg bg-secondary flex items-center justify-center">
                   <Building2 className="h-10 w-10 text-primary" />
                 </div>
@@ -167,6 +211,7 @@ const JobDetails = () => {
                   <p className="text-xl text-muted-foreground">{job.company}</p>
                 </div>
               </div>
+
 
               <div className="flex flex-wrap gap-3">
                 {job.location && (
