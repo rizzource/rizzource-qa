@@ -73,7 +73,7 @@ const JobDetails = () => {
     }
 
     try {
-      const result = await dispatch(saveFavoriteJob({jobId}));
+      const result = await dispatch(saveFavoriteJob({ jobId }));
 
       if (result.error) {
         toast.error(result.error.message || "Failed to update favorite");
@@ -81,7 +81,7 @@ const JobDetails = () => {
       }
 
       toast.success("Updated your favorites");
-      navigate(0);
+      window.location.reload();
     } catch (err) {
       toast.error("Could not update favorite job");
     }
@@ -92,7 +92,7 @@ const JobDetails = () => {
       return;
     }
     try {
-      const result = await dispatch(RemoveFavoriteJob({jobId}));
+      const result = await dispatch(RemoveFavoriteJob({ jobId }));
 
       if (result.error) {
         toast.error("Failed to remove from favorites. Please try again.");
@@ -101,7 +101,7 @@ const JobDetails = () => {
 
       toast.success("Updated your favorites!");
 
-      navigate(0);
+      window.location.reload();
     } catch (err) {
       console.error("Favorite job error:", err);
       toast.error("Something went wrong while saving your job.");
