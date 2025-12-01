@@ -43,10 +43,12 @@ const JobPortal = () => {
 
   // Fetch jobs on mount
   useEffect(() => {
-    if (window.location.href.includes("favoritejobs")) {
-      dispatch(getFavoriteJobs());
-    } else {
-      if (user) dispatch(getScrappedJobs());
+    if (user) {
+      if (window.location.href.includes("favoritejobs")) {
+        dispatch(getFavoriteJobs());
+      } else {
+        dispatch(getScrappedJobs());
+      }
     }
   }, [dispatch, user]);
 
