@@ -190,16 +190,23 @@ export const saveFavoriteJob = createAsyncThunk(
 );
 
 export const RemoveFavoriteJob = createAsyncThunk(
-    "Ollama/RemoveFavoriteJob",
+    "user/saveFavoriteJob",
     async ({ jobId }, { rejectWithValue }) => {
         try {
-            const res = await axios.delete(`${BASE_URL}/Ollama/RemoveFavoriteJob/${{ jobId }}`,);
+            const res = await axios({
+                url: `${BASE_URL}/Ollama/scrapped-jobs/${jobId}/favorite`,
+                method: "DELETE",
+                data: null, // since POST body is empty
+                headers: {
+                    Authorization: `Bearer ${restored?.token}`,
+                    // "Content-Type": "application/json",
+                },
+                // withCredentials: true, // equivalent to fetch `credentials: "include"`
+            });
 
             return res.data;
         } catch (err) {
-            return rejectWithValue(
-                err.response?.data || "Google login failed"
-            );
+            return rejectWithValue(err.response?.data || "Post failed");
         }
     }
 );
