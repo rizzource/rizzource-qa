@@ -46,9 +46,9 @@ const JobPortal = () => {
     if (window.location.href.includes("favoritejobs")) {
       dispatch(getFavoriteJobs());
     } else {
-      dispatch(getScrappedJobs());
+      if (user) dispatch(getScrappedJobs());
     }
-  }, [dispatch]);
+  }, [dispatch, user]);
 
   // ------------------------------------------------------------
   // 1️⃣ FILTER OUT BAD PLACEHOLDER JOBS
