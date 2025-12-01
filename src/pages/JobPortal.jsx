@@ -228,14 +228,14 @@ const JobPortal = () => {
       return;
     }
     try {
-      const result = await dispatch(saveFavoriteJob(jobId));
+      const result = await dispatch(saveFavoriteJob({ jobId }));
 
       if (result.error) {
         toast.error("Failed to add to favorites. Please try again.");
         return;
       }
 
-      toast.success("Job added to your favorites!");
+      toast.success("Updated your favorites!");
 
       if (window.location.href.includes("favoritejobs")) {
         dispatch(getFavoriteJobs());
@@ -382,13 +382,13 @@ const JobPortal = () => {
                         }}
                         className={
                           "absolute top-2 right-2 p-2 rounded-full transition hover:bg-muted/70 " +
-                          (job.isFavorite ? "text-red-500" : "text-muted-foreground")
+                          (job.isFav ? "text-red-500" : "text-muted-foreground")
                         }
                       >
                         <Heart
                           className={
                             "h-5 w-5 transition " +
-                            (job.isFavorite ? "fill-red-500" : "")
+                            (job.isFav ? "fill-red-500" : "")
                           }
                         />
                       </button>

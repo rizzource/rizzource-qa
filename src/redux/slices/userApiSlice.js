@@ -131,19 +131,34 @@ export const getScrappedJobs = createAsyncThunk(
     "user/getScrappedJobs",
     async (_, { rejectWithValue }) => {
         try {
-            const res = await axios.get(`${BASE_URL}/Ollama/GetScrappedJobs`);
+            const res = await axios({
+                url: `${BASE_URL}/Ollama/GetScrappedJobs`,
+                method: "GET",
+                headers: {
+                    Authorization: `Bearer ${restored?.token}`,
+                    // "Content-Type": "application/json",
+                },
+                // withCredentials: true, // same as fetch: credentials: "include"
+            });
+
             return res.data;
         } catch (err) {
             return rejectWithValue(err.response?.data || "Fetch failed");
         }
     }
 );
+
 
 export const getFavoriteJobs = createAsyncThunk(
     "user/getFavoriteJobs",
     async (_, { rejectWithValue }) => {
         try {
-            const res = await axios.get(`${BASE_URL}/Ollama/GetFavoriteJobs`);
+            const token = localStorage.getItem("token"); // same here
+            const res = await axios.get(`${BASE_URL}/Ollama/GetFavoriteJobs`, {
+                headers: {
+                    Authorization: `Bearer ${restored?.token}`,
+                },
+            });
             return res.data;
         } catch (err) {
             return rejectWithValue(err.response?.data || "Fetch failed");
@@ -151,19 +166,29 @@ export const getFavoriteJobs = createAsyncThunk(
     }
 );
 
+
 export const saveFavoriteJob = createAsyncThunk(
     "user/saveFavoriteJob",
     async ({ jobId }, { rejectWithValue }) => {
         try {
-            const res = await axios.post(
-                `${BASE_URL}/Ollama/SaveFavoriteJob/${jobId}`
-            );
+            const res = await axios({
+                url: `${BASE_URL}/Ollama/scrapped-jobs/${jobId}/favorite`,
+                method: "POST",
+                data: null, // since POST body is empty
+                headers: {
+                    Authorization: `Bearer ${restored?.token}`,
+                    // "Content-Type": "application/json",
+                },
+                // withCredentials: true, // equivalent to fetch `credentials: "include"`
+            });
+
             return res.data;
         } catch (err) {
             return rejectWithValue(err.response?.data || "Post failed");
         }
     }
 );
+
 
 // -----------------------------------
 // AI THUNKS

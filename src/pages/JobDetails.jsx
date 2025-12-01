@@ -193,12 +193,12 @@ const JobDetails = () => {
                   }}
                   className={
                     "absolute top-0 right-0 p-2 rounded-full transition hover:bg-muted/70 " +
-                    (job.isFavorite ? "text-red-500" : "text-muted-foreground")
+                    (job.isFav ? "text-red-500" : "text-muted-foreground")
                   }
                 >
                   <Heart
                     className={
-                      "h-6 w-6 transition " + (job.isFavorite ? "fill-red-500" : "")
+                      "h-6 w-6 transition " + (job.isFav ? "fill-red-500" : "")
                     }
                   />
                 </button>
