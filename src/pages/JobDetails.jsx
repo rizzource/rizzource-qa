@@ -66,14 +66,14 @@ const JobDetails = () => {
   // -----------------------------
   // FAVORITE JOB HANDLER
   // -----------------------------
-  const toggleFavorite = async () => {
+  const toggleFavorite = async (jobId) => {
     if (!user) {
       toast.error("Please sign in to save favorite jobs");
       return;
     }
 
     try {
-      const result = await dispatch(saveFavoriteJob(job.id));
+      const result = await dispatch(saveFavoriteJob({jobId}));
 
       if (result.error) {
         toast.error(result.error.message || "Failed to update favorite");
@@ -92,7 +92,7 @@ const JobDetails = () => {
       return;
     }
     try {
-      const result = await dispatch(RemoveFavoriteJob(job.id));
+      const result = await dispatch(RemoveFavoriteJob({jobId}));
 
       if (result.error) {
         toast.error("Failed to remove from favorites. Please try again.");
@@ -210,8 +210,8 @@ const JobDetails = () => {
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
-                    job?.isFav ? deleteFavoriteJob() :
-                      toggleFavorite();
+                    job?.isFav ? deleteFavoriteJob(job.id) :
+                      toggleFavorite(job.id);
                   }}
                   className={
                     "absolute top-0 right-0 p-2 rounded-full transition hover:bg-muted/70 " +
