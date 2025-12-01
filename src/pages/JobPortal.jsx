@@ -20,7 +20,7 @@ import Footer from "@/components/Footer";
 import { useDispatch, useSelector } from "react-redux";
 import { getScrappedJobs } from "@/redux/slices/userApiSlice";
 import { useNavigate } from "react-router-dom";
-import { getFavoriteJobs, saveFavoriteJob, setSelectedJob } from "../redux/slices/userApiSlice";
+import { getFavoriteJobs, RemoveFavoriteJob, saveFavoriteJob, setSelectedJob } from "../redux/slices/userApiSlice";
 import { toast, Toaster } from "sonner";
 
 const JobPortal = () => {
@@ -247,6 +247,31 @@ const JobPortal = () => {
       toast.error("Something went wrong while saving your job.");
     }
   };
+  const deleteFavoriteJob = async (jobId) => {
+    if (!user) {
+      toast.error("Please sign in to save favorite jobs");
+      return;
+    }
+    try {
+      const result = await dispatch(RemoveFavoriteJob({ jobId }));
+
+      if (result.error) {
+        toast.error("Failed to remove from favorites. Please try again.");
+        return;
+      }
+
+      toast.success("Updated your favorites!");
+
+      if (window.location.href.includes("favoritejobs")) {
+        dispatch(getFavoriteJobs());
+      } else {
+        dispatch(getScrappedJobs());
+      }
+    } catch (err) {
+      console.error("Favorite job error:", err);
+      toast.error("Something went wrong while saving your job.");
+    }
+  };
 
   const formatDate = (dateString) => {
     if (!dateString) return "No deadline specified";
@@ -378,7 +403,8 @@ const JobPortal = () => {
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
-                          addFavoriteJob(job.id);
+                          job?.isFav ? deleteFavoriteJob(job.id) :
+                            addFavoriteJob(job.id);
                         }}
                         className={
                           "absolute top-2 right-2 p-2 rounded-full transition hover:bg-muted/70 " +

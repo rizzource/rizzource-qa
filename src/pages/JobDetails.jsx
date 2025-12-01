@@ -29,6 +29,7 @@ import JobApplicationForm from "@/components/jobs/JobApplicationForm";
 import { toast, Toaster } from "sonner";
 import { setTempResume } from "@/redux/slices/userApiSlice";
 import ResumeEditor from "../components/resume/ResumeEditor";
+import { RemoveFavoriteJob } from "../redux/slices/userApiSlice";
 
 const JobDetails = () => {
   const navigate = useNavigate();
@@ -80,12 +81,32 @@ const JobDetails = () => {
       }
 
       toast.success("Updated your favorites");
-      dispatch(getFavoriteJobs());
+      navigate(0);
     } catch (err) {
       toast.error("Could not update favorite job");
     }
   };
+  const deleteFavoriteJob = async (jobId) => {
+    if (!user) {
+      toast.error("Please sign in to save favorite jobs");
+      return;
+    }
+    try {
+      const result = await dispatch(RemoveFavoriteJob(job.id));
 
+      if (result.error) {
+        toast.error("Failed to remove from favorites. Please try again.");
+        return;
+      }
+
+      toast.success("Updated your favorites!");
+
+      navigate(0);
+    } catch (err) {
+      console.error("Favorite job error:", err);
+      toast.error("Something went wrong while saving your job.");
+    }
+  };
   // -----------------------------
   // Resume Upload
   // -----------------------------
@@ -189,7 +210,8 @@ const JobDetails = () => {
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
-                    toggleFavorite();
+                    job?.isFav ? deleteFavoriteJob() :
+                      toggleFavorite();
                   }}
                   className={
                     "absolute top-0 right-0 p-2 rounded-full transition hover:bg-muted/70 " +

@@ -189,6 +189,20 @@ export const saveFavoriteJob = createAsyncThunk(
     }
 );
 
+export const RemoveFavoriteJob = createAsyncThunk(
+    "Ollama/RemoveFavoriteJob",
+    async ({ jobId }, { rejectWithValue }) => {
+        try {
+            const res = await axios.delete(`${BASE_URL}/Ollama/RemoveFavoriteJob/${{ jobId }}`,);
+
+            return res.data;
+        } catch (err) {
+            return rejectWithValue(
+                err.response?.data || "Google login failed"
+            );
+        }
+    }
+);
 
 // -----------------------------------
 // AI THUNKS
