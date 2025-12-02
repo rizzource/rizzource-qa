@@ -16,7 +16,7 @@ import Footer from '@/components/Footer';
 import logoLight from "@/assets/rizzource-logo-light.png";
 
 const GOOGLE_CLIENT_ID =
-  "267038711162-57kvum7q8o83c65p956e2e44kjl1c338.apps.googleusercontent.com";
+  "267038711162-c6681crs3mm7gq8cheglst9gej50m527.apps.googleusercontent.com";
 
 const Auth = () => {
   const [localError, setLocalError] = useState("");
