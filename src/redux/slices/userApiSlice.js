@@ -134,11 +134,11 @@ export const getScrappedJobs = createAsyncThunk(
             const res = await axios({
                 url: `${BASE_URL}/Ollama/GetScrappedJobs`,
                 method: "GET",
-                headers: {
-                    Authorization: `Bearer ${restored?.token}`,
-                    // "Content-Type": "application/json",
-                },
-                // withCredentials: true, // same as fetch: credentials: "include"
+                // headers: {
+                //     Authorization: `Bearer ${restored?.token}`,
+                //     // "Content-Type": "application/json",
+                // },
+                // // withCredentials: true, // same as fetch: credentials: "include"
             });
 
             return res.data;
@@ -155,9 +155,9 @@ export const getFavoriteJobs = createAsyncThunk(
         try {
             const token = localStorage.getItem("token"); // same here
             const res = await axios.get(`${BASE_URL}/Ollama/GetFavoriteJobs`, {
-                headers: {
-                    Authorization: `Bearer ${restored?.token}`,
-                },
+                // headers: {
+                //     Authorization: `Bearer ${restored?.token}`,
+                // },
             });
             return res.data;
         } catch (err) {
@@ -175,10 +175,10 @@ export const saveFavoriteJob = createAsyncThunk(
                 url: `${BASE_URL}/Ollama/scrapped-jobs/${jobId}/favorite`,
                 method: "POST",
                 data: null, // since POST body is empty
-                headers: {
-                    Authorization: `Bearer ${restored?.token}`,
-                    // "Content-Type": "application/json",
-                },
+                // headers: {
+                //     Authorization: `Bearer ${restored?.token}`,
+                //     // "Content-Type": "application/json",
+                // },
                 // withCredentials: true, // equivalent to fetch `credentials: "include"`
             });
 
@@ -197,10 +197,10 @@ export const RemoveFavoriteJob = createAsyncThunk(
                 url: `${BASE_URL}/Ollama/scrapped-jobs/${jobId}/favorite`,
                 method: "DELETE",
                 data: null, // since POST body is empty
-                headers: {
-                    Authorization: `Bearer ${restored?.token}`,
-                    // "Content-Type": "application/json",
-                },
+                // headers: {
+                //     Authorization: `Bearer ${restored?.token}`,
+                //     // "Content-Type": "application/json",
+                // },
                 // withCredentials: true, // equivalent to fetch `credentials: "include"`
             });
 
