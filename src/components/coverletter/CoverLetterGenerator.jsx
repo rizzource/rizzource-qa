@@ -24,7 +24,7 @@ import {
     FileUp,
     FileCheck,
 } from "lucide-react"
-import { toast } from "sonner"
+import { toast, Toaster } from "sonner"
 import {
     generateCoverLetterThunk,
     reGenerateCoverLetterThunk,
@@ -82,6 +82,8 @@ const flattenResumeToText = (resume) => {
 
 const CoverLetterGenerator = ({ onBack, initialResumeText = "", initialJobTitle = "", initialCompany = "" }) => {
     // Resume state
+    const location = useLocation();
+    const { jobId, title, jobCompany, description } = location.state || {};
     const [resumeText, setResumeText] = useState(initialResumeText)
     const [resumeFile, setResumeFile] = useState(null)
     const [parsing, setParsing] = useState(false)
@@ -92,9 +94,9 @@ const CoverLetterGenerator = ({ onBack, initialResumeText = "", initialJobTitle 
     const [mobileView, setMobileView] = useState("editor");
 
     // Job details
-    const [jobTitle, setJobTitle] = useState(initialJobTitle)
-    const [company, setCompany] = useState(initialCompany)
-    const [jobDescription, setJobDescription] = useState("")
+    const [jobTitle, setJobTitle] = useState(title || "")
+    const [company, setCompany] = useState(jobCompany || "")
+    const [jobDescription, setJobDescription] = useState(description || "")
 
     // Cover letter state
     const [coverLetter, setCoverLetter] = useState("")
@@ -121,8 +123,7 @@ const CoverLetterGenerator = ({ onBack, initialResumeText = "", initialJobTitle 
     const previewRef = useRef(null)
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const location = useLocation();
-    const { jobId } = location.state || {};
+
 
     const toggleSection = (section) => {
         setSectionsOpen((prev) => ({ ...prev, [section]: !prev[section] }))
@@ -230,6 +231,7 @@ const CoverLetterGenerator = ({ onBack, initialResumeText = "", initialJobTitle 
         if (result.meta.requestStatus === "fulfilled") {
             setCoverLetter(result.payload.coverLetter)
             toast.success("Cover letter generated!")
+            setMobileView("preview")
         } else {
             toast.error("Failed to generate")
         }
@@ -253,6 +255,7 @@ const CoverLetterGenerator = ({ onBack, initialResumeText = "", initialJobTitle 
         if (result.meta.requestStatus === "fulfilled") {
             setCoverLetter(result.payload.coverLetter)
             toast.success("Cover letter updated!")
+            setMobileView("preview");
         } else {
             toast.error("Failed to regenerate")
         }
@@ -277,13 +280,14 @@ const CoverLetterGenerator = ({ onBack, initialResumeText = "", initialJobTitle 
 
     return (
         <div className="min-h-screen bg-background flex flex-col" style={{ marginTop: 60 }}>
+            <Toaster richColors closeButton position="top-center" />
             {/* Mobile Toggle Bar */}
             <div className="md:hidden sticky top-[60px] z-20 bg-background border-b">
                 <div className="flex">
                     <button
                         className={`flex-1 py-3 text-center text-sm font-medium ${mobileView === "editor"
-                                ? "border-b-2 border-primary text-primary"
-                                : "text-muted-foreground"
+                            ? "border-b-2 border-primary text-primary"
+                            : "text-muted-foreground"
                             }`}
                         onClick={() => setMobileView("editor")}
                     >
@@ -292,8 +296,8 @@ const CoverLetterGenerator = ({ onBack, initialResumeText = "", initialJobTitle 
 
                     <button
                         className={`flex-1 py-3 text-center text-sm font-medium ${mobileView === "preview"
-                                ? "border-b-2 border-primary text-primary"
-                                : "text-muted-foreground"
+                            ? "border-b-2 border-primary text-primary"
+                            : "text-muted-foreground"
                             }`}
                         onClick={() => setMobileView("preview")}
                     >
@@ -349,8 +353,8 @@ const CoverLetterGenerator = ({ onBack, initialResumeText = "", initialJobTitle 
                                     {!resumeText ? (
                                         <div
                                             className={`border-2 border-dashed rounded-xl p-10 text-center transition-all cursor-pointer ${parsing
-                                                    ? "border-primary bg-primary/5"
-                                                    : "border-border hover:border-primary hover:bg-secondary/50 hover:shadow-lg"
+                                                ? "border-primary bg-primary/5"
+                                                : "border-border hover:border-primary hover:bg-secondary/50 hover:shadow-lg"
                                                 }`}
                                             onDrop={handleDrop}
                                             onDragOver={(e) => e.preventDefault()}

@@ -37,7 +37,7 @@ import {
     FileUp,
     Brain,
 } from "lucide-react"
-import { toast } from "sonner"
+import { toast, Toaster } from "sonner"
 import { fileUpload, generateNewBulletThunk, improveBulletThunk } from "../../redux/slices/userApiSlice"
 import { useDispatch } from "react-redux"
 import { buildResumeHtml } from "../../lib/utils"
@@ -524,6 +524,7 @@ const ResumeEditor = ({ onBack, initialFile = null, initialExtractedText = "" })
     if (!resumeData) {
         return (
             <div className="min-h-screen bg-background">
+                <Toaster richColors closeButton position="top-center" />
                 <div className="container mx-auto px-4 py-8 max-w-2xl">
                     <Button variant="ghost" onClick={() => onBack()} className="mb-6">
                         <ArrowLeft className="h-4 w-4 mr-2" /> Back
@@ -636,6 +637,7 @@ const ResumeEditor = ({ onBack, initialFile = null, initialExtractedText = "" })
     // Main Editor with Side-by-Side Preview
     return (
         <div className="min-h-screen bg-background" style={{ marginTop: 70 }}>
+            <Toaster richColors closeButton position="top-center" />
             {/* Header */}
             {/* <div className="border-b bg-background sticky top-0 z-10">
                 <div className="container mx-auto px-4 py-4">

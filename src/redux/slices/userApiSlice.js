@@ -243,7 +243,7 @@ export const generateCoverLetterThunk = createAsyncThunk(
 export const reGenerateCoverLetterThunk = createAsyncThunk(
     "ai/reGenerateCoverLetter",
     async (
-        { resumeText, jobDescription, jobTitle, company, tone },
+        { resumeText, jobDescription, jobTitle, company, selectedTone },
         { rejectWithValue }
     ) => {
         try {
@@ -254,7 +254,7 @@ export const reGenerateCoverLetterThunk = createAsyncThunk(
                     jobDescription,
                     jobTitle,
                     company,
-                    tone,
+                    tone: selectedTone,
                 }
             );
             return res.data;

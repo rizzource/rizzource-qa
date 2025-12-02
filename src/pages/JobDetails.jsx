@@ -150,6 +150,9 @@ const JobDetails = () => {
       , {
         state: {
           jobId: job.id,
+          title: job.title,
+          jobCompany: job.company,
+          description: job.jobDescription
         },
       }
     );
