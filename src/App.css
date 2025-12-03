@@ -40,3 +40,64 @@
 .read-the-docs {
   color: #888;
 }
+
+/* Typing Effect */
+@keyframes typing {
+  from { width: 0 }
+  to { width: 100% }
+}
+
+.animate-typing {
+  display: inline-block;
+  animation: typing 2s steps(40) infinite alternate;
+}
+
+/* Optional: slow spin for loader */
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 3s linear infinite;
+}
+
+@keyframes typing {
+  from { width: 0 }
+  to { width: 100% }
+}
+
+.animate-typing {
+  display: inline-block;
+  animation: typing 2s steps(40) alternate infinite;
+}
+@keyframes fade {
+  0% { opacity: 0 }
+  20% { opacity: 1 }
+  80% { opacity: 1 }
+  100% { opacity: 0 }
+}
+
+.animate-fade {
+  animation: fade 2s linear infinite;
+}
+@keyframes fade {
+  0% { opacity: 0 }
+  20% { opacity: 1 }
+  80% { opacity: 1 }
+  100% { opacity: 0 }
+}
+
+.animate-fade {
+  animation: fade 3s linear infinite;
+}
+
+@keyframes typing {
+  from { width: 0 }
+  to { width: 100% }
+}
+
+.animate-typing {
+  display: inline-block;
+  animation: typing 2s steps(40) alternate infinite;
+}

@@ -78,11 +78,11 @@ const Header = () => {
             <Link to="/jobs" className="font-bold text-primary hover:text-accent transition-colors">
               Job Portal
             </Link>
-            {user &&
+            {/* {user &&
               <Link to="/favoritejobs" className="font-bold text-primary hover:text-accent transition-colors">
                 Favorite Jobs
               </Link>
-            }
+            } */}
             {/* {user &&
               !isSuperAdmin() &&
               !roles.includes("owner") &&

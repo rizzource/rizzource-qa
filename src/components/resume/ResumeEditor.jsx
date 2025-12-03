@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useCallback, useRef } from "react"
+import { useState, useCallback, useRef, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -240,6 +240,25 @@ const ResumeEditor = ({ onBack, initialFile = null, initialExtractedText = "" })
     const [collapsedSections, setCollapsedSections] = useState({})
 
     const dispatch = useDispatch();
+    const [typingIndex, setTypingIndex] = useState(0);
+    useEffect(() => {
+        if (!isParsing) return;
+
+        let i = 0;
+
+        const interval = setInterval(() => {
+            i++;
+            if (i >= 5) {
+                clearInterval(interval);
+                return;
+            }
+            setTypingIndex(i);
+        }, 4000); // 3 sec per message, total 15 sec
+
+        return () => clearInterval(interval);
+    }, [isParsing]);
+
+
     const generateAIBullets = async (bulletText, jobTitle) => {
         const result = await dispatch(
             improveBulletThunk({
@@ -563,16 +582,41 @@ const ResumeEditor = ({ onBack, initialFile = null, initialExtractedText = "" })
                                 />
 
                                 {isParsing ? (
-                                    <div className="flex flex-col items-center gap-4">
+                                    <div className="flex flex-col items-center gap-8 py-12">
+
+                                        {/* AI ORB */}
                                         <div className="relative">
-                                            <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center">
+                                            <div className="w-24 h-24 rounded-full bg-primary/10 flex items-center justify-center animate-pulse">
                                                 <Loader2 className="h-10 w-10 text-primary animate-spin" />
                                             </div>
                                         </div>
-                                        <div>
-                                            <p className="text-lg font-semibold">Parsing your resume...</p>
-                                            <p className="text-muted-foreground text-sm mt-1">Extracting sections and content with AI</p>
+
+                                        {/* ANIMATED TEXT SECTION */}
+                                        <div className="flex flex-col items-center gap-2">
+                                            <p className="text-lg font-semibold text-primary/90">
+                                                AI is analyzing your resume
+                                            </p>
+
+                                            {/* Typing text with fade */}
+                                            <p
+                                                key={typingIndex} // forces fade animation on change
+                                                className="text-base font-medium animate-fade text-center
+                   overflow-hidden whitespace-nowrap border-r-4 
+                   border-primary pr-2 animate-typing"
+                                            >
+                                                {[
+                                                    "Reading your resume...",
+                                                    "Detecting Experience...",
+                                                    "Extracting Skills...",
+                                                    "Fixing inconsistencies...",
+                                                    "Preparing structured data..."
+                                                ][typingIndex]}
+                                            </p>
                                         </div>
+
+                                        <p className="text-muted-foreground text-sm">
+                                            Hang tight — this usually takes ~20 seconds.
+                                        </p>
                                     </div>
                                 ) : (
                                     <div className="flex flex-col items-center gap-5">

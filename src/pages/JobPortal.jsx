@@ -402,7 +402,7 @@ const JobPortal = () => {
                   >
                     <CardHeader className="relative">
                       {/* ❤️ Favorite Button */}
-                      <button
+                      {/* <button
                         onClick={(e) => {
                           e.stopPropagation();
                           job?.isFav ? deleteFavoriteJob(job.id) :
@@ -419,7 +419,7 @@ const JobPortal = () => {
                             (job.isFav ? "fill-red-500" : "")
                           }
                         />
-                      </button>
+                      </button> */}
 
                       <CardTitle className="text-lg">{job.title}</CardTitle>
                       <p className="text-sm text-muted-foreground">{job.company}</p>

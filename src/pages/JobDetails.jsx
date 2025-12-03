@@ -210,7 +210,7 @@ const JobDetails = () => {
               <div className="flex items-start gap-4 mb-4 relative">
 
                 {/* ❤️ Favorite Button */}
-                <button
+                {/* <button
                   onClick={(e) => {
                     e.stopPropagation();
                     job?.isFav ? deleteFavoriteJob(job.id) :
@@ -226,7 +226,7 @@ const JobDetails = () => {
                       "h-6 w-6 transition " + (job.isFav ? "fill-red-500" : "")
                     }
                   />
-                </button>
+                </button> */}
 
                 <div className="w-20 h-20 rounded-lg bg-secondary flex items-center justify-center">
                   <Building2 className="h-10 w-10 text-primary" />
