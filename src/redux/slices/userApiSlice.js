@@ -81,9 +81,11 @@ export const fileUpload = createAsyncThunk(
             const formData = new FormData();
             formData.append("file", file);
 
-            const res = await axios.post(`${BASE_URL}/resume/upload`, formData, {
-                headers: { "Content-Type": "multipart/form-data" },
-            });
+            const res = await axios.post(
+                `${BASE_URL}/ResumeParser/upload`,
+                formData,
+                { headers: { "Content-Type": "multipart/form-data" } }
+            );
 
             return res.data;
         } catch (err) {
@@ -91,6 +93,7 @@ export const fileUpload = createAsyncThunk(
         }
     }
 );
+
 
 /* -----------------------------------
    GOOGLE LOGIN (NEW)
