@@ -29,9 +29,14 @@ const Auth = () => {
   const { user, loading, error } = useSelector((state) => state.userApi);
 
   // Redirect after login
+  // Redirect after login — return to previous page if provided
   useEffect(() => {
-    if (user) navigate("/");
+    if (user) {
+      const returnTo = window.history.state?.usr?.returnTo;
+      navigate(returnTo || "/");
+    }
   }, [user, navigate]);
+
 
   // ----------------------
   // EMAIL/PASSWORD LOGIN

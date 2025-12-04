@@ -323,7 +323,7 @@ const JobDetails = () => {
                     <p className="text-muted-foreground mb-3 text-sm">Please sign in to apply for this position</p>
                     <Button
                       className="rounded-xl px-6 font-semibold transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
-                      onClick={() => navigate("/auth")}
+                      onClick={() => navigate("/auth", { state: { returnTo: `/jobs/${job.id}` } })}
                     >
                       Sign In
                     </Button>
