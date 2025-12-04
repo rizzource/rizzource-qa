@@ -412,7 +412,7 @@ const JobPortal = () => {
               </h1>
               <p className="text-muted-foreground text-lg">
                 {/* Rizzource scans firms, job boards, and courts—so you don’t have to. */}
-                Currently serving Georgia and New York — explore AI résumé and cover-letter tools {!user ? "when you join ✨" : "✨"}</p>
+                Currently serving Georgia and New York — {user && "click on job details to "}explore AI résumé and cover-letter tools {!user ? "when you join ✨" : "✨"}</p>
             </div>
           )}
 
