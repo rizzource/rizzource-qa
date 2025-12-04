@@ -408,7 +408,7 @@ const JobPortal = () => {
             <div className="text-center mb-12">
               <h1 className="text-4xl font-bold text-foreground mb-4">
                 {/* Every 1L Summer Job. One Smart Search */}
-                Every 1L Law-Firm Roles. One Smart Search.
+                Every 1L Law-Firm Role. One Smart Search.
               </h1>
               <p className="text-muted-foreground text-lg">
                 {/* Rizzource scans firms, job boards, and courts—so you don’t have to. */}
