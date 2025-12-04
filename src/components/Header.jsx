@@ -76,7 +76,7 @@ const Header = () => {
             )}
 
             <Link to="/jobs" className="font-bold text-primary hover:text-accent transition-colors">
-              Job Portal
+              Explore Jobs
             </Link>
             {/* {user &&
               <Link to="/favoritejobs" className="font-bold text-primary hover:text-accent transition-colors">

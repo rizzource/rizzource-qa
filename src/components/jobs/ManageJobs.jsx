@@ -73,7 +73,7 @@ const ManageJobs = () => {
   const handleEditClick = (job) => {
     setEditJobId(job.id);
     setEditForm({
-      title: job.title || "",
+      title: job.jobTitle || "",
       description: job.description || "",
       location: job.location || "",
       job_type: job.job_type || "",
@@ -274,7 +274,7 @@ const ManageJobs = () => {
             <CardHeader>
               <div className="flex items-start justify-between">
                 <div>
-                  <CardTitle className="text-xl">{job.title}</CardTitle>
+                  <CardTitle className="text-xl">{job.jobTitle}</CardTitle>
                   <p className="text-sm text-muted-foreground">{job.companies?.name}</p>
                 </div>
                 <Badge variant={job.status === "open" ? "default" : "primary"} className="px-3 py-1">

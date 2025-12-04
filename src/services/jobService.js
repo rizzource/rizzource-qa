@@ -27,9 +27,9 @@ export const saveJobsToDatabase = async (jobs, source) => {
 
       else if (source === 'adzuna') {
         return {
-          title: job.title,
+          title: job.jobTitle,
           description: job.description,
-          company_name: job.company?.display_name || 'Unknown',
+          company_name: job.firmName?.display_name || 'Unknown',
           location: job.location?.display_name || 'Unknown',
           job_type: job.contract_time || 'Not specified',
           area_of_law: 'Law',
@@ -43,7 +43,7 @@ export const saveJobsToDatabase = async (jobs, source) => {
       // Fallback for any future APIs
       else {
         return {
-          title: job.title || 'Untitled',
+          title: job.jobTitle || 'Untitled',
           description: job.description || 'No description available',
           company_name: job.company_name || 'Unknown',
           location: job.location || 'Unknown',
@@ -83,10 +83,10 @@ export const saveJobsToDatabase = async (jobs, source) => {
         if (insertError) {
           console.error('Error inserting job:', insertError);
         } else {
-          console.log(`New job saved: ${job.title}`);
+          console.log(`New job saved: ${job.jobTitle}`);
         }
       } else {
-        console.log(`Job already exists: ${job.title}`);
+        console.log(`Job already exists: ${job.jobTitle}`);
       }
     }
   } catch (error) {

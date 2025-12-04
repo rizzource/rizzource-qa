@@ -4,6 +4,7 @@ import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
+import Footer from "@/components/Footer";
 import {
     ArrowLeft,
     Upload,
@@ -623,6 +624,7 @@ const CoverLetterGenerator = ({ onBack, initialResumeText = "", initialJobTitle 
                 </div>
 
             </div>
+            <Footer />
         </div>
     )
 }

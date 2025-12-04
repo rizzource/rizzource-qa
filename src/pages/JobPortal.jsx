@@ -44,11 +44,13 @@ const JobPortal = () => {
   // Fetch jobs on mount
   useEffect(() => {
     // if (user) {
-      if (window.location.href.includes("favoritejobs")) {
-        dispatch(getFavoriteJobs());
-      } else {
-        dispatch(getScrappedJobs());
-      }
+    if (window.location.href.includes("favoritejobs")) {
+      dispatch(getFavoriteJobs());
+    } else {
+      dispatch(getScrappedJobs());
+    }
+    setStateFilter("Georgia");
+    setCurrentPage(1);
     // }
   }, [dispatch, user]);
 
@@ -59,12 +61,21 @@ const JobPortal = () => {
   const isBadJob = (job) => {
     if (!job) return true;
 
-    const badTitle = job.title?.toLowerCase().includes("no 1l summer internship");
-    const badLocation = job.location?.toLowerCase().includes("georgia or new york");
-    const badCompany = job.company?.toLowerCase().includes("no firm name available");
+  const noTitle =
+      !job.jobTitle ||
+      job.jobTitle.trim() === ""
 
-    return badTitle || badLocation || badCompany;
+    const noCompany =
+      !job.firmName ||
+      job.firmName.trim() === "" ||
+      job.firmName.toLowerCase() === "no firm name available";
+
+    const badTitle = job.jobTitle?.toLowerCase().includes("no 1l summer internship");
+    const badLocation = job.location?.toLowerCase().includes("georgia or new york");
+
+    return noCompany || badTitle || badLocation || noTitle
   };
+
 
   const cleanedScrappedJobs = scrappedJobs?.filter((job) => !isBadJob(job)) || [];
   const cleanedFavoriteJobs = favoriteJobs?.filter((job) => !isBadJob(job)) || [];
@@ -162,9 +173,9 @@ const JobPortal = () => {
 
   const filteredJobs = allJobsCombined.filter((job) => {
     const matchesSearch =
-      (job.title || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (job.jobTitle || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
       (job.jobDescription || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (job.company || "").toLowerCase().includes(searchQuery.toLowerCase());
+      (job.firmName || "").toLowerCase().includes(searchQuery.toLowerCase());
 
     // State matching
     const jobState = extractState(job.location);
@@ -421,20 +432,20 @@ const JobPortal = () => {
                         />
                       </button> */}
 
-                      <CardTitle className="text-lg">{job.title}</CardTitle>
-                      <p className="text-sm text-muted-foreground">{job.company}</p>
+                      <CardTitle className="text-lg">{job.jobTitle}</CardTitle>
+                      <p className="text-sm text-muted-foreground">{job.firmName || "Not Specified"}</p>
                     </CardHeader>
 
                     <CardContent>
                       <p className="text-sm text-muted-foreground mb-4 line-clamp-2">
-                        {job.jobDescription}
+                        {job.jobDescription || "No description available."}
                       </p>
 
                       <div className="flex flex-wrap gap-2 mb-4">
                         {job.location && (
                           <Badge variant="outline">
                             <MapPin className="h-3 w-3 mr-1" />
-                            {job.location}
+                            {job.location || "Not Specified"}
                           </Badge>
                         )}
                         {job.areaOfLaw && (
@@ -448,7 +459,7 @@ const JobPortal = () => {
                       <div className="flex justify-between items-center text-xs text-muted-foreground">
                         <span className="flex items-center gap-1">
                           <Clock className="h-3 w-3" />
-                          {job.applicationDeadline}
+                          {job.applicationDeadline || "Not Specified"}
                         </span>
 
                         <Button

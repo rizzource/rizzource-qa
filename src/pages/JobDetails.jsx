@@ -150,8 +150,8 @@ const JobDetails = () => {
       , {
         state: {
           jobId: job.id,
-          title: job.title,
-          jobCompany: job.company,
+          title: job.jobTitle,
+          jobCompany: job.firmName,
           description: job.jobDescription
         },
       }
@@ -162,8 +162,10 @@ const JobDetails = () => {
     if (job.jobUrl) {
       window.open(job.jobUrl, "_blank");
       return;
+    } else if (job.source) {
+      window.open(job.jobUrl, "_blank");
     }
-    setShowApplicationForm(true);
+    // setShowApplicationForm(true);
   };
 
   // -----------------------------
@@ -233,8 +235,8 @@ const JobDetails = () => {
                 </div>
 
                 <div className="flex-1">
-                  <CardTitle className="text-3xl">{job.title}</CardTitle>
-                  <p className="text-xl text-muted-foreground">{job.company}</p>
+                  <CardTitle className="text-3xl">{job.jobTitle}</CardTitle>
+                  <p className="text-xl text-muted-foreground">{job.firmName}</p>
                 </div>
               </div>
 
@@ -274,7 +276,7 @@ const JobDetails = () => {
               <div>
                 <h3 className="text-xl font-semibold mb-2">Job Description</h3>
                 <p className="text-muted-foreground whitespace-pre-line">
-                  {job.jobDescription}
+                  {job.jobDescription || "No description available."}
                 </p>
               </div>
 
@@ -338,7 +340,7 @@ const JobDetails = () => {
                              active:scale-[0.98]"
                       onClick={handleApplyClick}
                     >
-                      {job.jobUrl ? (
+                      {job.jobUrl || job.source ? (
                         <>
                           Visit Website
                           <ExternalLink className="h-4 w-4 ml-2" />

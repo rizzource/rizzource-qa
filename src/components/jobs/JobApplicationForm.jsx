@@ -99,7 +99,7 @@ const JobApplicationForm = ({ job, onCancel, resumeUrl }) => {
 
           <Card>
             <CardHeader>
-              <CardTitle className="text-2xl">Apply for {job.title}</CardTitle>
+              <CardTitle className="text-2xl">Apply for {job.jobTitle}</CardTitle>
               <p className="text-muted-foreground">{job.companies?.name}</p>
             </CardHeader>
             <CardContent>
