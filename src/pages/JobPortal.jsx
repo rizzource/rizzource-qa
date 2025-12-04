@@ -27,44 +27,171 @@ const JobPortal = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  // Redux data
-  const { scrappedJobs, loading, favoriteJobs } = useSelector(
+  const { scrappedJobs, loading, favoriteJobs, user } = useSelector(
     (state) => state.userApi
   );
 
-  // UI state
   const [searchQuery, setSearchQuery] = useState("");
   const [stateFilter, setStateFilter] = useState("");
   const [areaOfLawFilter, setAreaOfLawFilter] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const user = useSelector((state) => state.userApi.user);
 
   const jobsPerPage = 9;
 
-  // Fetch jobs on mount
+  // ------------------------------
+  // FETCH JOBS ON MOUNT
+  // ------------------------------
   useEffect(() => {
-    // if (user) {
     if (window.location.href.includes("favoritejobs")) {
       dispatch(getFavoriteJobs());
     } else {
       dispatch(getScrappedJobs());
     }
-    setStateFilter("Georgia");
-    setCurrentPage(1);
-    // }
-  }, [dispatch, user]);
+  }, []);
+
+  // Auto-select Georgia AFTER jobs load
+  useEffect(() => {
+    if ((scrappedJobs?.length > 0 || favoriteJobs?.length > 0) && !stateFilter) {
+      setStateFilter("Georgia");
+    }
+  }, [scrappedJobs, favoriteJobs]);
 
   // ------------------------------------------------------------
-  // 1️⃣ FILTER OUT BAD PLACEHOLDER JOBS
+  // SMART STATE EXTRACTOR — NEW VERSION
   // ------------------------------------------------------------
+  const extractState = (location = "") => {
+    if (!location) return null;
+    const loc = location.toLowerCase();
 
+    // 1️⃣ City → State mapping
+    const cityToState = {
+      "atlanta": "Georgia",
+      "miami": "Florida",
+      "boston": "Massachusetts",
+      "chicago": "Illinois",
+      "new york": "New York",
+      "los angeles": "California",
+      "san francisco": "California",
+      "silicon valley": "California",
+      "charlotte": "North Carolina",
+      "raleigh": "North Carolina",
+      "washington": "District of Columbia",
+      "philadelphia": "Pennsylvania",
+      "houston": "Texas",
+      "dallas": "Texas",
+      "ann arbor": "Michigan",
+      "grand rapids": "Michigan",
+      "columbus": "Ohio",
+      "minneapolis": "Minnesota",
+      "denver": "Colorado",
+      "hartford": "Connecticut",
+      "st. louis": "Missouri",
+      "des moines": "Iowa"
+    };
+
+    for (const city in cityToState) {
+      if (loc.includes(city)) return cityToState[city];
+    }
+
+    // 2️⃣ Abbreviation → Full Name
+    const abbrMap = {
+      AL: "Alabama",
+      AK: "Alaska",
+      AZ: "Arizona",
+      AR: "Arkansas",
+      CA: "California",
+      CO: "Colorado",
+      CT: "Connecticut",
+      DE: "Delaware",
+      FL: "Florida",
+      GA: "Georgia",
+      HI: "Hawaii",
+      ID: "Idaho",
+      IL: "Illinois",
+      IN: "Indiana",
+      IA: "Iowa",
+      KS: "Kansas",
+      KY: "Kentucky",
+      LA: "Louisiana",
+      ME: "Maine",
+      MD: "Maryland",
+      MA: "Massachusetts",
+      MI: "Michigan",
+      MN: "Minnesota",
+      MS: "Mississippi",
+      MO: "Missouri",
+      MT: "Montana",
+      NE: "Nebraska",
+      NV: "Nevada",
+      NH: "New Hampshire",
+      NJ: "New Jersey",
+      NM: "New Mexico",
+      NY: "New York",
+      NC: "North Carolina",
+      ND: "North Dakota",
+      OH: "Ohio",
+      OK: "Oklahoma",
+      OR: "Oregon",
+      PA: "Pennsylvania",
+      RI: "Rhode Island",
+      SC: "South Carolina",
+      SD: "South Dakota",
+      TN: "Tennessee",
+      TX: "Texas",
+      UT: "Utah",
+      VT: "Vermont",
+      VA: "Virginia",
+      WA: "Washington",
+      WV: "West Virginia",
+      WI: "Wisconsin",
+      WY: "Wyoming",
+      DC: "District of Columbia"
+    };
+
+    // Match ", XX" at end
+    const abbrMatch = location.match(/,\s*([A-Z]{2})$/);
+    if (abbrMatch) {
+      const abbr = abbrMatch[1];
+      return abbrMap[abbr] || null;
+    }
+
+    // 3️⃣ International → Full English name
+    const internationalMap = {
+      "kalifornien": "California",
+      "georgia": "Georgia",
+      "massachusetts": "Massachusetts",
+      "illinois": "Illinois",
+      "florida": "Florida",
+      "texas": "Texas",
+      "virginia": "Virginia",
+      "minnesota": "Minnesota",
+      "ohio": "Ohio",
+      "indiana": "Indiana",
+      "pennsylvanien": "Pennsylvania",
+      "nord-carolina": "North Carolina",
+      "vereinigte staaten von amerika": null
+    };
+
+    for (const token in internationalMap) {
+      if (loc.includes(token)) return internationalMap[token];
+    }
+
+    // 4️⃣ Direct state name fallback (English)
+    for (const fullName of Object.values(abbrMap)) {
+      if (loc.includes(fullName.toLowerCase())) return fullName;
+    }
+
+    return null;
+  };
+
+
+  // ------------------------------------------------------------
+  // FILTER OUT BAD JOBS
+  // ------------------------------------------------------------
   const isBadJob = (job) => {
     if (!job) return true;
 
-  const noTitle =
-      !job.jobTitle ||
-      job.jobTitle.trim() === ""
-
+    const noTitle = !job.jobTitle || job.jobTitle.trim() === "";
     const noCompany =
       !job.firmName ||
       job.firmName.trim() === "" ||
@@ -73,67 +200,19 @@ const JobPortal = () => {
     const badTitle = job.jobTitle?.toLowerCase().includes("no 1l summer internship");
     const badLocation = job.location?.toLowerCase().includes("georgia or new york");
 
-    return noCompany || badTitle || badLocation || noTitle
+    return noCompany || badTitle || badLocation || noTitle;
   };
 
-
-  const cleanedScrappedJobs = scrappedJobs?.filter((job) => !isBadJob(job)) || [];
-  const cleanedFavoriteJobs = favoriteJobs?.filter((job) => !isBadJob(job)) || [];
-
-  // ------------------------------------------------------------
-  // 2️⃣ DYNAMIC STATE LIST
-  // ------------------------------------------------------------
-
-  const extractState = (location = "") => {
-    const lower = location.toLowerCase();
-
-    // Direct DC mapping
-    if (lower.includes("washington, d.c.") || lower.includes("dc")) return "District of Columbia";
-
-    // Look for ", XX"
-    const stateAbbrMatch = location.match(/,\s*([A-Z]{2})$/);
-    if (stateAbbrMatch) {
-      const abbr = stateAbbrMatch[1];
-      const map = {
-        GA: "Georgia",
-        NY: "New York",
-        CA: "California",
-        TX: "Texas",
-        IL: "Illinois",
-        MA: "Massachusetts",
-        VA: "Virginia",
-        PA: "Pennsylvania",
-        WA: "Washington",
-        FL: "Florida"
-      };
-      return map[abbr] || abbr;
-    }
-
-    const knownStates = [
-      "Georgia",
-      "New York",
-      "California",
-      "Texas",
-      "Illinois",
-      "Massachusetts",
-      "Virginia",
-      "Pennsylvania",
-      "Washington",
-      "Florida",
-      "District of Columbia"
-    ];
-
-    for (const s of knownStates) {
-      if (lower.includes(s.toLowerCase())) return s;
-    }
-
-    return null;
-  };
+  const cleanedScrappedJobs = scrappedJobs?.filter((j) => !isBadJob(j)) || [];
+  const cleanedFavoriteJobs = favoriteJobs?.filter((j) => !isBadJob(j)) || [];
 
   const allJobsCombined = window.location.href.includes("favoritejobs")
     ? cleanedFavoriteJobs
     : cleanedScrappedJobs;
 
+  // ------------------------------------------------------------
+  // BUILD DYNAMIC STATE LIST
+  // ------------------------------------------------------------
   const dynamicStates = Array.from(
     new Set(
       allJobsCombined
@@ -145,9 +224,8 @@ const JobPortal = () => {
   const statesList = ["All States", ...dynamicStates];
 
   // ------------------------------------------------------------
-  // 3️⃣ DYNAMIC AREAS OF LAW (split + dedupe + clean)
+  // DYNAMIC AREAS OF LAW
   // ------------------------------------------------------------
-
   const areasOfLawRaw = allJobsCombined
     ?.map((j) => j.areaOfLaw)
     .filter(Boolean)
@@ -168,23 +246,18 @@ const JobPortal = () => {
   ];
 
   // ------------------------------------------------------------
-  // 4️⃣ FILTERING LOGIC
+  // FILTER LOGIC
   // ------------------------------------------------------------
-
   const filteredJobs = allJobsCombined.filter((job) => {
     const matchesSearch =
       (job.jobTitle || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
       (job.jobDescription || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
       (job.firmName || "").toLowerCase().includes(searchQuery.toLowerCase());
 
-    // State matching
     const jobState = extractState(job.location);
     const matchesState =
-      !stateFilter ||
-      stateFilter === "All States" ||
-      jobState === stateFilter;
+      !stateFilter || stateFilter === "All States" || jobState === stateFilter;
 
-    // Area of Law matching (OR logic for comma-separated categories)
     const jobAreas = job.areaOfLaw
       ?.split(",")
       .map((a) => a.trim().toLowerCase()) || [];
@@ -198,13 +271,26 @@ const JobPortal = () => {
   });
 
   // ------------------------------------------------------------
-  // 5️⃣ PAGINATION
+  // PAGINATION + SORTING
   // ------------------------------------------------------------
+
+  // Sort so jobs WITH descriptions appear before empty ones
+  const sortedJobs = [...filteredJobs].sort((a, b) => {
+    const hasDescA = a.jobDescription && a.jobDescription.trim() !== "";
+    const hasDescB = b.jobDescription && b.jobDescription.trim() !== "";
+
+    if (hasDescA && !hasDescB) return -1;
+    if (!hasDescA && hasDescB) return 1;
+
+    return 0;
+  });
 
   const indexOfLastJob = currentPage * jobsPerPage;
   const indexOfFirstJob = indexOfLastJob - jobsPerPage;
-  const currentJobs = filteredJobs.slice(indexOfFirstJob, indexOfLastJob);
-  const totalPages = Math.ceil(filteredJobs.length / jobsPerPage);
+
+  // Slice AFTER sorting
+  const currentJobs = sortedJobs.slice(indexOfFirstJob, indexOfLastJob);
+  const totalPages = Math.ceil(sortedJobs.length / jobsPerPage);
 
   const handlePageChange = (page) => setCurrentPage(page);
 
@@ -235,6 +321,9 @@ const JobPortal = () => {
     setCurrentPage(1);
   };
 
+  // ------------------------------------------------------------
+  // FAVORITES
+  // ------------------------------------------------------------
   const addFavoriteJob = async (jobId) => {
     if (!user) {
       toast.error("Please sign in to save favorite jobs");
@@ -260,6 +349,7 @@ const JobPortal = () => {
       toast.error("Something went wrong while saving your job.");
     }
   };
+
   const deleteFavoriteJob = async (jobId) => {
     if (!user) {
       toast.error("Please sign in to save favorite jobs");
@@ -296,9 +386,8 @@ const JobPortal = () => {
   };
 
   // ------------------------------------------------------------
-  // 6️⃣ UI
+  // UI STARTS HERE
   // ------------------------------------------------------------
-
   return (
     <>
       <Toaster richColors closeButton position="top-center" />
@@ -306,7 +395,6 @@ const JobPortal = () => {
       <Header />
       <div className="min-h-screen bg-background pt-16">
         <div className="container mx-auto px-4 py-8">
-          {/* HERO */}
           {window.location.href.includes("favoritejobs") ? (
             <div className="text-center mb-12">
               <h1 className="text-4xl font-bold text-foreground mb-4">
@@ -350,7 +438,7 @@ const JobPortal = () => {
               <SelectTrigger className="md:w-48">
                 <SelectValue placeholder="Select State" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="max-h-64 overflow-y-auto">
                 {statesList.map((state) => (
                   <SelectItem key={state} value={state}>
                     {state}
@@ -370,7 +458,7 @@ const JobPortal = () => {
               <SelectTrigger className="md:w-48">
                 <SelectValue placeholder="Area of Law" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="max-h-74 overflow-y-auto">
                 {areasOfLaw.map((area) => (
                   <SelectItem
                     key={area}
@@ -412,26 +500,6 @@ const JobPortal = () => {
                     }}
                   >
                     <CardHeader className="relative">
-                      {/* ❤️ Favorite Button */}
-                      {/* <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          job?.isFav ? deleteFavoriteJob(job.id) :
-                            addFavoriteJob(job.id);
-                        }}
-                        className={
-                          "absolute top-2 right-2 p-2 rounded-full transition hover:bg-muted/70 " +
-                          (job.isFav ? "text-red-500" : "text-muted-foreground")
-                        }
-                      >
-                        <Heart
-                          className={
-                            "h-5 w-5 transition " +
-                            (job.isFav ? "fill-red-500" : "")
-                          }
-                        />
-                      </button> */}
-
                       <CardTitle className="text-lg">{job.jobTitle}</CardTitle>
                       <p className="text-sm text-muted-foreground">{job.firmName || "Not Specified"}</p>
                     </CardHeader>
@@ -445,7 +513,7 @@ const JobPortal = () => {
                         {job.location && (
                           <Badge variant="outline">
                             <MapPin className="h-3 w-3 mr-1" />
-                            {job.location || "Not Specified"}
+                            {job.location}
                           </Badge>
                         )}
                         {job.areaOfLaw && (

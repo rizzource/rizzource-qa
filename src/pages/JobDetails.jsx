@@ -163,7 +163,7 @@ const JobDetails = () => {
       window.open(job.jobUrl, "_blank");
       return;
     } else if (job.source) {
-      window.open(job.jobUrl, "_blank");
+      window.open(job.source, "_blank");
     }
     // setShowApplicationForm(true);
   };
