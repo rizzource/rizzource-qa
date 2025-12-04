@@ -412,8 +412,7 @@ const JobPortal = () => {
               </h1>
               <p className="text-muted-foreground text-lg">
                 {/* Rizzource scans firms, job boards, and courts—so you don’t have to. */}
-                GA & NY are our starting point. We build outward from here.
-              </p>
+                Currently serving Georgia and New York{!user && "— explore AI résumé and cover-letter tools when you join. ✨"}</p>
             </div>
           )}
 

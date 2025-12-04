@@ -298,7 +298,9 @@ const JobDetails = () => {
                       {/* Shine effect */}
                       <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out" />
                       <Sparkles className="h-4 w-4 mr-2" />
-                      Enhance CV with AI
+                      Enhance CV with AI <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-primary/10 text-white border border-primary/20">
+                        BETA
+                      </span>
                     </Button>
 
                     {/* Generate Cover Letter Button */}
@@ -313,7 +315,9 @@ const JobDetails = () => {
                       onClick={handleGenerateCoverLetter}
                     >
                       <FileSignature className="h-4 w-4 mr-2" />
-                      Generate Cover Letter
+                      Generate Cover Letter   <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-primary/10 text-primary border border-primary/20">
+                        BETA
+                      </span>
                     </Button>
                   </div>
                 )}
