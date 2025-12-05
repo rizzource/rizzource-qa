@@ -24,6 +24,8 @@ import {
     X,
     FileUp,
     FileCheck,
+    Edit3,
+    Save,
 } from "lucide-react"
 import { toast, Toaster } from "sonner"
 import {
@@ -104,6 +106,7 @@ const CoverLetterGenerator = ({ onBack, initialResumeText = "", initialJobTitle 
     const [generating, setGenerating] = useState(false)
     const [copied, setCopied] = useState(false)
     const [letterName, setLetterName] = useState("Cover Letter")
+    const [isEditing, setIsEditing] = useState(false)
 
     // Tone options
     const [selectedTone, setSelectedTone] = useState("professional")
@@ -249,6 +252,7 @@ const CoverLetterGenerator = ({ onBack, initialResumeText = "", initialJobTitle 
 
         if (result.meta.requestStatus === "fulfilled") {
             setCoverLetter(result.payload.coverLetter)
+            setIsEditing(false) // Exit editing mode on new generation
             toast.success("Cover letter generated!")
             setMobileView("preview")
         } else {
@@ -273,6 +277,7 @@ const CoverLetterGenerator = ({ onBack, initialResumeText = "", initialJobTitle 
 
         if (result.meta.requestStatus === "fulfilled") {
             setCoverLetter(result.payload.coverLetter)
+            setIsEditing(false) // Exit editing mode on regeneration
             toast.success("Cover letter updated!")
             setMobileView("preview");
         } else {
@@ -291,6 +296,13 @@ const CoverLetterGenerator = ({ onBack, initialResumeText = "", initialJobTitle 
         if (!coverLetter) return toast.error("Generate a cover letter first")
 
         window.html2pdf().from(previewRef.current).save()
+    }
+
+    const handleEditToggle = () => {
+        if (isEditing) {
+            toast.success("Changes saved!")
+        }
+        setIsEditing(!isEditing)
     }
 
     /* ---------------------------------------------------
@@ -580,12 +592,37 @@ const CoverLetterGenerator = ({ onBack, initialResumeText = "", initialJobTitle 
                     className={`${mobileView === "preview" ? "block" : "hidden"} md:block md:w-1/2 flex flex-col bg-muted/30`}
                 >
                     <div className="p-4 border-b bg-card flex items-center justify-between">
-                        <span className="font-semibold">Live Preview</span>
-                        <Button variant="outline" size="sm" onClick={handleExportPDF} disabled={!coverLetter}>
-                            <Download className="h-4 w-4 mr-2" />
-                            Export PDF
-                        </Button>
-                        <Badge variant="outline" className="text-xs">Auto-updating</Badge>
+                        <div className="flex items-center gap-2">
+                            <span className="font-semibold">Live Preview</span>
+                            {!isEditing && coverLetter && (
+                                <Badge variant="outline" className="text-xs">Auto-updating</Badge>
+                            )}
+                        </div>
+                        <div className="flex items-center gap-2">
+                            {coverLetter && (
+                                <Button
+                                    variant={isEditing ? "default" : "outline"}
+                                    size="sm"
+                                    onClick={handleEditToggle}
+                                >
+                                    {isEditing ? (
+                                        <>
+                                            <Save className="h-4 w-4 mr-2" />
+                                            Save Changes
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Edit3 className="h-4 w-4 mr-2" />
+                                            Edit
+                                        </>
+                                    )}
+                                </Button>
+                            )}
+                            <Button variant="outline" size="sm" onClick={handleExportPDF} disabled={!coverLetter}>
+                                <Download className="h-4 w-4 mr-2" />
+                                Export PDF
+                            </Button>
+                        </div>
                     </div>
 
                     <div className="flex-1 overflow-y-auto p-6">
@@ -598,13 +635,22 @@ const CoverLetterGenerator = ({ onBack, initialResumeText = "", initialJobTitle 
                                 </div>
                             ) : (
                                 <div ref={previewRef} className="bg-white rounded-lg shadow-sm border p-8 min-h-[600px]">
-                                    <pre className="whitespace-pre-wrap font-sans text-sm leading-relaxed">
-                                        {coverLetter}
-                                    </pre>
+                                    {isEditing ? (
+                                        <Textarea
+                                            value={coverLetter}
+                                            onChange={(e) => setCoverLetter(e.target.value)}
+                                            className="w-full min-h-[550px] text-sm leading-relaxed font-sans border-none focus:ring-0 resize-none"
+                                            placeholder="Edit your cover letter..."
+                                        />
+                                    ) : (
+                                        <pre className="whitespace-pre-wrap font-sans text-sm leading-relaxed">
+                                            {coverLetter}
+                                        </pre>
+                                    )}
                                 </div>
                             )}
 
-                            {coverLetter && (
+                            {coverLetter && !isEditing && (
                                 <div className="mt-4 flex justify-center gap-3">
                                     <Button variant="outline" size="sm" onClick={handleCopy}>
                                         {copied ? (
