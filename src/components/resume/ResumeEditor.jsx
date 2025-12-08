@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { ScrollArea } from "@/components/ui/scroll-area"
+import { track } from "@/lib/analytics"
 import {
     ArrowLeft,
     Upload,
@@ -307,6 +308,11 @@ const ResumeEditor = ({ onBack, initialFile = null, initialExtractedText = "" })
             toast.error("Please upload a PDF or DOCX file")
             return
         }
+        track("ResumeUpload", {
+            fileName: file.name,
+            fileType: file.type,
+            fileSize: file.size
+        });
 
         setUploadedFile(file)
         setIsParsing(true);
@@ -317,10 +323,15 @@ const ResumeEditor = ({ onBack, initialFile = null, initialExtractedText = "" })
                 setResumeData(data.resume);
                 setOriginalFileUrl(data.fileUrl);
                 setIsParsing(false);
+                track("ResumeParsed", {
+                    success: true,
+                    resumeSections: Object.keys(data.resume || {})
+                });
                 toast.success("Resume parsed successfully!");
             })
             .catch((err) => {
                 setIsParsing(false);
+                track("ResumeParsed", { success: false });
                 toast.error(err || "Failed to parse resume");
             });
 
@@ -342,6 +353,9 @@ const ResumeEditor = ({ onBack, initialFile = null, initialExtractedText = "" })
         };
 
         window.html2pdf().from(element).save();
+        track("ResumeDownloaded", {
+            sectionCount: Object.keys(resumeData || {}).length
+        });
 
     };
 
@@ -358,6 +372,12 @@ const ResumeEditor = ({ onBack, initialFile = null, initialExtractedText = "" })
             toast.error("Please upload a PDF or DOCX file")
             return
         }
+        track("ResumeUpload", {
+            method: "drag-drop",
+            fileName: file.name,
+            fileType: file.type,
+            fileSize: file.size
+        });
 
         setUploadedFile(file)
         setIsParsing(true);
@@ -369,10 +389,21 @@ const ResumeEditor = ({ onBack, initialFile = null, initialExtractedText = "" })
                 setOriginalFileUrl(data.fileUrl);
                 setIsParsing(false);
                 toast.success("Resume parsed successfully!");
+                track("ResumeParsed", {
+                    success: true,
+                    parsedFrom: "drag-drop"
+                });
+
             })
             .catch((err) => {
                 setIsParsing(false);
                 toast.error(err || "Failed to parse resume");
+                track("AIBulletImproveStarted", {
+                    bulletId,
+                    expId,
+                    bulletLength: bulletText.length
+                });
+
             });
     }, [])
 
@@ -385,6 +416,11 @@ const ResumeEditor = ({ onBack, initialFile = null, initialExtractedText = "" })
         setActiveBulletId(bulletId)
         setIsGenerating(true)
         setAiSuggestions([])
+        track("AIBulletImproveStarted", {
+            bulletId,
+            expId,
+            bulletLength: bulletText.length
+        });
 
         try {
             const suggestions = await generateAIBullets(bulletText, exp.title)
@@ -394,8 +430,13 @@ const ResumeEditor = ({ onBack, initialFile = null, initialExtractedText = "" })
                     text: text.replace(/^\d+\.\s*/, "")
                 }))
             );
+            track("AIBulletImproveCompleted", {
+                count: suggestions.length
+            });
+
         } catch (error) {
             toast.error("Failed to generate suggestions")
+            track("AIBulletImproveFailed");
         } finally {
             setIsGenerating(false)
         }
@@ -407,6 +448,9 @@ const ResumeEditor = ({ onBack, initialFile = null, initialExtractedText = "" })
         const exp = resumeData.experience.find((e) => e.bullets.some((b) => b.id === activeBulletId))
         const bullet = exp?.bullets.find((b) => b.id === activeBulletId)
         if (!exp || !bullet) return
+        track("AIRegenerateSuggestions", {
+            bulletId: activeBulletId
+        });
 
         setIsGenerating(true)
         try {
@@ -426,6 +470,10 @@ const ResumeEditor = ({ onBack, initialFile = null, initialExtractedText = "" })
 
     const handleUseSuggestion = (expId, bulletId, newText) => {
         if (!resumeData) return
+        track("AIBulletSuggestionUsed", {
+            expId,
+            bulletId
+        });
 
         setResumeData({
             ...resumeData,
@@ -451,6 +499,7 @@ const ResumeEditor = ({ onBack, initialFile = null, initialExtractedText = "" })
         setShowNewBulletAI(expId)
         setIsGenerating(true)
         setAiSuggestions([])
+        track("AIAddBulletStarted", { expId });
 
         try {
             const suggestions = await generateNewBullet(exp.title, exp.company)
@@ -460,8 +509,13 @@ const ResumeEditor = ({ onBack, initialFile = null, initialExtractedText = "" })
                     text: text.replace(/^\d+\.\s*/, "")
                 }))
             );
+            track("AIAddBulletCompleted", {
+                count: suggestions.length
+            });
+
         } catch (error) {
             toast.error("Failed to generate bullet suggestions")
+            track("AIAddBulletFailed");
         } finally {
             setIsGenerating(false)
         }
@@ -474,6 +528,10 @@ const ResumeEditor = ({ onBack, initialFile = null, initialExtractedText = "" })
             id: `b-${Date.now()}`,
             text,
         }
+        track("AIBulletAdded", {
+            expId,
+            length: text.length
+        });
 
         setResumeData({
             ...resumeData,
@@ -489,6 +547,7 @@ const ResumeEditor = ({ onBack, initialFile = null, initialExtractedText = "" })
     // Manual bullet operations
     const handleAddManualBullet = (expId) => {
         if (!resumeData) return
+        track("ManualBulletAdded", { expId });
 
         const newBullet = {
             id: `b-${Date.now()}`,
@@ -505,7 +564,11 @@ const ResumeEditor = ({ onBack, initialFile = null, initialExtractedText = "" })
 
     const handleUpdateBullet = (expId, bulletId, text) => {
         if (!resumeData) return
-
+        track("ManualBulletEdited", {
+            expId,
+            bulletId,
+            newLength: text.length
+        });
         setResumeData({
             ...resumeData,
             experience: resumeData.experience.map((exp) =>
@@ -521,7 +584,7 @@ const ResumeEditor = ({ onBack, initialFile = null, initialExtractedText = "" })
 
     const handleDeleteBullet = (expId, bulletId) => {
         if (!resumeData) return
-
+        track("ManualBulletDeleted", { expId, bulletId });
         setResumeData({
             ...resumeData,
             experience: resumeData.experience.map((exp) =>
@@ -537,6 +600,11 @@ const ResumeEditor = ({ onBack, initialFile = null, initialExtractedText = "" })
             ...prev,
             [sectionId]: !prev[sectionId],
         }))
+        track("ResumeSectionToggled", {
+            section: sectionId,
+            collapsed: !collapsedSections[sectionId]
+        });
+
     }
 
     // Upload Screen

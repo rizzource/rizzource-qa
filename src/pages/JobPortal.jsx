@@ -23,6 +23,9 @@ import { useNavigate } from "react-router-dom";
 import { getFavoriteJobs, RemoveFavoriteJob, saveFavoriteJob, setSelectedJob } from "../redux/slices/userApiSlice";
 import { toast, Toaster } from "sonner";
 
+// ⭐ TRACKING IMPORT ADDED
+import { track } from "@/lib/analytics";
+
 const JobPortal = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -44,8 +47,10 @@ const JobPortal = () => {
   useEffect(() => {
     if (window.location.href.includes("favoritejobs")) {
       dispatch(getFavoriteJobs());
+      track("FavoritesViewed");
     } else {
       dispatch(getScrappedJobs());
+      track("JobPortalViewed");
     }
   }, []);
 
@@ -53,17 +58,18 @@ const JobPortal = () => {
   useEffect(() => {
     if ((scrappedJobs?.length > 0 || favoriteJobs?.length > 0) && !stateFilter) {
       setStateFilter("Georgia");
+      // Track auto-state assignment
+      track("AutoStateFilterApplied", { state: "Georgia" });
     }
   }, [scrappedJobs, favoriteJobs]);
 
   // ------------------------------------------------------------
-  // SMART STATE EXTRACTOR — NEW VERSION
+  // SMART STATE EXTRACTOR — NO CHANGES MADE
   // ------------------------------------------------------------
   const extractState = (location = "") => {
     if (!location) return null;
     const loc = location.toLowerCase();
 
-    // 1️⃣ City → State mapping
     const cityToState = {
       "atlanta": "Georgia",
       "miami": "Florida",
@@ -93,7 +99,6 @@ const JobPortal = () => {
       if (loc.includes(city)) return cityToState[city];
     }
 
-    // 2️⃣ Abbreviation → Full Name
     const abbrMap = {
       AL: "Alabama",
       AK: "Alaska",
@@ -148,14 +153,12 @@ const JobPortal = () => {
       DC: "District of Columbia"
     };
 
-    // Match ", XX" at end
     const abbrMatch = location.match(/,\s*([A-Z]{2})$/);
     if (abbrMatch) {
       const abbr = abbrMatch[1];
       return abbrMap[abbr] || null;
     }
 
-    // 3️⃣ International → Full English name
     const internationalMap = {
       "kalifornien": "California",
       "georgia": "Georgia",
@@ -176,7 +179,6 @@ const JobPortal = () => {
       if (loc.includes(token)) return internationalMap[token];
     }
 
-    // 4️⃣ Direct state name fallback (English)
     for (const fullName of Object.values(abbrMap)) {
       if (loc.includes(fullName.toLowerCase())) return fullName;
     }
@@ -184,9 +186,8 @@ const JobPortal = () => {
     return null;
   };
 
-
   // ------------------------------------------------------------
-  // FILTER OUT BAD JOBS
+  // FILTER OUT BAD JOBS (UNCHANGED)
   // ------------------------------------------------------------
   const isBadJob = (job) => {
     if (!job) return true;
@@ -211,7 +212,7 @@ const JobPortal = () => {
     : cleanedScrappedJobs;
 
   // ------------------------------------------------------------
-  // BUILD DYNAMIC STATE LIST
+  // DYNAMIC STATE LIST (UNCHANGED)
   // ------------------------------------------------------------
   const dynamicStates = Array.from(
     new Set(
@@ -224,7 +225,7 @@ const JobPortal = () => {
   const statesList = ["All States", ...dynamicStates];
 
   // ------------------------------------------------------------
-  // DYNAMIC AREAS OF LAW
+  // DYNAMIC AREAS OF LAW (UNCHANGED)
   // ------------------------------------------------------------
   const areasOfLawRaw = allJobsCombined
     ?.map((j) => j.areaOfLaw)
@@ -246,7 +247,7 @@ const JobPortal = () => {
   ];
 
   // ------------------------------------------------------------
-  // FILTER LOGIC
+  // FILTER LOGIC (UNCHANGED)
   // ------------------------------------------------------------
   const filteredJobs = allJobsCombined.filter((job) => {
     const matchesSearch =
@@ -271,10 +272,8 @@ const JobPortal = () => {
   });
 
   // ------------------------------------------------------------
-  // PAGINATION + SORTING
+  // PAGINATION + SORTING (UNCHANGED)
   // ------------------------------------------------------------
-
-  // Sort so jobs WITH descriptions appear before empty ones
   const sortedJobs = [...filteredJobs].sort((a, b) => {
     const hasDescA = a.jobDescription && a.jobDescription.trim() !== "";
     const hasDescB = b.jobDescription && b.jobDescription.trim() !== "";
@@ -288,11 +287,13 @@ const JobPortal = () => {
   const indexOfLastJob = currentPage * jobsPerPage;
   const indexOfFirstJob = indexOfLastJob - jobsPerPage;
 
-  // Slice AFTER sorting
   const currentJobs = sortedJobs.slice(indexOfFirstJob, indexOfLastJob);
   const totalPages = Math.ceil(sortedJobs.length / jobsPerPage);
 
-  const handlePageChange = (page) => setCurrentPage(page);
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+    track("PaginationChanged", { page });
+  };
 
   const getPaginationRange = () => {
     const showPages = 5;
@@ -319,16 +320,22 @@ const JobPortal = () => {
     setStateFilter("");
     setAreaOfLawFilter("");
     setCurrentPage(1);
+
+    // ⭐ TRACKING
+    track("ResetFiltersClicked");
   };
 
   // ------------------------------------------------------------
-  // FAVORITES
+  // FAVORITES (+ tracking)
   // ------------------------------------------------------------
   const addFavoriteJob = async (jobId) => {
     if (!user) {
       toast.error("Please sign in to save favorite jobs");
       return;
     }
+
+    track("FavoriteAdded", { jobId });
+
     try {
       const result = await dispatch(saveFavoriteJob({ jobId }));
 
@@ -355,6 +362,9 @@ const JobPortal = () => {
       toast.error("Please sign in to save favorite jobs");
       return;
     }
+
+    track("FavoriteRemoved", { jobId });
+
     try {
       const result = await dispatch(RemoveFavoriteJob({ jobId }));
 
@@ -386,7 +396,7 @@ const JobPortal = () => {
   };
 
   // ------------------------------------------------------------
-  // UI STARTS HERE
+  // UI STARTS HERE (ONLY tracking added)
   // ------------------------------------------------------------
   return (
     <>
@@ -407,12 +417,13 @@ const JobPortal = () => {
           ) : (
             <div className="text-center mb-12">
               <h1 className="text-4xl font-bold text-foreground mb-4">
-                {/* Every 1L Summer Job. One Smart Search */}
                 Every 1L Law-Firm Role. One Smart Search.
               </h1>
               <p className="text-muted-foreground text-lg">
+                Currently serving Georgia and New York —{" "}
+                {user && "click on job details to "}explore AI résumé and cover-letter tools {!user ? "when you join ✨" : "✨"}
                 {/* Rizzource scans firms, job boards, and courts—so you don’t have to. */}
-                Currently serving Georgia and New York — {user && "click on job details to "}explore AI résumé and cover-letter tools {!user ? "when you join ✨" : "✨"}</p>
+              </p>
             </div>
           )}
 
@@ -423,7 +434,10 @@ const JobPortal = () => {
               <Input
                 placeholder="Search by job title, company, or keywords..."
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={(e) => {
+                  setSearchQuery(e.target.value);
+                  track("JobSearchPerformed", { query: e.target.value });
+                }}
                 className="pl-10"
               />
             </div>
@@ -434,6 +448,7 @@ const JobPortal = () => {
               onValueChange={(v) => {
                 setStateFilter(v);
                 setCurrentPage(1);
+                track("StateFilterChanged", { state: v });
               }}
             >
               <SelectTrigger className="md:w-48">
@@ -454,6 +469,7 @@ const JobPortal = () => {
               onValueChange={(v) => {
                 setAreaOfLawFilter(v);
                 setCurrentPage(1);
+                track("AreaOfLawFilterChanged", { area: v });
               }}
             >
               <SelectTrigger className="md:w-48">
@@ -497,6 +513,14 @@ const JobPortal = () => {
                     className="hover:shadow-lg cursor-pointer transition"
                     onClick={() => {
                       dispatch(setSelectedJob(job));
+
+                      // ⭐ TRACK JOB VIEW
+                      track("JobViewed", {
+                        jobId: job.id,
+                        title: job.jobTitle,
+                        firm: job.firmName,
+                      });
+
                       navigate(`/jobs/${job.id}`);
                     }}
                   >
@@ -538,6 +562,13 @@ const JobPortal = () => {
                           onClick={(e) => {
                             e.stopPropagation();
                             dispatch(setSelectedJob(job));
+
+                            // ⭐ TRACK VIEW DETAILS BUTTON
+                            track("JobDetailsViewed", {
+                              jobId: job.id,
+                              title: job.jobTitle,
+                            });
+
                             navigate(`/jobs/${job.id}`);
                           }}
                         >
@@ -580,7 +611,7 @@ const JobPortal = () => {
             </>
           )}
         </div>
-      </div>
+      </div >
 
       <Footer />
     </>

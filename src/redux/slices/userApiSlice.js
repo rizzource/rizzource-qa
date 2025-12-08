@@ -5,6 +5,9 @@ import CryptoJS from "crypto-js";
 // -----------------------------------
 // CONFIG
 // -----------------------------------
+import { identifyUser, track } from "@/lib/analytics";
+import { useEffect } from "react";
+
 const BASE_URL =
     "https://rizzource-c2amh0adhpcbgjgx.canadacentral-01.azurewebsites.net/api";
 const SECRET_KEY = "33Browntrucks!@#";
@@ -34,7 +37,12 @@ const restored = storedSession ? decrypt(storedSession) : null;
 // -----------------------------------
 // EXISTING THUNKS
 // -----------------------------------
-
+useEffect(() => {
+    if (restored) {
+        identifyUser(restored);
+        track("UserLoggedIn");
+    }
+}, [restored])
 // LOGIN USER
 export const loginUser = createAsyncThunk(
     "user/loginUser",

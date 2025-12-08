@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
+import { track } from "@/lib/analytics"
 import { Textarea } from "@/components/ui/textarea"
 import Footer from "@/components/Footer";
 import {
@@ -168,6 +169,12 @@ const CoverLetterGenerator = ({ onBack, initialResumeText = "", initialJobTitle 
             toast.error("Please upload PDF or DOCX")
             return
         }
+        track("CL_ResumeUpload", {
+            fileName: file.name,
+            fileType: file.type,
+            fileSize: file.size,
+            method: "file-input"
+        });
 
         setResumeFile(file)
         setParsing(true)
@@ -183,10 +190,15 @@ const CoverLetterGenerator = ({ onBack, initialResumeText = "", initialJobTitle 
 
                 setOriginalFileUrl(data.fileUrl)
                 setParsing(false)
+                track("CL_ResumeParsed", {
+                    success: true,
+                    parsedFields: Object.keys(data.resume || {}),
+                });
                 toast.success("Resume parsed successfully!")
             })
             .catch(() => {
                 setParsing(false)
+                track("CL_ResumeParsed", { success: false });
                 toast.error("Failed to parse resume")
             })
     }
@@ -205,6 +217,12 @@ const CoverLetterGenerator = ({ onBack, initialResumeText = "", initialJobTitle 
             toast.error("Please upload PDF or DOCX")
             return
         }
+        track("CL_ResumeUpload", {
+            fileName: file.name,
+            fileType: file.type,
+            fileSize: file.size,
+            method: "drag-drop"
+        });
 
         setResumeFile(file)
         setParsing(true)
@@ -220,10 +238,15 @@ const CoverLetterGenerator = ({ onBack, initialResumeText = "", initialJobTitle 
 
                 setOriginalFileUrl(data.fileUrl)
                 setParsing(false)
+                track("CL_ResumeParsed", {
+                    success: true,
+                    method: "drag-drop"
+                });
                 toast.success("Resume parsed successfully!")
             })
             .catch(() => {
                 setParsing(false)
+                track("CL_ResumeParsed", { success: false, method: "drag-drop" });
                 toast.error("Failed to parse resume")
             })
     }
@@ -237,6 +260,13 @@ const CoverLetterGenerator = ({ onBack, initialResumeText = "", initialJobTitle 
         if (!jobDescription.trim()) return toast.error("Enter job description")
 
         setGenerating(true)
+        track("CL_GenerateClicked", {
+            resumeProvided: !!resumeText.trim(),
+            jobDescriptionLength: jobDescription.length,
+            jobTitle,
+            company,
+            tone: selectedTone,
+        });
 
         const result = await dispatch(
             generateCoverLetterThunk({
@@ -254,15 +284,24 @@ const CoverLetterGenerator = ({ onBack, initialResumeText = "", initialJobTitle 
             setCoverLetter(result.payload.coverLetter)
             setIsEditing(false) // Exit editing mode on new generation
             toast.success("Cover letter generated!")
+            track("CL_Generated", {
+                length: result.payload.coverLetter?.length || 0,
+                tone: selectedTone
+            });
             setMobileView("preview")
         } else {
+            track("CL_GenerateFailed");
             toast.error("Failed to generate")
         }
     }
 
     const regenerateCoverLetter = async () => {
         setGenerating(true)
-
+        track("CL_RegenerateClicked", {
+            jobTitle,
+            company,
+            tone: selectedTone
+        });
         const result = await dispatch(
             reGenerateCoverLetterThunk({
                 resumeText,
@@ -279,8 +318,13 @@ const CoverLetterGenerator = ({ onBack, initialResumeText = "", initialJobTitle 
             setCoverLetter(result.payload.coverLetter)
             setIsEditing(false) // Exit editing mode on regeneration
             toast.success("Cover letter updated!")
+            track("CL_Regenerated", {
+                length: result.payload.coverLetter?.length || 0,
+                tone: selectedTone
+            });
             setMobileView("preview");
         } else {
+            track("CL_RegenerateFailed");
             toast.error("Failed to regenerate")
         }
     }
@@ -289,16 +333,24 @@ const CoverLetterGenerator = ({ onBack, initialResumeText = "", initialJobTitle 
         await navigator.clipboard.writeText(coverLetter)
         setCopied(true)
         toast.success("Copied!")
+        track("CL_Copy", {
+            length: coverLetter?.length || 0
+        });
         setTimeout(() => setCopied(false), 2000)
     }
 
     const handleExportPDF = () => {
         if (!coverLetter) return toast.error("Generate a cover letter first")
-
+        track("CL_PDFExport", {
+            length: coverLetter?.length || 0
+        });
         window.html2pdf().from(previewRef.current).save()
     }
 
     const handleEditToggle = () => {
+        track("CL_EditToggle", {
+            editing: !isEditing
+        });
         if (isEditing) {
             toast.success("Changes saved!")
         }
