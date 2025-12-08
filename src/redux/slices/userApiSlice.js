@@ -37,12 +37,7 @@ const restored = storedSession ? decrypt(storedSession) : null;
 // -----------------------------------
 // EXISTING THUNKS
 // -----------------------------------
-useEffect(() => {
-    if (restored) {
-        identifyUser(restored);
-        track("UserLoggedIn");
-    }
-}, [restored])
+
 // LOGIN USER
 export const loginUser = createAsyncThunk(
     "user/loginUser",
@@ -385,6 +380,17 @@ const userApiSlice = createSlice({
                 });
 
                 localStorage.setItem("rizzource_session", encrypted);
+                track("UserLoggedIn", {
+                    userId: action.payload.data?.id,
+                    email: action.payload.data?.email,
+                    method: "manual",
+                });
+
+                identifyUser({
+                    id: action.payload.data?.id,
+                    email: action.payload.data?.email,
+                    name: action.payload.data?.firstName + " " + action.payload.data?.lastName
+                });
             })
             .addCase(loginUser.rejected, (state, action) => {
                 state.loading = false;
