@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input"
 import { track } from "@/lib/analytics"
 import { Textarea } from "@/components/ui/textarea"
 import Footer from "@/components/Footer";
+import FeedbackModal from "@/components/FeedbackModal" // Import the new component
 import {
     ArrowLeft,
     Upload,
@@ -108,6 +109,9 @@ const CoverLetterGenerator = ({ onBack, initialResumeText = "", initialJobTitle 
     const [copied, setCopied] = useState(false)
     const [letterName, setLetterName] = useState("Cover Letter")
     const [isEditing, setIsEditing] = useState(false)
+
+    // Feedback modal state
+    const [showFeedbackModal, setShowFeedbackModal] = useState(false)
 
     // Tone options
     const [selectedTone, setSelectedTone] = useState("professional")
@@ -340,12 +344,21 @@ const CoverLetterGenerator = ({ onBack, initialResumeText = "", initialJobTitle 
     }
 
     const handleExportPDF = () => {
-        if (!coverLetter) return toast.error("Generate a cover letter first")
-        track("CL_PDFExport", {
-            length: coverLetter?.length || 0
-        });
-        window.html2pdf().from(previewRef.current).save()
+        if (!coverLetter) return toast.error("Generate a cover letter first");
+
+        window.html2pdf()
+            .from(previewRef.current)
+            .save()
+            .then(() => {
+                toast.success("PDF downloaded successfully!")
+
+                // IMPORTANT: defer state update so it runs AFTER HTML2PDF releases UI thread
+                setTimeout(() => {
+                    setShowFeedbackModal(true)
+                }, 1000)
+            })
     }
+
 
     const handleEditToggle = () => {
         track("CL_EditToggle", {
@@ -364,6 +377,16 @@ const CoverLetterGenerator = ({ onBack, initialResumeText = "", initialJobTitle 
     return (
         <div className="min-h-screen bg-background flex flex-col" style={{ marginTop: 60 }}>
             <Toaster richColors closeButton position="top-center" />
+
+            {/* Feedback Modal */}
+            <FeedbackModal
+                isOpen={showFeedbackModal}
+                onClose={() => setShowFeedbackModal(false)}
+                feedbackType="coverletter"
+                title="How was your experience?"
+                description="Your feedback helps us create better cover letters for everyone"
+            />
+
             {/* Mobile Toggle Bar */}
             <div className="md:hidden sticky top-[60px] z-20 bg-background border-b">
                 <div className="flex">

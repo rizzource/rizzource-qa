@@ -308,7 +308,36 @@ export const generateNewBulletThunk = createAsyncThunk(
         }
     }
 );
+// Add this thunk to your userApiSlice.js file
 
+export const submitFeedbackThunk = createAsyncThunk(
+    "user/submitFeedback",
+    async ({ userId, userFeedback, feedbackType, comments }, { rejectWithValue }) => {
+        try {
+            const response = await fetch(`${BASE_URL}/UserFeedBack/userfeedback`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    userId,
+                    userFeedback,
+                    feedbackType,
+                    comments
+                })
+            })
+
+            if (!response.ok) {
+                throw new Error("Failed to submit feedback")
+            }
+
+            const data = await response.json()
+            return data
+        } catch (error) {
+            return rejectWithValue(error.message)
+        }
+    }
+)
 // -----------------------------------
 // INITIAL STATE
 // -----------------------------------

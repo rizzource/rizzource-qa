@@ -42,6 +42,7 @@ import { toast, Toaster } from "sonner"
 import { fileUpload, generateNewBulletThunk, improveBulletThunk } from "../../redux/slices/userApiSlice"
 import { useDispatch } from "react-redux"
 import { buildResumeHtml } from "../../lib/utils"
+import FeedbackModal from "../FeedbackModal"
 
 // File parser mock - in real implementation, use a library like pdf-parse or mammoth
 const parseResumeFile = async (file) => {
@@ -233,13 +234,13 @@ const ResumeEditor = ({ onBack, initialFile = null, initialExtractedText = "" })
     const [originalFileUrl, setOriginalFileUrl] = useState('');
     // AI enhancement state
     const [activeBulletId, setActiveBulletId] = useState(null)
-    const [aiSuggestions, setAiSuggestions] = useState([])
+    const [aiSuggestions, setAiSuggestions] = useState([]);
     const [isGenerating, setIsGenerating] = useState(false)
     const [showNewBulletAI, setShowNewBulletAI] = useState(null)
 
     // Section collapse state
     const [collapsedSections, setCollapsedSections] = useState({})
-
+    const [showFeedbackModal, setShowFeedbackModal] = useState(false);
     const dispatch = useDispatch();
     const [typingIndex, setTypingIndex] = useState(0);
     useEffect(() => {
@@ -353,6 +354,10 @@ const ResumeEditor = ({ onBack, initialFile = null, initialExtractedText = "" })
         };
 
         window.html2pdf().from(element).save();
+        toast.success("PDF downloaded successfully!")
+        setTimeout(() => {
+            setShowFeedbackModal(true)
+        }, 1000)
         track("ResumeDownloaded", {
             sectionCount: Object.keys(resumeData || {}).length
         });
@@ -425,10 +430,14 @@ const ResumeEditor = ({ onBack, initialFile = null, initialExtractedText = "" })
         try {
             const suggestions = await generateAIBullets(bulletText, exp.title)
             setAiSuggestions(
-                suggestions.map((text, i) => ({
-                    id: `sug-${i}`,
-                    text: text.replace(/^\d+\.\s*/, "")
-                }))
+                suggestions
+                    .filter(text => /^\d+\.\s*".*"$/.test(text))
+                    .map((text, i) => ({
+                        id: `sug-${i}`,
+                        text: text
+                            .replace(/^\d+\.\s*/, "") // remove "1. "
+                            .replace(/^"|"$|^"+|"+$/g, "") // remove surrounding quotes
+                    }))
             );
             track("AIBulletImproveCompleted", {
                 count: suggestions.length
@@ -456,10 +465,14 @@ const ResumeEditor = ({ onBack, initialFile = null, initialExtractedText = "" })
         try {
             const suggestions = await generateAIBullets(bullet.text, exp.title)
             setAiSuggestions(
-                suggestions.map((text, i) => ({
-                    id: `sug-new-${i}`,
-                    text: text.replace(/^\d+\.\s*/, "")
-                }))
+                suggestions
+                    .filter(text => /^\d+\.\s*".*"$/.test(text))
+                    .map((text, i) => ({
+                        id: `sug-${i}`,
+                        text: text
+                            .replace(/^\d+\.\s*/, "") // remove "1. "
+                            .replace(/^"|"$|^"+|"+$/g, "") // remove surrounding quotes
+                    }))
             );
         } catch (error) {
             toast.error("Failed to regenerate suggestions")
@@ -504,10 +517,14 @@ const ResumeEditor = ({ onBack, initialFile = null, initialExtractedText = "" })
         try {
             const suggestions = await generateNewBullet(exp.title, exp.company)
             setAiSuggestions(
-                suggestions.map((text, i) => ({
-                    id: `new-${i}`,
-                    text: text.replace(/^\d+\.\s*/, "")
-                }))
+                suggestions
+                    .filter(text => /^\d+\.\s*".*"$/.test(text))
+                    .map((text, i) => ({
+                        id: `sug-${i}`,
+                        text: text
+                            .replace(/^\d+\.\s*/, "") // remove "1. "
+                            .replace(/^"|"$|^"+|"+$/g, "") // remove surrounding quotes
+                    }))
             );
             track("AIAddBulletCompleted", {
                 count: suggestions.length
@@ -749,6 +766,13 @@ const ResumeEditor = ({ onBack, initialFile = null, initialExtractedText = "" })
     // Main Editor with Side-by-Side Preview
     return (
         <div className="min-h-screen bg-background" style={{ marginTop: 70 }}>
+            <FeedbackModal
+                isOpen={showFeedbackModal}
+                onClose={() => setShowFeedbackModal(false)}
+                feedbackType="resume"
+                title="How was your experience?"
+                description="Your feedback helps us create better resumes for everyone"
+            />
             <Toaster richColors closeButton position="top-center" />
             {/* Header */}
             {/* <div className="border-b bg-background sticky top-0 z-10">
