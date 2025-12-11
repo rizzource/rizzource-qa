@@ -232,11 +232,15 @@ const ResumeEditor = ({ onBack, initialFile = null, initialExtractedText = "" })
     // Resume data state
     const [resumeData, setResumeData] = useState(null)
     const [originalFileUrl, setOriginalFileUrl] = useState('');
-    // AI enhancement state
+    // AI enhancement state (for improving existing bullets)
     const [activeBulletId, setActiveBulletId] = useState(null)
-    const [aiSuggestions, setAiSuggestions] = useState([]);
+    const [aiSuggestions, setAiSuggestions] = useState([])
     const [isGenerating, setIsGenerating] = useState(false)
+
+    // AI new bullet state (for generating new bullets)
     const [showNewBulletAI, setShowNewBulletAI] = useState(null)
+    const [newBulletSuggestions, setNewBulletSuggestions] = useState([])
+    const [isGeneratingNewBullet, setIsGeneratingNewBullet] = useState(false)
 
     // Section collapse state
     const [collapsedSections, setCollapsedSections] = useState({})
@@ -510,20 +514,20 @@ const ResumeEditor = ({ onBack, initialFile = null, initialExtractedText = "" })
         if (exp?.length == 0) return;
 
         setShowNewBulletAI(expId)
-        setIsGenerating(true)
-        setAiSuggestions([])
+        setIsGeneratingNewBullet(true)
+        setNewBulletSuggestions([])
         track("AIAddBulletStarted", { expId });
 
         try {
             const suggestions = await generateNewBullet(exp.title, exp.company)
-            setAiSuggestions(
+            setNewBulletSuggestions(
                 suggestions
                     .filter(text => /^\d+\.\s*".*"$/.test(text))
                     .map((text, i) => ({
                         id: `sug-${i}`,
                         text: text
-                            .replace(/^\d+\.\s*/, "") // remove "1. "
-                            .replace(/^"|"$|^"+|"+$/g, "") // remove surrounding quotes
+                            .replace(/^\d+\.\s*/, "")
+                            .replace(/^"|"$|^"+|"+$/g, "")
                     }))
             );
             track("AIAddBulletCompleted", {
@@ -534,7 +538,7 @@ const ResumeEditor = ({ onBack, initialFile = null, initialExtractedText = "" })
             toast.error("Failed to generate bullet suggestions")
             track("AIAddBulletFailed");
         } finally {
-            setIsGenerating(false)
+            setIsGeneratingNewBullet(false)
         }
     }
 
@@ -1149,10 +1153,10 @@ const ResumeEditor = ({ onBack, initialFile = null, initialExtractedText = "" })
                                                                 variant="ghost"
                                                                 size="sm"
                                                                 onClick={() => handleAddBulletWithAI(exp.id)}
-                                                                disabled={isGenerating}
+                                                                disabled={isGeneratingNewBullet}
                                                                 className="h-7 text-xs"
                                                             >
-                                                                {isGenerating ? (
+                                                                {isGeneratingNewBullet ? (
                                                                     <Loader2 className="h-3 w-3 animate-spin" />
                                                                 ) : (
                                                                     <RefreshCw className="h-3 w-3" />
@@ -1164,7 +1168,7 @@ const ResumeEditor = ({ onBack, initialFile = null, initialExtractedText = "" })
                                                                 size="sm"
                                                                 onClick={() => {
                                                                     setShowNewBulletAI(null)
-                                                                    setAiSuggestions([])
+                                                                    setNewBulletSuggestions([])
                                                                 }}
                                                                 className="h-7 w-7 p-0"
                                                             >
@@ -1180,7 +1184,7 @@ const ResumeEditor = ({ onBack, initialFile = null, initialExtractedText = "" })
                                                         </div>
                                                     ) : (
                                                         <div className="space-y-2">
-                                                            {aiSuggestions.map((suggestion) => (
+                                                            {newBulletSuggestions.map((suggestion) => (
                                                                 <div
                                                                     key={suggestion.id}
                                                                     className="flex items-start gap-2 p-2 rounded-lg border hover:bg-secondary/50 transition-colors group/suggestion"
