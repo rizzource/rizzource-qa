@@ -516,15 +516,13 @@ const ResumeEditor = ({ onBack, initialFile = null, initialExtractedText = "" })
 
         try {
             const suggestions = await generateNewBullet(exp.title, exp.company)
+            const filteredSuggestions = suggestions.map((text, i) => ({
+                id: `sug-${i}`,
+                text: text
+                    .replace(/^-+\s*/, "") // remove "- " or "-- " etc.
+            }));
             setAiSuggestions(
-                suggestions
-                    .filter(text => /^\d+\.\s*".*"$/.test(text))
-                    .map((text, i) => ({
-                        id: `sug-${i}`,
-                        text: text
-                            .replace(/^\d+\.\s*/, "") // remove "1. "
-                            .replace(/^"|"$|^"+|"+$/g, "") // remove surrounding quotes
-                    }))
+                filteredSuggestions
             );
             track("AIAddBulletCompleted", {
                 count: suggestions.length
