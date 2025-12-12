@@ -49,7 +49,7 @@ export const loginUser = createAsyncThunk(
             });
             return res.data;
         } catch (err) {
-            return rejectWithValue(err.response?.data || "Login failed");
+            return rejectWithValue(err.response?.data?.message || "Login failed");
         }
     }
 );
@@ -71,7 +71,7 @@ export const registerUser = createAsyncThunk(
             });
             return res.data;
         } catch (err) {
-            return rejectWithValue(err.response?.data || "Registration failed");
+            return rejectWithValue(err.response?.data?.message || "Registration failed");
         }
     }
 );
@@ -112,7 +112,7 @@ export const googleLogin = createAsyncThunk(
             return res.data;
         } catch (err) {
             return rejectWithValue(
-                err.response?.data || "Google login failed"
+                err.response?.data?.message || "Google login failed"
             );
         }
     }
