@@ -237,14 +237,21 @@ const JobPortal = () => {
         a.toLowerCase() !== "none"
     );
 
-  const splitAreas = areasOfLawRaw.flatMap((a) =>
+  // Make this safe when no jobs are present
+  const splitAreas = (areasOfLawRaw || []).flatMap((a) =>
     a.split(",").map((s) => s.trim())
   );
 
-  const areasOfLaw = [
-    "All Areas of Law",
-    ...Array.from(new Set(splitAreas)).sort(),
-  ];
+  const areasOfLaw = splitAreas.length > 0
+    ? ["All Areas of Law", ...Array.from(new Set(splitAreas)).sort()]
+    : [];
+
+  // Clear area filter when no areas exist
+  useEffect(() => {
+    if (splitAreas.length === 0 && areaOfLawFilter) {
+      setAreaOfLawFilter("");
+    }
+  }, [splitAreas, areaOfLawFilter]);
 
   // ------------------------------------------------------------
   // FILTER LOGIC (UNCHANGED)
@@ -464,29 +471,31 @@ const JobPortal = () => {
             </Select>
 
             {/* AREA OF LAW SELECT */}
-            <Select
-              value={areaOfLawFilter}
-              onValueChange={(v) => {
-                setAreaOfLawFilter(v);
-                setCurrentPage(1);
-                track("AreaOfLawFilterChanged", { area: v });
-              }}
-            >
-              <SelectTrigger className="md:w-48">
-                <SelectValue placeholder="Area of Law" />
-              </SelectTrigger>
-              <SelectContent className="max-h-74 overflow-y-auto">
-                {areasOfLaw.map((area) => (
-                  <SelectItem
-                    key={area}
-                    value={area}
-                    className="max-w-[260px] truncate"
-                  >
-                    {area}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            {splitAreas.length > 0 && (
+              <Select
+                value={areaOfLawFilter}
+                onValueChange={(v) => {
+                  setAreaOfLawFilter(v);
+                  setCurrentPage(1);
+                  track("AreaOfLawFilterChanged", { area: v });
+                }}
+              >
+                <SelectTrigger className="md:w-48">
+                  <SelectValue placeholder="Area of Law" />
+                </SelectTrigger>
+                <SelectContent className="max-h-74 overflow-y-auto">
+                  {areasOfLaw.map((area) => (
+                    <SelectItem
+                      key={area}
+                      value={area}
+                      className="max-w-[260px] truncate"
+                    >
+                      {area}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
 
             <Button size="lg" onClick={resetFilters} className="md:w-48 rounded-xl">
               Reset Filters
