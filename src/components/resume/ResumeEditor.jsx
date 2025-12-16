@@ -232,11 +232,15 @@ const ResumeEditor = ({ onBack, initialFile = null, initialExtractedText = "" })
     // Resume data state
     const [resumeData, setResumeData] = useState(null)
     const [originalFileUrl, setOriginalFileUrl] = useState('');
-    // AI enhancement state
-    const [activeBulletId, setActiveBulletId] = useState(null)
-    const [aiSuggestions, setAiSuggestions] = useState([]);
-    const [isGenerating, setIsGenerating] = useState(false)
-    const [showNewBulletAI, setShowNewBulletAI] = useState(null)
+    // AI enhancement state (enhance existing bullet)
+    const [activeEnhanceBulletId, setActiveEnhanceBulletId] = useState(null)
+    const [enhanceAiSuggestions, setEnhanceAiSuggestions] = useState([]);
+    const [isGeneratingEnhance, setIsGeneratingEnhance] = useState(false)
+
+    // AI add-bullet state (generate new bullets)
+    const [showNewBulletAIExpId, setShowNewBulletAIExpId] = useState(null)
+    const [addAiSuggestions, setAddAiSuggestions] = useState([]);
+    const [isGeneratingAdd, setIsGeneratingAdd] = useState(false)
 
     // Section collapse state
     const [collapsedSections, setCollapsedSections] = useState({})
@@ -418,9 +422,9 @@ const ResumeEditor = ({ onBack, initialFile = null, initialExtractedText = "" })
         const exp = resumeData?.experience.find((e) => e.id === expId)
         if (!exp) return
 
-        setActiveBulletId(bulletId)
-        setIsGenerating(true)
-        setAiSuggestions([])
+        setActiveEnhanceBulletId(bulletId)
+        setIsGeneratingEnhance(true)
+        setEnhanceAiSuggestions([])
         track("AIBulletImproveStarted", {
             bulletId,
             expId,
@@ -429,7 +433,7 @@ const ResumeEditor = ({ onBack, initialFile = null, initialExtractedText = "" })
 
         try {
             const suggestions = await generateAIBullets(bulletText, exp.title)
-            setAiSuggestions(
+            setEnhanceAiSuggestions(
                 suggestions
                     .filter(text => /^\d+\.\s*".*"$/.test(text))
                     .map((text, i) => ({
@@ -447,24 +451,24 @@ const ResumeEditor = ({ onBack, initialFile = null, initialExtractedText = "" })
             toast.error("Failed to generate suggestions")
             track("AIBulletImproveFailed");
         } finally {
-            setIsGenerating(false)
+            setIsGeneratingEnhance(false)
         }
     }
 
     const handleRegenerateSuggestions = async () => {
-        if (!activeBulletId || !resumeData) return
+        if (!activeEnhanceBulletId || !resumeData) return
 
-        const exp = resumeData.experience.find((e) => e.bullets.some((b) => b.id === activeBulletId))
-        const bullet = exp?.bullets.find((b) => b.id === activeBulletId)
+        const exp = resumeData.experience.find((e) => e.bullets.some((b) => b.id === activeEnhanceBulletId))
+        const bullet = exp?.bullets.find((b) => b.id === activeEnhanceBulletId)
         if (!exp || !bullet) return
         track("AIRegenerateSuggestions", {
-            bulletId: activeBulletId
+            bulletId: activeEnhanceBulletId
         });
 
-        setIsGenerating(true)
+        setIsGeneratingEnhance(true)
         try {
             const suggestions = await generateAIBullets(bullet.text, exp.title)
-            setAiSuggestions(
+            setEnhanceAiSuggestions(
                 suggestions
                     .filter(text => /^\d+\.\s*".*"$/.test(text))
                     .map((text, i) => ({
@@ -477,7 +481,7 @@ const ResumeEditor = ({ onBack, initialFile = null, initialExtractedText = "" })
         } catch (error) {
             toast.error("Failed to regenerate suggestions")
         } finally {
-            setIsGenerating(false)
+            setIsGeneratingEnhance(false)
         }
     }
 
@@ -499,8 +503,8 @@ const ResumeEditor = ({ onBack, initialFile = null, initialExtractedText = "" })
                     : exp,
             ),
         })
-        setActiveBulletId(null)
-        setAiSuggestions([])
+        setActiveEnhanceBulletId(null)
+        setEnhanceAiSuggestions([])
         toast.success("Bullet updated!")
     }
 
@@ -509,9 +513,9 @@ const ResumeEditor = ({ onBack, initialFile = null, initialExtractedText = "" })
         const exp = resumeData?.experience.find((e) => e.id === expId)
         if (exp?.length == 0) return;
 
-        setShowNewBulletAI(expId)
-        setIsGenerating(true)
-        setAiSuggestions([])
+        setShowNewBulletAIExpId(expId)
+        setIsGeneratingAdd(true)
+        setAddAiSuggestions([])
         track("AIAddBulletStarted", { expId });
 
         try {
@@ -521,7 +525,7 @@ const ResumeEditor = ({ onBack, initialFile = null, initialExtractedText = "" })
                 text: text
                     .replace(/^-+\s*/, "") // remove "- " or "-- " etc.
             }));
-            setAiSuggestions(
+            setAddAiSuggestions(
                 filteredSuggestions
             );
             track("AIAddBulletCompleted", {
@@ -532,7 +536,7 @@ const ResumeEditor = ({ onBack, initialFile = null, initialExtractedText = "" })
             toast.error("Failed to generate bullet suggestions")
             track("AIAddBulletFailed");
         } finally {
-            setIsGenerating(false)
+            setIsGeneratingAdd(false)
         }
     }
 
@@ -554,8 +558,8 @@ const ResumeEditor = ({ onBack, initialFile = null, initialExtractedText = "" })
                 exp.id === expId ? { ...exp, bullets: [...exp.bullets, newBullet] } : exp,
             ),
         })
-        setShowNewBulletAI(null)
-        setAiSuggestions([])
+        setShowNewBulletAIExpId(null)
+        setAddAiSuggestions([])
         toast.success("Bullet added!")
     }
 
@@ -1041,8 +1045,8 @@ const ResumeEditor = ({ onBack, initialFile = null, initialExtractedText = "" })
                                                             </div>
                                                         </div>
 
-                                                        {/* AI Suggestions Panel */}
-                                                        {activeBulletId === bullet.id && (
+                                                        {/* AI Suggestions Panel (enhance existing bullet) */}
+                                                        {activeEnhanceBulletId === bullet.id && (
                                                             <div className="mt-2 ml-6 p-3 border rounded-xl bg-background space-y-2">
                                                                 <div className="flex items-center justify-between">
                                                                     <div className="flex items-center gap-2">
@@ -1054,10 +1058,10 @@ const ResumeEditor = ({ onBack, initialFile = null, initialExtractedText = "" })
                                                                             variant="ghost"
                                                                             size="sm"
                                                                             onClick={handleRegenerateSuggestions}
-                                                                            disabled={isGenerating}
+                                                                            disabled={isGeneratingEnhance}
                                                                             className="h-7 text-xs"
                                                                         >
-                                                                            {isGenerating ? (
+                                                                            {isGeneratingEnhance ? (
                                                                                 <Loader2 className="h-3 w-3 animate-spin" />
                                                                             ) : (
                                                                                 <RefreshCw className="h-3 w-3" />
@@ -1068,8 +1072,8 @@ const ResumeEditor = ({ onBack, initialFile = null, initialExtractedText = "" })
                                                                             variant="ghost"
                                                                             size="sm"
                                                                             onClick={() => {
-                                                                                setActiveBulletId(null)
-                                                                                setAiSuggestions([])
+                                                                                setActiveEnhanceBulletId(null)
+                                                                                setEnhanceAiSuggestions([])
                                                                             }}
                                                                             className="h-7 w-7 p-0"
                                                                         >
@@ -1078,14 +1082,14 @@ const ResumeEditor = ({ onBack, initialFile = null, initialExtractedText = "" })
                                                                     </div>
                                                                 </div>
 
-                                                                {isGenerating ? (
+                                                                {isGeneratingEnhance ? (
                                                                     <div className="flex items-center justify-center py-4">
                                                                         <Loader2 className="h-5 w-5 animate-spin text-primary" />
                                                                         <span className="ml-2 text-muted-foreground text-sm">Generating...</span>
                                                                     </div>
                                                                 ) : (
                                                                     <div className="space-y-2">
-                                                                        {aiSuggestions.map((suggestion) => (
+                                                                        {enhanceAiSuggestions.map((suggestion) => (
                                                                             <div
                                                                                 key={suggestion.id}
                                                                                 className="flex items-start gap-2 p-2 rounded-lg border hover:bg-secondary/50 transition-colors group/suggestion"
@@ -1134,8 +1138,8 @@ const ResumeEditor = ({ onBack, initialFile = null, initialExtractedText = "" })
                                                 </Button>
                                             </div>
 
-                                            {/* New Bullet AI Panel */}
-                                            {showNewBulletAI === exp.id && (
+                                            {/* New Bullet AI Panel (add new bullets) */}
+                                            {showNewBulletAIExpId === exp.id && (
                                                 <div className="p-3 border rounded-xl bg-background space-y-2">
                                                     <div className="flex items-center justify-between">
                                                         <div className="flex items-center gap-2">
@@ -1147,10 +1151,10 @@ const ResumeEditor = ({ onBack, initialFile = null, initialExtractedText = "" })
                                                                 variant="ghost"
                                                                 size="sm"
                                                                 onClick={() => handleAddBulletWithAI(exp.id)}
-                                                                disabled={isGenerating}
+                                                                disabled={isGeneratingAdd}
                                                                 className="h-7 text-xs"
                                                             >
-                                                                {isGenerating ? (
+                                                                {isGeneratingAdd ? (
                                                                     <Loader2 className="h-3 w-3 animate-spin" />
                                                                 ) : (
                                                                     <RefreshCw className="h-3 w-3" />
@@ -1161,8 +1165,8 @@ const ResumeEditor = ({ onBack, initialFile = null, initialExtractedText = "" })
                                                                 variant="ghost"
                                                                 size="sm"
                                                                 onClick={() => {
-                                                                    setShowNewBulletAI(null)
-                                                                    setAiSuggestions([])
+                                                                    setShowNewBulletAIExpId(null)
+                                                                    setAddAiSuggestions([])
                                                                 }}
                                                                 className="h-7 w-7 p-0"
                                                             >
@@ -1171,14 +1175,14 @@ const ResumeEditor = ({ onBack, initialFile = null, initialExtractedText = "" })
                                                         </div>
                                                     </div>
 
-                                                    {isGenerating ? (
+                                                    {isGeneratingAdd ? (
                                                         <div className="flex items-center justify-center py-4">
                                                             <Loader2 className="h-5 w-5 animate-spin text-primary" />
                                                             <span className="ml-2 text-muted-foreground text-sm">Generating new bullets...</span>
                                                         </div>
                                                     ) : (
                                                         <div className="space-y-2">
-                                                            {aiSuggestions.map((suggestion) => (
+                                                            {addAiSuggestions.map((suggestion) => (
                                                                 <div
                                                                     key={suggestion.id}
                                                                     className="flex items-start gap-2 p-2 rounded-lg border hover:bg-secondary/50 transition-colors group/suggestion"
