@@ -31,20 +31,20 @@ const ScrollBar = React.forwardRef<
     ref={ref}
     orientation={orientation}
     className={cn(
-      "flex touch-none select-none transition-colors opacity-100 pointer-events-auto group",
+      "flex touch-none select-none transition-colors transition-opacity opacity-100 pointer-events-auto group data-[state=hidden]:!opacity-100 data-[state=hidden]:!translate-x-0 data-[state=hidden]:!translate-y-0",
       // Make the scrollbar slightly wider so it's clearly visible
       // Add a subtle track background that differs from the editor/preview background
       // The 'group' class allows us to change the thumb's color when the pointer is over the scrollbar
       orientation === "vertical" &&
-        "h-full w-3 p-[2px] bg-muted/10 dark:bg-muted/30 rounded-md",
+        "h-full w-3 p-[2px] bg-muted/20 dark:bg-muted/60 rounded-md",
       orientation === "horizontal" &&
-        "h-3 flex-col w-full p-[2px] bg-muted/10 dark:bg-muted/30 rounded-md",
+        "h-3 flex-col w-full p-[2px] bg-muted/20 dark:bg-muted/60 rounded-md",
       className
     )}
     {...props}
   >
-    {/* Thumb - dark grey in light theme, slightly lighter in dark theme; turns black/dark-gray when pointer is over scrollbar */}
-    <ScrollAreaPrimitive.ScrollAreaThumb className="relative flex-1 rounded-full bg-gray-700 dark:bg-gray-400 hover:bg-black dark:hover:bg-gray-600 group-hover:bg-black dark:group-hover:bg-gray-600 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60" />
+    {/* Thumb - dark grey in light theme, slightly lighter in dark theme; visible at all times */}
+    <ScrollAreaPrimitive.ScrollAreaThumb className="relative flex-1 rounded-full bg-primary/90 dark:bg-primary/70 hover:bg-primary/90 dark:hover:bg-primary/70 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 opacity-100 translate-x-0 translate-y-0 data-[state=hidden]:!opacity-100 data-[state=hidden]:!translate-x-0 data-[state=hidden]:!translate-y-0" />
   </ScrollAreaPrimitive.ScrollAreaScrollbar>
 ))
 ScrollBar.displayName = ScrollAreaPrimitive.ScrollAreaScrollbar.displayName
