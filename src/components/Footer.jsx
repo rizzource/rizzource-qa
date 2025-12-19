@@ -42,9 +42,9 @@ const Footer = () => {
             <div className="flex items-center space-x-3"> 
               <Mail className="w-5 h-5 text-primary-foreground/80" /> 
               {/* 
-              <a href="mailto:rana.sher.khan@emory.edu" 
-              className="text-primary-foreground/80 hover:text-gold-light transition-colors" > rana.sher.khan@emory.edu </a> */} 
-              <p> rana.sher.khan@emory.edu </p> 
+              <a href="mailto:support@rizzource.com" 
+              className="text-primary-foreground/80 hover:text-gold-light transition-colors" > support@rizzource.com </a> */} 
+              <p> support@rizzource.com </p> 
             </div> 
           </div> 
         </div> 
