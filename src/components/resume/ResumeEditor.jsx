@@ -1115,8 +1115,8 @@ const ResumeEditor = ({ onBack, initialFile = null, initialExtractedText = "" })
                                             </div>
 
                                             {/* Add Bullet Actions */}
-                                            <div className="flex items-center gap-2 pt-1">
-                                                <Button
+                                            <div className="flex items-center gap-2 pt-1 ml-5">
+                                                {/* <Button
                                                     variant="outline"
                                                     size="sm"
                                                     onClick={() => handleAddManualBullet(exp.id)}
@@ -1124,7 +1124,7 @@ const ResumeEditor = ({ onBack, initialFile = null, initialExtractedText = "" })
                                                 >
                                                     <Plus className="h-3 w-3 mr-1" />
                                                     Add Bullet
-                                                </Button>
+                                                </Button> */}
                                                 <Button
                                                     variant="outline"
                                                     size="sm"
