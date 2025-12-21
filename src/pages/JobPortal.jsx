@@ -62,6 +62,66 @@ const JobPortal = () => {
       track("AutoStateFilterApplied", { state: "Georgia" });
     }
   }, [scrappedJobs, favoriteJobs]);
+  const US_STATE_ABBR = new Set([
+    "AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA", "HI", "ID", "IL", "IN", "IA",
+    "KS", "KY", "LA", "ME", "MD", "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ",
+    "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI", "SC", "SD", "TN", "TX", "UT", "VT",
+    "VA", "WV", "WI", "WY", "DC"
+  ]);
+
+  // ⛔ EXCLUDE ambiguous names: New York, Washington
+  const US_STATE_FULL = new Set([
+    "Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado", "Connecticut",
+    "Delaware", "Florida", "Georgia", "Hawaii", "Idaho", "Illinois", "Indiana", "Iowa",
+    "Kansas", "Kentucky", "Louisiana", "Maine", "Maryland", "Massachusetts", "Michigan",
+    "Minnesota", "Mississippi", "Missouri", "Montana", "Nebraska", "Nevada",
+    "New Hampshire", "New Jersey", "New Mexico", "North Carolina", "North Dakota",
+    "Ohio", "Oklahoma", "Oregon", "Pennsylvania", "Rhode Island",
+    "South Carolina", "South Dakota", "Tennessee", "Texas", "Utah", "Vermont",
+    "Virginia", "West Virginia", "Wisconsin", "Wyoming",
+    "District of Columbia"
+  ]);
+
+  const isState = (value) =>
+    US_STATE_ABBR.has(value) || US_STATE_FULL.has(value);
+  const parseLocations = (locationStr) => {
+    if (!locationStr) return [];
+
+    const parts = locationStr.split(",").map(p => p.trim());
+    const result = [];
+
+    let i = 0;
+    while (i < parts.length) {
+      const current = parts[i];
+      const next = parts[i + 1];
+
+      // ✅ Washington + DC ONLY
+      if (
+        current === "Washington" &&
+        next &&
+        /^(d\.?c\.?)$/i.test(next.replace(/\s+/g, ""))
+      ) {
+        result.push("Washington, D.C.");
+        i += 2;
+        continue;
+      }
+
+      // ✅ City + State (safe states only)
+      if (next && isState(next)) {
+        result.push(`${current}, ${next}`);
+        i += 2;
+        continue;
+      }
+
+      // ✅ Otherwise → city
+      result.push(current);
+      i += 1;
+    }
+
+    return result;
+  };
+
+
 
   // ------------------------------------------------------------
   // SMART STATE EXTRACTOR — NO CHANGES MADE
@@ -545,11 +605,18 @@ const JobPortal = () => {
 
                       <div className="flex flex-wrap gap-2 mb-4">
                         {job.location && (
-                          <Badge variant="outline">
-                            <MapPin className="h-3 w-3 mr-1" />
-                            {job.location}
-                          </Badge>
+                          <div className="flex flex-wrap gap-2">
+                            {parseLocations(job.location).map((loc, index) => (
+                              <Badge key={index} variant="outline">
+                                <MapPin className="h-3 w-3 mr-1" />
+                                {loc}
+                              </Badge>
+                            ))}
+                          </div>
                         )}
+
+
+
                         {job.areaOfLaw && (
                           <Badge variant="outline">
                             <Scale className="h-3 w-3 mr-1" />

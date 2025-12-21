@@ -37,6 +37,9 @@ import {
     FileCheck,
     FileUp,
     Brain,
+    Edit3,
+    Save,
+    Eye,
 } from "lucide-react"
 import { toast, Toaster } from "sonner"
 import { fileUpload, generateNewBulletThunk, improveBulletThunk } from "../../redux/slices/userApiSlice"
@@ -102,8 +105,150 @@ const parseResumeFile = async (file) => {
 }
 
 // Live Preview Component
-const ResumePreview = ({ resumeData }) => {
+const ResumePreview = ({ resumeData, isEditing, onEdit }) => {
     if (!resumeData) return null
+
+    if (isEditing) {
+        return (
+            <div className="bg-white text-black p-8 min-h-full font-serif text-sm leading-relaxed">
+                {/* Editable Header */}
+                <div className="text-center border-b border-gray-300 pb-4 mb-4">
+                    <Input
+                        value={resumeData.personalInfo.name || "Your Name"}
+                        onChange={(e) => onEdit({
+                            ...resumeData,
+                            personalInfo: { ...resumeData.personalInfo, name: e.target.value }
+                        })}
+                        className="text-2xl font-bold tracking-wide uppercase mb-2 text-center border-none bg-transparent focus-visible:ring-1"
+                    />
+                    <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-xs text-gray-600">
+                        {resumeData.personalInfo.email && (
+                            <Input
+                                value={resumeData.personalInfo.email}
+                                onChange={(e) => onEdit({
+                                    ...resumeData,
+                                    personalInfo: { ...resumeData.personalInfo, email: e.target.value }
+                                })}
+                                className="w-auto border-none bg-transparent text-xs p-0 h-auto focus-visible:ring-1"
+                            />
+                        )}
+                        {resumeData.personalInfo.phone && (
+                            <Input
+                                value={resumeData.personalInfo.phone}
+                                onChange={(e) => onEdit({
+                                    ...resumeData,
+                                    personalInfo: { ...resumeData.personalInfo, phone: e.target.value }
+                                })}
+                                className="w-auto border-none bg-transparent text-xs p-0 h-auto focus-visible:ring-1"
+                            />
+                        )}
+                    </div>
+                </div>
+
+                {/* Editable Summary */}
+                {resumeData.summary && (
+                    <div className="mb-4">
+                        <h2 className="text-xs font-bold uppercase tracking-widest border-b border-gray-300 pb-1 mb-2">
+                            Professional Summary
+                        </h2>
+                        <Textarea
+                            value={resumeData.summary}
+                            onChange={(e) => onEdit({ ...resumeData, summary: e.target.value })}
+                            className="text-xs text-gray-700 leading-relaxed border-none bg-transparent p-0 resize-none focus-visible:ring-1 min-h-[60px]"
+                        />
+                    </div>
+                )}
+
+                {/* Editable Experience */}
+                {resumeData.experience.length > 0 && (
+                    <div className="mb-4">
+                        <h2 className="text-xs font-bold uppercase tracking-widest border-b border-gray-300 pb-1 mb-2">
+                            Work Experience
+                        </h2>
+                        <div className="space-y-3">
+                            {resumeData.experience.map((exp) => (
+                                <div key={exp.id}>
+                                    <div className="flex justify-between items-baseline">
+                                        <Input
+                                            value={exp.title || "Job Title"}
+                                            onChange={(e) => onEdit({
+                                                ...resumeData,
+                                                experience: resumeData.experience.map(e =>
+                                                    e.id === exp.id ? { ...e, title: e.target.value } : e
+                                                )
+                                            })}
+                                            className="font-bold text-xs border-none bg-transparent p-0 h-auto focus-visible:ring-1 w-auto"
+                                        />
+                                        <span className="text-xs text-gray-500">
+                                            {exp.startDate} - {exp.endDate}
+                                        </span>
+                                    </div>
+                                    <div className="flex justify-between items-baseline text-xs text-gray-600 mb-1">
+                                        <span>{exp.company || "Company Name"}</span>
+                                        <span>{exp.location}</span>
+                                    </div>
+                                    <ul className="list-disc list-outside ml-4 space-y-0.5">
+                                        {exp.bullets.map((bullet) => (
+                                            <li key={bullet.id} className="text-xs text-gray-700">
+                                                <Textarea
+                                                    value={bullet.text || "Bullet point..."}
+                                                    onChange={(e) => onEdit({
+                                                        ...resumeData,
+                                                        experience: resumeData.experience.map(e =>
+                                                            e.id === exp.id
+                                                                ? {
+                                                                    ...e,
+                                                                    bullets: e.bullets.map(b =>
+                                                                        b.id === bullet.id ? { ...b, text: e.target.value } : b
+                                                                    )
+                                                                }
+                                                                : e
+                                                        )
+                                                    })}
+                                                    className="text-xs border-none bg-transparent p-0 resize-none focus-visible:ring-1 min-h-[40px] w-full"
+                                                />
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                )}
+
+                {/* Non-editable Education and Skills in edit mode */}
+                {resumeData.education.length > 0 && (
+                    <div className="mb-4">
+                        <h2 className="text-xs font-bold uppercase tracking-widest border-b border-gray-300 pb-1 mb-2">Education</h2>
+                        <div className="space-y-2">
+                            {resumeData.education.map((edu) => (
+                                <div key={edu.id}>
+                                    <div className="flex justify-between items-baseline">
+                                        <h3 className="font-bold text-xs">{edu.degree || "Degree"}</h3>
+                                        <span className="text-xs text-gray-500">
+                                            {edu.startDate} - {edu.endDate}
+                                        </span>
+                                    </div>
+                                    <div className="flex justify-between items-baseline text-xs text-gray-600">
+                                        <span>{edu.school || "School Name"}</span>
+                                        <span>{edu.location}</span>
+                                    </div>
+                                    {edu.description && <p className="text-xs text-gray-500 mt-0.5">{edu.description}</p>}
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                )}
+
+                {resumeData.skills.length > 0 && (
+                    <div>
+                        <h2 className="text-xs font-bold uppercase tracking-widest border-b border-gray-300 pb-1 mb-2">Skills</h2>
+                        <p className="text-xs text-gray-700">{resumeData.skills.join(" • ")}</p>
+                    </div>
+                )}
+            </div>
+        )
+    }
 
     return (
         <div className="bg-white text-black p-8 min-h-full font-serif text-sm leading-relaxed">
@@ -232,6 +377,10 @@ const ResumeEditor = ({ onBack, initialFile = null, initialExtractedText = "" })
     // Resume data state
     const [resumeData, setResumeData] = useState(null)
     const [originalFileUrl, setOriginalFileUrl] = useState('');
+
+    // Preview editing state
+    const [isPreviewEditing, setIsPreviewEditing] = useState(false)
+
     // AI enhancement state (enhance existing bullet)
     const [activeEnhanceBulletId, setActiveEnhanceBulletId] = useState(null)
     const [enhanceAiSuggestions, setEnhanceAiSuggestions] = useState([]);
@@ -247,6 +396,7 @@ const ResumeEditor = ({ onBack, initialFile = null, initialExtractedText = "" })
     const [showFeedbackModal, setShowFeedbackModal] = useState(false);
     const dispatch = useDispatch();
     const [typingIndex, setTypingIndex] = useState(0);
+
     useEffect(() => {
         if (!isParsing) return;
 
@@ -264,6 +414,19 @@ const ResumeEditor = ({ onBack, initialFile = null, initialExtractedText = "" })
         return () => clearInterval(interval);
     }, [isParsing]);
 
+    const handlePreviewEdit = (updatedData) => {
+        setResumeData(updatedData)
+    }
+
+    const handlePreviewEditToggle = () => {
+        if (isPreviewEditing) {
+            toast.success("Preview changes saved!")
+            track("PreviewEditingSaved")
+        } else {
+            track("PreviewEditingStarted")
+        }
+        setIsPreviewEditing(!isPreviewEditing)
+    }
 
     const generateAIBullets = async (bulletText, jobTitle) => {
         const result = await dispatch(
@@ -407,12 +570,7 @@ const ResumeEditor = ({ onBack, initialFile = null, initialExtractedText = "" })
             .catch((err) => {
                 setIsParsing(false);
                 toast.error(err || "Failed to parse resume");
-                track("AIBulletImproveStarted", {
-                    bulletId,
-                    expId,
-                    bulletLength: bulletText.length
-                });
-
+                track("ResumeParsed", { success: false });
             });
     }, [])
 
@@ -776,16 +934,7 @@ const ResumeEditor = ({ onBack, initialFile = null, initialExtractedText = "" })
                 description="Your feedback helps us create better resumes for everyone"
             />
             <Toaster richColors closeButton position="top-center" />
-            {/* Header */}
-            {/* <div className="border-b bg-background sticky top-0 z-10">
-                <div className="container mx-auto px-4 py-4">
-                    <div className="flex items-center justify-between">
-                        
-                    </div>
-                </div>
-            </div> */}
 
-            {/* Main Content - Split View */}
             {/* Mobile Toggle Bar */}
             <div className="md:hidden sticky top-[73px] z-20 bg-background border-b">
                 <div className="flex">
@@ -824,14 +973,11 @@ const ResumeEditor = ({ onBack, initialFile = null, initialExtractedText = "" })
                     <ScrollArea className="h-full">
                         <div className="p-6 space-y-8 md:space-y-6">
 
-                            {/* Personal Info Section */}
-                            {/* <div className="flex items-center gap-4"> */}
-                            {/* {onBack && ( */}
                             <Button variant="ghost" onClick={() => setResumeData(false)} size="sm">
                                 <ArrowLeft className="h-4 w-4 mr-2" /> Back
                             </Button>
-                            {/* )} */}
-                            {/* </div> */}
+
+                            {/* Personal Info Section */}
                             <Card>
                                 <CardHeader className="cursor-pointer py-3" onClick={() => toggleSection("personal")}>
                                     <div className="flex items-center justify-between">
@@ -1116,15 +1262,6 @@ const ResumeEditor = ({ onBack, initialFile = null, initialExtractedText = "" })
 
                                             {/* Add Bullet Actions */}
                                             <div className="flex items-center gap-2 pt-1 ml-5">
-                                                {/* <Button
-                                                    variant="outline"
-                                                    size="sm"
-                                                    onClick={() => handleAddManualBullet(exp.id)}
-                                                    className="text-xs h-6"
-                                                >
-                                                    <Plus className="h-3 w-3 mr-1" />
-                                                    Add Bullet
-                                                </Button> */}
                                                 <Button
                                                     variant="outline"
                                                     size="sm"
@@ -1335,14 +1472,33 @@ const ResumeEditor = ({ onBack, initialFile = null, initialExtractedText = "" })
                                     <FileText className="h-3 w-3" />
                                     {uploadedFile?.name}
                                 </Badge>
+                                <Button
+                                    variant={isPreviewEditing ? "default" : "outline"}
+                                    size="sm"
+                                    onClick={handlePreviewEditToggle}
+                                >
+                                    {isPreviewEditing ? (
+                                        <>
+                                            <Save className="h-4 w-4 mr-2" />
+                                            Save Changes
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Edit3 className="h-4 w-4 mr-2" />
+                                            Edit Preview
+                                        </>
+                                    )}
+                                </Button>
                                 <Button variant="outline" size="sm" onClick={() => onDownloadPdf()}>
                                     <Download className="h-4 w-4 mr-2" />
                                     Export PDF
                                 </Button>
                             </div>
-                            <Badge variant="outline" className="text-xs">
-                                Auto-updating
-                            </Badge>
+                            {!isPreviewEditing && (
+                                <Badge variant="outline" className="text-xs">
+                                    Auto-updating
+                                </Badge>
+                            )}
                         </div>
                         <ScrollArea className="flex-1">
                             <div className="p-6">
@@ -1350,7 +1506,11 @@ const ResumeEditor = ({ onBack, initialFile = null, initialExtractedText = "" })
                                     className="bg-white shadow-lg rounded-lg overflow-hidden mx-auto"
                                     style={{ maxWidth: "8.5in", aspectRatio: "8.5/11" }}
                                 >
-                                    <ResumePreview resumeData={resumeData} />
+                                    <ResumePreview
+                                        resumeData={resumeData}
+                                        isEditing={isPreviewEditing}
+                                        onEdit={handlePreviewEdit}
+                                    />
                                 </div>
                             </div>
                         </ScrollArea>
