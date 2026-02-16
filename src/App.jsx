@@ -6,21 +6,21 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { useTheme } from "next-themes";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
-import ThankYou from "./pages/ThankYou";
-import NotFound from "./pages/NotFound";
-import ResourceHub from "./pages/ResourceHub";
-import OutlinesHub from "./components/OutlinesHub";
-import OutlineView from "./pages/OutlineView";
+// import ThankYou from "./pages/ThankYou";
+// import NotFound from "./pages/NotFound";
+// import ResourceHub from "./pages/ResourceHub";
+// import OutlinesHub from "./components/OutlinesHub";
+// import OutlineView from "./pages/OutlineView";
 import { AdminDashboard } from "./pages/AdminDashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
 import ScrollToTop from "./components/ScrollToTop";
-import MatchupPage from "./pages/MatchupPage";
-import AvailabilityScheduler from "./components/AvailabilityScheduler";
-import FixedSlotPoll from "./components/FixedSlotPoll";
+// import MatchupPage from "./pages/MatchupPage";
+// import AvailabilityScheduler from "./components/AvailabilityScheduler";
+// import FixedSlotPoll from "./components/FixedSlotPoll";
 import JobPortal from "./pages/JobPortal";
 import JobDetails from "./pages/JobDetails";
-import JobApplicationSuccess from "./pages/JobApplicationSuccess";
-import MyApplications from "./pages/MyApplications";
+// import JobApplicationSuccess from "./pages/JobApplicationSuccess";
+// import MyApplications from "./pages/MyApplications";
 import CompanyDashboard from "./pages/CompanyDashboard";
 import CVEnhancer from "@/pages/CVEnhancer";
 import CoverLetterGenerator from './components/coverletter/CoverLetterGenerator';
@@ -59,25 +59,29 @@ const AppContent = () => {
           <Route element={<Layout />}>
             <Route path="/" element={<Index />} />
             <Route path="/auth" element={<Auth />} />
-            <Route path="/resources" element={<ResourceHub />} />
-            <Route path="/outlines" element={<OutlinesHub />} />
+            <Route path="/jobs" element={<JobPortal />} />
+            <Route path="/cv-enhancer/:jobId" element={<CVEnhancer />} />
+            <Route path="/resume/editor" element={<ResumeEditor />} />
+            <Route path="/jobs/:id" element={<JobDetails />} />
+            <Route path="/cover-letter/generator" element={<CoverLetterGenerator />} />
 
-            <Route path="/outlines/:id" element={<OutlineView />} />
-            <Route path="/availability" element={<FixedSlotPoll />} />
-            <Route path="/matchup" element={<MatchupPage />} />
+            {/* <Route path="/resources" element={<ResourceHub />} /> */}
+            {/* <Route path="/outlines" element={<OutlinesHub />} /> */}
+
+            {/* <Route path="/outlines/:id" element={<OutlineView />} /> */}
+            {/* <Route path="/availability" element={<FixedSlotPoll />} /> */}
+            {/* <Route path="/matchup" element={<MatchupPage />} /> */}
             <Route path="/apalsa-mentorship" element={<Index mentorshipPage={true} />} />
             <Route path="/mentorship-selection" element={<Index mentorshipPage={true} initialState="selection" />} />
-            <Route path="/thank-you" element={<ThankYou />} />
-            <Route path="/jobs" element={<JobPortal />} />
+            {/* <Route path="/thank-you" element={<ThankYou />} /> */}
+            
             <Route path="/favoritejobs" element={<JobPortal />} />
-            <Route path="/jobs/:id" element={<JobDetails />} />
-            <Route path="/job-application-success" element={<JobApplicationSuccess />} />
-            <Route path="/cover-letter/generator" element={<CoverLetterGenerator />} />
-            <Route path="/my-applications" element={
+            {/* <Route path="/job-application-success" element={<JobApplicationSuccess />} /> */}
+            {/* <Route path="/my-applications" element={
               <ProtectedRoute>
                 <MyApplications />
               </ProtectedRoute>
-            } />
+            } /> */}
             <Route path="/company-dashboard" element={
               <ProtectedRoute>
                 <CompanyDashboard />
@@ -88,10 +92,9 @@ const AppContent = () => {
                 <AdminDashboard />
               </ProtectedRoute>
             } />
-            <Route path="/cv-enhancer/:jobId" element={<CVEnhancer />} />
-            <Route path="/resume/editor" element={<ResumeEditor />} />
+
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
+            {/* <Route path="*" element={<NotFound />} /> */}
           </Route>
         </Routes>
       </BrowserRouter>
