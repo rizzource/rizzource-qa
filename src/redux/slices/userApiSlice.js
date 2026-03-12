@@ -689,11 +689,11 @@ const userApiSlice = createSlice({
             .addCase(googleLogin.fulfilled, (state, action) => {
                 state.loading = false;
                 state.token = action.payload.token;
-                state.user = action.payload || action.payload.data;
+                state.user =  action.payload.data || action.payload.Data || action.payload;
                 state.roles = action.payload.roles || [];
                 const encrypted = encrypt({
                     token: action.payload.token,
-                    user: action.payload || action.payload.data,
+                    user: action.payload.Data || action.payload.data || action.payload ,
                     roles: action.payload.roles || [],
                 });
                 localStorage.setItem("rizzource_session", encrypted);
