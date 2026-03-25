@@ -26,6 +26,17 @@ const Auth = () => {
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const [activeTab, setActiveTab] = useState("signin");
   const [isValidating, setIsValidating] = useState(false);
+  const [passwordStrength, setPasswordStrength] = useState("");
+  const [passwordVal, setPasswordVal] = useState("");
+  const [knownEmails, setKnownEmails] = useState(() => {
+    if (typeof window === "undefined") return [];
+    try {
+      const value = localStorage.getItem("rizzource_known_emails");
+      return value ? JSON.parse(value) : [];
+    } catch {
+      return [];
+    }
+  });
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -44,6 +55,49 @@ const Auth = () => {
   useEffect(() => {
     posthog?.capture('$pageview');
   }, [posthog]);
+
+  // Persist known sign-up emails to avoid duplicates on this client
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    try {
+      localStorage.setItem('rizzource_known_emails', JSON.stringify(knownEmails));
+    } catch {
+      // ignore localStorage errors
+    }
+  }, [knownEmails]);
+
+  useEffect(() => {
+    if (activeTab !== 'signup') {
+      setPasswordVal('');
+      setPasswordStrength('');
+    }
+  }, [activeTab]);
+
+  const evaluatePasswordStrength = (password) => {
+    const commonWeak = new Set([
+      '123456', 'password', '123456789', '12345678', '12345', 'qwerty', '111111', '123123', 'abc123', 'password1'
+    ]);
+
+    if (!password) return '';
+    if (commonWeak.has(password.toLowerCase())) return 'weak';
+    if (password.length < 6) return 'weak';
+
+    let score = 0;
+    if (password.length >= 8) score += 1;
+    if (/[a-z]/.test(password) && /[A-Z]/.test(password)) score += 1;
+    if (/\d/.test(password)) score += 1;
+    if (/[^A-Za-z0-9]/.test(password)) score += 1;
+
+    if (score <= 1) return 'weak';
+    if (score === 2) return 'medium';
+    return 'strong';
+  };
+
+  const handlePasswordChange = (e) => {
+    const value = e.target.value;
+    setPasswordVal(value);
+    setPasswordStrength(evaluatePasswordStrength(value));
+  };
 
   // Redirect after login
   useEffect(() => {
@@ -229,8 +283,19 @@ const Auth = () => {
       const email = form.get("email");
       const password = form.get("password");
       const confirmPassword = form.get("confirmPassword");
+      const normalizedEmail = email?.toString().trim().toLowerCase();
 
       posthog?.capture('signup_started', { method: 'email' });
+
+      if (normalizedEmail && knownEmails.includes(normalizedEmail)) {
+        setLocalError("Email already registered. Please login.");
+        posthog?.capture('signup_failed', {
+          method: 'email',
+          error_type: 'email_already_exists'
+        });
+        setIsValidating(false);
+        return;
+      }
 
       // Validation
       if (!email || !password || !confirmPassword) {
@@ -263,6 +328,18 @@ const Auth = () => {
         return;
       }
 
+      const strength = evaluatePasswordStrength(password);
+      if (strength === 'weak') {
+        setLocalError("Weak password detected. Use at least 8 characters with mixed case, numbers, and symbols.");
+        posthog?.capture('signup_failed', {
+          method: 'email',
+          error_type: 'weak_password'
+        });
+        setPasswordStrength('weak');
+        setIsValidating(false);
+        return;
+      }
+
       // Email validation
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailRegex.test(email)) {
@@ -285,17 +362,30 @@ const Auth = () => {
       const result = await dispatch(registerUser(payload));
 
       if (result.error) {
-        setLocalError(result.payload || "This email is already registered. Please try a different email.");
+        const payloadMessage = result.payload || "Registration failed.";
+        const isDuplicate = /already exists|already registered/i.test(payloadMessage);
+
+        setLocalError(isDuplicate
+          ? "Email already registered. Please login."
+          : payloadMessage
+        );
+
         posthog?.capture('signup_failed', {
           method: 'email',
-          error_type: 'email_already_exists'
+          error_type: isDuplicate ? 'email_already_exists' : 'registration_failed'
         });
         setIsValidating(false);
         return;
       }
 
       posthog?.capture('signup_completed', { method: 'email' });
+      setKnownEmails((prev) => {
+        const merged = [...prev, normalizedEmail];
+        return Array.from(new Set(merged));
+      });
       setSuccess("Account created successfully! You can now sign in.");
+      setPasswordVal('');
+      setPasswordStrength('');
 
       // Clear form and switch to signin tab after a short delay
       setTimeout(() => {
@@ -582,11 +672,18 @@ const Auth = () => {
                             type="password"
                             required
                             disabled={loading || isValidating}
+                            onChange={handlePasswordChange}
+                            value={passwordVal}
                             className="h-11 sm:h-12 rounded-xl border-2 border-charcoal/10 bg-white font-medium
                                      focus-visible:ring-electric-teal focus-visible:border-electric-teal
                                      transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                             placeholder="Min. 6 characters"
                           />
+                          {passwordStrength && (
+                            <p className={`mt-2 text-xs font-bold uppercase tracking-wider ${passwordStrength === 'weak' ? 'text-rose-600' : passwordStrength === 'medium' ? 'text-amber-600' : 'text-emerald-600'}`}>
+                              Password strength: {passwordStrength}
+                            </p>
+                          )}
                         </div>
 
                         <div>

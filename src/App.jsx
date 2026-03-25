@@ -75,7 +75,14 @@ const AppContent = () => {
             <Route path="/mentorship-selection" element={<Index mentorshipPage={true} initialState="selection" />} />
             {/* <Route path="/thank-you" element={<ThankYou />} /> */}
             
-            <Route path="/favoritejobs" element={<JobPortal />} />
+            <Route
+              path="/favoritejobs"
+              element={
+                <ProtectedRoute>
+                  <JobPortal />
+                </ProtectedRoute>
+              }
+            />
             {/* <Route path="/job-application-success" element={<JobApplicationSuccess />} /> */}
             {/* <Route path="/my-applications" element={
               <ProtectedRoute>
