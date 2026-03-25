@@ -52,12 +52,36 @@ export default function JobDetails() {
   const [showResumeUpload, setShowResumeUpload] = useState(false);
   const [scrollY, setScrollY] = useState(0);
   const [activeTab, setActiveTab] = useState("overview");
+  const [headerHeight, setHeaderHeight] = useState(0);
 
   // Scroll tracking for animations
   useEffect(() => {
     const handleScroll = () => setScrollY(window.scrollY);
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  // Track header height to align sticky elements with fixed header
+  useEffect(() => {
+    const headerEl = document.getElementById("rizz-header");
+    if (!headerEl) return;
+
+    const updateHeaderHeight = () => {
+      const h = headerEl.getBoundingClientRect().height || 0;
+      setHeaderHeight(h);
+    };
+
+    updateHeaderHeight();
+
+    const ro = new ResizeObserver(() => updateHeaderHeight());
+    ro.observe(headerEl);
+
+    window.addEventListener("resize", updateHeaderHeight, { passive: true });
+
+    return () => {
+      ro.disconnect();
+      window.removeEventListener("resize", updateHeaderHeight);
+    };
   }, []);
 
   // Track job details view on mount
@@ -233,8 +257,9 @@ export default function JobDetails() {
       <div className="min-h-screen bg-warm-cream text-charcoal">
         {/* Floating Progress Bar */}
         <div
-          className="fixed top-20 left-0 right-0 h-1 bg-electric-teal z-50 origin-left transition-transform"
+          className="fixed left-0 right-0 h-1 bg-electric-teal z-50 origin-left transition-transform"
           style={{
+            top: headerHeight || 80,
             transform: `scaleX(${progressOpacity})`,
             opacity: progressOpacity,
           }}
@@ -434,7 +459,10 @@ export default function JobDetails() {
         </section>
 
         {/* Tabs Navigation */}
-        <section className="sticky top-20 z-40 bg-warm-cream/95 backdrop-blur-xl border-b border-charcoal/5 py-4 sm:py-6 px-4 sm:px-6">
+        <section
+          className="sticky z-40 bg-warm-cream/95 backdrop-blur-xl border-b border-charcoal/5 py-4 sm:py-6 px-4 sm:px-6"
+          style={{ top: headerHeight || 80 }}
+        >
           <div className="container mx-auto">
             <div className="flex justify-center gap-2 sm:gap-4 overflow-x-auto pb-2">
               {tabs.map((tab) => (

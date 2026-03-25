@@ -5,29 +5,28 @@ import useAuth from "@/hooks/useAuth";
 
 const ProtectedRoute = ({ children, requireSuperAdmin = false, requireRole = null }) => {
   const navigate = useNavigate();
-  const { user, roles, loading, isSuperAdmin, hasRole } = useAuth();
+  const { user, roles, isSuperAdmin, hasRole } = useAuth();
 
   useEffect(() => {
-    if (!loading) {
-      if (!user) {
-        navigate("/auth");
-        return;
-      }
+    // Check authentication immediately without waiting for loading state
+    if (!user) {
+      navigate("/auth");
+      return;
+    }
 
-      if (requireSuperAdmin) {
-        if (!isSuperAdmin()) {
-          navigate("/");
-        }
-      }
-
-      if (requireRole && !hasRole(requireRole)) {
+    if (requireSuperAdmin) {
+      if (!isSuperAdmin()) {
         navigate("/");
       }
     }
-  }, [loading, user, roles, requireSuperAdmin, requireRole, isSuperAdmin, hasRole, navigate]);
 
-  // Show loading while verifying
-  if (loading || !user) {
+    if (requireRole && !hasRole(requireRole)) {
+      navigate("/");
+    }
+  }, [user, roles, requireSuperAdmin, requireRole, isSuperAdmin, hasRole, navigate]);
+
+  // Show loading only if user is not yet determined (check user object, not loading state)
+  if (!user) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin" />

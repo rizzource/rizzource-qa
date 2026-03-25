@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import HeroSection from "@/components/HeroSection";
-import MentorMenteeSelection from "@/components/MentorMenteeSelection";
+// import HeroSection from "@/components/HeroSection";
+// import MentorMenteeSelection from "@/components/MentorMenteeSelection";
 import SignupForm from "@/components/SignupForm";
-import MentorMultiStepForm from "@/components/MentorMultiStepForm";
+// import MentorMultiStepForm from "@/components/MentorMultiStepForm";
 import MinimalistHome from "@/components/MinimalistHome";
 import Header from "@/components/Header";  
 import Footer from "@/components/Footer";

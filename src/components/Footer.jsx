@@ -39,7 +39,7 @@ const Footer = () => {
                   Job Search
                 </Link>
               </li>
-              <li>
+              {/* <li>
                 <Link
                   to="/jobs?resume=true"
                   onClick={() => setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 50)}
@@ -47,7 +47,7 @@ const Footer = () => {
                 >
                   Resume AI
                 </Link>
-              </li>
+              </li> */}
               <li>
                 <Link to="/cover-letter/generator" className="hover:text-warm-cream cursor-pointer transition-colors block">Cover Letter</Link>
               </li>
