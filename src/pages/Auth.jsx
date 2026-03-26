@@ -74,23 +74,25 @@ const Auth = () => {
   }, [activeTab]);
 
   const evaluatePasswordStrength = (password) => {
-    const commonWeak = new Set([
-      '123456', 'password', '123456789', '12345678', '12345', 'qwerty', '111111', '123123', 'abc123', 'password1'
-    ]);
+    // const commonWeak = new Set([
+    //   '123456', 'password', '123456789', '12345678', '12345', 'qwerty', '111111', '123123', 'abc123', 'password1'
+    // ]);
 
-    if (!password) return '';
-    if (commonWeak.has(password.toLowerCase())) return 'weak';
-    if (password.length < 6) return 'weak';
+    // if (!password) return '';
+    // if (commonWeak.has(password.toLowerCase())) return 'weak';
+    // if (password.length < 6) return 'weak';
 
-    let score = 0;
-    if (password.length >= 8) score += 1;
-    if (/[a-z]/.test(password) && /[A-Z]/.test(password)) score += 1;
-    if (/\d/.test(password)) score += 1;
-    if (/[^A-Za-z0-9]/.test(password)) score += 1;
+    // let score = 0;
+    // if (password.length >= 8) score += 1;
+    // if (/[a-z]/.test(password) && /[A-Z]/.test(password)) score += 1;
+    // if (/\d/.test(password)) score += 1;
+    // if (/[^A-Za-z0-9]/.test(password)) score += 1;
 
-    if (score <= 1) return 'weak';
-    if (score === 2) return 'medium';
-    return 'strong';
+    // if (password?.length <= 1) return 'weak';
+    // if (score === 2) return 'medium';
+    // return 'strong';
+     if (password?.length < 8) return 'weak';
+    else return 'good';
   };
 
   const handlePasswordChange = (e) => {
@@ -330,7 +332,7 @@ const Auth = () => {
 
       const strength = evaluatePasswordStrength(password);
       if (strength === 'weak') {
-        setLocalError("Weak password detected. Use at least 8 characters with mixed case, numbers, and symbols.");
+        setLocalError("Weak password detected. Use at least 8 characters.");
         posthog?.capture('signup_failed', {
           method: 'email',
           error_type: 'weak_password'
@@ -677,7 +679,7 @@ const Auth = () => {
                             className="h-11 sm:h-12 rounded-xl border-2 border-charcoal/10 bg-white font-medium
                                      focus-visible:ring-electric-teal focus-visible:border-electric-teal
                                      transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                            placeholder="Min. 6 characters"
+                            placeholder="Min. 8 characters"
                           />
                           {passwordStrength && (
                             <p className={`mt-2 text-xs font-bold uppercase tracking-wider ${passwordStrength === 'weak' ? 'text-rose-600' : passwordStrength === 'medium' ? 'text-amber-600' : 'text-emerald-600'}`}>
