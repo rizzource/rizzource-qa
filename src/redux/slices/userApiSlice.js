@@ -9,10 +9,12 @@ import { identifyUser, track } from "@/lib/analytics";
 import { useEffect } from "react";
 
 //DEV & QA BASE URL
-const BASE_URL = "https://devrizzource-gnacdydxc8dhakdh.canadacentral-01.azurewebsites.net/api";
+// const BASE_URL = "https://devrizzource-gnacdydxc8dhakdh.canadacentral-01.azurewebsites.net/api";
 
 //PROD BASE URL
 // const BASE_URL = "https://rizzourceprod-c7gaemc7c4dve7c3.canadacentral-01.azurewebsites.net/api";
+const BASE_URL = "https://rizzourcepython-dev-production.up.railway.app/api";
+
 const SECRET_KEY = "33Browntrucks!@#";
 
 // ----------------------------------- 
